@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "#": {
+      "item": "kunluncontinent:gray_iron_ingot"
+    },
+    "M": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "##",
+    " M",
+    " M"
+  ],
+  "result": {
+    "item": "kunluncontinent:gray_iron_hoe"
+  },
+  "show_notification": true
+}

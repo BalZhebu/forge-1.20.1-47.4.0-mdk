@@ -1,0 +1,5 @@
+// 1.20.1	2026-02-11T16:22:02.0741504	Tags for minecraft:block mod id kunluncontinent
+145c477598ff55b70796ab3bd2200d7a81c2afa8 data/minecraft/tags/blocks/mineable/hoe.json
+787797eb5cfe6e7295251e02495f929efea5349f data/minecraft/tags/blocks/mineable/pickaxe.json
+af9c7d85f78aec3ea8046d2ff2af0c76b8ae40f6 data/minecraft/tags/blocks/needs_diamond_tool.json
+1087ae6285cb60c7bfc763629f7d67d1a4875881 data/minecraft/tags/blocks/needs_iron_tool.json

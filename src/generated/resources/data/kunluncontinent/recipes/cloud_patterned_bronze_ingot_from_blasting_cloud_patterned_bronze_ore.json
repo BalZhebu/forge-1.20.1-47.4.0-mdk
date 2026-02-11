@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.3,
+  "group": "cloud_patterned_bronze",
+  "ingredient": {
+    "item": "kunluncontinent:cloud_patterned_bronze_ore"
+  },
+  "result": "kunluncontinent:cloud_patterned_bronze_ingot"
+}

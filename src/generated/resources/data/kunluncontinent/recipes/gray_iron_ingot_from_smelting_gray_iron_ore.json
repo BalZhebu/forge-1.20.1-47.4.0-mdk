@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.25,
+  "group": "gray_iron",
+  "ingredient": {
+    "item": "kunluncontinent:gray_iron_ore"
+  },
+  "result": "kunluncontinent:gray_iron_ingot"
+}
