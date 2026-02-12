@@ -22,6 +22,7 @@ import org.joml.Matrix4f;
 
 import static net.minecraftforge.client.gui.overlay.VanillaGuiOverlay.*;
 
+//屏幕图标图片渲染代码
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class PWRenderGuiOverlayEventEvent {
 

@@ -3,6 +3,7 @@ package com.TovidY.kunluncontinent.capability;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.util.INBTSerializable;
 
+//基础属性面板
 public class CapabilityAttributeBase implements INBTSerializable<CompoundTag> {
 
 /*基础属性

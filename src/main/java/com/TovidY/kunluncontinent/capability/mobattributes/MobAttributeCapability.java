@@ -6,6 +6,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.Random;
 
+//各个年限生物的属性生成
 public class MobAttributeCapability extends CapabilityAttributeBase implements INBTSerializable<CompoundTag> {
     private static final Random RANDOM = new Random();
     private long nianxian;

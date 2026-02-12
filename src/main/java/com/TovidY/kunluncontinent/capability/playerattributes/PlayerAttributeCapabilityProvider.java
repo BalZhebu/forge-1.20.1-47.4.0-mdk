@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
+//玩家属性注册器
 public class PlayerAttributeCapabilityProvider implements ICapabilityProvider, ICapabilitySerializable<CompoundTag> {
     public static Capability<PlayerAttributeCapability> CAPABILITY = CapabilityManager.get(new CapabilityToken<PlayerAttributeCapability>() {});
 

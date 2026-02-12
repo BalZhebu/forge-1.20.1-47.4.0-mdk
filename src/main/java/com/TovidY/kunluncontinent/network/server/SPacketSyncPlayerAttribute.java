@@ -28,11 +28,15 @@ public class SPacketSyncPlayerAttribute {
     private final float jingyan;
     private final int dengji;
     private final float maxjingyan;
+    private final float wuchuan;
+    private final float shengminghuifu;
+
 
     public SPacketSyncPlayerAttribute(
         float shengming, float maxshengming, float jingshenli, float maxjingshenli,
         float mingzhong, float fangyu, float gongji, float baojilv, float baojishanghai,
-        float xixue, float shanbi, float kangbao, float jingyan, int dengji, float maxjingyan
+        float wuchuan, float shengminghuifu, float xixue, float shanbi, float kangbao,
+        float jingyan, int dengji, float maxjingyan
     ) {
         this.shengming = shengming;
         this.maxshengming = maxshengming;
@@ -49,6 +53,9 @@ public class SPacketSyncPlayerAttribute {
         this.jingyan = jingyan;
         this.dengji = dengji;
         this.maxjingyan = maxjingyan;
+        this.wuchuan = wuchuan;
+        this.shengminghuifu = shengminghuifu;
+
     }
 
     public static void encode(SPacketSyncPlayerAttribute msg, FriendlyByteBuf buf) {
@@ -67,6 +74,8 @@ public class SPacketSyncPlayerAttribute {
         buf.writeFloat(msg.jingyan);
         buf.writeInt(msg.dengji);
         buf.writeFloat(msg.maxjingyan);
+        buf.writeFloat(msg.wuchuan);
+        buf.writeFloat(msg.shengminghuifu);
     }
 
     public static SPacketSyncPlayerAttribute decode(FriendlyByteBuf buf) {
@@ -74,7 +83,7 @@ public class SPacketSyncPlayerAttribute {
             buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(),
             buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(),
             buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(),
-            buf.readFloat(), buf.readInt(), buf.readFloat()
+            buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readInt(), buf.readFloat()
         );
     }
 
@@ -98,6 +107,8 @@ public class SPacketSyncPlayerAttribute {
                     attr.setJingyan(msg.jingyan);
                     attr.setDengji(msg.dengji);
                     attr.setMaxjingyan(msg.maxjingyan);
+                    attr.setWuchuan(msg.wuchuan);
+                    attr.setShengmingHuifu(msg.shengminghuifu);
                 });
             }
         });

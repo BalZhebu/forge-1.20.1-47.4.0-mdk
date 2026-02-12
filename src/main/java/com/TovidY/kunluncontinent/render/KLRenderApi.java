@@ -8,41 +8,24 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
 
+//渲染API
 public interface KLRenderApi {
 
     static void renderStart(ResourceLocation resourceLocation, PoseStack poseStack){
         RenderSystem.enableBlend();
         RenderSystem.enableDepthTest();
-//        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-//        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.SRC_COLOR, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 
         RenderSystem.setShaderTexture(0, resourceLocation);
         RenderSystem.depthMask(Minecraft.useShaderTransparency());
         poseStack.pushPose();
 
-//        RenderSystem.setShaderColor(f, f1, f2, (float)d1);
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.polygonOffset(-3.0F, -3.0F);
         RenderSystem.enablePolygonOffset();
         RenderSystem.disableCull();
     }
-    static void renderStart(PoseStack poseStack){
-        RenderSystem.enableBlend();
-        RenderSystem.enableDepthTest();
-//        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.DST_COLOR, GlStateManager.DestFactor.SRC_COLOR, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 
-//        RenderSystem.setShaderTexture(0, resourceLocation);
-        RenderSystem.depthMask(Minecraft.useShaderTransparency());
-        poseStack.pushPose();
-
-//        RenderSystem.setShaderColor(f, f1, f2, (float)d1);
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.polygonOffset(-3.0F, -3.0F);
-        RenderSystem.enablePolygonOffset();
-        RenderSystem.disableCull();
-    }
     static void renderEnd(PoseStack poseStack){
 
         RenderSystem.enableCull();

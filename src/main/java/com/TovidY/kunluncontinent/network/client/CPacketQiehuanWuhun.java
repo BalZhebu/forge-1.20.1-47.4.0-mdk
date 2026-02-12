@@ -30,6 +30,7 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
+//武魂开关数据包
 public class CPacketQiehuanWuhun {
 
   public static void encode(CPacketQiehuanWuhun msg, FriendlyByteBuf buf) {

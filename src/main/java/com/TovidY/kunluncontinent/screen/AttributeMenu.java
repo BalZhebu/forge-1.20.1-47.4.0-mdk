@@ -10,6 +10,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+//属性菜单
 public class AttributeMenu extends AbstractContainerMenu implements MenuProvider {
 
     public AttributeMenu(int pContainerId, Inventory inv, net.minecraft.network.FriendlyByteBuf extraData) {
@@ -22,13 +23,9 @@ public class AttributeMenu extends AbstractContainerMenu implements MenuProvider
 
     public AttributeMenu(int pContainerId, Inventory inv, Player player, SimpleContainerData simpleContainerData) {
         super(ModMenuTypes.ATTRUBUTE_MENU.get(), pContainerId);
-
-        //物品栏和快捷栏
         addPlayerInventory(inv);
         addPlayerHotbar(inv);
     }
-
-    //物品栏，用于显示物品栏的位置，来适配图片
     private void addPlayerInventory(Inventory playerInventory) {
         for (int si = 0; si < 3; ++si) {
             for (int sj = 0; sj < 9; ++sj) {
@@ -37,7 +34,6 @@ public class AttributeMenu extends AbstractContainerMenu implements MenuProvider
         }
     }
 
-    //快捷栏，用于显示快捷栏的位置，来适配图片
     private void addPlayerHotbar(Inventory playerInventory) {
         for (int si = 0; si < 9; ++si) {
             this.addSlot(new Slot(playerInventory, si, 73 + 8 + si * 18, 13 + 142));
@@ -54,7 +50,6 @@ public class AttributeMenu extends AbstractContainerMenu implements MenuProvider
         return ItemStack.EMPTY;
     }
 
-    //true表示一直打开，删除后会导致无法打开GUI
     @Override
     public boolean stillValid(Player pPlayer) {
         return true;

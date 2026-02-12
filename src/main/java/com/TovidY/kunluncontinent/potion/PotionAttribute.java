@@ -6,6 +6,7 @@ import net.minecraft.world.entity.LivingEntity;
 
 import java.util.Map;
 
+//药水属性接口
 public interface PotionAttribute {
 
     float getWugong(LivingEntity livingEntity, Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry, float value);

@@ -20,6 +20,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+//网络包注册器
 public class NetworkHandler {
 
     private static final String PTC_VERSION = "1";

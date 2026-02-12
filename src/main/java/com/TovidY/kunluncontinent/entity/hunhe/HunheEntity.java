@@ -15,6 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 
+//魂核实体代码
 public class HunheEntity extends Entity {
         private Player player;
         private int livetime;

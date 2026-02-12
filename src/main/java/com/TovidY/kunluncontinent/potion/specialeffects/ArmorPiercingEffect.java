@@ -3,6 +3,7 @@ package com.TovidY.kunluncontinent.potion.specialeffects;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 
+//减伤debuff
 public class ArmorPiercingEffect extends MobEffect {
     public ArmorPiercingEffect() {
         super(MobEffectCategory.HARMFUL, 0xFF0000);

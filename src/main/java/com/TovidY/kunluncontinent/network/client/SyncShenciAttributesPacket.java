@@ -8,6 +8,7 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
+//武魂属性同步包
 public class SyncShenciAttributesPacket {
     private final PlayerAttributeCapability attributes;
 

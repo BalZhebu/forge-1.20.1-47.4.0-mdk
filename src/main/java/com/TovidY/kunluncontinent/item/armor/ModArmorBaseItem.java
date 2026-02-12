@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+//装备属性
 public class ModArmorBaseItem extends ArmorItem {
     public ModArmorBaseItem(ArmorMaterial material, Type type, Properties properties) {
         super(material, type, properties);

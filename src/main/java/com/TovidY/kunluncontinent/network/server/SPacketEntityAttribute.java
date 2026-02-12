@@ -30,6 +30,7 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.HashMap;
 import java.util.function.Supplier;
 
+// 同步实体属性数据的网络包
 public class SPacketEntityAttribute {
 
   public static final HashMap<Integer, CompoundTag> monsterHashMapCapability = new HashMap();

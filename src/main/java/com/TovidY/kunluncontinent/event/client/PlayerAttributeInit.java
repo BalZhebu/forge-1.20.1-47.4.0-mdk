@@ -16,14 +16,13 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
 import org.slf4j.Logger;
 
+//设置玩家初始属性
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID)
 public class PlayerAttributeInit {
-    private static final Logger LOGGER = LogUtils.getLogger();
 
     @SubscribeEvent
     public static void onPlayerLogin(EntityJoinLevelEvent event) {
         if (event.getEntity() instanceof Player player) {
-            // 只在服务端处理
             if (player.level().isClientSide) return;
             
             if (player instanceof ServerPlayer serverPlayer) {
@@ -36,7 +35,6 @@ public class PlayerAttributeInit {
                                         attributes.getJingyan() !=0.0f;
 
                     if (!attributes.isInitialized() && !isRespawn) {
-                        // 设置初始属性值
                         attributes.setShengming(20.0f);
                         attributes.setMaxshengming(20.0f);
                         attributes.setJingshenli(20.0f);
@@ -55,12 +53,9 @@ public class PlayerAttributeInit {
                         attributes.setShengmingHuifu(1.0f);
                         attributes.setWuchuan(1.0f);
                         attributes.setInitialized(true);
-                        
-
                     } else {
                         if (!attributes.isInitialized()) {
                             attributes.setInitialized(true);
-
                         }
                     }
                     syncMaxHealthToPlayer(player, attributes.getMaxshengming());
@@ -69,11 +64,6 @@ public class PlayerAttributeInit {
             }
         }
     }
-    
-    /**
-     * 同步最大生命值到原生属性系统，突破1024限制
-     * 注：通过 Mixin 已经移除了原生的 1024 上限，现在可以直接设置任意值
-     */
 
     public static void syncMaxHealthToPlayer(Player player, float targetMaxHealth) {
         AttributeInstance maxHealthAttr = player.getAttribute(Attributes.MAX_HEALTH);
@@ -81,10 +71,7 @@ public class PlayerAttributeInit {
         double currentMaxHealth = maxHealthAttr.getBaseValue();
         maxHealthAttr.setBaseValue(targetMaxHealth);
     }
-    
-    /**
-     * 同步所有属性到客户端
-     */
+
     private static void syncAllAttributesToClient(ServerPlayer player, PlayerAttributeCapability attr) {
         SPacketSyncPlayerAttribute packet = new SPacketSyncPlayerAttribute(
             attr.getShengming(), attr.getMaxshengming(), attr.getJingshenli(), attr.getMaxjingshenli(),

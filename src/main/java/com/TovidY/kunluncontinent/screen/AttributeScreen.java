@@ -18,6 +18,7 @@ import java.util.List;
 
 import static net.minecraft.client.gui.screens.inventory.InventoryScreen.renderEntityInInventoryFollowsMouse;
 
+//属性面板渲染
 public class AttributeScreen extends AbstractContainerScreen<AttributeMenu> {
     //资源路径，如果提示警告则在ResourceLocation的后面加入fromNamespaceAndPath
     private static final int ATTRIBUTE_TEXT_OFFSET_X = 14;
@@ -115,7 +116,6 @@ public class AttributeScreen extends AbstractContainerScreen<AttributeMenu> {
             guiGraphics.drawString(this.font, "等级: " + (int)attributes.getDengji(), startX, y, textColor, false);
         });
     }
-
 
     //可用ESC或E关闭窗口
     @Override

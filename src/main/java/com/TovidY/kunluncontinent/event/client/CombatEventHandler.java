@@ -13,6 +13,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.Random;
+
+//伤害源判定
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID)
 public class CombatEventHandler {
     private static final Random RANDOM = new Random();
@@ -34,19 +36,15 @@ public class CombatEventHandler {
         float wuchuan = ModAttributeAPI.getWuchuan(attacker);
         float fangyu = ModAttributeAPI.getEffectiveFangyu(target);
 
-        // 3. 减伤计算 (整合你的公式)
-        // 减伤系数 = 100 / (100 + 有效防御)
         float effectiveFangyu = Math.max(0, fangyu - wuchuan);
         float reductionFactor = 100f / (100f + effectiveFangyu);
         float baseDamage = (gongji + event.getAmount()) * reductionFactor;
 
-        // 4. 暴击判定
         float baojilv = ModAttributeAPI.getBaojilv(attacker);
         float kangbao = ModAttributeAPI.getKangbao(target);
         float finalCritRate = Math.max(0, baojilv - kangbao);
         boolean isCrit = (RANDOM.nextFloat() * 100) < finalCritRate;
 
-        // 5. 特殊效果与最终伤害计算
         float finalDamage = baseDamage;
         boolean effectTriggered = false;
 
@@ -57,7 +55,6 @@ public class CombatEventHandler {
             }
         }
 
-        // 6. 如果没触发特殊效果，则走普通暴击逻辑
         if (!effectTriggered && isCrit) {
             float baojishanghai = ModAttributeAPI.getBaojishanghai(attacker);
             finalDamage = baseDamage * (baojishanghai / 100f);
@@ -66,10 +63,8 @@ public class CombatEventHandler {
         finalDamage = Math.max(0.1f, finalDamage);
         event.setAmount(finalDamage);
 
-        // 7. 处理吸血 (结合你的公式)
         handleLifesteal(attacker, finalDamage);
 
-        // 8. 消息显示
         if (attacker instanceof Player player && !effectTriggered) {
             sendDamageMessage(player, target, finalDamage, isCrit);
         }
@@ -110,10 +105,7 @@ public class CombatEventHandler {
         }
     }
 
-    // 独立计算特殊效果伤害，防止逻辑混杂
     private static float calculateSpecialDamage(LivingEntity attacker, LivingEntity target, float base) {
-        // 这里可以再次根据 roll 值精确返回伤害，或者在 handleSpecialEffects 里用个变量存一下
-        // 为了演示简洁，这里返回带有加成的基础值
         return base * 1.3f;
     }
 

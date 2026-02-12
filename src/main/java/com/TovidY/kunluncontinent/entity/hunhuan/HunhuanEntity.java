@@ -32,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.TovidY.kunluncontinent.item.ModItems.hunhuanstorage;
 
+//魂环实体代码
     public class HunhuanEntity extends Entity {
         private int existenceTime;
         public int livetime;

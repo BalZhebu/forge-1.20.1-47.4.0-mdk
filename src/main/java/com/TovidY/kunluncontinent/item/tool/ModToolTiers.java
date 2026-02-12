@@ -9,15 +9,16 @@ import java.util.function.Supplier;
 //该类为工具等级类，用于写工具等级
 public enum ModToolTiers implements Tier {
     //前面为材料名，后面数值分别为：采集等级，耐久度，攻击速度，攻击伤害，附魔属性，{}里面的修复的材料
-    GRAY_IRON(3,2100,8.0F,5.0F,30,
+    GRAY_IRON(3,2100,12.0F,5.0F,30,
             ()->Ingredient.of(ModItems.GRAY_IRON_INGOT.get())),
 
-    CLOUD_PATTERNED_BRONZE(4, 3000, 13.0F, 10.0F, 30,
+    CLOUD_PATTERNED_BRONZE(4, 3200, 18.0F, 10.0F, 30,
                                    () -> Ingredient.of(ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get())),
 
+
+    //测试物品
     TEST_ITEM(1,100,5.0F,3.0F,15,
             ()->Ingredient.of(ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get()));
-
 
     private final int level;
     private final int uses;

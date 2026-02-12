@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+//丹药类
 public class DanYaoItem extends Item {
 
     private float shengming;

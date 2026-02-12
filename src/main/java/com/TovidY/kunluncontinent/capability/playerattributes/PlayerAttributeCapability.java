@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+//玩家属性
 public class PlayerAttributeCapability implements ICapabilitySerializable<CompoundTag> {
 
     // 初始化标志，用于判断是否是第一次创建角色
@@ -24,7 +25,6 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
     private List<String> wuhunListsname = new ArrayList<>();
     private int hunhuankuaiguan;
 
-    // 玩家属性字段
     private float shengming = 20.0f;  // 当前生命值，默认20.0
     private float maxshengming = 20.0f;  // 最大生命值，默认20.0
     private float jingshenli = 20.0f;
@@ -46,7 +46,6 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
 
     private String forcedTalent = "";
     private int xiantianTalent = 0;
-    // Getter 和 Setter 方法
 
 
     public PlayerAttributeCapability(){
@@ -224,11 +223,10 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
 
     @Override
     public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
-        // 检查传入的 Capability 是否是我们的玩家属性 Capability
         if (cap == PlayerAttributeCapabilityProvider.CAPABILITY) {
-            return LazyOptional.of(() -> (T) this); // 返回该实例本身作为能力提供者
+            return LazyOptional.of(() -> (T) this);
         }
-        return LazyOptional.empty(); // 如果不是我们期望的能力，返回空的 LazyOptional
+        return LazyOptional.empty();
     }
 
     public static ArrayList<String> wuhunListsnameall= new ArrayList<>();

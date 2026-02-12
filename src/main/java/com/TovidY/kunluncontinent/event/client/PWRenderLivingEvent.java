@@ -14,6 +14,7 @@ import org.joml.Matrix4f;
 
 import static com.TovidY.kunluncontinent.entity.hunhuan.HunhuanEntity.HUNHUAN;
 
+//怪物身上的魂环渲染
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class PWRenderLivingEvent {
 
@@ -27,15 +28,13 @@ public class PWRenderLivingEvent {
     }
 
     public static void renderHunhuan(Entity entity, float partialTick, PoseStack poseStack, int nianxian, int count){
-        // 使用你定义的 API
+
         KLRenderApi.renderStart(HUNHUAN, poseStack);
         Matrix4f matrix4f = poseStack.last().pose();
 
-        // 你的动画逻辑
         renderAnimation(matrix4f, nianxian, (entity.level().getGameTime() + partialTick), count);
         renderHunhuanAttribute(matrix4f, nianxian, (entity.level().getGameTime() + partialTick), count);
 
-        // 绘图部分（完全保留你的写法）
         BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
         bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
         bufferbuilder.vertex(matrix4f, -6f, 0.1f, -6f).uv(0, 0).endVertex();

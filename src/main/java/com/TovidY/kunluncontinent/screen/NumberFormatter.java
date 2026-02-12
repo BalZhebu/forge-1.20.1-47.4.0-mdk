@@ -3,6 +3,7 @@ package com.TovidY.kunluncontinent.screen;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.glfw.GLFW;
 
+// 数值格式化工具类
 public class NumberFormatter {
     private static boolean forceShowFullNumber = false;
 

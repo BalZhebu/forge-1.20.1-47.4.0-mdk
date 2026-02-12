@@ -23,18 +23,17 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+// 注册能力提供者
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)  // 改为 FORGE 总线
 public class CapabilityRegistryHandler {
     @SubscribeEvent
     public static void onAttachCapabilities(AttachCapabilitiesEvent<Entity> event) {
         Entity entity = event.getObject();
+        //玩家附加属性
         if (event.getObject() instanceof Player) {
-            // 创建 PlayerAttributeCapabilityProvider 实例
             PlayerAttributeCapabilityProvider provider = new PlayerAttributeCapabilityProvider();
-            // 将 capability 附加到玩家对象上
             event.addCapability(ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "player_attribute"), provider);
         }
-
         // 为怪物附加属性
         if (entity instanceof Mob || entity instanceof HunhuanEntity) {
             MobAttributeCapabilityProvider provider = new MobAttributeCapabilityProvider();
@@ -49,20 +48,17 @@ public class CapabilityRegistryHandler {
     public static void onEntityJoin(EntityJoinLevelEvent event){
         Entity entity = event.getEntity();
         if(entity==null)return;
-// 魂环属性
+        //魂环属性赋予
         if(entity instanceof HunhuanEntity hunhuan){
             hunhuanJoin(hunhuan);
         }
-
-//修改怪属性
-        if (entity instanceof Mob monsterentity )
-        {
+        //怪物属性赋予
+        if (entity instanceof Mob monsterentity ) {
             monsterJoin(monsterentity);
         }
-//修改玩家属性
-
     }
 
+    //怪物加入世界时赋予属性
     public static void monsterJoin(Mob entity){
 
         if(!entity.level().isClientSide){
@@ -105,6 +101,7 @@ public class CapabilityRegistryHandler {
         }
     }
 
+    //魂环加入世界时赋予属性
     public static void hunhuanJoin(HunhuanEntity entity){
 
         if(!entity.level().isClientSide){
@@ -125,12 +122,11 @@ public class CapabilityRegistryHandler {
         }
     }
 
+    //玩家的同步属性
     @SubscribeEvent
     public static void onStartTracking(PlayerEvent.StartTracking event) {
         Entity target = event.getTarget();
-        // 只有在服务端才执行同步逻辑
         if (!target.level().isClientSide) {
-            // 如果是怪物或魂环实体，执行同步
             if (target instanceof Mob || target instanceof HunhuanEntity) {
                 SynsAPI.synsEntityAttribute(target);
             }

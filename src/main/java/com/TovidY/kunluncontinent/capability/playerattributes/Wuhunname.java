@@ -1,5 +1,6 @@
 package com.TovidY.kunluncontinent.capability.playerattributes;
 
+//武魂名称
 public class Wuhunname {
     //器武魂
     public static final String pohunqiang = "破魂枪";

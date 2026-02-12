@@ -10,6 +10,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraftforge.network.PacketDistributor;
 
+// 同步属性接口
 public interface SynsAPI {
     static void synsPlayerAttribute(Entity entity){
         if(entity instanceof ServerPlayer livingEntity){

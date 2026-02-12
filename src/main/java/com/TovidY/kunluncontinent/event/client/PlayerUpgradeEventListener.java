@@ -41,22 +41,5 @@ public class PlayerUpgradeEventListener {
      */
     @SubscribeEvent
     public static void onPlayerLoadComplete(PlayerEvent.LoadFromFile event) {
-        // 这里暂时不直接处理，因为玩家对象可能尚未完全初始化
-    }
-
-    /**
-     * 监听玩家 tick 事件，定期检查升级（可选，性能考虑）
-     * 注意：这个事件非常频繁，如果性能要求高，可以考虑减少检查频率
-     */
-//    @SubscribeEvent
-    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        if (event.phase == TickEvent.Phase.END && 
-            !event.player.level().isClientSide && 
-            event.player instanceof ServerPlayer serverPlayer) {
-            // 每隔一定时间检查一次升级，例如每100 ticks（约5秒）检查一次
-            if (serverPlayer.tickCount % 100 == 0) {
-                PlayerUpgradeSystem.triggerUpgradeCheck(serverPlayer);
-            }
-        }
     }
 }

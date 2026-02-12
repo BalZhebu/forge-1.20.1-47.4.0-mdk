@@ -22,16 +22,18 @@ import net.minecraftforge.network.PacketDistributor;
 import java.util.Arrays;
 import java.util.List;
 
+//指令格式/kunluncontinent attribute <属性名称> <增加/减少> <值> <玩家>
+// 属性修改指令
+
 public class AttributeCommand {
-    
-    // 所有可用的属性名称
+
     private static final List<String> ATTRIBUTE_NAMES = Arrays.asList(
         "shengming", "maxshengming", "jingshenli", "maxjingshenli",
         "mingzhong", "fangyu", "gongji", "baojilv", "baojishanghai",
-        "xixue", "shanbi", "kangbao", "jingyan", "dengji", "maxjingyan"
+        "xixue", "shanbi", "kangbao", "jingyan", "dengji", "maxjingyan",
+        "wuchuan", "shengminghuifu"
     );
-    
-    // 属性名称建议提供器
+
     private static final SuggestionProvider<CommandSourceStack> ATTRIBUTE_SUGGESTIONS = 
         (context, builder) -> SharedSuggestionProvider.suggest(ATTRIBUTE_NAMES, builder);
     
@@ -54,10 +56,7 @@ public class AttributeCommand {
                 )
         );
     }
-    
-    /**
-     * 修改执行者自己的属性
-     */
+
     private static int modifySelfAttribute(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer player = context.getSource().getPlayerOrException();
         String attributeName = StringArgumentType.getString(context, "attributeName");
@@ -65,10 +64,7 @@ public class AttributeCommand {
         
         return modifyAttribute(player, attributeName, value, context.getSource());
     }
-    
-    /**
-     * 修改指定玩家的属性
-     */
+
     private static int modifyPlayerAttribute(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer targetPlayer = EntityArgument.getPlayer(context, "player");
         String attributeName = StringArgumentType.getString(context, "attributeName");
@@ -76,10 +72,7 @@ public class AttributeCommand {
         
         return modifyAttribute(targetPlayer, attributeName, value, context.getSource());
     }
-    
-    /**
-     * 核心修改逻辑
-     */
+
     private static int modifyAttribute(ServerPlayer player, String attributeName, float value, CommandSourceStack source) {
         return player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).map(attr -> {
             float oldValue;
@@ -90,15 +83,13 @@ public class AttributeCommand {
                     oldValue = attr.getShengming();
                     newValue = oldValue + value;
                     attr.setShengming(newValue);
-                    // 同步当前生命值到游戏
                     player.setHealth(Math.min(newValue, player.getMaxHealth()));
                     break;
                     
                 case "maxshengming":
                     oldValue = attr.getMaxshengming();
-                    newValue = Math.max(1.0f, oldValue + value); // 最大生命值不能低于1
+                    newValue = Math.max(1.0f, oldValue + value);
                     attr.setMaxshengming(newValue);
-                    // 同步到原生属性系统（支持超过1024）
                     PlayerAttributeInit.syncMaxHealthToPlayer(player, newValue);
                     break;
                     
@@ -122,13 +113,13 @@ public class AttributeCommand {
                     
                 case "fangyu":
                     oldValue = attr.getFangyu();
-                    newValue = Math.max(0.0f, oldValue + value); // 防御不能为负
+                    newValue = Math.max(0.0f, oldValue + value);
                     attr.setFangyu(newValue);
                     break;
                     
                 case "gongji":
                     oldValue = attr.getGongji();
-                    newValue = Math.max(0.0f, oldValue + value); // 攻击力不能为负
+                    newValue = Math.max(0.0f, oldValue + value);
                     attr.setGongji(newValue);
                     break;
                     
@@ -164,29 +155,37 @@ public class AttributeCommand {
                     
                 case "jingyan":
                     oldValue = attr.getJingyan();
-                    newValue = Math.max(0.0f, oldValue + value); // 经验不能为负
+                    newValue = Math.max(0.0f, oldValue + value);
                     attr.setJingyan(newValue);
                     break;
                     
                 case "dengji":
                     oldValue = attr.getDengji();
-                    newValue = Math.max(0.0f, oldValue + value); // 等级不能为负
+                    newValue = Math.max(0.0f, oldValue + value);
                     attr.setDengji((int)newValue);
                     break;
                     
                 case "maxjingyan":
                     oldValue = attr.getMaxjingyan();
-                    newValue = Math.max(1.0f, oldValue + value); // 最大经验不能低于1
+                    newValue = Math.max(1.0f, oldValue + value);
                     attr.setMaxjingyan(newValue);
                     break;
-                    
+                case "wuchuan":
+                    oldValue = attr.getWuchuan();
+                    newValue = oldValue + value;
+                    attr.setWuchuan(newValue);
+                    break;
+                case "shengminghuifu":
+                    oldValue = attr.getShengmingHuifu();
+                    newValue = oldValue + value;
+                    attr.setShengmingHuifu(newValue);
+                    break;
                 default:
-                    source.sendFailure(Component.literal("§c未知的属性名称: " + attributeName));
+                    source.sendFailure(Component.literal("§c未知的属性名称: " + attributeName + "请联系作者TovidY"));
                     source.sendFailure(Component.literal("§e可用属性: " + String.join(", ", ATTRIBUTE_NAMES)));
                     return 0;
             }
-            
-            // 发送成功消息
+
             String operation = value >= 0 ? "增加" : "减少";
             source.sendSuccess(() -> Component.literal(
                 "§a成功" + operation + "玩家 §e" + player.getName().getString() + 
@@ -196,22 +195,15 @@ public class AttributeCommand {
                 "§7" + oldValue + " §f-> §b" + String.format("%.2f", newValue) + 
                 " §7(变化: " + (value >= 0 ? "§a+" : "§c") + String.format("%.2f", value) + "§7)"
             ), false);
-            
-            // 同步数据到客户端
             syncToClient(player, attr);
-            
-            // 如果是经验值属性，检查是否需要升级
             if (attributeName.equalsIgnoreCase("jingyan")) {
                 PlayerUpgradeSystem.checkAndProcessUpgrade(player, attr);
             }
-            
             return 1;
         }).orElse(0);
     }
-    
-    /**
-     * 同步属性到客户端
-     */
+
+    // 同步属性到客户端
     private static void syncToClient(ServerPlayer player, com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability attr) {
         SPacketSyncPlayerAttribute packet = new SPacketSyncPlayerAttribute(
             attr.getShengming(), attr.getMaxshengming(), attr.getJingshenli(), attr.getMaxjingshenli(),

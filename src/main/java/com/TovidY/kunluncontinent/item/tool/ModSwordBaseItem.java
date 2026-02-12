@@ -11,6 +11,7 @@ import net.minecraft.world.level.Level;
 import javax.annotation.Nullable;
 import java.util.List;
 
+//剑类武器增幅类
 public class ModSwordBaseItem extends SwordItem {
 
     public ModSwordBaseItem(Tier tier, int attackDamageModifier, float attackSpeedModifier, Properties properties) {

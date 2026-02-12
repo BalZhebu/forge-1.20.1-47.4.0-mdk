@@ -20,8 +20,8 @@ import static com.TovidY.kunluncontinent.KlMain.random;
 import static com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability.wuhunListsnameall;
 import static com.TovidY.kunluncontinent.capability.playerattributes.PlayerUpgradeSystem.performUpgrade;
 
+//各个方法的调用与使用
 public class PlayerHunhuanAPI {
-
 
     static void addWuHun(Player player) {
         LazyOptional<PlayerAttributeCapability> capability1 = player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY);
@@ -42,7 +42,6 @@ public class PlayerHunhuanAPI {
                     if(random.nextInt(5) == 0){
                         juexingShuangsheng(player);
                     }
-                    //排序
                     Collections.sort(capability.getWuhunListsname());
                     SynsAPI.synsPlayerAttribute(player);
                 }
@@ -116,22 +115,17 @@ public class PlayerHunhuanAPI {
         if(capability1.isPresent()){
             PlayerAttributeCapability capability = capability1.orElseThrow(RuntimeException::new);
             int playerLevel = capability.getDengji();
-            // 检查是否已觉醒至少一个武魂
             List<String> wuhunNames = capability.getWuhunListsname();
             if(wuhunNames == null || wuhunNames.isEmpty()){
                 player.sendSystemMessage(Component.translatable("未开启或觉醒武魂"));
                 return false;
             }
-            // 等级检查：必须是阶段等级（10 的倍数，10~190 或者 199）
             if(!((playerLevel % 10 == 0 && playerLevel >= 10 && playerLevel <= 190) || playerLevel == 199)) {
                 player.sendSystemMessage(Component.translatable("阶段等级").withStyle(ChatFormatting.RED));
                 return false;
             }
-            // 获取当前魂环数量
             int currentRings = getMaxRings(capability);
-            // 计算理论上可拥有的最大魂环数
             int allowedRings = (playerLevel == 199) ? 20 : playerLevel / 10;
-            // 如果魂环数量已经达到上限，则不能再吸收
             if (currentRings >= allowedRings) {
                 player.sendSystemMessage(Component.translatable("等级不够").withStyle(ChatFormatting.RED));
                 return false;

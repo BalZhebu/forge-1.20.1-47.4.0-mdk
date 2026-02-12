@@ -22,6 +22,7 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.util.Random;
 
+//玩家击杀生物事件
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class KLivingDeathEvent {
     private static final RandomSource RANDOM = RandomSource.create();

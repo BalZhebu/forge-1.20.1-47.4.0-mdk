@@ -13,6 +13,7 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.util.List;
 
+// 生成属性赋予
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID)
 public class MobAttributeInit {
 

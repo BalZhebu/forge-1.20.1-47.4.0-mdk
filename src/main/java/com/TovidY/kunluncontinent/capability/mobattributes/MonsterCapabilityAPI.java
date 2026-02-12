@@ -1,12 +1,13 @@
 package com.TovidY.kunluncontinent.capability.mobattributes;
 
-import com.TovidY.kunluncontinent.KlMain;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.level.Level;
+
+//怪物属性生成器API
 public interface MonsterCapabilityAPI {
 
     public static MobAttributeCapability genMonsterCapability(Entity entity) {

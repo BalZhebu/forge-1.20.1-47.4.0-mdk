@@ -18,6 +18,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 import java.util.ArrayList;
 
+//物品注册
 public class ModItems {
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(ForgeRegistries.ITEMS, KlMain.MOD_ID);

@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
 
+//武魂数据同步包
 public class SyncWuhunDataPacket {
     private final UUID playerUUID;
     private final List<Integer> wuhunNianxianList;

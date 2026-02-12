@@ -16,6 +16,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
 
+//按键注册类
 public class KeyMappingInit {
 
     //常量字段
@@ -38,7 +39,7 @@ public class KeyMappingInit {
 
         @SubscribeEvent
         public static void onKeyPressed(InputEvent.Key event) {
-            // 检查是否按下的按键是我们自定义的按键，并且玩家不在聊天框中
+            //聊天框检测类
             if (event.getAction() == InputConstants.PRESS && !isPlayerInChat()) {
                 if (ATTRIBUTE_MAPPING.getKey().getValue() == event.getKey()) {
                     NetworkHandler.INSTANCE.sendToServer(new CPacketOpenAttrubuteGUI());

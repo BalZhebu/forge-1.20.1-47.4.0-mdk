@@ -7,15 +7,20 @@ import net.minecraft.world.entity.EntityType;
 import java.util.HashMap;
 import java.util.Map;
 
+//用于自定义某些生物的年限
 public class MonsterYearConfig {
-
     private static final Map<EntityType<?>, YearRange> SPECIAL_LEVELS = new HashMap<>();
 
     record YearRange(int min, int max) {}
 
+    //min为最小年限
+    //max为最大年限
+
     static {
+
         //末影龙
         register(EntityType.ENDER_DRAGON, 500000, 2000000);
+
         //凋零
         register(EntityType.WITHER, 800000, 1500000);
     }
@@ -34,4 +39,5 @@ public class MonsterYearConfig {
         }
         return -1;
     }
+
 }

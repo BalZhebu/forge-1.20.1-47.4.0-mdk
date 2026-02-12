@@ -7,6 +7,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+//生物属性能力提供者
 public class MobAttributeCapabilityProvider<T extends MobAttributeCapability> implements ICapabilityProvider,ICapabilitySerializable<CompoundTag> {
     public static Capability<MobAttributeCapability> CAPABILITY = CapabilityManager.get(new CapabilityToken<MobAttributeCapability>() {});
 

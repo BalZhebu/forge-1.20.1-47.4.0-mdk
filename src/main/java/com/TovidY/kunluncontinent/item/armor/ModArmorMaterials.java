@@ -12,6 +12,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import java.util.EnumMap;
 import java.util.function.Supplier;
 
+//装备属性接口
 public enum ModArmorMaterials implements ArmorMaterial {
     //基础耐久乘数例钻石=33，铁=15，皮革=5
     //构造参数，33 = 基础耐久度乘数，4/7/10/4、都是各部位护甲值，30 = 附魔能力，ARMOR_EQUIP_DIAMOND穿戴音效，3.0F = 盔甲韧性，0.1F = 击退抗性，Ingredient方法 = 修复材料

@@ -13,6 +13,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
+//创造物品栏
 public class ModCreativeModelTab {
     public static final DeferredRegister<CreativeModeTab> KUNLUN_TABS =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, KlMain.MOD_ID);

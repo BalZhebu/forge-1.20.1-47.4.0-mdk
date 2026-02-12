@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
+//魂环收纳器
 public class HunHuanStorageItem extends Item {
     private static final String STORED_HUNHUAN_TAG = "StoredHunhuan";
     private final int minYear;
