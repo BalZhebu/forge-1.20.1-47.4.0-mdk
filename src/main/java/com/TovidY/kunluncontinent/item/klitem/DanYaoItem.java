@@ -159,6 +159,7 @@ public class DanYaoItem extends Item {
                         capability.getShengming(), capability.getMaxshengming(), capability.getJingshenli(), capability.getMaxjingshenli(),
                         capability.getMingzhong(), capability.getFangyu(), capability.getGongji(), capability.getBaojilv(), capability.getBaojishanghai(),
                         capability.getXixue(), capability.getShanbi(), capability.getKangbao(), capability.getJingyan(), capability.getDengji(), capability.getMaxjingyan()
+                            ,(int)capability.getWuchuan(),capability.getShengmingHuifu()
                     );
                 com.TovidY.kunluncontinent.network.NetworkHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), packet);
             });

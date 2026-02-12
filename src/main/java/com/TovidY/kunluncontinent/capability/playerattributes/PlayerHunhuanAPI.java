@@ -343,7 +343,8 @@ public class PlayerHunhuanAPI {
             new com.TovidY.kunluncontinent.network.server.SPacketSyncPlayerAttribute(
                 capability.getShengming(), capability.getMaxshengming(), capability.getJingshenli(), capability.getMaxjingshenli(),
                 capability.getMingzhong(), capability.getFangyu(), capability.getGongji(), capability.getBaojilv(), capability.getBaojishanghai(),
-                capability.getXixue(), capability.getShanbi(), capability.getKangbao(), capability.getJingyan(), capability.getDengji(), capability.getMaxjingyan()
+                capability.getXixue(), capability.getShanbi(), capability.getKangbao(), capability.getJingyan(), capability.getDengji(), capability.getMaxjingyan(),
+                    (int)capability.getWuchuan(),capability.getShengmingHuifu()
             );
         com.TovidY.kunluncontinent.network.NetworkHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), packet);
     }

@@ -44,7 +44,7 @@ public class KlMain {
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
 
-        ModLoadingContext.get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.COMMON, ModConfig.CONFIG);
+        ModLoadingContext .get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.COMMON, ModConfig.CONFIG);
 
         ModMenuTypes.register(modEventBus);
 
