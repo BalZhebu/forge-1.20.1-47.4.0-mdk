@@ -1,4 +1,4 @@
-package com.TovidY.kunluncontinent.item;
+package com.TovidY.kunluncontinent.item.klitem;
 
 import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;

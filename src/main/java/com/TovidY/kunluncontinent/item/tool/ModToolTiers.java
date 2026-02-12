@@ -1,7 +1,7 @@
-package com.TovidY.kunluncontinent.item;
+package com.TovidY.kunluncontinent.item.tool;
 
+import com.TovidY.kunluncontinent.item.ModItems;
 import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.crafting.Ingredient;
 
 import java.util.function.Supplier;

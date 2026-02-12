@@ -1,4 +1,4 @@
-package com.TovidY.kunluncontinent.item;
+package com.TovidY.kunluncontinent.item.tool;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -20,8 +20,8 @@ public class ModSwordBaseItem extends SwordItem {
     // 攻击力加成
     //1 = 1F
     public float getGongji(ItemStack stack) {
-        if (this.getTier() == ModToolTiers.GRAY_IRON) return 20.0f;
-        if (this.getTier() == ModToolTiers.CLOUD_PATTERNED_BRONZE) return 40.0f;
+        if (this.getTier() == ModToolTiers.GRAY_IRON) return 30.0f;
+        if (this.getTier() == ModToolTiers.CLOUD_PATTERNED_BRONZE) return 50.0f;
 
         if (this.getTier() == ModToolTiers.TEST_ITEM) return 999999.0f;
         return 0;
@@ -30,7 +30,8 @@ public class ModSwordBaseItem extends SwordItem {
     // 物理穿透
     //1 = 100%
     public float getWuchuan(ItemStack stack) {
-        if (this.getTier() == ModToolTiers.CLOUD_PATTERNED_BRONZE) return 0.3f;
+        if (this.getTier() == ModToolTiers.CLOUD_PATTERNED_BRONZE) return 0.35f;
+
         if (this.getTier() == ModToolTiers.TEST_ITEM) return 100.0f;
         return 0;
     }
@@ -38,6 +39,8 @@ public class ModSwordBaseItem extends SwordItem {
     // 吸血
     //1 = 100%
     public float getXixue(ItemStack stack) {
+
+
         if (this.getTier() == ModToolTiers.TEST_ITEM) return 100f;
         return 0;
     }
@@ -45,6 +48,8 @@ public class ModSwordBaseItem extends SwordItem {
     // 暴击
     //1 = 100%
     public float getBaoji(ItemStack stack) {
+
+
         if (this.getTier() == ModToolTiers.TEST_ITEM) return 100f;
         return 0;
     }
@@ -52,6 +57,8 @@ public class ModSwordBaseItem extends SwordItem {
     // 暴击伤害
     //1 = 100%
     public float getBaojiShanghai(ItemStack stack) {
+
+
         if (this.getTier() == ModToolTiers.TEST_ITEM) return 300f;
         return 0;
     }

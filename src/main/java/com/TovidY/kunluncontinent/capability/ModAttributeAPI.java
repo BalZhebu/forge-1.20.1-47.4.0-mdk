@@ -4,7 +4,7 @@ import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapabilit
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
-import com.TovidY.kunluncontinent.item.ModSwordBaseItem;
+import com.TovidY.kunluncontinent.item.tool.ModSwordBaseItem;
 import com.TovidY.kunluncontinent.potion.ModEffects;
 import com.TovidY.kunluncontinent.item.armor.ModArmorBaseItem;
 import com.TovidY.kunluncontinent.potion.PotionAttribute;
@@ -17,6 +17,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Map;
+
+import static com.TovidY.kunluncontinent.capability.hunhuanattributes.HunhuanAttributeHelper.getWuhunBonus;
 
 /**
  * 统一属性 API，用于获取任何实体的属性
@@ -51,6 +53,8 @@ public class ModAttributeAPI {
         if (entity instanceof Player player) {
             value += player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
                     .map(PlayerAttributeCapability::getMaxshengming).orElse(0f);
+
+            value += getWuhunBonus(player, MobAttributeCapability::getMaxshengming);
         }
         if (entity instanceof Mob mob) {
             value += mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY)
@@ -90,6 +94,8 @@ public class ModAttributeAPI {
         if (entity instanceof Player player) {
             value += player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
                     .map(PlayerAttributeCapability::getGongji).orElse(0f);
+
+            value += getWuhunBonus(player, MobAttributeCapability::getGongji);
         }
         if (entity instanceof Mob mob) {
             value += mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY)
@@ -103,13 +109,8 @@ public class ModAttributeAPI {
                     value += swordItem.getGongji(mainHand);
                 }
             }
-        }
-        
-        if (entity instanceof LivingEntity livingEntity) {
-            // 考虑药水效果
             Map<MobEffect, MobEffectInstance> activeEffectsMap = livingEntity.getActiveEffectsMap();
             for (Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry : activeEffectsMap.entrySet()) {
-                // 在这里可以添加对自定义药水效果的处理
             }
         }
         return value;
@@ -123,6 +124,8 @@ public class ModAttributeAPI {
         if (living instanceof Player player) {
             baseFangyu = player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
                     .map(PlayerAttributeCapability::getFangyu).orElse(0f);
+
+            baseFangyu += getWuhunBonus(player, MobAttributeCapability::getFangyu);
         } else if (living instanceof Mob mob) {
             baseFangyu = mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY)
                     .map(MobAttributeCapability::getFangyu).orElse(0f);
