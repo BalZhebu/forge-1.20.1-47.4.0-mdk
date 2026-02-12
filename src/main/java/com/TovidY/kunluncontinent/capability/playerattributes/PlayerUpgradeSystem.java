@@ -3,16 +3,21 @@ package com.TovidY.kunluncontinent.capability.playerattributes;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.server.SPacketSyncPlayerAttribute;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.util.Random;
 
 import static com.TovidY.kunluncontinent.capability.playerattributes.PlayerHunhuanAPI.addWuHun;
 import net.minecraft.ChatFormatting;
+import org.jetbrains.annotations.NotNull;
 
 //天赋系统
+
 public class PlayerUpgradeSystem {
 
     private static final Random random = new Random();
@@ -25,11 +30,18 @@ public class PlayerUpgradeSystem {
 
     static void performUpgrade(ServerPlayer player, PlayerAttributeCapability capability) {
         int currentLevel = capability.getDengji();
+
         if (currentLevel == 0) {
             processAwakening(player, capability);
             return;
         }
+
+        if (!isTupoDengji(player, capability)) {
+            return;
+        }
+
         int nextLevel = currentLevel + 1;
+
         if (attemptUpgrade(capability)) {
             processSuccessfulUpgrade(capability, nextLevel);
             player.sendSystemMessage(Component.literal("§a突破成功！晋升至 " + nextLevel + " 级！"));
@@ -37,6 +49,70 @@ public class PlayerUpgradeSystem {
         } else {
             processUpgradeFailure(player, capability);
         }
+    }
+
+    static boolean isTupoDengji(ServerPlayer player, @NotNull PlayerAttributeCapability cap) {
+        int level = cap.getDengji();
+
+        // 达到最终满级 (199级)
+        if (level >= 199) {
+            player.connection.send(new ClientboundSetTitleTextPacket(Component.translatable("已经满级")));
+            return false;
+        }
+
+        if (level == 99) {
+            // 只有当经验满了尝试突破时，才发送全服公告（避免玩家刚升到99级还没攒满经验就乱报）
+            if (cap.getJingyan() >= cap.getMaxjingyan()) {
+                sendDeityAnnouncement(player);
+            }
+            player.connection.send(new ClientboundSetTitleTextPacket(
+                    Component.literal("已经满级，请封神后再突破").withStyle(ChatFormatting.RED, ChatFormatting.BOLD)
+            ));
+            return false;
+        }
+
+        // 神级阶段 (100-199) 的魂环数量限制
+        if (level >= 100 && level < 199) {
+            int rings = getMaxRings(cap); // 获取当前魂环数量
+            int required = level / 10;
+            if (rings < required) {
+                player.connection.send(new ClientboundSetTitleTextPacket(Component.translatable("不能突破")));
+                return false;
+            }
+            return true;
+        }
+
+        // 凡人阶段的魂环限制 (每10级需要一个魂环才能继续升级)
+        int rings = getMaxRings(cap);
+        if (level >= rings * 10 + 10) {
+            player.connection.send(new ClientboundSetTitleTextPacket(Component.translatable("需要吸收魂环才能继续突破")));
+            return false;
+        }
+
+        return true;
+    }
+
+    private static void sendDeityAnnouncement(ServerPlayer player) {
+        MinecraftServer server = player.getServer();
+        if (server != null) {
+            Component message = Component.literal("§l§f【全服通告】§6风云变幻，天地共鸣！§b玩家 §e" + player.getName().getString() + " §b通过自身不懈努力，修为已臻§6§l 99级 §b极限之境！")
+                    .append("\n§d§l>>> §f万众瞩目之下，我们期待他能成功夺取神位，破茧成神，成就永恒传奇！");
+
+            server.getPlayerList().broadcastSystemMessage(message, false);
+
+            // 顺便给玩家放个烟花或者声音特效增加氛围
+            player.playNotifySound(SoundEvents.END_PORTAL_SPAWN, SoundSource.PLAYERS, 1.0f, 1.0f);
+        }
+    }
+
+    /**
+     * 辅助方法：获取当前已吸收的魂环数量
+     * 请根据你的 Capability 实际字段修改此处的获取逻辑
+     */
+    private static int getMaxRings(PlayerAttributeCapability cap) {
+        // 这里假设你的 Capability 里存了魂环列表或数量
+        // 例如：return cap.getHunhuanList().size();
+        return 0; // 暂时占位
     }
 
     private static void processAwakening(ServerPlayer player, PlayerAttributeCapability capability) {
