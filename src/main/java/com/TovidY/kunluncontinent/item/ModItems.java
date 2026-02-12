@@ -3,6 +3,7 @@ package com.TovidY.kunluncontinent.item;
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.item.armor.ModArmorBaseItem;
 import com.TovidY.kunluncontinent.item.armor.ModArmorMaterials;
+import com.TovidY.kunluncontinent.item.testitemblock.TestLevelUp;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -21,6 +22,10 @@ public class ModItems {
     public static final RegistryObject<Item> DANYAO_TEST = ITEMS.register("danyao_test",()->new DanYaoItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setJingyan(999999).setMinLevel(999));
     public static final RegistryObject<Item> DANYAO_JINGSHENLI = ITEMS.register("danyao_jingshenli",()->new DanYaoItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setJingshenlibaifenbi(100).setMinLevel(999));
     public static final RegistryObject<Item> TEST_SWORD = ITEMS.register("test_sword",()->new ModSwordBaseItem(ModToolTiers.TEST_ITEM,3,-1.8F,new Item.Properties()));
+    public static final RegistryObject<Item> DANYAO_DENGJI_JIA = ITEMS.register("danyao_dengji_jia",
+            () -> new TestLevelUp(new Item.Properties().stacksTo(1), 1)); // 加一级
+    public static final RegistryObject<Item> DANYAO_DENGJI_JIAN = ITEMS.register("danyao_dengji_jian",
+            () -> new TestLevelUp(new Item.Properties().stacksTo(1), -1)); // 减一级
 
     //矿石宝石
     public static final RegistryObject<Item> GRAY_IRON_INGOT = ITEMS.register("gray_iron_ingot",()->new Item(new Item.Properties()));
@@ -84,6 +89,8 @@ public class ModItems {
         DEBUG_ITEM_BLOCK.add(DANYAO_TEST);
         DEBUG_ITEM_BLOCK.add(DANYAO_JINGSHENLI);
         DEBUG_ITEM_BLOCK.add(TEST_SWORD);
+        DEBUG_ITEM_BLOCK.add(DANYAO_DENGJI_JIA);
+        DEBUG_ITEM_BLOCK.add(DANYAO_DENGJI_JIAN);
     }
 
     public static void register(IEventBus eventBus){

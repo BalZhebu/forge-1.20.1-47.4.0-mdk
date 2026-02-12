@@ -24,6 +24,8 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.DANYAO_TEST.get(),"测试物品---经验+9999999");
         add(ModItems.DANYAO_JINGSHENLI.get(),"测试物品---精神力+100%");
         add(ModItems.TEST_SWORD.get(),"测试物品---剑");
+        add(ModItems.DANYAO_DENGJI_JIA.get(),"测试物品---等级+1");
+        add(ModItems.DANYAO_DENGJI_JIAN.get(),"测试物品---等级-1");
 
         //魂环收纳器
         add(ModItems.HUNHUAN_STORAGE_ONE.get(),"一级魂环收纳器");
