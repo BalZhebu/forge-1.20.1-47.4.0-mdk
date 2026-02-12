@@ -3,7 +3,8 @@ package com.TovidY.kunluncontinent.Init;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 //配置信息生成类
-public class ModConfig {
+
+public class KLConfig {
 
     public static final ForgeConfigSpec.BooleanValue ENABLE_HUNHUAN_PROBABILITY;
     public static final ForgeConfigSpec.DoubleValue TIER1_PROB;

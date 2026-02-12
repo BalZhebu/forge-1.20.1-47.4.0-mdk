@@ -1,6 +1,6 @@
 package com.TovidY.kunluncontinent.event.server;
 
-import com.TovidY.kunluncontinent.Init.ModConfig;
+import com.TovidY.kunluncontinent.Init.KLConfig;
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapability;
@@ -19,8 +19,6 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-
-import java.util.Random;
 
 //玩家击杀生物事件
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -88,7 +86,7 @@ public class KLivingDeathEvent {
     }
 
     private static void tryGenerateHunhuan(MobAttributeCapability cap, Level level, BlockPos pos) {
-        if (!ModConfig.ENABLE_HUNHUAN_PROBABILITY.get()) {
+        if (!KLConfig.ENABLE_HUNHUAN_PROBABILITY.get()) {
             addHunhuanEntity(cap, level, pos);
             return;
         }
@@ -101,19 +99,19 @@ public class KLivingDeathEvent {
 
     private static double getHunhuanProbability(long nianxian) {
         if (nianxian >= 10000000) {
-            return ModConfig.TIER7_PROB.get();
+            return KLConfig.TIER7_PROB.get();
         } else if (nianxian >= 100000) {
-            return ModConfig.TIER5_PROB.get();
+            return KLConfig.TIER5_PROB.get();
         } else if (nianxian >= 10000) {
-            return ModConfig.TIER4_PROB.get();
+            return KLConfig.TIER4_PROB.get();
         } else if (nianxian >= 1000) {
-            return ModConfig.TIER3_PROB.get();
+            return KLConfig.TIER3_PROB.get();
         } else if (nianxian >= 100) {
-            return ModConfig.TIER2_PROB.get();
+            return KLConfig.TIER2_PROB.get();
         } else if (nianxian >= 10) {
-            return ModConfig.TIER1_PROB.get();
+            return KLConfig.TIER1_PROB.get();
         } else {
-            return ModConfig.TIER1_PROB.get();
+            return KLConfig.TIER1_PROB.get();
         }
     }
 

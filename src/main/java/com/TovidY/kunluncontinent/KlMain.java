@@ -1,6 +1,6 @@
 package com.TovidY.kunluncontinent;
 
-import com.TovidY.kunluncontinent.Init.ModConfig;
+import com.TovidY.kunluncontinent.Init.KLConfig;
 import com.TovidY.kunluncontinent.block.ModBlocks;
 import com.TovidY.kunluncontinent.potion.ModEffects;
 import com.TovidY.kunluncontinent.entity.EntityInit;
@@ -16,8 +16,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -30,7 +30,6 @@ import java.util.Random;
 @Mod(KlMain.MOD_ID)
 public class KlMain {
     public static final String MOD_ID = "kunluncontinent";
-    public static final Logger LOGGER = LogUtils.getLogger();
     public static final Random random = new Random();
 
     public KlMain(FMLJavaModLoadingContext context)
@@ -44,7 +43,7 @@ public class KlMain {
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
 
-        ModLoadingContext .get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.COMMON, ModConfig.CONFIG);
+        context.registerConfig(ModConfig.Type.COMMON, KLConfig.CONFIG);
 
         ModMenuTypes.register(modEventBus);
 
