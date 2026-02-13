@@ -37,6 +37,27 @@ public class ModBlocks {
             registerBlock("putuan_block",()->
                     new PutuanBlock(BlockBehaviour.Properties.copy(Blocks.HAY_BLOCK).noOcclusion()));
 
+    public static final RegistryObject<Block> LIANDANLU1 =
+            registerBlock("liandanlu1",()->
+                    new Block(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion()));
+
+    public static final RegistryObject<Block> LIANDANLU2 =
+            registerBlock("liandanlu2",()->
+                    new Block(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion()));
+
+    public static final RegistryObject<Block> LIANDANLU3 =
+            registerBlock("liandanlu3",()->
+                    new Block(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion()));
+
+
+    //炼丹炉
+    public static ArrayList<RegistryObject<Block>> LIANDANLULIST = new ArrayList<>();
+    static{
+        LIANDANLULIST.add(LIANDANLU1);
+        LIANDANLULIST.add(LIANDANLU2);
+        LIANDANLULIST.add(LIANDANLU3);
+    }
+
     //mod矿物
     public static ArrayList<RegistryObject<Block>> MODORE = new ArrayList<>();
     static {

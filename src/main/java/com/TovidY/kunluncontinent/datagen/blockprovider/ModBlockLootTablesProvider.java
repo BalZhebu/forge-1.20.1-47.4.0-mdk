@@ -26,6 +26,9 @@ public class ModBlockLootTablesProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.GRAY_IRON_ORE.get());
         dropSelf(ModBlocks.CLOUD_PATTERNED_BRONZE_ORE.get());
         dropSelf(ModBlocks.PUTUAN_BLOCK.get());
+        dropSelf(ModBlocks.LIANDANLU1.get());
+        dropSelf(ModBlocks.LIANDANLU2.get());
+        dropSelf(ModBlocks.LIANDANLU3.get());
     }
 
     //该方法是矿石类，挖矿石会掉落更多矿物，将原本的block方块替换成该方法即可
