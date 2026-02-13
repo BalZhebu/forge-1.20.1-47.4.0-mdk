@@ -1,6 +1,7 @@
 package com.TovidY.kunluncontinent.block;
 
 import com.TovidY.kunluncontinent.KlMain;
+import com.TovidY.kunluncontinent.block.klblock.LiandanluBlock;
 import com.TovidY.kunluncontinent.block.klblock.PutuanBlock;
 import com.TovidY.kunluncontinent.item.ModItems;
 import net.minecraft.world.item.BlockItem;
@@ -33,21 +34,25 @@ public class ModBlocks {
             registerBlock("cloud_patterned_bronze_ore",()->
                     new Block(BlockBehaviour.Properties.copy(Blocks.NETHER_GOLD_ORE)));
 
+    public static final RegistryObject<Block> DROSS_BLOCK =
+            registerBlock("dross_block",()->
+                    new Block(BlockBehaviour.Properties.copy(Blocks.HAY_BLOCK)));
+
     public static final RegistryObject<Block> PUTUAN_BLOCK =
             registerBlock("putuan_block",()->
                     new PutuanBlock(BlockBehaviour.Properties.copy(Blocks.HAY_BLOCK).noOcclusion()));
 
     public static final RegistryObject<Block> LIANDANLU1 =
             registerBlock("liandanlu1",()->
-                    new Block(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion()));
+                    new LiandanluBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion()));
 
     public static final RegistryObject<Block> LIANDANLU2 =
             registerBlock("liandanlu2",()->
-                    new Block(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion()));
+                    new LiandanluBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion()));
 
     public static final RegistryObject<Block> LIANDANLU3 =
             registerBlock("liandanlu3",()->
-                    new Block(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion()));
+                    new LiandanluBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion()));
 
 
     //炼丹炉
@@ -70,6 +75,7 @@ public class ModBlocks {
     static {
         MODBLOCKS.add(CULTIVATION_PLATFORM);
         MODBLOCKS.add(PUTUAN_BLOCK);
+        MODBLOCKS.add(DROSS_BLOCK);
     }
 
     private static <T extends Block> void registerBlockItems(String name,RegistryObject<T> block){

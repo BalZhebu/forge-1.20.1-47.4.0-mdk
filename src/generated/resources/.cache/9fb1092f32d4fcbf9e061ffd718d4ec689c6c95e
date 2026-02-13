@@ -1,4 +1,4 @@
-// 1.20.1	2026-02-11T16:13:54.300707	Recipes
+// 1.20.1	2026-02-13T23:22:00.2177325	Recipes
 02d3818a9afddbb3f60c51e2b143f20dcb222b5a data/kunluncontinent/advancements/recipes/combat/cloud_patterned_bronze_boots.json
 72929926456f0725762eafe4e20e09bdb89c9613 data/kunluncontinent/advancements/recipes/combat/cloud_patterned_bronze_chestplate.json
 47a987ebd5e90408769d6cc2148608f9bfea25fd data/kunluncontinent/advancements/recipes/combat/cloud_patterned_bronze_helmet.json
@@ -22,6 +22,7 @@ d6e396e98d642e2929865d5b0e9a1807cf696a84 data/kunluncontinent/advancements/recip
 08b7564d966c5bd6afc4fdd3c2119d0988d29fb5 data/kunluncontinent/advancements/recipes/tools/gray_iron_hoe.json
 ff2df1433f3c5b4fd8a744e4f3f354af5fa49a73 data/kunluncontinent/advancements/recipes/tools/gray_iron_pickaxe.json
 f6fab655a8851706c87f4d8dc40feb88ae478c37 data/kunluncontinent/advancements/recipes/tools/gray_iron_shovel.json
+e5b53918a2efb9240a30a47a01b55ec6b401fe22 data/kunluncontinent/recipes/chuyuan_dan_from_neidan1.json
 dc5e7afcc54b6ca3acb12105b340ec769ea9f713 data/kunluncontinent/recipes/cloud_patterned_bronze_axe.json
 e8ce36dd79d7a5a0bba057e3d43ee9f7c7955d77 data/kunluncontinent/recipes/cloud_patterned_bronze_boots.json
 67097c4b7e2e7d16b6c3e6ee06c89acd360c2a26 data/kunluncontinent/recipes/cloud_patterned_bronze_chestplate.json

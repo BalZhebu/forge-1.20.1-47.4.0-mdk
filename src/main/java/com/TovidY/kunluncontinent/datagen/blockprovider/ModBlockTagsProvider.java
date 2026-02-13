@@ -21,7 +21,8 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
 
         //锄子
         tag(BlockTags.MINEABLE_WITH_HOE)
-                .add(ModBlocks.PUTUAN_BLOCK.get());
+                .add(ModBlocks.PUTUAN_BLOCK.get())
+                .add(ModBlocks.DROSS_BLOCK.get());
 
         //镐子
         tag(BlockTags.MINEABLE_WITH_PICKAXE)

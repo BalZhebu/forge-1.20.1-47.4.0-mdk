@@ -1,10 +1,12 @@
 package com.TovidY.kunluncontinent;
 
 import com.TovidY.kunluncontinent.Init.KLConfig;
+import com.TovidY.kunluncontinent.block.ModBlockEntities;
 import com.TovidY.kunluncontinent.block.ModBlocks;
 import com.TovidY.kunluncontinent.potion.ModEffects;
 import com.TovidY.kunluncontinent.entity.EntityInit;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
+import com.TovidY.kunluncontinent.recipe.ModRecipes;
 import com.TovidY.kunluncontinent.screen.ModMenuTypes;
 import com.TovidY.kunluncontinent.Init.ModCreativeModelTab;
 import com.TovidY.kunluncontinent.item.ModItems;
@@ -46,11 +48,15 @@ public class KlMain {
 
         ModCreativeModelTab.register(modEventBus);
 
+        ModRecipes.register(modEventBus);
+
         EntityInit.register(modEventBus);
 
         changeAttributesIO();
 
         NetworkHandler.register();
+
+        ModBlockEntities.register(modEventBus);
 
         ModEffects.register(modEventBus);
 

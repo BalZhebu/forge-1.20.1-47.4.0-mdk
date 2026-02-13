@@ -8,8 +8,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
-//方块模型生成例如blockstates文件之类的，3D模型不需要写这里！
-//3D模型需要手动写代码！
+//方块模型生成例如blockstates文件之类的
 public class ModBlockStateProvider extends BlockStateProvider {
     public ModBlockStateProvider(PackOutput output, ExistingFileHelper exFileHelper) {
         super(output,KlMain.MOD_ID, exFileHelper);
@@ -19,18 +18,29 @@ public class ModBlockStateProvider extends BlockStateProvider {
     protected void registerStatesAndModels() {
         simpleBlockWithItem(ModBlocks.GRAY_IRON_ORE.get(), cubeAll(ModBlocks.GRAY_IRON_ORE.get()));
         simpleBlockWithItem(ModBlocks.CLOUD_PATTERNED_BRONZE_ORE.get(), cubeAll(ModBlocks.CLOUD_PATTERNED_BRONZE_ORE.get()));
-
-
+        simpleBlockWithItem(ModBlocks.DROSS_BLOCK.get(), cubeAll(ModBlocks.DROSS_BLOCK.get()));
 
         // 自定义 3D 模型方块
         // 我们只生成 blockstate
-        Block liandanlu = ModBlocks.LIANDANLU1.get();
+        Block liandanlu1 = ModBlocks.LIANDANLU1.get();
         // 生成 blockstate
-        simpleBlock(liandanlu, new ModelFile.UncheckedModelFile(
+        simpleBlock(liandanlu1, new ModelFile.UncheckedModelFile(
                 ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/liandanlu1")));
         //生成item
         itemModels().withExistingParent("liandanlu1",
                 ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/liandanlu1"));
+
+        Block liandanlu2 = ModBlocks.LIANDANLU2.get();
+        simpleBlock(liandanlu2, new ModelFile.UncheckedModelFile(
+                ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/liandanlu2")));
+        itemModels().withExistingParent("liandanlu2",
+                ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/liandanlu2"));
+
+        Block liandanlu3 = ModBlocks.LIANDANLU3.get();
+        simpleBlock(liandanlu3, new ModelFile.UncheckedModelFile(
+                ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/liandanlu3")));
+        itemModels().withExistingParent("liandanlu3",
+                ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/liandanlu3"));
 
 
     }

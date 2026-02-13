@@ -27,6 +27,11 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.NEIDAN4.get(),"四阶内丹");
         add(ModItems.NEIDAN5.get(),"五阶内丹");
 
+        //炼丹炉
+        add(ModBlocks.LIANDANLU1.get(),"一阶炼丹炉");
+        add(ModBlocks.LIANDANLU2.get(),"二阶炼丹炉");
+        add(ModBlocks.LIANDANLU3.get(),"三阶炼丹炉");
+
         //测试物品类
         add(ModItems.DANYAO_TEST.get(),"测试物品---经验+9999999");
         add(ModItems.DANYAO_JINGSHENLI.get(),"测试物品---精神力+100%");
@@ -44,6 +49,8 @@ public class ModZhCnLangProvider extends LanguageProvider {
         //丹药类
         add(ModItems.CHUYUAN_DAN.get(),"初元丹");
         add(ModItems.BAICAOLING_DAN.get(),"百草灵丹");
+        add(ModItems.QIANHUABAO_DAN.get(),"千华宝丹");
+        add(ModItems.DROSS.get(),"丹渣");
         add("吸收经验成功","§2吸收成功,经验：§e+%s");
         add("生命", "生命：%s/%s");
         add("最大生命", "最大生命：+%s");
@@ -101,6 +108,8 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModBlocks.CLOUD_PATTERNED_BRONZE_ORE.get(),"云纹铜矿");
         add(ModBlocks.PUTUAN_BLOCK.get(),"蒲团");
         add("putuan.xiulian.finish","§c你感到浑身清爽，但打坐时间太长你感到有被心魔入侵的风险，出去走走吧");
+
+
 
         //创造物品栏
         add("itemGroup.kunlun_tab","昆仑大陆");

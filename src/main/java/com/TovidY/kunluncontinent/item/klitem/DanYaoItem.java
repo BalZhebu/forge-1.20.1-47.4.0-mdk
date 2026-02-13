@@ -1,12 +1,14 @@
-package com.TovidY.kunluncontinent.item.klitem;
+package com.TovidY.kunluncontinent.item.klitem; // 请确保包名与你项目一致
 
 import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
+import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerHunhuanAPI;
+import com.TovidY.kunluncontinent.network.NetworkHandler;
+import com.TovidY.kunluncontinent.network.server.SPacketSyncPlayerAttribute;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.stats.ServerStatsCounter;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -17,56 +19,73 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.PacketDistributor;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
-//丹药类
 public class DanYaoItem extends Item {
 
-    private float shengming;
-    private float maxshengming;
-    private float shengmingbaifenbi;
-    private float wugong;
-    private float wufang;
-    private float baojishanghai;
-    private float baojilv;
-    private float zhenshang;
-    private float kangbao;
-    private float xixue;
-    private float mingzhong;
-    private float shanbi;
-    private float jingyan;
-    private float jingshenli;
-    private float jingshenlibaifenbi;
-    private float maxjingshenli;
+    // --- 属性字段 ---
+    private float shengming, maxshengming, shengmingbaifenbi;
+    private float wugong, wufang, baojishanghai, baojilv;
+    private float zhenshang, kangbao, xixue, mingzhong, shanbi;
+    private float jingyan, jingshenli, jingshenlibaifenbi, maxjingshenli;
     private float tupochenggonggailv;
-
 
     private int minLevel;
     private int maxused;
+
     public DanYaoItem(Properties properties) {
         super(properties);
     }
 
-    public DanYaoItem setMinLevel(int level) {
-        this.minLevel = level;
-        return this;
+    // --- 品级枚举定义 ---
+    public enum Quality {
+        破碎("丹渣", 0.0f, ChatFormatting.DARK_GRAY),
+        绿色("药散", 0.3f, ChatFormatting.GREEN),
+        蓝色("药丹", 0.5f, ChatFormatting.BLUE),
+        紫色("灵丹", 1.0f, ChatFormatting.DARK_PURPLE),
+        金色("宝丹", 1.5f, ChatFormatting.GOLD),
+        红色("仙丹", 2.0f, ChatFormatting.RED);
+
+        public final String label;
+        public final float multiplier;
+        public final ChatFormatting color;
+
+        Quality(String label, float multiplier, ChatFormatting color) {
+            this.label = label;
+            this.multiplier = multiplier;
+            this.color = color;
+        }
+
+        public static Quality get(ItemStack stack) {
+            if (stack.hasTag() && stack.getTag().contains("DanYaoQuality")) {
+                int index = stack.getTag().getInt("DanYaoQuality");
+                return Quality.values()[Math.min(index, Quality.values().length - 1)];
+            }
+            return 紫色; // 默认紫色 100%
+        }
     }
+
+    // --- 逻辑重写 ---
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
+        Quality q = Quality.get(itemstack);
+
+        // 1. 破碎丹药拦截
+        if (q == Quality.破碎) {
+            if (!level.isClientSide) player.sendSystemMessage(Component.literal("这颗丹药已经碎成渣了，无法服用...").withStyle(ChatFormatting.GRAY));
+            return InteractionResultHolder.fail(itemstack);
+        }
+
+        // 2. 等级限制检查
         if (!player.getAbilities().instabuild) {
-            AtomicInteger playerLevel = new AtomicInteger(0);
-            player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
-                playerLevel.set((int) cap.getDengji());
-            });
-            if (playerLevel.get() < this.minLevel) {
+            int playerLevel = player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).map(cap -> (int)cap.getDengji()).orElse(0);
+            if (playerLevel < this.minLevel) {
                 if (!level.isClientSide) {
-                    player.sendSystemMessage(Component.literal("您的境界不够（当前:" + playerLevel.get() + "级，需求:" + this.minLevel + "级），无法服用此丹药")
-                            .withStyle(ChatFormatting.RED));
+                    player.sendSystemMessage(Component.literal("您的境界不够（当前:" + playerLevel + "级，需求:" + this.minLevel + "级），无法服用此丹药").withStyle(ChatFormatting.RED));
                 }
                 return InteractionResultHolder.fail(itemstack);
             }
@@ -74,318 +93,122 @@ public class DanYaoItem extends Item {
         return super.use(level, player, hand);
     }
 
+    @Override
     public ItemStack finishUsingItem(ItemStack itemStack, Level level, LivingEntity livingEntity) {
-
-        int i;
-        if(livingEntity instanceof ServerPlayer serverPlayer){
-            ServerStatsCounter stats = serverPlayer.getStats();
-             i = stats.getValue(Stats.ITEM_USED.get(itemStack.getItem()));
-
-//            stats.setValue(serverPlayer,Stats.ITEM_USED.get(itemStack.getItem()),99);
-
-             if(this.getMaxused()<=0 || i<this.getMaxused()){
-                 serverPlayer.awardStat(Stats.ITEM_USED.get(itemStack.getItem()));
-                 addDanyaoAttribute(itemStack,level,livingEntity);
-             }else {
-                 serverPlayer.sendSystemMessage(Component.translatable("已达到服用上限"));
-             }
+        if (livingEntity instanceof ServerPlayer serverPlayer) {
+            int usedCount = serverPlayer.getStats().getValue(Stats.ITEM_USED.get(this));
+            if (this.maxused <= 0 || usedCount < this.maxused) {
+                serverPlayer.awardStat(Stats.ITEM_USED.get(this));
+                applyDanyaoAttribute(itemStack, serverPlayer);
+            } else {
+                serverPlayer.sendSystemMessage(Component.literal("已达到该丹药服用上限！").withStyle(ChatFormatting.YELLOW));
+            }
         }
 
-        if (livingEntity instanceof Player && !((Player)livingEntity).getAbilities().instabuild) {
+        if (livingEntity instanceof Player player && !player.getAbilities().instabuild) {
             itemStack.shrink(1);
         }
-
         return itemStack;
     }
 
-    private void addDanyaoAttribute(ItemStack itemStack, Level level, LivingEntity livingEntity) {
-        if(itemStack.getItem() instanceof DanYaoItem danYaoItem && livingEntity instanceof ServerPlayer player){
-            livingEntity.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(capability -> {
-                if(danYaoItem.baojilv>0){
-                    PlayerHunhuanAPI.addBaojilv(player,danYaoItem.baojilv);
-                }
-                if(danYaoItem.baojishanghai>0){
-                    PlayerHunhuanAPI.addBaojishanhai(player,danYaoItem.baojishanghai);
-                }
-                if(danYaoItem.jingyan>0){
-                    PlayerHunhuanAPI.addJingyan(player,danYaoItem.jingyan);
-                }
-                if(danYaoItem.kangbao>0){
-                    PlayerHunhuanAPI.addKangbao(player,danYaoItem.kangbao);
-                }
-                if(danYaoItem.shanbi>0){
-                    PlayerHunhuanAPI.addShanbi(player,danYaoItem.shanbi);
-                }
-                if(danYaoItem.jingshenli>0){
-                    PlayerHunhuanAPI.addJingshenli(player,danYaoItem.jingshenli);
-                }
-                if(danYaoItem.maxjingshenli>0){
-                    PlayerHunhuanAPI.addMaxJingshenli(player,danYaoItem.maxjingshenli);
-                }
-                if(danYaoItem.maxshengming>0){
-                    PlayerHunhuanAPI.addMaxshengming(player,danYaoItem.maxshengming);
-                }
-                if(danYaoItem.mingzhong >0){
-                    PlayerHunhuanAPI.addMingzhong(player,danYaoItem.mingzhong);
-                }
-                if(danYaoItem.shengming >0){
-                    PlayerHunhuanAPI.addShengming(player,danYaoItem.shengming);
-                }
-                if(danYaoItem.tupochenggonggailv >0){
-                    PlayerHunhuanAPI.addTupochenggonggailv(player,danYaoItem.tupochenggonggailv);
-                }
-                if(danYaoItem.wufang >0){
-                    PlayerHunhuanAPI.addFangyu(player,danYaoItem.wufang);
-                }
-                if(danYaoItem.wugong >0){
-                    PlayerHunhuanAPI.addGongji(player,danYaoItem.wugong);
-                }
-                if(danYaoItem.xixue >0){
-                    PlayerHunhuanAPI.addXixue(player,danYaoItem.xixue);
-                }
-                if(danYaoItem.shengmingbaifenbi >0){
-                    PlayerHunhuanAPI.addShengming(player,player.getMaxHealth()*danYaoItem.shengmingbaifenbi /100f);
-                }
-                if(danYaoItem.jingshenlibaifenbi >0){
-                    PlayerHunhuanAPI.addJingshenli(player, ModAttributeAPI.getMaxjingshenli(player)* danYaoItem.jingshenlibaifenbi /100f);
-                }
+    private void applyDanyaoAttribute(ItemStack stack, ServerPlayer player) {
+        // 使用你最新的枚举类和统一后的键名获取方法
+        DanYaoQuality q = DanYaoQuality.getFromStack(stack);
+        float m = q.multiplier; // 药效倍率：绿0.3, 蓝0.5, 紫1.0, 金1.5, 红2.0
 
-            });
-
-            // 同步属性到客户端，确保属性变更即时生效
-            player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(capability -> {
-                com.TovidY.kunluncontinent.network.server.SPacketSyncPlayerAttribute packet = 
-                    new com.TovidY.kunluncontinent.network.server.SPacketSyncPlayerAttribute(
-                        capability.getShengming(), capability.getMaxshengming(), capability.getJingshenli(), capability.getMaxjingshenli(),
-                        capability.getMingzhong(), capability.getFangyu(), capability.getGongji(), capability.getBaojilv(), capability.getBaojishanghai(),
-                        capability.getXixue(), capability.getShanbi(), capability.getKangbao(), capability.getJingyan(), capability.getDengji(), capability.getMaxjingyan()
-                            ,(int)capability.getWuchuan(),capability.getShengmingHuifu()
-                    );
-                com.TovidY.kunluncontinent.network.NetworkHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), packet);
-            });
+        // 如果是破碎品级，直接拦截不执行任何属性加成
+        if (q == DanYaoQuality.PO_SUI) {
+            return;
         }
 
+        player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
+
+            if (this.wugong > 0) PlayerHunhuanAPI.addGongji(player, this.wugong * m);
+            if (this.wufang > 0) PlayerHunhuanAPI.addFangyu(player, this.wufang * m);
+            if (this.shengming > 0) PlayerHunhuanAPI.addShengming(player, this.shengming * m);
+            if (this.maxshengming > 0) PlayerHunhuanAPI.addMaxshengming(player, this.maxshengming * m);
+            if (this.jingyan > 0) PlayerHunhuanAPI.addJingyan(player, this.jingyan * m);
+            if (this.jingshenli > 0) PlayerHunhuanAPI.addJingshenli(player, this.jingshenli * m);
+            if (this.maxjingshenli > 0) PlayerHunhuanAPI.addMaxJingshenli(player, this.maxjingshenli * m);
+            if (this.baojilv > 0) PlayerHunhuanAPI.addBaojilv(player, this.baojilv * m);
+            if (this.baojishanghai > 0) PlayerHunhuanAPI.addBaojishanhai(player, this.baojishanghai * m);
+            if (this.kangbao > 0) PlayerHunhuanAPI.addKangbao(player, this.kangbao * m);
+            if (this.xixue > 0) PlayerHunhuanAPI.addXixue(player, this.xixue * m);
+            if (this.mingzhong > 0) PlayerHunhuanAPI.addMingzhong(player, this.mingzhong * m);
+            if (this.shanbi > 0) PlayerHunhuanAPI.addShanbi(player, this.shanbi * m);
+            if (this.tupochenggonggailv > 0) PlayerHunhuanAPI.addTupochenggonggailv(player, this.tupochenggonggailv * m);
+
+            if (this.shengmingbaifenbi > 0) {
+                float addedHealth = player.getMaxHealth() * (this.shengmingbaifenbi * m) / 100f;
+                PlayerHunhuanAPI.addShengming(player, addedHealth);
+            }
+            if (this.jingshenlibaifenbi > 0) {
+                float addedMana = ModAttributeAPI.getMaxjingshenli(player) * (this.jingshenlibaifenbi * m) / 100f;
+                PlayerHunhuanAPI.addJingshenli(player, addedMana);
+            }
+
+            sync(player, cap);
+        });
     }
 
-    public float getShengming() {
-        return shengming;
+    private void sync(ServerPlayer player, PlayerAttributeCapability cap) {
+        SPacketSyncPlayerAttribute packet = new SPacketSyncPlayerAttribute(
+                cap.getShengming(), cap.getMaxshengming(), cap.getJingshenli(), cap.getMaxjingshenli(),
+                cap.getMingzhong(), cap.getFangyu(), cap.getGongji(), cap.getBaojilv(), cap.getBaojishanghai(),
+                cap.getXixue(), cap.getShanbi(), cap.getKangbao(), cap.getJingyan(), cap.getDengji(), cap.getMaxjingyan(),
+                (int)cap.getWuchuan(), cap.getShengmingHuifu()
+        );
+        NetworkHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), packet);
     }
 
-    public DanYaoItem setShengming(float shengming) {
-        this.shengming = shengming;
-        return this;
-    }
+    // --- Setters (链式调用) ---
+    public DanYaoItem setMinLevel(int l) { this.minLevel = l; return this; }
+    public DanYaoItem setMaxused(int m) { this.maxused = m; return this; }
+    public DanYaoItem setShengming(float v) { this.shengming = v; return this; }
+    public DanYaoItem setMaxshengming(float v) { this.maxshengming = v; return this; }
+    public DanYaoItem setWugong(float v) { this.wugong = v; return this; }
+    public DanYaoItem setWufang(float v) { this.wufang = v; return this; }
+    public DanYaoItem setBaojishanghai(float v) { this.baojishanghai = v; return this; }
+    public DanYaoItem setBaojilv(float v) { this.baojilv = v; return this; }
+    public DanYaoItem setKangbao(float v) { this.kangbao = v; return this; }
+    public DanYaoItem setXixue(float v) { this.xixue = v; return this; }
+    public DanYaoItem setMingzhong(float v) { this.mingzhong = v; return this; }
+    public DanYaoItem setShanbi(float v) { this.shanbi = v; return this; }
+    public DanYaoItem setJingyan(float v) { this.jingyan = v; return this; }
+    public DanYaoItem setJingshenli(float v) { this.jingshenli = v; return this; }
+    public DanYaoItem setMaxjingshenli(int v) { this.maxjingshenli = v; return this; }
+    public DanYaoItem setTupochenggonggailv(float v) { this.tupochenggonggailv = v; return this; }
+    public DanYaoItem setShengmingbaifenbi(float v) { this.shengmingbaifenbi = v; return this; }
+    public DanYaoItem setJingshenlibaifenbi(float v) { this.jingshenlibaifenbi = v; return this; }
 
-    public float getMaxshengming() {
-        return maxshengming;
-    }
+    // --- Tooltip 渲染 ---
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> list, TooltipFlag flag) {
+        Quality q = Quality.get(stack);
+        float m = q.multiplier;
 
-    public DanYaoItem setMaxshengming(float maxshengming) {
-        this.maxshengming = maxshengming;
-        return this;
-    }
-
-    public float getWugong() {
-        return wugong;
-    }
-
-    public DanYaoItem setWugong(float wugong) {
-        this.wugong = wugong;
-        return this;
-    }
-
-    public float getWufang() {
-        return wufang;
-    }
-
-    public DanYaoItem setWufang(float wufang) {
-        this.wufang = wufang;
-        return this;
-    }
-
-    public float getBaojishanghai() {
-        return baojishanghai;
-    }
-
-    public DanYaoItem setBaojishanghai(float baojishanghai) {
-        this.baojishanghai = baojishanghai;
-        return this;
-    }
-
-    public float getBaojilv() {
-        return baojilv;
-    }
-
-    public DanYaoItem setBaojilv(float baojilv) {
-        this.baojilv = baojilv;
-        return this;
-    }
-
-    public float getZhenshang() {
-        return zhenshang;
-    }
-
-    public DanYaoItem setZhenshang(float zhenshang) {
-        this.zhenshang = zhenshang;
-        return this;
-    }
-
-    public float getKangbao() {
-        return kangbao;
-    }
-
-    public DanYaoItem setKangbao(float kangbao) {
-        this.kangbao = kangbao;
-        return this;
-    }
-
-    public float getXixue() {
-        return xixue;
-    }
-
-    public DanYaoItem setXixue(float xixue) {
-        this.xixue = xixue;
-        return this;
-    }
-    public float getMingzhong() {
-        return mingzhong;
-    }
-
-    public DanYaoItem setMingzhong(float mingzhong) {
-        this.mingzhong = mingzhong;
-        return this;
-    }
-
-    public float getShanbi() {
-        return shanbi;
-    }
-
-    public DanYaoItem setShanbi(float shanbi) {
-        this.shanbi = shanbi;
-        return this;
-    }
-
-    public float getJingyan() {
-        return jingyan;
-    }
-
-    public DanYaoItem setJingyan(float jingyan) {
-        this.jingyan = jingyan;
-        return this;
-    }
-
-    public float getJingshenli() {
-        return jingshenli;
-    }
-
-    public DanYaoItem setJingshenli(float jingshenli) {
-        this.jingshenli = jingshenli;
-        return this;
-    }
-
-    public float getTupochenggonggailv() {
-        return tupochenggonggailv;
-    }
-
-    public DanYaoItem setTupochenggonggailv(float tupochenggonggailv) {
-        this.tupochenggonggailv = tupochenggonggailv;
-        return this;
-    }
-
-    public int getMaxused() {
-        return maxused;
-    }
-
-    public DanYaoItem setMaxused(int maxused) {
-        this.maxused = maxused;
-        return this;
-    }
-    public float getMaxjingshenli() {
-        return maxjingshenli;
-    }
-
-    public DanYaoItem setMaxjingshenli(int maxjingshenli) {
-        this.maxjingshenli = maxjingshenli;
-        return this;
-    }
-
-
-    public float getShengmingbaifenbi() {
-        return shengmingbaifenbi;
-    }
-
-    public DanYaoItem setShengmingbaifenbi(float shengmingbaifenbi) {
-        this.shengmingbaifenbi = shengmingbaifenbi;
-        return this;
-    }
-
-
-    public float getJingshenlibaifenbi() {
-        return jingshenlibaifenbi;
-    }
-
-    public DanYaoItem setJingshenlibaifenbi(float jingshenlibaifenbi) {
-        this.jingshenlibaifenbi = jingshenlibaifenbi;
-        return this;
-    }
-
-
-    public void appendHoverText(ItemStack itemStack, @Nullable Level level, List<Component> list, TooltipFlag tooltipFlag) {
-        if(this.baojilv>0){
-            list.add(Component.translatable("暴击率", (int)this.baojilv).withStyle(ChatFormatting.YELLOW));
+        if (q == Quality.破碎) {
+            list.add(Component.literal("品级：" + q.label).withStyle(q.color).withStyle(ChatFormatting.BOLD));
+            list.add(Component.literal("这只是一堆毫无药效的残渣。").withStyle(ChatFormatting.DARK_GRAY));
+            return;
         }
-        if(this.baojishanghai>0){
-            list.add(Component.translatable("暴击伤害", (int)this.baojishanghai).withStyle(ChatFormatting.YELLOW));
-        }
-        if(this.jingyan>0){
-            list.add(Component.translatable("获得经验", (int)this.jingyan).withStyle(ChatFormatting.YELLOW));
-        }
-        if(this.kangbao>0){
-            list.add(Component.translatable("抗暴", (int)this.kangbao).withStyle(ChatFormatting.YELLOW));
-        }
-        if(this.shanbi>0){
-            list.add(Component.translatable("闪避", (int)this.shanbi).withStyle(ChatFormatting.YELLOW));
-        }
-        if(this.jingshenli>0){
-            list.add(Component.translatable("获得精神力", (int)this.jingshenli).withStyle(ChatFormatting.YELLOW));
-        }
-        if(this.maxjingshenli>0){
-            list.add(Component.translatable("获得最大精神力", (int)this.maxjingshenli).withStyle(ChatFormatting.YELLOW));
-        }
-        if(this.maxshengming>0){
-            list.add(Component.translatable("最大生命", (int)this.maxshengming).withStyle(ChatFormatting.YELLOW));
-        }
-        if(this.mingzhong >0){
-            list.add(Component.translatable("命中", (int)this.mingzhong).withStyle(ChatFormatting.YELLOW));
-        }
-        if(this.shengming >0){
-            list.add(Component.translatable("获得生命", (int)this.shengming).withStyle(ChatFormatting.YELLOW));
-        }
-        if(this.tupochenggonggailv >0){
-            list.add(Component.translatable("突破成功率", (int)this.tupochenggonggailv).withStyle(ChatFormatting.YELLOW));
-        }
-        if(this.wufang >0){
-            list.add(Component.translatable("防御力", (int)this.wufang).withStyle(ChatFormatting.YELLOW));
-        }
-        if(this.wugong >0){
-            list.add(Component.translatable("攻击力", (int)this.wugong).withStyle(ChatFormatting.YELLOW));
-        }
-        if(this.xixue >0){
-            list.add(Component.translatable("吸血", (int)this.xixue).withStyle(ChatFormatting.YELLOW));
-        }
-        if(this.shengmingbaifenbi >0){
-            list.add(Component.translatable("获得生命", (int)this.shengmingbaifenbi +"%").withStyle(ChatFormatting.YELLOW));
-        }
-        if(this.jingshenlibaifenbi >0){
-            list.add(Component.translatable("获得精神力", (int)this.jingshenlibaifenbi+"%").withStyle(ChatFormatting.YELLOW));
-        }
+
+        list.add(Component.literal("品级：" + q.label).withStyle(q.color).withStyle(ChatFormatting.BOLD));
+        list.add(Component.literal("药效发挥：" + (int)(m * 100) + "%").withStyle(ChatFormatting.GRAY));
+        list.add(Component.literal("------------------").withStyle(ChatFormatting.DARK_GRAY));
+
+        if (this.wugong > 0) list.add(Component.literal("攻击力: +" + String.format("%.1f", this.wugong * m)).withStyle(ChatFormatting.YELLOW));
+        if (this.wufang > 0) list.add(Component.literal("防御力: +" + String.format("%.1f", this.wufang * m)).withStyle(ChatFormatting.YELLOW));
+        if (this.jingyan > 0) list.add(Component.literal("经验加成: +" + String.format("%.1f", this.jingyan * m)).withStyle(ChatFormatting.GOLD));
+        if (this.shengming > 0) list.add(Component.literal("生命恢复: +" + String.format("%.1f", this.shengming * m)).withStyle(ChatFormatting.GREEN));
+        if (this.maxshengming > 0) list.add(Component.literal("最大生命: +" + String.format("%.1f", this.maxshengming * m)).withStyle(ChatFormatting.DARK_GREEN));
+        if (this.jingshenli > 0) list.add(Component.literal("精神力: +" + String.format("%.1f", this.jingshenli * m)).withStyle(ChatFormatting.AQUA));
+        if (this.baojilv > 0) list.add(Component.literal("暴击率: +" + String.format("%.1f", this.baojilv * m) + "%").withStyle(ChatFormatting.RED));
+
+        // 分隔线
         if (this.minLevel > 0) {
-            list.add(Component.literal("服用要求：")
-                    .append(Component.literal("等级 " + this.minLevel))
-                    .withStyle(ChatFormatting.RED));
+            list.add(Component.literal(" "));
+            list.add(Component.literal("服用要求：等级 " + this.minLevel).withStyle(ChatFormatting.DARK_RED));
         }
-    }
-    public int getMinLevel() {
-        return minLevel;
     }
 }

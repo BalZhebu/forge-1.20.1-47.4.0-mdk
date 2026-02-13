@@ -1,6 +1,8 @@
 package com.TovidY.kunluncontinent.screen;
 
 import com.TovidY.kunluncontinent.KlMain;
+import com.TovidY.kunluncontinent.screen.liandanlugui.LiandanluMenu;
+import com.TovidY.kunluncontinent.screen.liandanlugui.LiandanluScreen;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
@@ -25,6 +27,9 @@ public class ModMenuTypes {
     public static final RegistryObject<MenuType<AttributeMenu>> ATTRUBUTE_MENU =
             registerMenuType("attrubute_menu", AttributeMenu::new);
 
+    public static final RegistryObject<MenuType<LiandanluMenu>> LIANDANLU_MENU =
+            registerMenuType("liandanlu_menu", LiandanluMenu::new);
+
 
     private static <T extends AbstractContainerMenu> RegistryObject<MenuType<T>> registerMenuType(String name, IContainerFactory<T> factory) {
         return MENUS.register(name, () -> IForgeMenuType.create(factory));
@@ -41,6 +46,7 @@ public class ModMenuTypes {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
             MenuScreens.register(ModMenuTypes.ATTRUBUTE_MENU.get(), AttributeScreen::new);
+            MenuScreens.register(ModMenuTypes.LIANDANLU_MENU.get(), LiandanluScreen::new);
         }
     }
 

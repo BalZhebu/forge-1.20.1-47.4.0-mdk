@@ -3,8 +3,10 @@ package com.TovidY.kunluncontinent.datagen.itemprovider;
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.block.ModBlocks;
 import com.TovidY.kunluncontinent.item.ModItems;
+import com.TovidY.kunluncontinent.recipe.liandanlurecipe.LiandanRecipeBuilder;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -16,6 +18,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 //配方生成
+
 public class ModRecipesProvider extends RecipeProvider implements IConditionBuilder  {
     public ModRecipesProvider(PackOutput pOutput) {
         super(pOutput);
@@ -30,6 +33,9 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
         oreBlasting(pWriter,GRAY_IRON,RecipeCategory.MISC,ModItems.GRAY_IRON_INGOT.get(),0.25F,100,"gray_iron");
         oreSmelting(pWriter,CLOUD_PATTERNED_BRONZE,RecipeCategory.MISC,ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get(),0.30F,400,"cloud_patterned_bronze");
         oreBlasting(pWriter,CLOUD_PATTERNED_BRONZE,RecipeCategory.MISC,ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get(),0.30F,200,"cloud_patterned_bronze");
+
+        LiandanRecipeBuilder.create(ModItems.NEIDAN1.get(), ModItems.CHUYUAN_DAN.get(), 400)
+                .save(pWriter,ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "chuyuan_dan_from_neidan1"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC,ModBlocks.PUTUAN_BLOCK.get())
                 .pattern("# #")
