@@ -1,6 +1,15 @@
 package com.TovidY.kunluncontinent.datagen;
 
 import com.TovidY.kunluncontinent.KlMain;
+import com.TovidY.kunluncontinent.datagen.blockprovider.ModBlockLootTablesProvider;
+import com.TovidY.kunluncontinent.datagen.blockprovider.ModBlockStateProvider;
+import com.TovidY.kunluncontinent.datagen.blockprovider.ModBlockTagsProvider;
+import com.TovidY.kunluncontinent.datagen.itemprovider.ModItemModelsProvider;
+import com.TovidY.kunluncontinent.datagen.itemprovider.ModItemTagsProvider;
+import com.TovidY.kunluncontinent.datagen.itemprovider.ModRecipesProvider;
+import com.TovidY.kunluncontinent.datagen.lang.ModZhCnLangProvider;
+import com.TovidY.kunluncontinent.datagen.oredatagen.ModBiomeModifierProvider;
+import com.TovidY.kunluncontinent.datagen.oredatagen.ModWorldGenProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;

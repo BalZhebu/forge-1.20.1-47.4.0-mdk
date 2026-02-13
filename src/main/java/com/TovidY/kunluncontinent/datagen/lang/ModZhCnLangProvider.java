@@ -1,4 +1,4 @@
-package com.TovidY.kunluncontinent.datagen;
+package com.TovidY.kunluncontinent.datagen.lang;
 
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.block.ModBlocks;

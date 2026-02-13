@@ -1,4 +1,4 @@
-package com.TovidY.kunluncontinent.datagen;
+package com.TovidY.kunluncontinent.datagen.itemprovider;
 
 import com.TovidY.kunluncontinent.KlMain;
 import net.minecraft.core.HolderLookup;

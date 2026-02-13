@@ -1,4 +1,4 @@
-package com.TovidY.kunluncontinent.datagen;
+package com.TovidY.kunluncontinent.datagen.blockprovider;
 
 import com.TovidY.kunluncontinent.block.ModBlocks;
 import net.minecraft.data.loot.BlockLootSubProvider;

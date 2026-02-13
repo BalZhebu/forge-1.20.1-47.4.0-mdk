@@ -1,4 +1,4 @@
-package com.TovidY.kunluncontinent.datagen;
+package com.TovidY.kunluncontinent.datagen.blockprovider;
 
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.block.ModBlocks;
