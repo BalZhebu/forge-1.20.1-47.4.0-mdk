@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.util.INBTSerializable;
 
 //基础属性面板
+
 public class CapabilityAttributeBase implements INBTSerializable<CompoundTag> {
 
 /*基础属性
@@ -15,8 +16,6 @@ public class CapabilityAttributeBase implements INBTSerializable<CompoundTag> {
 吸血          生命回复
 命中          闪避
        */
-
-
     private float shengming;
     private float maxshengming;
     private float gongji;

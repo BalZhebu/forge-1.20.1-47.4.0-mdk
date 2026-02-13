@@ -1,6 +1,7 @@
 package com.TovidY.kunluncontinent.block;
 
 import com.TovidY.kunluncontinent.KlMain;
+import com.TovidY.kunluncontinent.block.klblock.PutuanBlock;
 import com.TovidY.kunluncontinent.item.ModItems;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -34,7 +35,7 @@ public class ModBlocks {
 
     public static final RegistryObject<Block> PUTUAN_BLOCK =
             registerBlock("putuan_block",()->
-                    new Block(BlockBehaviour.Properties.copy(Blocks.HAY_BLOCK).noOcclusion()));
+                    new PutuanBlock(BlockBehaviour.Properties.copy(Blocks.HAY_BLOCK).noOcclusion()));
 
     //mod矿物
     public static ArrayList<RegistryObject<Block>> MODORE = new ArrayList<>();

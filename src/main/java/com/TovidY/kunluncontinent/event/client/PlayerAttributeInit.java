@@ -52,6 +52,7 @@ public class PlayerAttributeInit {
                         attributes.setMaxjingyan(20.0f);
                         attributes.setShengmingHuifu(1.0f);
                         attributes.setWuchuan(1.0f);
+                        attributes.setXiulianTime((int) 600.0f);
                         attributes.setInitialized(true);
                     } else {
                         if (!attributes.isInitialized()) {

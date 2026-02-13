@@ -19,6 +19,7 @@ import java.util.List;
 import static net.minecraft.client.gui.screens.inventory.InventoryScreen.renderEntityInInventoryFollowsMouse;
 
 //属性面板渲染
+
 public class AttributeScreen extends AbstractContainerScreen<AttributeMenu> {
     //资源路径，如果提示警告则在ResourceLocation的后面加入fromNamespaceAndPath
     private static final int ATTRIBUTE_TEXT_OFFSET_X = 14;
@@ -114,6 +115,13 @@ public class AttributeScreen extends AbstractContainerScreen<AttributeMenu> {
             guiGraphics.drawString(this.font, "生命恢复: " + NumberFormatter.formatNumber(shengmingHuifu), startX, y, textColor, false);
             y += SPACING;
             guiGraphics.drawString(this.font, "等级: " + (int)attributes.getDengji(), startX, y, textColor, false);
+
+            int xiulianTime = attributes.getXiulianTime();
+            String timeText = "可修炼时间: " + (xiulianTime / 60) + "分" + (xiulianTime % 60) + "秒";
+            int timeTextWidth = this.font.width(timeText);
+            int rightX = this.leftPos + this.imageWidth - timeTextWidth - 10;
+            int topY = this.topPos + 8;
+            guiGraphics.drawString(this.font, timeText, rightX, topY, 0xFFFF00, true);
         });
     }
 

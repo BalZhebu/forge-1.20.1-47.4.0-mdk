@@ -18,6 +18,9 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
     // 初始化标志，用于判断是否是第一次创建角色
     private boolean initialized = false;
 
+    private int xiulianTime = 600;
+    private boolean usingAll = false;
+
     private static final String DATA_VERSION_TAG = "DataVersion";
     private static final int CURRENT_DATA_VERSION = 2;
 
@@ -81,6 +84,9 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         tag.putFloat("TupoChenggonglv", tupochenggonglv);  // 突破成功率
         tag.putFloat("ShengmingHuifu", shengminghuifu);
 
+        tag.putInt("xiulianTime", this.xiulianTime);
+        tag.putBoolean("usingAll", this.usingAll);
+
         tag.putInt("Hunhuankuaiguan", hunhuankuaiguan);
 
         for (Map.Entry<String, List<MobAttributeCapability>> stringListEntry : monsterCapabilityLists.entrySet()) {
@@ -120,6 +126,9 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         this.tupochenggonglv = nbt.getFloat("TupoChenggonglv");  // 突破成功率
         this.shengminghuifu = nbt.getFloat("ShengmingHuifu");
 
+        this.xiulianTime = nbt.getInt("xiulianTime");
+        this.usingAll = nbt.getBoolean("usingAll");
+
         this.hunhuankuaiguan = nbt.getInt("Hunhuankuaiguan");
 
         for (String s : wuhunListsnameall) {
@@ -147,6 +156,20 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
     public void setXiantianTalent(int talent) { this.xiantianTalent = talent; }
     public int getXiantianTalent() { return this.xiantianTalent; }
 
+
+    public int getXiulianTime() {
+        return this.xiulianTime;
+    }
+    public void setXiulianTime(int time) {
+        this.xiulianTime = Math.max(0, Math.min(600, time));
+    }
+
+    public boolean isUsingAll() {
+        return this.usingAll;
+    }
+    public void setUsingAll(boolean usingAll) {
+        this.usingAll = usingAll;
+    }
 
     public int getHunhuankuaiguan() {
         return hunhuankuaiguan;

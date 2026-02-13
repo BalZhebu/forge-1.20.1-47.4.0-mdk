@@ -1,18 +1,25 @@
 package com.TovidY.kunluncontinent.event.server;
 
 import com.TovidY.kunluncontinent.KlMain;
+import com.TovidY.kunluncontinent.block.klblock.PutuanBlock;
 import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
+import com.TovidY.kunluncontinent.capability.playerattributes.PlayerUpgradeSystem;
 import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanEntity;
 import com.TovidY.kunluncontinent.network.SynsAPI;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
@@ -22,30 +29,84 @@ import org.jetbrains.annotations.NotNull;
 public class PWPlayerTickEvent {
 
     @SubscribeEvent
-    public static void onStartTracking(TickEvent.PlayerTickEvent event) {
+    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         Player player = event.player;
-        if (event.phase == TickEvent.Phase.END) {
-            if (!player.level().isClientSide) {
-                long gameTime = player.level().getGameTime();
-                if (gameTime % 100 == 0) {
-                    SynsAPI.synsPlayerAttribute(player);
-                }
+        if (event.phase == TickEvent.Phase.END && !player.level().isClientSide && player instanceof ServerPlayer serverPlayer) {
+            long gameTime = player.level().getGameTime();
+            player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(capability -> {
+                playerUpdateServere(player, capability);
                 if (gameTime % 20 == 0) {
                     float maxshengming = ModAttributeAPI.getMaxshengming(player);
                     if (Math.abs(maxshengming - player.getMaxHealth()) > 0.1f) {
                         player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxshengming);
                     }
                 }
-                player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(capability -> {
-                    playerUpdateServere(player, capability);
-                    if (gameTime % 100 == 0) {
-                        updatePlayerHealthRegen(player, capability);
+                if (gameTime % 100 == 0) {
+                    updatePlayerHealthRegen(player, capability);
+                    SynsAPI.synsPlayerAttribute(player);
+                }
+                if (gameTime % 120 == 0) {
+                    updateJingshenliRegen(player, capability);
+                }
+
+                updatePlayerFly(player, capability);
+
+                handleMeditationLogic(serverPlayer, capability, gameTime);
+            });
+        }
+    }
+
+    private static void handleMeditationLogic(ServerPlayer player, PlayerAttributeCapability cap, long gameTime) {
+        boolean isMeditating = player.getVehicle() != null && player.getVehicle().getTags().contains("putuan_seat");
+
+        if (isMeditating) {
+            if (gameTime % 20 == 0) {
+                int currentTime = cap.getXiulianTime();
+                if (currentTime > 0) {
+                    cap.setXiulianTime(currentTime - 1);
+                    int level = cap.getDengji();
+                    float minutesToLevel = (level <= 30) ? 5f : (level <= 89) ? 7f : 10f;
+                    float gain = cap.getMaxjingyan() / (minutesToLevel * 60f);
+                    cap.setJingyan(cap.getJingyan() + gain);
+                    PlayerUpgradeSystem.checkAndProcessUpgrade(player, cap);
+                    if (gameTime % 40 == 0) SynsAPI.synsPlayerAttribute(player);
+                    if (cap.getXiulianTime() <= 0) {
+                        cap.setUsingAll(true);
+                        player.sendSystemMessage(Component.translatable("putuan.xiulian.finish"));
+                        player.stopRiding();
                     }
-                    if (gameTime % 120 == 0) {
-                        updateJingshenliRegen(player, capability);
-                    }
-                    updatePlayerFly(player, capability);
-                });
+                }
+            }
+        } else {
+            // 恢复逻辑
+            int recoverTickRate = cap.isUsingAll() ? 87 : 100;
+            if (gameTime % recoverTickRate == 0) {
+                if (cap.getXiulianTime() < 600) {
+                    cap.setXiulianTime(cap.getXiulianTime() + 1);
+                    if (cap.getXiulianTime() >= 600) cap.setUsingAll(false);
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onEntityTick(LivingEvent.LivingTickEvent event) {
+        Entity entity = event.getEntity();
+        if (entity instanceof ArmorStand armorStand && armorStand.getTags().contains("putuan_seat")) {
+            if (armorStand.getPassengers().isEmpty()) {
+                armorStand.discard();
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerHurt(LivingHurtEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            if (player.getVehicle() != null && player.getVehicle().getTags().contains("putuan_seat")) {
+                player.stopRiding(); // 强行踢下来
+                player.sendSystemMessage(Component.literal("§c你受到攻击，心神受损，被迫停止了修炼！").withStyle(ChatFormatting.BOLD));
+
+                player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 100, 0));
             }
         }
     }

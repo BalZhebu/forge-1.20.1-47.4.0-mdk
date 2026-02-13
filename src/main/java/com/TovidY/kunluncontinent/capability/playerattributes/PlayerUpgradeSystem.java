@@ -61,7 +61,6 @@ public class PlayerUpgradeSystem {
         }
 
         if (level == 99) {
-            // 只有当经验满了尝试突破时，才发送全服公告（避免玩家刚升到99级还没攒满经验就乱报）
             if (cap.getJingyan() >= cap.getMaxjingyan()) {
                 sendDeityAnnouncement(player);
             }
@@ -71,9 +70,8 @@ public class PlayerUpgradeSystem {
             return false;
         }
 
-        // 神级阶段 (100-199) 的魂环数量限制
         if (level >= 100 && level < 199) {
-            int rings = getMaxRings(cap); // 获取当前魂环数量
+            int rings = getMaxRings(cap);
             int required = level / 10;
             if (rings < required) {
                 player.connection.send(new ClientboundSetTitleTextPacket(Component.translatable("不能突破")));
@@ -100,7 +98,6 @@ public class PlayerUpgradeSystem {
 
             server.getPlayerList().broadcastSystemMessage(message, false);
 
-            // 顺便给玩家放个烟花或者声音特效增加氛围
             player.playNotifySound(SoundEvents.END_PORTAL_SPAWN, SoundSource.PLAYERS, 1.0f, 1.0f);
         }
     }

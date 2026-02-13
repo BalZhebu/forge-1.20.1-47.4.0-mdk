@@ -93,6 +93,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModBlocks.GRAY_IRON_ORE.get(),"灰铁矿");
         add(ModBlocks.CLOUD_PATTERNED_BRONZE_ORE.get(),"云纹铜矿");
         add(ModBlocks.PUTUAN_BLOCK.get(),"蒲团");
+        add("putuan.xiulian.finish","§c你感到浑身清爽，但打坐时间太长你感到有被心魔入侵的风险，出去走走吧");
 
         //创造物品栏
         add("itemGroup.kunlun_tab","昆仑大陆");
