@@ -25,6 +25,7 @@ import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
 
 // 玩家每Tick触发
+
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class PWPlayerTickEvent {
 
@@ -157,7 +158,16 @@ public class PWPlayerTickEvent {
             }
 
             if (capability.getWuhunName() != null && player.level().getGameTime() % 20 == 0) {
-                capability.setJingshenli(capability.getJingshenli() - 25 - (float) capability.getDengji() / 5);
+                int level = capability.getDengji();
+                float cost;
+                if (level <= 30) {
+                    cost = 3.0f + (level * 0.1f);
+                } else if (level <= 89) {
+                    cost = 10.0f + (level * 0.2f);
+                } else {
+                    cost = 20.0f + (level * 0.3f);
+                }
+                capability.setJingshenli(capability.getJingshenli() - cost);
             }
         }
     }
