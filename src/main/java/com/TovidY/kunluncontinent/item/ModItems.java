@@ -5,6 +5,7 @@ import com.TovidY.kunluncontinent.item.armor.ModArmorBaseItem;
 import com.TovidY.kunluncontinent.item.armor.ModArmorMaterials;
 import com.TovidY.kunluncontinent.item.klitem.DanYaoItem;
 import com.TovidY.kunluncontinent.item.klitem.HunHuanStorageItem;
+import com.TovidY.kunluncontinent.item.neidanitems.NeidanItem;
 import com.TovidY.kunluncontinent.item.testitemblock.TestLevelUp;
 import com.TovidY.kunluncontinent.item.tool.ModSwordBaseItem;
 import com.TovidY.kunluncontinent.item.tool.ModToolTiers;
@@ -27,9 +28,16 @@ public class ModItems {
     public static final RegistryObject<Item> DANYAO_JINGSHENLI = ITEMS.register("danyao_jingshenli",()->new DanYaoItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setJingshenlibaifenbi(100).setMinLevel(999));
     public static final RegistryObject<Item> TEST_SWORD = ITEMS.register("test_sword",()->new ModSwordBaseItem(ModToolTiers.TEST_ITEM,3,-1.8F,new Item.Properties()));
     public static final RegistryObject<Item> DANYAO_DENGJI_JIA = ITEMS.register("danyao_dengji_jia",
-            () -> new TestLevelUp(new Item.Properties().stacksTo(1), 1)); // 加一级
+            () -> new TestLevelUp(new Item.Properties().stacksTo(1), 1));
     public static final RegistryObject<Item> DANYAO_DENGJI_JIAN = ITEMS.register("danyao_dengji_jian",
-            () -> new TestLevelUp(new Item.Properties().stacksTo(1), -1)); // 减一级
+            () -> new TestLevelUp(new Item.Properties().stacksTo(1), -1));
+
+    //内丹
+    public static final RegistryObject<Item> NEIDAN1 = ITEMS.register("neidan1",()->new NeidanItem(new Item.Properties(),1));
+    public static final RegistryObject<Item> NEIDAN2 = ITEMS.register("neidan2",()->new NeidanItem(new Item.Properties(),2));
+    public static final RegistryObject<Item> NEIDAN3 = ITEMS.register("neidan3",()->new NeidanItem(new Item.Properties(),3));
+    public static final RegistryObject<Item> NEIDAN4 = ITEMS.register("neidan4",()->new NeidanItem(new Item.Properties(),4));
+    public static final RegistryObject<Item> NEIDAN5 = ITEMS.register("neidan5",()->new NeidanItem(new Item.Properties(),5));
 
     //矿石宝石
     public static final RegistryObject<Item> GRAY_IRON_INGOT = ITEMS.register("gray_iron_ingot",()->new Item(new Item.Properties()));
@@ -78,6 +86,17 @@ public class ModItems {
 
     public static final RegistryObject<Item> HUNHUAN_STORAGE_FIVE = ITEMS.register("hunhuan_storage_five",
             () -> new HunHuanStorageItem(new Item.Properties().stacksTo(1).fireResistant(), 1, 20000000));
+
+
+    public static ArrayList<RegistryObject<Item>> NEIDANLIST = new ArrayList<>();
+    static {
+        NEIDANLIST.add(NEIDAN1);
+        NEIDANLIST.add(NEIDAN2);
+        NEIDANLIST.add(NEIDAN3);
+        NEIDANLIST.add(NEIDAN4);
+        NEIDANLIST.add(NEIDAN5);
+    }
+
 
     public static ArrayList<RegistryObject<Item>> hunhuanstorage = new ArrayList<>();
     static {

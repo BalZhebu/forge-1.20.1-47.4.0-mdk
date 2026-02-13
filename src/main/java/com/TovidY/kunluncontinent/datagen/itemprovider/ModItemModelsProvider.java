@@ -33,6 +33,11 @@ public class ModItemModelsProvider extends ItemModelProvider {
             basicItem(itemRegistry.get());
         }
 
+        //内丹
+        for (RegistryObject<Item> itemRegistry : ModItems.NEIDANLIST){
+            basicItem(itemRegistry.get());
+        }
+
         //丹药(使用 basicItem)
         for (RegistryObject<Item> itemRegistry : ModItems.DANYAOITEM){
             basicItem(itemRegistry.get());

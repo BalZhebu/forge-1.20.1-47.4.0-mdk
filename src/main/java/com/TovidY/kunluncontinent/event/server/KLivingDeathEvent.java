@@ -8,6 +8,7 @@ import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapabilit
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerHunhuanAPI;
 import com.TovidY.kunluncontinent.entity.EntityInit;
 import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanEntity;
+import com.TovidY.kunluncontinent.item.neidanitems.NeidanDropHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
@@ -21,6 +22,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 //玩家击杀生物事件
+
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class KLivingDeathEvent {
     private static final RandomSource RANDOM = RandomSource.create();
@@ -31,6 +33,11 @@ public class KLivingDeathEvent {
         if (entity == null || entity.level().isClientSide) return;
         entity.getCapability(MobAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
             Entity sourceEntity = event.getSource().getEntity();
+
+            //内丹掉落机制
+            if (sourceEntity instanceof Player player) {
+                NeidanDropHandler.tryDropNeidan(entity, cap,player);
+            }
 
             if (cap.getNianxian() > 1 && sourceEntity instanceof Player player) {
                 int wugongValue = (int) cap.getGongji();

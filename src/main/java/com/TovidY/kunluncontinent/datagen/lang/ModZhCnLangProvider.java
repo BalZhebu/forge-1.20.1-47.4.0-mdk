@@ -16,9 +16,16 @@ public class ModZhCnLangProvider extends LanguageProvider {
     @Override
     protected void addTranslations() {
 
-        //物品类
+        //矿石类
         add(ModItems.GRAY_IRON_INGOT.get(),"§8灰铁锭");
         add(ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get(),"§6云纹铜");
+
+        //内丹类
+        add(ModItems.NEIDAN1.get(),"一阶内丹");
+        add(ModItems.NEIDAN2.get(),"二阶内丹");
+        add(ModItems.NEIDAN3.get(),"三阶内丹");
+        add(ModItems.NEIDAN4.get(),"四阶内丹");
+        add(ModItems.NEIDAN5.get(),"五阶内丹");
 
         //测试物品类
         add(ModItems.DANYAO_TEST.get(),"测试物品---经验+9999999");

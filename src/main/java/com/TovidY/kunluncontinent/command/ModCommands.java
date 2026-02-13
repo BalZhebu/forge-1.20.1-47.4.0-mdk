@@ -13,5 +13,6 @@ public class ModCommands {
         AttributeCommand.register(event.getDispatcher());
         UpgradeTestCommand.register(event.getDispatcher());
         TianfuCommand.register(event.getDispatcher());
+        NeidanCommand.register(event.getDispatcher());
     }
 }

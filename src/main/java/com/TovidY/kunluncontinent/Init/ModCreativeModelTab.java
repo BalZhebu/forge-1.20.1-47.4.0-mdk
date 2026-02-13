@@ -36,6 +36,10 @@ public class ModCreativeModelTab {
                             pOutput.accept(itemRegistryObject.get());
                         }
 
+                        for (RegistryObject<Item> itemRegistryObject : ModItems.NEIDANLIST){
+                            pOutput.accept(itemRegistryObject.get());
+                        }
+
                         for (RegistryObject<Item> itemRegistryObject : ModItems.DANYAOITEM) {
                             pOutput.accept(itemRegistryObject.get());
                         }
