@@ -1,11 +1,9 @@
 package com.TovidY.kunluncontinent.item.klitem; // 请确保包名与你项目一致
 
 import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
-import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerHunhuanAPI;
-import com.TovidY.kunluncontinent.network.NetworkHandler;
-import com.TovidY.kunluncontinent.network.server.SPacketSyncPlayerAttribute;
+import com.TovidY.kunluncontinent.network.SynsAPI;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -18,7 +16,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -41,12 +38,12 @@ public class DanYaoItem extends Item {
 
     // --- 品级枚举定义 ---
     public enum Quality {
-        破碎("丹渣", 0.0f, ChatFormatting.DARK_GRAY),
-        绿色("药散", 0.3f, ChatFormatting.GREEN),
-        蓝色("药丹", 0.5f, ChatFormatting.BLUE),
-        紫色("灵丹", 1.0f, ChatFormatting.DARK_PURPLE),
-        金色("宝丹", 1.5f, ChatFormatting.GOLD),
-        红色("仙丹", 2.0f, ChatFormatting.RED);
+        damaged("丹渣", 0.0f, ChatFormatting.DARK_GRAY),
+        green("药散", 0.3f, ChatFormatting.GREEN),
+        blue("药丹", 0.5f, ChatFormatting.BLUE),
+        purple("灵丹", 1.0f, ChatFormatting.DARK_PURPLE),
+        gold("宝丹", 1.5f, ChatFormatting.GOLD),
+        red("仙丹", 2.0f, ChatFormatting.RED);
 
         public final String label;
         public final float multiplier;
@@ -63,7 +60,7 @@ public class DanYaoItem extends Item {
                 int index = stack.getTag().getInt("DanYaoQuality");
                 return Quality.values()[Math.min(index, Quality.values().length - 1)];
             }
-            return 紫色; // 默认紫色 100%
+            return purple; // 默认紫色 100%
         }
     }
 
@@ -75,7 +72,7 @@ public class DanYaoItem extends Item {
         Quality q = Quality.get(itemstack);
 
         // 1. 破碎丹药拦截
-        if (q == Quality.破碎) {
+        if (q == Quality.damaged) {
             if (!level.isClientSide) player.sendSystemMessage(Component.literal("这颗丹药已经碎成渣了，无法服用...").withStyle(ChatFormatting.GRAY));
             return InteractionResultHolder.fail(itemstack);
         }
@@ -114,9 +111,8 @@ public class DanYaoItem extends Item {
     private void applyDanyaoAttribute(ItemStack stack, ServerPlayer player) {
         // 使用你最新的枚举类和统一后的键名获取方法
         DanYaoQuality q = DanYaoQuality.getFromStack(stack);
-        float m = q.multiplier; // 药效倍率：绿0.3, 蓝0.5, 紫1.0, 金1.5, 红2.0
+        float m = q.multiplier;
 
-        // 如果是破碎品级，直接拦截不执行任何属性加成
         if (q == DanYaoQuality.PO_SUI) {
             return;
         }
@@ -147,18 +143,8 @@ public class DanYaoItem extends Item {
                 PlayerHunhuanAPI.addJingshenli(player, addedMana);
             }
 
-            sync(player, cap);
+            SynsAPI.synsPlayerAttribute(player);
         });
-    }
-
-    private void sync(ServerPlayer player, PlayerAttributeCapability cap) {
-        SPacketSyncPlayerAttribute packet = new SPacketSyncPlayerAttribute(
-                cap.getShengming(), cap.getMaxshengming(), cap.getJingshenli(), cap.getMaxjingshenli(),
-                cap.getMingzhong(), cap.getFangyu(), cap.getGongji(), cap.getBaojilv(), cap.getBaojishanghai(),
-                cap.getXixue(), cap.getShanbi(), cap.getKangbao(), cap.getJingyan(), cap.getDengji(), cap.getMaxjingyan(),
-                (int)cap.getWuchuan(), cap.getShengmingHuifu()
-        );
-        NetworkHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), packet);
     }
 
     // --- Setters (链式调用) ---
@@ -187,9 +173,10 @@ public class DanYaoItem extends Item {
         Quality q = Quality.get(stack);
         float m = q.multiplier;
 
-        if (q == Quality.破碎) {
+        if (q == Quality.damaged) {
             list.add(Component.literal("品级：" + q.label).withStyle(q.color).withStyle(ChatFormatting.BOLD));
             list.add(Component.literal("这只是一堆毫无药效的残渣。").withStyle(ChatFormatting.DARK_GRAY));
+            list.add(Component.literal("可以被分解成丹渣").withStyle(ChatFormatting.DARK_GRAY));
             return;
         }
 

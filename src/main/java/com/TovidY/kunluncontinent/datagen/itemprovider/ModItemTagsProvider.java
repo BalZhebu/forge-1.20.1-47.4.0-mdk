@@ -1,6 +1,9 @@
 package com.TovidY.kunluncontinent.datagen.itemprovider;
 
 import com.TovidY.kunluncontinent.KlMain;
+import com.TovidY.kunluncontinent.block.ModBlocks;
+import com.TovidY.kunluncontinent.item.ModItems;
+import com.TovidY.kunluncontinent.item.ModTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
@@ -16,5 +19,8 @@ public class ModItemTagsProvider extends ItemTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider pProvider) {
+        this.tag(ModTags.Items.DANYAO_DROSS)
+                .add(ModItems.CHUYUAN_DAN.get())
+                .add(ModItems.BAICAOLING_DAN.get());
     }
 }

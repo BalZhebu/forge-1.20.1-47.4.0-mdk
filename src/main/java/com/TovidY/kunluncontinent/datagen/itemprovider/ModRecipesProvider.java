@@ -3,7 +3,10 @@ package com.TovidY.kunluncontinent.datagen.itemprovider;
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.block.ModBlocks;
 import com.TovidY.kunluncontinent.item.ModItems;
+import com.TovidY.kunluncontinent.item.ModTags;
+import com.TovidY.kunluncontinent.recipe.ModRecipes;
 import com.TovidY.kunluncontinent.recipe.liandanlurecipe.LiandanRecipeBuilder;
+import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
 import net.minecraft.resources.ResourceLocation;
@@ -36,6 +39,20 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
 
         LiandanRecipeBuilder.create(ModItems.NEIDAN1.get(), ModItems.CHUYUAN_DAN.get(), 400)
                 .save(pWriter,ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "chuyuan_dan_from_neidan1"));
+
+        LiandanRecipeBuilder.create(ModItems.NEIDAN2.get(), ModItems.BAICAOLING_DAN.get(), 400)
+                .save(pWriter,ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "baicaoling_dan_from_neidan2"));
+
+        SpecialRecipeBuilder.special(ModRecipes.DROSS_CONVERSION_SERIALIZER.get())
+                .save(pWriter, KlMain.MOD_ID + ":dross_conversion");
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.DROSS_BLOCK.get())
+                .pattern("###")
+                .pattern("###")
+                .pattern("###")
+                .define('#', ModItems.DROSS.get()) // 这里直接使用丹渣物品
+                .unlockedBy("has_dross_item", has(ModItems.DROSS.get()))
+                .save(pWriter);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC,ModBlocks.PUTUAN_BLOCK.get())
                 .pattern("# #")
