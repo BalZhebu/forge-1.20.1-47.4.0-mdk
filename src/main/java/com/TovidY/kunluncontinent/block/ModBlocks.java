@@ -44,15 +44,15 @@ public class ModBlocks {
 
     public static final RegistryObject<Block> LIANDANLU1 =
             registerBlock("liandanlu1",()->
-                    new LiandanluBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion()));
+                    new LiandanluBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion(),1));
 
     public static final RegistryObject<Block> LIANDANLU2 =
             registerBlock("liandanlu2",()->
-                    new LiandanluBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion()));
+                    new LiandanluBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion(),2));
 
     public static final RegistryObject<Block> LIANDANLU3 =
             registerBlock("liandanlu3",()->
-                    new LiandanluBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion()));
+                    new LiandanluBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion(),3));
 
 
     //炼丹炉

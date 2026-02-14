@@ -23,9 +23,17 @@ import net.minecraftforge.network.NetworkHooks;
 import javax.annotation.Nullable;
 
 public class LiandanluBlock extends BaseEntityBlock {
-    public LiandanluBlock(Properties pProperties) {
+    private final int tier;
+
+    public LiandanluBlock(Properties pProperties,int tier) {
         super(pProperties);
+        this.tier = tier;
     }
+
+    public int getTier() {
+        return this.tier;
+    }
+
 
     @Override
     public RenderShape getRenderShape(BlockState pState) {
@@ -35,7 +43,7 @@ public class LiandanluBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
-        return new LiandanluBlockEntity(pPos, pState);
+        return new LiandanluBlockEntity(pPos, pState,this.tier);
     }
 
     @Override

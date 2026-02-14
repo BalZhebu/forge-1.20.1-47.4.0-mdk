@@ -110,7 +110,8 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("putuan.xiulian.finish","§c你感到浑身清爽，但打坐时间太长你感到有被心魔入侵的风险，出去走走吧");
         add(ModBlocks.DROSS_BLOCK.get(), "丹渣块");
 
-
+        //JEI类
+        add("liandalu","炼丹炉");
 
         //创造物品栏
         add("itemGroup.kunlun_tab","昆仑大陆");

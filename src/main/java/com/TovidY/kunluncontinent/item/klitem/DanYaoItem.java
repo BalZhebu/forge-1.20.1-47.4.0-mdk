@@ -22,6 +22,8 @@ import java.util.List;
 
 public class DanYaoItem extends Item {
 
+    private int tier = 1;
+
     // --- 属性字段 ---
     private float shengming, maxshengming, shengmingbaifenbi;
     private float wugong, wufang, baojishanghai, baojilv;
@@ -34,6 +36,15 @@ public class DanYaoItem extends Item {
 
     public DanYaoItem(Properties properties) {
         super(properties);
+    }
+
+    public DanYaoItem setTier(int tier) {
+        this.tier = tier;
+        return this;
+    }
+
+    public int getTier() {
+        return this.tier;
     }
 
     // --- 品级枚举定义 ---

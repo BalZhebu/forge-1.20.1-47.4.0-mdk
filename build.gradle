@@ -173,9 +173,11 @@ dependencies {
 
     // Example mod dependency with JEI - using fg.deobf() ensures the dependency is remapped to your development mappings
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
-// 正确：JEI作为可选依赖
-    compileOnly fg.deobf("mezz.jei:jei-1.20.1-forge-api:15.3.0.5")  // 编译时需要API
-    runtimeOnly fg.deobf("mezz.jei:jei-1.20.1-forge:15.3.0.5")       // 运行时需要完整Mod
+
+    compileOnly(fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}"))
+    compileOnly(fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}"))
+    // at runtime, use the full JEI jar for Forge
+    runtimeOnly(fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}"))
 
     //极简血量显示
     runtimeOnly fg.deobf("curse.maven:Neat-238372:4580940")

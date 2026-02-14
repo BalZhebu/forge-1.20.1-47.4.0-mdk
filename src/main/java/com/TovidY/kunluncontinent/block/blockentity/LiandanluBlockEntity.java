@@ -17,6 +17,7 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -31,59 +32,95 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
-
 public class LiandanluBlockEntity extends BlockEntity implements MenuProvider {
-
+    private final int furnaceLevel;
     private int progress = 0;
-    private int maxProgress = 400;
+    private int maxProgress = 200; // 默认值
 
-    // 定义 19 个槽位
+    // 19个槽位：0-4内丹, 5-16输出, 17药渣块, 18可选
     private final ItemStackHandler itemHandler = new ItemStackHandler(19) {
         @Override
         protected void onContentsChanged(int slot) {
-            setChanged(); // 物品变化时标记保存
+            setChanged();
         }
     };
 
     private LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.of(() -> itemHandler);
 
-    public LiandanluBlockEntity(BlockPos pPos, BlockState pBlockState) {
-        // 假设你已经注册了 BLOCK_ENTITY_TYPE
+    // 同步给 Menu 和 Screen 的数据
+    protected final ContainerData data = new ContainerData() {
+        @Override
+        public int get(int index) {
+            return switch (index) {
+                case 0 -> LiandanluBlockEntity.this.progress;
+                case 1 -> LiandanluBlockEntity.this.maxProgress;
+                default -> 0;
+            };
+        }
+
+        @Override
+        public void set(int index, int value) {
+            switch (index) {
+                case 0 -> LiandanluBlockEntity.this.progress = value;
+                case 1 -> LiandanluBlockEntity.this.maxProgress = value;
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return 2;
+        }
+    };
+
+    public LiandanluBlockEntity(BlockPos pPos, BlockState pBlockState, int tier) {
         super(ModBlockEntities.LIANDANLU_BE.get(), pPos, pBlockState);
+        this.furnaceLevel = tier;
     }
 
-    // 这是每 tick 运行一次的服务器端逻辑
     public static void serverTick(Level level, BlockPos pos, BlockState state, LiandanluBlockEntity entity) {
-        // 1. 获取当前槽位里的所有物品（封装成 SimpleContainer 方便配方匹配）
-        SimpleContainer container = new SimpleContainer(entity.itemHandler.getSlots());
-        for (int i = 0; i < entity.itemHandler.getSlots(); i++) {
+        // 构造临时容器匹配配方
+        SimpleContainer container = new SimpleContainer(5);
+        for (int i = 0; i < 5; i++) {
             container.setItem(i, entity.itemHandler.getStackInSlot(i));
         }
 
-        // 2. 尝试从世界中寻找匹配的自定义配方 (kunlun:liandan)
-        Optional<LiandanRecipe> recipe = level.getRecipeManager()
+        Optional<LiandanRecipe> recipeOptional = level.getRecipeManager()
                 .getRecipeFor(ModRecipes.LIANDAN_TYPE.get(), container, level);
 
-        if (recipe.isPresent()) {
-            // 3. 检查输出槽是否已满（5-16 槽位是否还有空间）
+        if (recipeOptional.isPresent()) {
+            LiandanRecipe recipe = recipeOptional.get();
             if (canInsertResult(entity.itemHandler)) {
+                // 核心：根据炉子和丹药等阶动态设定时长
+                entity.maxProgress = entity.getAdjustedCookingTime(recipe);
                 entity.progress++;
-                entity.maxProgress = recipe.get().getCookTime();
 
-                // 4. 进度条跑满，执行炼制
                 if (entity.progress >= entity.maxProgress) {
-                    executeCraft(entity, recipe.get());
-                    entity.progress = 0; // 重置进度
+                    executeCraft(entity, recipe);
+                    entity.progress = 0;
                 }
             }
         } else {
-            // 如果配方不匹配或材料被中途拿走，重置进度
             entity.progress = 0;
         }
     }
 
+    private int getAdjustedCookingTime(LiandanRecipe recipe) {
+        int danLevel = recipe.getRecipeLevel(); // 需在Recipe类中实现此方法
+        int luLevel = this.furnaceLevel;
+        int finalTimeInSeconds;
+
+        if (luLevel >= danLevel) {
+            // 炉阶 >= 丹阶：基础10秒，每高出一阶减1秒
+            finalTimeInSeconds = 10 - (luLevel - danLevel);
+        } else {
+            // 炉阶 < 丹阶：10秒 + (差值 * 10秒)
+            finalTimeInSeconds = 10 + (danLevel - luLevel) * 10;
+        }
+        // 保底1秒，转为Tick
+        return Math.max(finalTimeInSeconds, 1) * 20;
+    }
+
     private static boolean canInsertResult(IItemHandler handler) {
-        // 检查 5-16 槽位是否有任意一个空格子
         for (int i = 5; i <= 16; i++) {
             if (handler.getStackInSlot(i).isEmpty()) return true;
         }
@@ -93,31 +130,25 @@ public class LiandanluBlockEntity extends BlockEntity implements MenuProvider {
     private static void executeCraft(LiandanluBlockEntity entity, LiandanRecipe recipe) {
         IItemHandlerModifiable handler = (IItemHandlerModifiable) entity.itemHandler;
 
+        // 计算品质
         int finalQuality = AlchemicalCalculator.calculateResultQuality(handler);
         ItemStack resultStack = recipe.getResultItem(entity.level.registryAccess()).copy();
         resultStack.getOrCreateTag().putInt("DanYaoQuality", finalQuality);
 
+        // 消耗材料
         for (int i = 0; i < 5; i++) {
             handler.extractItem(i, 1, false);
         }
-
         if (!handler.getStackInSlot(17).isEmpty()) {
             handler.extractItem(17, 1, false);
         }
 
+        // 放入结果
         ItemStack remaining = resultStack;
         for (int i = 5; i <= 16; i++) {
             remaining = handler.insertItem(i, remaining, false);
-            if (remaining.isEmpty()) break; // 全部放进去了，退出循环
+            if (remaining.isEmpty()) break;
         }
-    }
-
-    public float getEfficiencyMultiplier() {
-        Block block = this.getBlockState().getBlock();
-        if (block == ModBlocks.LIANDANLU1.get()) return 1.0f;
-        if (block == ModBlocks.LIANDANLU2.get()) return 1.5f;
-        if (block == ModBlocks.LIANDANLU3.get()) return 2.0f;
-        return 1.0f;
     }
 
     @Override
@@ -128,21 +159,23 @@ public class LiandanluBlockEntity extends BlockEntity implements MenuProvider {
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory, Player pPlayer) {
-        return new LiandanluMenu(pContainerId, pPlayerInventory, new FriendlyByteBuf(Unpooled.buffer()).writeBlockPos(this.worldPosition));
+        // 关键：将 this.data 传入 Menu
+        return new LiandanluMenu(pContainerId, pPlayerInventory, this, this.data);
     }
 
-    // 保存数据
     @Override
     protected void saveAdditional(CompoundTag pTag) {
         pTag.put("inventory", itemHandler.serializeNBT());
+        pTag.putInt("FurnaceLevel", this.furnaceLevel);
+        pTag.putInt("Progress", this.progress);
         super.saveAdditional(pTag);
     }
 
-    // 读取数据
     @Override
     public void load(CompoundTag pTag) {
         super.load(pTag);
         itemHandler.deserializeNBT(pTag.getCompound("inventory"));
+        this.progress = pTag.getInt("Progress");
     }
 
     @Override

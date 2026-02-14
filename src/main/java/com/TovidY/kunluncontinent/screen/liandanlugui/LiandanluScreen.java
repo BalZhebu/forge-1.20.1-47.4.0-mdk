@@ -28,6 +28,11 @@ public class LiandanluScreen extends AbstractContainerScreen<LiandanluMenu> {
         this.titleLabelY = 10000;
     }
 
+    private static final ResourceLocation FLAME_EMPTY =
+            ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/screens/huoyan.png");
+    private static final ResourceLocation FLAME_FULL =
+            ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/screens/huoyanmax.png");
+
     @Override
     protected void init() {
         super.init();
@@ -151,6 +156,35 @@ public class LiandanluScreen extends AbstractContainerScreen<LiandanluMenu> {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         guiGraphics.blit(TEXTURE, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
 
+        int originalSize = 14;
+        int scale = 2;
+        int displaySize = originalSize * scale;
+        int flameX = this.leftPos + 95;
+        int flameY = this.topPos + 30;
+        guiGraphics.blit(FLAME_EMPTY, flameX, flameY, displaySize, displaySize, 0, 0, originalSize, originalSize, originalSize, originalSize);
+
+        int progress = this.menu.getProgress();
+        int maxProgress = this.menu.getMaxProgress();
+
+        if (maxProgress > 0 && progress > 0) {
+            float ratio = Math.min(1.0F, (float) progress / maxProgress);
+            int scaledSourceHeight = Math.round(ratio * originalSize);
+            int scaledDisplayHeight = scaledSourceHeight * scale;
+            if (scaledSourceHeight > 0) {
+                guiGraphics.blit(FLAME_FULL,
+                        flameX,
+                        flameY + (displaySize - scaledDisplayHeight),
+                        displaySize,
+                        scaledDisplayHeight,
+                        0,
+                        (float) (originalSize - scaledSourceHeight),
+                        originalSize,
+                        scaledSourceHeight,
+                        originalSize,
+                        originalSize
+                );
+            }
+        }
     }
 
     @Override

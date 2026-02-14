@@ -1,15 +1,18 @@
 package com.TovidY.kunluncontinent.recipe.liandanlurecipe;
 
+import com.TovidY.kunluncontinent.item.klitem.DanYaoItem;
 import com.TovidY.kunluncontinent.recipe.ModRecipes;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class LiandanRecipe implements Recipe<SimpleContainer> {
     private final ResourceLocation id;
@@ -17,11 +20,21 @@ public class LiandanRecipe implements Recipe<SimpleContainer> {
     private final ItemStack result;      // 产出的丹药基础物品
     private final int cookTime;          // 炼制耗时
 
-    public LiandanRecipe(ResourceLocation id, Ingredient ingredient, ItemStack result, int cookTime) {
+    private final int recipeLevel;
+
+    public LiandanRecipe(ResourceLocation id, Ingredient ingredient, ItemStack result, int cookTime,int recipeLevel) {
         this.id = id;
         this.ingredient = ingredient;
         this.result = result;
         this.cookTime = cookTime;
+        this.recipeLevel = recipeLevel;
+    }
+
+    public int getRecipeLevel() {
+        if (this.result.getItem() instanceof DanYaoItem danyao) {
+            return danyao.getTier();
+        }
+        return 1;
     }
 
     @Override
@@ -45,6 +58,8 @@ public class LiandanRecipe implements Recipe<SimpleContainer> {
     @Override public RecipeType<?> getType() { return ModRecipes.LIANDAN_TYPE.get(); }
 
     // 获取配方所需的内丹
-    public Ingredient getIngredient() { return ingredient; }
+    public Ingredient getIngredient() {
+        return ingredient;
+    }
     public int getCookTime() { return cookTime; }
 }
