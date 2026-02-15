@@ -16,6 +16,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class ModBiomeModifierProvider {
     // 定义 Key 的位置
     public static final ResourceKey<BiomeModifier> ADD_GRAY_IRON_ORE = createKey("add_gray_iron_ore");
+    public static final ResourceKey<BiomeModifier> ADD_RUBY_ORE = createKey("add_ruby_ore");
     public static final ResourceKey<BiomeModifier> ADD_BRONZE_ORE = createKey("add_bronze_ore");
 
     public static void bootstrap(BootstapContext<BiomeModifier> context) {
@@ -26,6 +27,12 @@ public class ModBiomeModifierProvider {
         context.register(ADD_GRAY_IRON_ORE, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
                 biomes.getOrThrow(BiomeTags.IS_OVERWORLD), // 维度/生物群系限定
                 HolderSet.direct(placedFeatures.getOrThrow(ModWorldGenProvider.createPlaceKey(ModBlocks.GRAY_IRON_ORE.get()))),
+                GenerationStep.Decoration.UNDERGROUND_ORES // 生成阶段：地下矿石
+        ));
+
+        context.register(ADD_RUBY_ORE, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                biomes.getOrThrow(BiomeTags.IS_OVERWORLD), // 维度/生物群系限定
+                HolderSet.direct(placedFeatures.getOrThrow(ModWorldGenProvider.createPlaceKey(ModBlocks.RUBY_ORE.get()))),
                 GenerationStep.Decoration.UNDERGROUND_ORES // 生成阶段：地下矿石
         ));
 

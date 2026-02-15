@@ -20,6 +20,7 @@ public class ModTags {
     public static class Items {
         // 这就是你刚才报错缺少的那个常量
         public static final TagKey<Item> DANYAO_DROSS = tag("danyao_dross");
+        public static final TagKey<Item> ENGRAVING_KNIFE = tag("engraving_knife");
 
         private static TagKey<Item> tag(String name) {
             return ItemTags.create(ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, name));

@@ -15,10 +15,18 @@ public class ModZhCnLangProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
+        //刻刀类
+        add(ModItems.IRON_ENGRAVING_KNIFE.get(), "铁制刻刀");
+        add(ModItems.DIAMOND_ENGRAVING_KNIFE.get(), "钻石制刻刀");
+        //核心类
+        add(ModItems.LOW_LEVEL_HEXIN.get(), "§7低级丹炉核心");
+        add(ModItems.HIGH_LEVEL_HEXIN.get(), "§4顶级丹炉核心");
+        add(ModItems.MIDDLE_LEVEL_HEXIN.get(), "§6中级丹炉核心");
 
         //矿石类
         add(ModItems.GRAY_IRON_INGOT.get(),"§8灰铁锭");
         add(ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get(),"§6云纹铜");
+        add(ModItems.RUBY.get(), "§c红宝石");
 
         //内丹类
         add(ModItems.NEIDAN1.get(),"一阶内丹");
@@ -107,6 +115,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModBlocks.CULTIVATION_PLATFORM.get(),"修炼台");
         add(ModBlocks.GRAY_IRON_ORE.get(),"灰铁矿");
         add(ModBlocks.CLOUD_PATTERNED_BRONZE_ORE.get(),"云纹铜矿");
+        add(ModBlocks.RUBY_ORE.get(), "红宝石原矿");
         add(ModBlocks.PUTUAN_BLOCK.get(),"蒲团");
         add("putuan.xiulian.finish","§c你感到浑身清爽，但打坐时间太长你感到有被心魔入侵的风险，出去走走吧");
         add(ModBlocks.DROSS_BLOCK.get(), "丹渣块");
@@ -139,6 +148,9 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModEffects.ARMOR_PIERCING.get(),"§9破甲");
         add(ModEffects.SCORCHING.get(),"§c灼烧");
         add(ModEffects.DIZZINESS.get(),"§6眩晕");
+
+        //普通文字
+        add("心神受损","你受到攻击，心神受损，被迫停止了修炼！");
 
     }
 }

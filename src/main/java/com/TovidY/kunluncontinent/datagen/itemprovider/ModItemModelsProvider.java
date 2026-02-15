@@ -28,6 +28,16 @@ public class ModItemModelsProvider extends ItemModelProvider {
                     .texture("layer0", sharedTexture);
         }
 
+        //刻刀类
+        for (RegistryObject<Item> itemRegistry : ModItems.ENGRAVING_KNIFE){
+            basicItem(itemRegistry.get());
+        }
+
+        //核心类
+        for (RegistryObject<Item> itemRegistry : ModItems.HEXIN){
+            basicItem(itemRegistry.get());
+        }
+
         // 矿石和锭（使用 basicItem）
         for (RegistryObject<Item> itemRegistry : ModItems.MODSTONE){
             basicItem(itemRegistry.get());

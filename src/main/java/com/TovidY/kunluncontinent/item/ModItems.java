@@ -4,6 +4,7 @@ import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.item.armor.ModArmorBaseItem;
 import com.TovidY.kunluncontinent.item.armor.ModArmorMaterials;
 import com.TovidY.kunluncontinent.item.klitem.DanYaoItem;
+import com.TovidY.kunluncontinent.item.klitem.EngravingKnifeItem;
 import com.TovidY.kunluncontinent.item.klitem.HunHuanStorageItem;
 import com.TovidY.kunluncontinent.item.neidanitems.NeidanItem;
 import com.TovidY.kunluncontinent.item.testitemblock.TestLevelUp;
@@ -42,7 +43,7 @@ public class ModItems {
     //矿石宝石
     public static final RegistryObject<Item> GRAY_IRON_INGOT = ITEMS.register("gray_iron_ingot",()->new Item(new Item.Properties()));
     public static final RegistryObject<Item> CLOUD_PATTERNED_BRONZE_INGOT = ITEMS.register("cloud_patterned_bronze_ingot",()->new Item(new Item.Properties()));
-
+    public static final RegistryObject<Item> RUBY = ITEMS.register("ruby",()->new Item(new Item.Properties()));
     //装备
     public static final RegistryObject<Item> GRAY_IRON_HELMET = ITEMS.register("gray_iron_helmet",()->new ModArmorBaseItem(ModArmorMaterials.GRAY_IRON,ArmorItem.Type.HELMET,new Item.Properties()));
     public static final RegistryObject<Item> GRAY_IRON_CHESTPLATE = ITEMS.register("gray_iron_chestplate",()->new ModArmorBaseItem(ModArmorMaterials.GRAY_IRON,ArmorItem.Type.CHESTPLATE,new Item.Properties()));
@@ -74,6 +75,16 @@ public class ModItems {
 
     public static final RegistryObject <Item> DROSS = ITEMS.register("dross",()->new Item(new Item.Properties()));
 
+    //刻刀类
+    public static final RegistryObject<Item> IRON_ENGRAVING_KNIFE = ITEMS.register("iron_engravings_knife",()->new EngravingKnifeItem(new Item.Properties().durability(30)));
+    public static final RegistryObject<Item> DIAMOND_ENGRAVING_KNIFE = ITEMS.register("diamond_engravings_knife",()->new EngravingKnifeItem(new Item.Properties().durability(100)));
+
+    //丹炉核心
+    public static final RegistryObject<Item> LOW_LEVEL_HEXIN = ITEMS.register("low_level_hexin",()->new Item(new Item.Properties()));
+    public static final RegistryObject<Item> MIDDLE_LEVEL_HEXIN = ITEMS.register("middle_level_hexin",()->new Item(new Item.Properties()));
+    public static final RegistryObject<Item> HIGH_LEVEL_HEXIN = ITEMS.register("high_level_hexin",()->new Item(new Item.Properties()));
+
+
     // 魂环储存器
     public static final RegistryObject<Item> HUNHUAN_STORAGE_ONE = ITEMS.register("hunhuan_storage_one",
             () -> new HunHuanStorageItem(new Item.Properties().stacksTo(1).fireResistant(), 1, 6666));
@@ -90,6 +101,19 @@ public class ModItems {
     public static final RegistryObject<Item> HUNHUAN_STORAGE_FIVE = ITEMS.register("hunhuan_storage_five",
             () -> new HunHuanStorageItem(new Item.Properties().stacksTo(1).fireResistant(), 1, 20000000));
 
+
+    public static ArrayList<RegistryObject<Item>> HEXIN = new ArrayList<>();
+    static {
+        HEXIN.add(LOW_LEVEL_HEXIN);
+        HEXIN.add(MIDDLE_LEVEL_HEXIN);
+        HEXIN.add(HIGH_LEVEL_HEXIN);
+    }
+
+    public static ArrayList<RegistryObject<Item>> ENGRAVING_KNIFE = new ArrayList<>();
+    static {
+        ENGRAVING_KNIFE.add(IRON_ENGRAVING_KNIFE);
+        ENGRAVING_KNIFE.add(DIAMOND_ENGRAVING_KNIFE);
+    }
 
     public static ArrayList<RegistryObject<Item>> NEIDANLIST = new ArrayList<>();
     static {
@@ -127,6 +151,7 @@ public class ModItems {
     static {
         MODSTONE.add(GRAY_IRON_INGOT);
         MODSTONE.add(CLOUD_PATTERNED_BRONZE_INGOT);
+        MODSTONE.add(RUBY);
     }
 
     public static ArrayList<RegistryObject<Item>> DANYAOITEM = new ArrayList<>();

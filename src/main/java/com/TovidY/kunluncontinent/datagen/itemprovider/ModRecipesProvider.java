@@ -15,6 +15,8 @@ import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
 
 import java.util.List;
@@ -37,18 +39,52 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
         oreSmelting(pWriter,CLOUD_PATTERNED_BRONZE,RecipeCategory.MISC,ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get(),0.30F,400,"cloud_patterned_bronze");
         oreBlasting(pWriter,CLOUD_PATTERNED_BRONZE,RecipeCategory.MISC,ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get(),0.30F,200,"cloud_patterned_bronze");
 
+        //丹药炼制代码
         LiandanRecipeBuilder.create(ModItems.NEIDAN1.get(), ModItems.CHUYUAN_DAN.get(), 400)
                 .save(pWriter,ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "chuyuan_dan_from_neidan1"));
-
         LiandanRecipeBuilder.create(ModItems.NEIDAN2.get(), ModItems.BAICAOLING_DAN.get(), 400)
                 .save(pWriter,ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "baicaoling_dan_from_neidan2"));
-
         LiandanRecipeBuilder.create(ModItems.NEIDAN3.get(), ModItems.QIANHUABAO_DAN.get(), 400)
                 .save(pWriter,ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "qianhuabao_dan_from_neidan3"));
 
+        //丹渣
         SpecialRecipeBuilder.special(ModRecipes.DROSS_CONVERSION_SERIALIZER.get())
                 .save(pWriter, KlMain.MOD_ID + ":dross_conversion");
 
+        //低阶核心
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.LOW_LEVEL_HEXIN.get())
+                .pattern(" R ")
+                .pattern("RKR")
+                .pattern(" R ")
+                .define('K', Ingredient.of(ModTags.Items.ENGRAVING_KNIFE))
+                .define('R', ModItems.RUBY.get())
+                .unlockedBy("has_knife", has(ModTags.Items.ENGRAVING_KNIFE))
+                .save(pWriter);
+
+        //一阶炼丹炉
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,ModBlocks.LIANDANLU1.get())
+                .pattern("#Z#")
+                .pattern("ZXZ")
+                .pattern("#Z#")
+                .define('#', Blocks.OBSIDIAN)
+                .define('X', ModItems.LOW_LEVEL_HEXIN.get())
+                .define('Z', ModItems.GRAY_IRON_INGOT.get())
+                .unlockedBy("has_liandanlu1", has(ModBlocks.LIANDANLU1.get()))
+                .save(pWriter);
+
+        //二阶炼丹炉
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,ModBlocks.LIANDANLU2.get())
+                .pattern("#Y#")
+                .pattern("ZXZ")
+                .pattern("#Z#")
+                .define('#', Blocks.OBSIDIAN)
+                .define('X', ModItems.LOW_LEVEL_HEXIN.get())
+                .define('Z', ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get())
+                .define('Y', ModBlocks.LIANDANLU1.get())
+                .unlockedBy("has_liandanlu2", has(ModBlocks.LIANDANLU2.get()))
+                .save(pWriter);
+
+        //丹渣块
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.DROSS_BLOCK.get())
                 .pattern("###")
                 .pattern("###")
@@ -57,6 +93,27 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .unlockedBy("has_dross_item", has(ModItems.DROSS.get()))
                 .save(pWriter);
 
+        //铁刻刀
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,ModItems.IRON_ENGRAVING_KNIFE.get())
+                .pattern(" ##")
+                .pattern(" M#")
+                .pattern("M  ")
+                .define('#', Items.IRON_INGOT)
+                .define('M', Items.STICK)
+                .unlockedBy("has_iron_ingot", has(Items.IRON_INGOT))
+                .save(pWriter);
+
+        //钻石刻刀
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,ModItems.DIAMOND_ENGRAVING_KNIFE.get())
+                .pattern(" ##")
+                .pattern(" M#")
+                .pattern("M  ")
+                .define('#', Items.DIAMOND)
+                .define('M', Items.STICK)
+                .unlockedBy("has_diamond_ingot", has(Items.DIAMOND))
+                .save(pWriter);
+
+        //蒲团
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC,ModBlocks.PUTUAN_BLOCK.get())
                 .pattern("# #")
                 .pattern(" # ")

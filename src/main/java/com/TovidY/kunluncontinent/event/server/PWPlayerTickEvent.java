@@ -105,8 +105,7 @@ public class PWPlayerTickEvent {
         if (event.getEntity() instanceof ServerPlayer player) {
             if (player.getVehicle() != null && player.getVehicle().getTags().contains("putuan_seat")) {
                 player.stopRiding(); // 强行踢下来
-                player.sendSystemMessage(Component.literal("§c你受到攻击，心神受损，被迫停止了修炼！").withStyle(ChatFormatting.BOLD));
-
+                player.sendSystemMessage(Component.translatable("心神受损").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.RED));
                 player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 100, 0));
             }
         }
@@ -142,7 +141,6 @@ public class PWPlayerTickEvent {
 
     private static void updatePlayerFly(Player player, @NotNull PlayerAttributeCapability capability) {
         if (!player.isCreative() && !player.isSpectator()) {
-            // 检查是否被击落（可以添加一个临时状态标记）
             if (player.getPersistentData().contains("knocked_down")) {
                 player.getAbilities().mayfly = false;
                 player.getAbilities().flying = false;

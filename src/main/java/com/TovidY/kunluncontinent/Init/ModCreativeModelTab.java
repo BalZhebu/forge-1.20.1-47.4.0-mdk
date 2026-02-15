@@ -36,6 +36,14 @@ public class ModCreativeModelTab {
                             pOutput.accept(itemRegistryObject.get());
                         }
 
+                        for (RegistryObject<Item> itemRegistryObject : ModItems.ENGRAVING_KNIFE){
+                            pOutput.accept(itemRegistryObject.get());
+                        }
+
+                        for (RegistryObject<Item> itemRegistryObject : ModItems.HEXIN){
+                            pOutput.accept(itemRegistryObject.get());
+                        }
+
                         for (RegistryObject<Item> itemRegistryObject : ModItems.NEIDANLIST){
                             pOutput.accept(itemRegistryObject.get());
                         }

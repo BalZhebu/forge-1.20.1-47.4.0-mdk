@@ -34,6 +34,11 @@ public class ModBlocks {
             registerBlock("cloud_patterned_bronze_ore",()->
                     new Block(BlockBehaviour.Properties.copy(Blocks.NETHER_GOLD_ORE)));
 
+    public static final RegistryObject<Block> RUBY_ORE =
+            registerBlock("ruby_ore",()->
+                    new Block(BlockBehaviour.Properties.copy(Blocks.NETHER_GOLD_ORE)));
+
+
     public static final RegistryObject<Block> DROSS_BLOCK =
             registerBlock("dross_block",()->
                     new Block(BlockBehaviour.Properties.copy(Blocks.HAY_BLOCK)));
@@ -55,6 +60,7 @@ public class ModBlocks {
                     new LiandanluBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion(),3));
 
 
+
     //炼丹炉
     public static ArrayList<RegistryObject<Block>> LIANDANLULIST = new ArrayList<>();
     static{
@@ -68,6 +74,7 @@ public class ModBlocks {
     static {
         MODORE.add(GRAY_IRON_ORE);
         MODORE.add(CLOUD_PATTERNED_BRONZE_ORE);
+        MODORE.add(RUBY_ORE);
     }
 
     //mod方块

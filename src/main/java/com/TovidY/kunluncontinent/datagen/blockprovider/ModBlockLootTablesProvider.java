@@ -1,6 +1,7 @@
 package com.TovidY.kunluncontinent.datagen.blockprovider;
 
 import com.TovidY.kunluncontinent.block.ModBlocks;
+import com.TovidY.kunluncontinent.item.ModItems;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Item;
@@ -30,6 +31,8 @@ public class ModBlockLootTablesProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.LIANDANLU1.get());
         dropSelf(ModBlocks.LIANDANLU2.get());
         dropSelf(ModBlocks.LIANDANLU3.get());
+        // 红宝石矿石（使用矿石破坏战利品列表）
+        this.add(ModBlocks.RUBY_ORE.get(), block -> createCopperOreLikeDrops(block, ModItems.RUBY.get()));
     }
 
     //该方法是矿石类，挖矿石会掉落更多矿物，将原本的block方块替换成该方法即可
@@ -37,7 +40,7 @@ public class ModBlockLootTablesProvider extends BlockLootSubProvider {
     protected LootTable.Builder createCopperOreLikeDrops(Block pBlock, Item item) {
         return createSilkTouchDispatchTable(pBlock,
                 this.applyExplosionDecay(pBlock, LootItem.lootTableItem(item)
-                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(2.0F, 5.0F)))
+                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 3.0F)))
                         .apply(ApplyBonusCount.addOreBonusCount(Enchantments.BLOCK_FORTUNE))));
     }
 

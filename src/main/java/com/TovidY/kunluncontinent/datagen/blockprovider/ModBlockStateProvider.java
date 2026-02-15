@@ -19,6 +19,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         simpleBlockWithItem(ModBlocks.GRAY_IRON_ORE.get(), cubeAll(ModBlocks.GRAY_IRON_ORE.get()));
         simpleBlockWithItem(ModBlocks.CLOUD_PATTERNED_BRONZE_ORE.get(), cubeAll(ModBlocks.CLOUD_PATTERNED_BRONZE_ORE.get()));
         simpleBlockWithItem(ModBlocks.DROSS_BLOCK.get(), cubeAll(ModBlocks.DROSS_BLOCK.get()));
+        simpleBlockWithItem(ModBlocks.RUBY_ORE.get(), cubeAll(ModBlocks.RUBY_ORE.get()));
 
         // 自定义 3D 模型方块
         // 我们只生成 blockstate
@@ -42,6 +43,11 @@ public class ModBlockStateProvider extends BlockStateProvider {
         itemModels().withExistingParent("liandanlu3",
                 ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/liandanlu3"));
 
+        Block putuan = ModBlocks.PUTUAN_BLOCK.get();
+        simpleBlock(putuan, new ModelFile.UncheckedModelFile(
+                ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/putuan_block")));
+        itemModels().withExistingParent("putuan_block",
+                ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/putuan_block"));
 
     }
 }

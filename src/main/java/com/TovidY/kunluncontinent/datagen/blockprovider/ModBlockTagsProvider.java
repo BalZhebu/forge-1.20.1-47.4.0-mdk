@@ -28,6 +28,7 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
                 .add(ModBlocks.GRAY_IRON_ORE.get())
                 .add(ModBlocks.CLOUD_PATTERNED_BRONZE_ORE.get())
+                .add(ModBlocks.RUBY_ORE.get())
                 .add(ModBlocks.LIANDANLU1.get())
                 .add(ModBlocks.LIANDANLU2.get())
                 .add(ModBlocks.LIANDANLU3.get())
@@ -35,6 +36,7 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
         //需要铁镐破坏
         tag(BlockTags.NEEDS_IRON_TOOL)
                 .add(ModBlocks.GRAY_IRON_ORE.get())
+                .add(ModBlocks.RUBY_ORE.get())
         ;
         //需要钻石镐
         tag(BlockTags.NEEDS_DIAMOND_TOOL)

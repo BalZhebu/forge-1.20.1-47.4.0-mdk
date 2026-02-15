@@ -23,5 +23,8 @@ public class ModItemTagsProvider extends ItemTagsProvider {
                 .add(ModItems.CHUYUAN_DAN.get())
                 .add(ModItems.BAICAOLING_DAN.get())
                 .add(ModItems.QIANHUABAO_DAN.get());
+        this.tag(ModTags.Items.ENGRAVING_KNIFE)
+                .add(ModItems.IRON_ENGRAVING_KNIFE.get())
+                .add(ModItems.DIAMOND_ENGRAVING_KNIFE.get());
     }
 }
