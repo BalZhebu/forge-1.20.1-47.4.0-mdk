@@ -1,4 +1,4 @@
-// 1.20.1	2026-02-15T16:00:05.0637112	Loot Tables
+// 1.20.1	2026-02-15T17:57:05.1751136	Loot Tables
 66c3c20c81092639bca775de1ba907fba6171307 data/kunluncontinent/loot_tables/blocks/cloud_patterned_bronze_ore.json
 23011ebbd0364ddce8e3ac14c16ac0816206618c data/kunluncontinent/loot_tables/blocks/cultivation_platform.json
 31573a5752de2b7457d1e128f849af7f3e786f36 data/kunluncontinent/loot_tables/blocks/dross_block.json
@@ -7,4 +7,5 @@
 21264619e3a64fd84345618b978010b52c815bd7 data/kunluncontinent/loot_tables/blocks/liandanlu2.json
 55f8c2297705c882e02b7a4cd711fea298c6ab4d data/kunluncontinent/loot_tables/blocks/liandanlu3.json
 39475f933ac21f696e15d4ffbf747adb05983306 data/kunluncontinent/loot_tables/blocks/putuan_block.json
+aa28bd80edba9376b821fbd034837a402629cd21 data/kunluncontinent/loot_tables/blocks/red_fire_ore.json
 c0361b9af63e72b3c74fc59c24be56c87dd1d3d5 data/kunluncontinent/loot_tables/blocks/ruby_ore.json

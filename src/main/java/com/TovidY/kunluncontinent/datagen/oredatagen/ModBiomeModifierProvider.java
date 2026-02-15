@@ -18,6 +18,7 @@ public class ModBiomeModifierProvider {
     public static final ResourceKey<BiomeModifier> ADD_GRAY_IRON_ORE = createKey("add_gray_iron_ore");
     public static final ResourceKey<BiomeModifier> ADD_RUBY_ORE = createKey("add_ruby_ore");
     public static final ResourceKey<BiomeModifier> ADD_BRONZE_ORE = createKey("add_bronze_ore");
+    public static final ResourceKey<BiomeModifier> ADD_RED_FIRE = createKey("add_red_fire_ore");
 
     public static void bootstrap(BootstapContext<BiomeModifier> context) {
         var placedFeatures = context.lookup(Registries.PLACED_FEATURE);
@@ -40,6 +41,12 @@ public class ModBiomeModifierProvider {
         context.register(ADD_BRONZE_ORE, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
                 biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
                 HolderSet.direct(placedFeatures.getOrThrow(ModWorldGenProvider.createPlaceKey(ModBlocks.CLOUD_PATTERNED_BRONZE_ORE.get()))),
+                GenerationStep.Decoration.UNDERGROUND_ORES
+        ));
+
+        context.register(ADD_RED_FIRE, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                biomes.getOrThrow(BiomeTags.IS_NETHER),
+                HolderSet.direct(placedFeatures.getOrThrow(ModWorldGenProvider.createPlaceKey(ModBlocks.RED_FIRE_ORE.get()))),
                 GenerationStep.Decoration.UNDERGROUND_ORES
         ));
     }

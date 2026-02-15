@@ -1,6 +1,7 @@
 package com.TovidY.kunluncontinent.datagen;
 
 import com.TovidY.kunluncontinent.KlMain;
+import com.TovidY.kunluncontinent.datagen.advancement.ModAdvancementProvider;
 import com.TovidY.kunluncontinent.datagen.blockprovider.ModBlockLootTablesProvider;
 import com.TovidY.kunluncontinent.datagen.blockprovider.ModBlockStateProvider;
 import com.TovidY.kunluncontinent.datagen.blockprovider.ModBlockTagsProvider;
@@ -58,6 +59,10 @@ public class ModDataGenerator {
                         // 3. 注册维度/生物群系绑定 (哪个矿在哪出现)
                         .add(ForgeRegistries.Keys.BIOME_MODIFIERS, ModBiomeModifierProvider::bootstrap),
                 Set.of(KlMain.MOD_ID)));
+
+        //成就
+        generator.addProvider(event.includeServer(),
+                new ModAdvancementProvider(packOutput, lookupProvider, existingFileHelper));
 
     }
 }

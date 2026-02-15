@@ -1,5 +1,6 @@
 package com.TovidY.kunluncontinent.capability.playerattributes;
 
+import com.TovidY.kunluncontinent.advancement.ModTriggers;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapability;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.SynsAPI;
@@ -48,7 +49,7 @@ public class PlayerUpgradeSystem {
         int nextLevel = currentLevel + 1;
 
         if (attemptUpgrade(capability)) {
-            processSuccessfulUpgrade(capability, nextLevel);
+            processSuccessfulUpgrade(player,capability, nextLevel);
             player.sendSystemMessage(Component.literal("§a突破成功！晋升至 " + nextLevel + " 级！"));
             SynsAPI.synsPlayerAttribute(player);
         } else {
@@ -170,6 +171,7 @@ public class PlayerUpgradeSystem {
         }
         int finalLevel = 1 + talentLevel;
         applyGrowthAndBonus(capability, finalLevel, bonusHP, bonusAtk, bonusDef);
+        ModTriggers.LEVEL_TRIGGER.trigger(player, finalLevel);
         addWuHun(player);
         capability.setXiantianTalent(talentLevel);
         player.sendSystemMessage(Component.literal("§e【觉醒仪式】§f你的魂力已觉醒！"));
@@ -221,7 +223,7 @@ public class PlayerUpgradeSystem {
         SynsAPI.synsPlayerAttribute(player);
     }
 
-    private static void processSuccessfulUpgrade(PlayerAttributeCapability capability, int newLevel) {
+    private static void processSuccessfulUpgrade(ServerPlayer player,PlayerAttributeCapability capability, int newLevel) {
         capability.setDengji(newLevel);
         capability.setJingyan(0.0f);
 
@@ -232,6 +234,8 @@ public class PlayerUpgradeSystem {
         capability.setMaxjingyan(capability.getMaxjingyan() + (newLevel * 1.4f) * 1.3f);
         capability.setShengming(capability.getShengming() + 1f);
         capability.setWuchuan(capability.getWuchuan() + 1f);
+
+        ModTriggers.LEVEL_TRIGGER.trigger(player, newLevel);
     }
 
     private static void syncAttributesToClient(ServerPlayer player, PlayerAttributeCapability capability) {

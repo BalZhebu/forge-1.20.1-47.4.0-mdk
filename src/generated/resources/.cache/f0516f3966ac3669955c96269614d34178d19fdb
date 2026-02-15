@@ -1,4 +1,4 @@
-// 1.20.1	2026-02-15T16:00:05.06571	Block States: kunluncontinent
+// 1.20.1	2026-02-15T17:57:05.177131	Block States: kunluncontinent
 aa198151da873c1dceb6398fa0536b0cca1a4487 assets/kunluncontinent/blockstates/cloud_patterned_bronze_ore.json
 4703ee4b9d338dfdd6ced05549c1d0fc3cf561c8 assets/kunluncontinent/blockstates/dross_block.json
 f608ed04a98a341104bc5a8ac320d5b13724fbc0 assets/kunluncontinent/blockstates/gray_iron_ore.json
@@ -6,10 +6,12 @@ f608ed04a98a341104bc5a8ac320d5b13724fbc0 assets/kunluncontinent/blockstates/gray
 c8fa5b25f6479274fb5698ec7780b2e5e121eb85 assets/kunluncontinent/blockstates/liandanlu2.json
 6890768a5506b1f46cd79ee0a8861580e867ec70 assets/kunluncontinent/blockstates/liandanlu3.json
 4614ae4ce8f739d21e3a126ace5710b91069eced assets/kunluncontinent/blockstates/putuan_block.json
+f0dbb3ed9cda86e5c75c96f4617e02728487aef2 assets/kunluncontinent/blockstates/red_fire_ore.json
 0e8fdeffc4b79fded0df1216b945de125f3004c3 assets/kunluncontinent/blockstates/ruby_ore.json
 9e7f696f353e2a5afabbc52006cebfe6b6bb217c assets/kunluncontinent/models/block/cloud_patterned_bronze_ore.json
 c20385aba5d8bed9f939926acaee466a63eccf2c assets/kunluncontinent/models/block/dross_block.json
 e12904d4c71075a55af4db9026c09fa2013ba4ba assets/kunluncontinent/models/block/gray_iron_ore.json
+03b9085b613336fdeb81764d7f3aa962089f358c assets/kunluncontinent/models/block/red_fire_ore.json
 3078c732dee0e4792de366404e8088dc245bf3fd assets/kunluncontinent/models/block/ruby_ore.json
 c87e472f7bbb2cd8f0eea5f58ee722b229ac46c4 assets/kunluncontinent/models/item/cloud_patterned_bronze_ore.json
 54e5ee065198bf07d014470af7fe1d56880537fb assets/kunluncontinent/models/item/dross_block.json
@@ -18,4 +20,5 @@ b3d188d283d91efafb266418f8a0ffd2d7f6d151 assets/kunluncontinent/models/item/lian
 a95ac411fca55a7b1629f33658582603207f802d assets/kunluncontinent/models/item/liandanlu2.json
 c851c12decc0e3bcca348799661ffded94599313 assets/kunluncontinent/models/item/liandanlu3.json
 9be1d83c14147e1ead03e9cd56ac13c6052528dd assets/kunluncontinent/models/item/putuan_block.json
+d527e8def13d48eab85b44bb98e7f10f46367e5e assets/kunluncontinent/models/item/red_fire_ore.json
 ba7c1623217e38421247c11a8c62fa5bdb287b1a assets/kunluncontinent/models/item/ruby_ore.json

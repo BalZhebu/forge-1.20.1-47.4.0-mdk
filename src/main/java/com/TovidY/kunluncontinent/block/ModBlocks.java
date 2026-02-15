@@ -34,6 +34,11 @@ public class ModBlocks {
             registerBlock("cloud_patterned_bronze_ore",()->
                     new Block(BlockBehaviour.Properties.copy(Blocks.NETHER_GOLD_ORE)));
 
+    public static final RegistryObject<Block> RED_FIRE_ORE =
+            registerBlock("red_fire_ore",()->
+                    new Block(BlockBehaviour.Properties.copy(Blocks.NETHER_GOLD_ORE)));
+
+
     public static final RegistryObject<Block> RUBY_ORE =
             registerBlock("ruby_ore",()->
                     new Block(BlockBehaviour.Properties.copy(Blocks.NETHER_GOLD_ORE)));
@@ -74,6 +79,7 @@ public class ModBlocks {
     static {
         MODORE.add(GRAY_IRON_ORE);
         MODORE.add(CLOUD_PATTERNED_BRONZE_ORE);
+        MODORE.add(RED_FIRE_ORE);
         MODORE.add(RUBY_ORE);
     }
 

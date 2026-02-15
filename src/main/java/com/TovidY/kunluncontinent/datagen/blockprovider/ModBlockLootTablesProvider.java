@@ -24,10 +24,16 @@ public class ModBlockLootTablesProvider extends BlockLootSubProvider {
     @Override
     protected void generate() {
         dropSelf(ModBlocks.CULTIVATION_PLATFORM.get());
+
         dropSelf(ModBlocks.GRAY_IRON_ORE.get());
         dropSelf(ModBlocks.CLOUD_PATTERNED_BRONZE_ORE.get());
+        dropSelf(ModBlocks.RED_FIRE_ORE.get());
+        dropSelf(ModBlocks.RUBY_ORE.get());
+
         dropSelf(ModBlocks.PUTUAN_BLOCK.get());
+
         dropSelf(ModBlocks.DROSS_BLOCK.get());
+
         dropSelf(ModBlocks.LIANDANLU1.get());
         dropSelf(ModBlocks.LIANDANLU2.get());
         dropSelf(ModBlocks.LIANDANLU3.get());

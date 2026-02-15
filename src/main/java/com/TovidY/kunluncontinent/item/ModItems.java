@@ -43,6 +43,8 @@ public class ModItems {
     //矿石宝石
     public static final RegistryObject<Item> GRAY_IRON_INGOT = ITEMS.register("gray_iron_ingot",()->new Item(new Item.Properties()));
     public static final RegistryObject<Item> CLOUD_PATTERNED_BRONZE_INGOT = ITEMS.register("cloud_patterned_bronze_ingot",()->new Item(new Item.Properties()));
+    public static final RegistryObject<Item> RED_FIRE_INGOT = ITEMS.register("red_fire_ingot",()->new Item(new Item.Properties()));
+
     public static final RegistryObject<Item> RUBY = ITEMS.register("ruby",()->new Item(new Item.Properties()));
     //装备
     public static final RegistryObject<Item> GRAY_IRON_HELMET = ITEMS.register("gray_iron_helmet",()->new ModArmorBaseItem(ModArmorMaterials.GRAY_IRON,ArmorItem.Type.HELMET,new Item.Properties()));
@@ -54,6 +56,11 @@ public class ModItems {
     public static final RegistryObject<Item> CLOUD_PATTERNED_BRONZE_CHESTPLATE = ITEMS.register("cloud_patterned_bronze_chestplate",()->new ModArmorBaseItem(ModArmorMaterials.CLOUD_PATTERNED_BRONZE,ArmorItem.Type.CHESTPLATE,new Item.Properties()));
     public static final RegistryObject<Item> CLOUD_PATTERNED_BRONZE_LEGGINGS = ITEMS.register("cloud_patterned_bronze_leggings",()->new ModArmorBaseItem(ModArmorMaterials.CLOUD_PATTERNED_BRONZE,ArmorItem.Type.LEGGINGS,new Item.Properties()));
     public static final RegistryObject<Item> CLOUD_PATTERNED_BRONZE_BOOTS = ITEMS.register("cloud_patterned_bronze_boots",()->new ModArmorBaseItem(ModArmorMaterials.CLOUD_PATTERNED_BRONZE,ArmorItem.Type.BOOTS,new Item.Properties()));
+
+    public static final RegistryObject<Item> RED_FIRE_HELMET = ITEMS.register("red_fire_helmet",()->new ModArmorBaseItem(ModArmorMaterials.RED_FIRE,ArmorItem.Type.HELMET,new Item.Properties()));
+    public static final RegistryObject<Item> RED_FIRE_CHESTPLATE = ITEMS.register("red_fire_chestplate",()->new ModArmorBaseItem(ModArmorMaterials.RED_FIRE,ArmorItem.Type.CHESTPLATE,new Item.Properties()));
+    public static final RegistryObject<Item> RED_FIRE_LEGGINGS = ITEMS.register("red_fire_leggings",()->new ModArmorBaseItem(ModArmorMaterials.RED_FIRE,ArmorItem.Type.LEGGINGS,new Item.Properties()));
+    public static final RegistryObject<Item> RED_FIRE_BOOTS = ITEMS.register("red_fire_boots",()->new ModArmorBaseItem(ModArmorMaterials.RED_FIRE,ArmorItem.Type.BOOTS,new Item.Properties()));
 
     //工具
     public static final RegistryObject<Item> GRAY_IRON_SWORD = ITEMS.register("gray_iron_sword",()->new ModSwordBaseItem(ModToolTiers.GRAY_IRON,3,-1.8F,new Item.Properties()));
@@ -68,10 +75,22 @@ public class ModItems {
     public static final RegistryObject<Item> CLOUD_PATTERNED_BRONZE_SHOVEL = ITEMS.register("cloud_patterned_bronze_shovel",()->new ShovelItem(ModToolTiers.CLOUD_PATTERNED_BRONZE,2.8F, -0.8F,new Item.Properties()));
     public static final RegistryObject<Item> CLOUD_PATTERNED_BRONZE_HOE = ITEMS.register("cloud_patterned_bronze_hoe",()->new HoeItem(ModToolTiers.CLOUD_PATTERNED_BRONZE,-1, 1.0F,new Item.Properties()));
 
+    public static final RegistryObject<Item> RED_FIRE_SWORD = ITEMS.register("red_fire_sword",()->new ModSwordBaseItem(ModToolTiers.RED_FIRE,6,-1.0F,new Item.Properties()));
+    public static final RegistryObject<Item> RED_FIRE_PICKAXE = ITEMS.register("red_fire_pickaxe",()->new PickaxeItem(ModToolTiers.RED_FIRE,2, -1.1F,new Item.Properties()));
+    public static final RegistryObject<Item> RED_FIRE_AXE = ITEMS.register("red_fire_axe",()->new AxeItem(ModToolTiers.RED_FIRE,12.0F, -3.0F,new Item.Properties()));
+    public static final RegistryObject<Item> RED_FIRE_SHOVEL = ITEMS.register("red_fire_shovel",()->new ShovelItem(ModToolTiers.RED_FIRE,2.6F, -2.0F,new Item.Properties()));
+    public static final RegistryObject<Item> RED_FIRE_HOE = ITEMS.register("red_fire_hoe",()->new HoeItem(ModToolTiers.RED_FIRE,-1, 1.0F,new Item.Properties()));
+
     //丹药类
     public static final RegistryObject<Item> CHUYUAN_DAN = ITEMS.register("chuyuan_dan",()->new DanYaoItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setJingyan(16).setMinLevel(1).setTier(1));
     public static final RegistryObject<Item> BAICAOLING_DAN = ITEMS.register("baicaoling_dan",()->new DanYaoItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setJingyan(56).setMinLevel(10).setTier(2));
     public static final RegistryObject<Item> QIANHUABAO_DAN = ITEMS.register("qianhuabao_dan",()->new DanYaoItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setJingyan(112).setMinLevel(20).setTier(3));
+    public static final RegistryObject<Item> WANPOXUAN_DAN = ITEMS.register("wanpoxuan_dan",()->new DanYaoItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setJingyan(256).setMinLevel(30).setTier(4));
+    public static final RegistryObject<Item> SHIFANGJIE_DAN = ITEMS.register("shifangjie_dan",()->new DanYaoItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setJingyan(512).setMinLevel(40).setTier(5));
+    public static final RegistryObject<Item> HUANYUANYIQI_DAN = ITEMS.register("huanyuanyiqi_dan",()->new DanYaoItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setJingyan(2026).setMinLevel(50).setTier(6));
+    public static final RegistryObject<Item> TAIXUPOWANG_DAN = ITEMS.register("taixupowang_dan",()->new DanYaoItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setJingyan(4096).setMinLevel(60).setTier(7));
+    public static final RegistryObject<Item> QIANWANXINGCHEN_DAN = ITEMS.register("qianwanxingchen_dan",()->new DanYaoItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setJingyan(8192).setMinLevel(70).setTier(8));
+    public static final RegistryObject<Item> YIZAICHUANGSHENG_DAN = ITEMS.register("yizhaichuangsheng_dan",()->new DanYaoItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setJingyan(16384).setMinLevel(80).setTier(9));
 
     public static final RegistryObject <Item> DROSS = ITEMS.register("dross",()->new Item(new Item.Properties()));
 
@@ -151,6 +170,7 @@ public class ModItems {
     static {
         MODSTONE.add(GRAY_IRON_INGOT);
         MODSTONE.add(CLOUD_PATTERNED_BRONZE_INGOT);
+        MODSTONE.add(RED_FIRE_INGOT);
         MODSTONE.add(RUBY);
     }
 
@@ -159,6 +179,12 @@ public class ModItems {
         DANYAOITEM.add(CHUYUAN_DAN);
         DANYAOITEM.add(BAICAOLING_DAN);
         DANYAOITEM.add(QIANHUABAO_DAN);
+        DANYAOITEM.add(WANPOXUAN_DAN);
+        DANYAOITEM.add(SHIFANGJIE_DAN);
+        DANYAOITEM.add(HUANYUANYIQI_DAN);
+        DANYAOITEM.add(TAIXUPOWANG_DAN);
+        DANYAOITEM.add(QIANWANXINGCHEN_DAN);
+        DANYAOITEM.add(YIZAICHUANGSHENG_DAN);
 
         DANYAOITEM.add(DROSS);
     }
@@ -173,6 +199,10 @@ public class ModItems {
         EQUIPMENT.add(CLOUD_PATTERNED_BRONZE_CHESTPLATE);
         EQUIPMENT.add(CLOUD_PATTERNED_BRONZE_LEGGINGS);
         EQUIPMENT.add(CLOUD_PATTERNED_BRONZE_BOOTS);
+        EQUIPMENT.add(RED_FIRE_HELMET);
+        EQUIPMENT.add(RED_FIRE_CHESTPLATE);
+        EQUIPMENT.add(RED_FIRE_LEGGINGS);
+        EQUIPMENT.add(RED_FIRE_BOOTS);
     }
 
     public static ArrayList<RegistryObject<Item>> TOOL = new ArrayList<>();
@@ -187,6 +217,11 @@ public class ModItems {
         TOOL.add(CLOUD_PATTERNED_BRONZE_AXE);
         TOOL.add(CLOUD_PATTERNED_BRONZE_SHOVEL);
         TOOL.add(CLOUD_PATTERNED_BRONZE_HOE);
+        TOOL.add(RED_FIRE_SWORD);
+        TOOL.add(RED_FIRE_PICKAXE);
+        TOOL.add(RED_FIRE_AXE);
+        TOOL.add(RED_FIRE_SHOVEL);
+        TOOL.add(RED_FIRE_HOE);
     }
 
 

@@ -2,6 +2,8 @@ package com.TovidY.kunluncontinent.item.armor;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
@@ -50,6 +52,9 @@ public class ModArmorBaseItem extends ArmorItem {
         if(material == ModArmorMaterials.CLOUD_PATTERNED_BRONZE){
             return 2;
         }
+        if(material == ModArmorMaterials.RED_FIRE){
+            return 3;
+        }
         return 0;
     }
 
@@ -94,6 +99,9 @@ public class ModArmorBaseItem extends ArmorItem {
         if(this.getMaterial() == ModArmorMaterials.CLOUD_PATTERNED_BRONZE){
             return value*0.3f;
         }
+        if(this.getMaterial() == ModArmorMaterials.RED_FIRE){
+            return value*0.4f;
+        }
         return 0;
     }
 
@@ -103,6 +111,9 @@ public class ModArmorBaseItem extends ArmorItem {
         }
         if(this.getMaterial() == ModArmorMaterials.CLOUD_PATTERNED_BRONZE){
             return 8;
+        }
+        if(this.getMaterial() == ModArmorMaterials.RED_FIRE){
+            return 12;
         }
         return 0;
     }
@@ -125,16 +136,10 @@ public class ModArmorBaseItem extends ArmorItem {
 
     //备用：套装效果（药水）
     private static void applySetEffects(Player player, ArmorMaterial material) {
-//        if (material == SHArmorMaterial.lanhaizuan) {
-//            player.removeEffect(MobEffects.WATER_BREATHING);
-//            player.addEffect(new MobEffectInstance(
-//                    MobEffects.WATER_BREATHING, 60, 0, false, false, true));
-//        }
-//        else if (material == SHArmorMaterial.cixuexianjin) {
-//            player.removeEffect(MobEffects.FIRE_RESISTANCE);
-//            player.addEffect(new MobEffectInstance(
-//                    MobEffects.FIRE_RESISTANCE, 60, 0, false, false, true));
-//        }
+        if (material == ModArmorMaterials.RED_FIRE) {
+            player.removeEffect(MobEffects.FIRE_RESISTANCE);
+            player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 60, 0, false, false, true));
+        }
     }
 
     static {
@@ -161,6 +166,12 @@ public class ModArmorBaseItem extends ArmorItem {
             list.add(Component.translatable("最大生命","15%").withStyle(ChatFormatting.AQUA));
             list.add(Component.translatable("防御力","30%").withStyle(ChatFormatting.AQUA));
             list.add(Component.translatable("生命恢复","8").withStyle(ChatFormatting.AQUA));
+        }
+        if(this.getMaterial() == ModArmorMaterials.RED_FIRE){
+            list.add(Component.translatable("最大生命","20%").withStyle(ChatFormatting.AQUA));
+            list.add(Component.translatable("防御力","40%").withStyle(ChatFormatting.AQUA));
+            list.add(Component.translatable("生命恢复","12").withStyle(ChatFormatting.AQUA));
+            list.add(Component.translatable("火焰抗性").withStyle(ChatFormatting.DARK_RED));
         }
     }
 

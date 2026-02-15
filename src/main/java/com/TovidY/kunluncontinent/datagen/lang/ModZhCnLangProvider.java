@@ -7,6 +7,7 @@ import com.TovidY.kunluncontinent.entity.EntityInit;
 import com.TovidY.kunluncontinent.item.ModItems;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.LanguageProvider;
+import net.minecraftforge.fml.common.Mod;
 
 public class ModZhCnLangProvider extends LanguageProvider {
     public ModZhCnLangProvider(PackOutput output) {
@@ -15,6 +16,16 @@ public class ModZhCnLangProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
+        //成就类
+        add("advancements.kunluncontinent.root.title", "初入世界");
+        add("advancements.kunluncontinent.root.description", "踏入昆仑大陆的第一步。");
+        add("adv.kunlun.lvl10.title", "魂师");
+        add("adv.kunlun.lvl10.desc", "吸收一个魂环来到魂师行类吧");
+        add("adv.kunlun.lvl20.title", "大魂师");
+        add("adv.kunlun.lvl20.desc", "相比你已经学会了如何吸收魂环了吧");
+        add("adv.kunlun.lvl30.title", "魂尊");
+        add("adv.kunlun.lvl30.desc", "你觉得你能够吸收一个千年魂环了吗=-=？");
+
         //刻刀类
         add(ModItems.IRON_ENGRAVING_KNIFE.get(), "铁制刻刀");
         add(ModItems.DIAMOND_ENGRAVING_KNIFE.get(), "钻石制刻刀");
@@ -26,6 +37,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         //矿石类
         add(ModItems.GRAY_IRON_INGOT.get(),"§8灰铁锭");
         add(ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get(),"§6云纹铜");
+        add(ModItems.RED_FIRE_INGOT.get(), "§c赤火锭");
         add(ModItems.RUBY.get(), "§c红宝石");
 
         //内丹类
@@ -59,6 +71,12 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.CHUYUAN_DAN.get(),"初元丹");
         add(ModItems.BAICAOLING_DAN.get(),"百草灵丹");
         add(ModItems.QIANHUABAO_DAN.get(),"千华宝丹");
+        add(ModItems.WANPOXUAN_DAN.get(), "万魄玄丹");
+        add(ModItems.SHIFANGJIE_DAN.get(), "十方劫丹");
+        add(ModItems.HUANYUANYIQI_DAN.get(), "混元一气丹");
+        add(ModItems.TAIXUPOWANG_DAN.get(), "太虚破妄丹");
+        add(ModItems.QIANWANXINGCHEN_DAN.get(), "千万星辰丹");
+        add(ModItems.YIZAICHUANGSHENG_DAN.get(), "亿载长生丹");
         add(ModItems.DROSS.get(),"丹渣");
         add("吸收经验成功","§2吸收成功,经验：§e+%s");
         add("生命", "生命：%s/%s");
@@ -96,6 +114,12 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.CLOUD_PATTERNED_BRONZE_SHOVEL.get(),"§6云纹铜铲");
         add(ModItems.CLOUD_PATTERNED_BRONZE_HOE.get(),"§6云纹铜锄");
 
+        add(ModItems.RED_FIRE_SWORD.get(), "§c赤火剑");
+        add(ModItems.RED_FIRE_PICKAXE.get(), "§c赤火镐");
+        add(ModItems.RED_FIRE_AXE.get(), "§c赤火斧");
+        add(ModItems.RED_FIRE_SHOVEL.get(), "§c赤火铲");
+        add(ModItems.RED_FIRE_HOE.get(), "§c赤火锄");
+
         //实体类
         add(EntityInit.HUNHUAN.get(),"§b魂环");
         add(EntityInit.HUNHE.get(),"§e魂核");
@@ -111,15 +135,20 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.CLOUD_PATTERNED_BRONZE_LEGGINGS.get(),"§6云纹铜护腿");
         add(ModItems.CLOUD_PATTERNED_BRONZE_BOOTS.get(),"§6云纹铜靴子");
 
+        add(ModItems.RED_FIRE_HELMET.get(), "§c赤火头盔");
+        add(ModItems.RED_FIRE_CHESTPLATE.get(), "§c赤火胸甲");
+        add(ModItems.RED_FIRE_LEGGINGS.get(), "§c赤火护腿");
+        add(ModItems.RED_FIRE_BOOTS.get(), "§c赤火靴子");
+
         //方块类
         add(ModBlocks.CULTIVATION_PLATFORM.get(),"修炼台");
         add(ModBlocks.GRAY_IRON_ORE.get(),"灰铁矿");
         add(ModBlocks.CLOUD_PATTERNED_BRONZE_ORE.get(),"云纹铜矿");
+        add(ModBlocks.RED_FIRE_ORE.get(), "赤火矿");
         add(ModBlocks.RUBY_ORE.get(), "红宝石原矿");
         add(ModBlocks.PUTUAN_BLOCK.get(),"蒲团");
         add("putuan.xiulian.finish","§c你感到浑身清爽，但打坐时间太长你感到有被心魔入侵的风险，出去走走吧");
         add(ModBlocks.DROSS_BLOCK.get(), "丹渣块");
-
 
         //JEI类
         add("liandalu","炼丹炉");
@@ -151,6 +180,8 @@ public class ModZhCnLangProvider extends LanguageProvider {
 
         //普通文字
         add("心神受损","你受到攻击，心神受损，被迫停止了修炼！");
+        add("tooltip.kunlun.neidan_item","击杀不同年限生物概率掉落");
+        add("tooltip.kunlun.neidan_item_tier","内屏高品质低概率掉落");
 
     }
 }

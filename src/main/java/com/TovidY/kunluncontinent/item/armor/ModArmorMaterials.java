@@ -30,7 +30,14 @@ public enum ModArmorMaterials implements ArmorMaterial {
         map.put(ArmorItem.Type.CHESTPLATE,12);
         map.put(ArmorItem.Type.LEGGINGS,9);
         map.put(ArmorItem.Type.BOOTS,6);
-    }),30,SoundEvents.ARMOR_EQUIP_NETHERITE,5.0F,0.2F,()->Ingredient.of(ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get()));
+    }),30,SoundEvents.ARMOR_EQUIP_NETHERITE,5.0F,0.2F,()->Ingredient.of(ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get())),
+
+    RED_FIRE("red_fire", 55, Util.make(new EnumMap<>(ArmorItem.Type.class), (map) -> {
+        map.put(ArmorItem.Type.HELMET, 10);
+        map.put(ArmorItem.Type.CHESTPLATE, 15);
+        map.put(ArmorItem.Type.LEGGINGS, 13);
+        map.put(ArmorItem.Type.BOOTS, 8);
+    }), 30, SoundEvents.ARMOR_EQUIP_NETHERITE, 7.0F, 0.3F, () -> Ingredient.of(ModItems.RED_FIRE_INGOT.get()));
 
 
     private static final EnumMap<ArmorItem.Type, Integer> HEALTH_FUNCTION_FOR_TYPE = Util.make(new EnumMap<>(ArmorItem.Type.class), (map) -> {
