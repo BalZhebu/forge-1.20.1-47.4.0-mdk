@@ -13,7 +13,6 @@ import net.minecraftforge.fml.common.Mod;
  */
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID)
 public class PlayerUpgradeEventListener {
-
     /**
      * 监听玩家克隆事件（重生等），检查升级
      */
@@ -24,7 +23,6 @@ public class PlayerUpgradeEventListener {
             PlayerUpgradeSystem.triggerUpgradeCheck(serverPlayer);
         }
     }
-
     /**
      * 监听玩家登录事件，检查升级
      */
@@ -34,12 +32,5 @@ public class PlayerUpgradeEventListener {
             // 玩家登录时检查升级
             PlayerUpgradeSystem.triggerUpgradeCheck(serverPlayer);
         }
-    }
-
-    /**
-     * 监听玩家加载完成事件，检查升级
-     */
-    @SubscribeEvent
-    public static void onPlayerLoadComplete(PlayerEvent.LoadFromFile event) {
     }
 }

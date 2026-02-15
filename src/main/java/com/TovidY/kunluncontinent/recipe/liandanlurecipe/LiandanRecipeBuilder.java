@@ -50,7 +50,6 @@ public class LiandanRecipeBuilder implements RecipeBuilder {
         });
     }
 
-    // 实现接口所需的各种无用占位方法...
     @Override public RecipeBuilder unlockedBy(String name, CriterionTriggerInstance criterion) { return this; }
     @Override public RecipeBuilder group(@Nullable String group) { return this; }
     @Override public Item getResult() { return result; }

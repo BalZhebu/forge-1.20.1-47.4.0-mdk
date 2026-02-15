@@ -21,6 +21,7 @@ public class ModItemTagsProvider extends ItemTagsProvider {
     protected void addTags(HolderLookup.Provider pProvider) {
         this.tag(ModTags.Items.DANYAO_DROSS)
                 .add(ModItems.CHUYUAN_DAN.get())
-                .add(ModItems.BAICAOLING_DAN.get());
+                .add(ModItems.BAICAOLING_DAN.get())
+                .add(ModItems.QIANHUABAO_DAN.get());
     }
 }

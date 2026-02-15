@@ -39,7 +39,6 @@ public class LiandanRecipe implements Recipe<SimpleContainer> {
 
     @Override
     public boolean matches(SimpleContainer inv, Level level) {
-        // 核心逻辑：检查 0-4 槽位是否全是配方要求的内丹
         for (int i = 0; i < 5; i++) {
             if (!ingredient.test(inv.getItem(i))) return false;
         }
@@ -57,7 +56,6 @@ public class LiandanRecipe implements Recipe<SimpleContainer> {
     @Override public RecipeSerializer<?> getSerializer() { return ModRecipes.LIANDAN_SERIALIZER.get(); }
     @Override public RecipeType<?> getType() { return ModRecipes.LIANDAN_TYPE.get(); }
 
-    // 获取配方所需的内丹
     public Ingredient getIngredient() {
         return ingredient;
     }

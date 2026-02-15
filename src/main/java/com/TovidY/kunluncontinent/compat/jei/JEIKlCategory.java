@@ -6,13 +6,16 @@ import com.TovidY.kunluncontinent.recipe.liandanlurecipe.LiandanRecipe;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
+import mezz.jei.api.gui.drawable.IDrawableAnimated;
 import mezz.jei.api.gui.drawable.IDrawableBuilder;
+import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -23,21 +26,27 @@ public class JEIKlCategory implements IRecipeCategory<LiandanRecipe> {
     public static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kl_polishing");
     public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/gui/liandanlu_jei.png");
 
-    public static final RecipeType<LiandanRecipe> LIANDANLU_TYPE =
-            new RecipeType<>(UID,LiandanRecipe.class);
+    private final ResourceLocation PROGRESS_EMPTY = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/screens/huoyan.png");
+    private final ResourceLocation PROGRESS_FULL = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/screens/huoyanmax.png");
+
+    public static final RecipeType<LiandanRecipe> LIANDANLU_TYPE = new RecipeType<>(UID, LiandanRecipe.class);
 
     private final IDrawable background;
     private final IDrawable icon;
 
+    private final IDrawable staticFlame;
+    private final IDrawableAnimated animatedFlame;
+
     public JEIKlCategory(IGuiHelper helper) {
+        this.background = helper.drawableBuilder(TEXTURE, 0, 0, 188, 80)
+                .setTextureSize(188, 80).build();
 
-        IDrawableBuilder iDrawableBuilder = helper.drawableBuilder(TEXTURE, 0, 0, 188, 80);
-
-        this.background = iDrawableBuilder.setTextureSize(188,80).build();
-
-        this.icon = helper.createDrawableIngredient(VanillaTypes.ITEM_STACK,new ItemStack(ModBlocks.LIANDANLU1.get()));
+        this.icon = helper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ModBlocks.LIANDANLU1.get()));
+        this.staticFlame = helper.createDrawable(PROGRESS_EMPTY, 0, 0, 32, 32);
+        this.animatedFlame = helper.drawableBuilder(PROGRESS_FULL, 0, 0, 32, 32)
+                .setTextureSize(32, 32)
+                .buildAnimated(120, IDrawableAnimated.StartDirection.BOTTOM, false);
     }
-
 
     @Override
     public RecipeType<LiandanRecipe> getRecipeType() {
@@ -50,7 +59,8 @@ public class JEIKlCategory implements IRecipeCategory<LiandanRecipe> {
     }
 
     @Override
-    public @Nullable IDrawable getBackground() {
+    @SuppressWarnings("removal")
+    public IDrawable getBackground() {
         return this.background;
     }
 
@@ -60,29 +70,24 @@ public class JEIKlCategory implements IRecipeCategory<LiandanRecipe> {
     }
 
     @Override
+    public void draw(LiandanRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
+        int flameX = 67;
+        int flameY = 30;
+        this.staticFlame.draw(guiGraphics, flameX, flameY);
+        this.animatedFlame.draw(guiGraphics, flameX, flameY);
+        guiGraphics.drawString(Minecraft.getInstance().font,Component.translatable("丹渣块降低丹药出现破碎的概率"),5,63,0xFFFFFF,true);
+    }
+
+    @Override
     public void setRecipe(IRecipeLayoutBuilder builder, LiandanRecipe recipe, IFocusGroup focuses) {
-        // 输入槽 (5个内丹槽)
         for (int i = 0; i < 5; i++) {
             builder.addSlot(RecipeIngredientRole.INPUT, 8 + (i * 18), 8)
                     .addIngredients(recipe.getIngredient());
         }
-        // 药渣 (可选)
         builder.addSlot(RecipeIngredientRole.CATALYST, 9, 42)
                 .addItemStack(new ItemStack(ModBlocks.DROSS_BLOCK.get().asItem()));
-        // 输出 (使用正确的 Access 传入)
+
         builder.addSlot(RecipeIngredientRole.OUTPUT, 109, 9)
                 .addItemStack(recipe.getResultItem(Minecraft.getInstance().level.registryAccess()));
     }
-
-//            for (int i = 0; i < 5; i++) {
-//        builder.addSlot(RecipeIngredientRole.INPUT, 10 + (i * 18), 6)
-//                .addIngredients(recipe.getIngredient());
-//    }
-//    // 药渣 (可选)
-//        builder.addSlot(RecipeIngredientRole.CATALYST, 8, 43)
-//            .addItemStack(new ItemStack(ModBlocks.DROSS_BLOCK.get().asItem()));
-//    // 输出 (使用正确的 Access 传入)
-//        builder.addSlot(RecipeIngredientRole.OUTPUT, 109, 8)
-//            .addItemStack(recipe.getResultItem(Minecraft.getInstance().level.registryAccess()));
-
 }

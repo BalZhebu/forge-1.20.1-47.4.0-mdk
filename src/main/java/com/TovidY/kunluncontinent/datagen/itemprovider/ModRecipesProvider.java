@@ -43,6 +43,9 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
         LiandanRecipeBuilder.create(ModItems.NEIDAN2.get(), ModItems.BAICAOLING_DAN.get(), 400)
                 .save(pWriter,ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "baicaoling_dan_from_neidan2"));
 
+        LiandanRecipeBuilder.create(ModItems.NEIDAN3.get(), ModItems.QIANHUABAO_DAN.get(), 400)
+                .save(pWriter,ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "qianhuabao_dan_from_neidan3"));
+
         SpecialRecipeBuilder.special(ModRecipes.DROSS_CONVERSION_SERIALIZER.get())
                 .save(pWriter, KlMain.MOD_ID + ":dross_conversion");
 

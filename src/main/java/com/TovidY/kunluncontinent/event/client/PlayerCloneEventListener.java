@@ -58,6 +58,9 @@ public class PlayerCloneEventListener {
                     newAttrs.setMaxjingyan(originalAttrs.getMaxjingyan());
                     newAttrs.setWuchuan(originalAttrs.getWuchuan());
                     newAttrs.setShengmingHuifu(originalAttrs.getShengmingHuifu());
+
+                    newAttrs.setXiulianTime(originalAttrs.getXiulianTime());
+
                     newAttrs.setInitialized(originalAttrs.isInitialized());
                     if (newPlayer instanceof ServerPlayer serverPlayer) {
                         PlayerAttributeInit.syncMaxHealthToPlayer(serverPlayer, newAttrs.getMaxshengming());

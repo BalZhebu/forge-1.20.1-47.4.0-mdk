@@ -14,7 +14,7 @@ public class LiandanRecipeSerializer implements RecipeSerializer<LiandanRecipe> 
     public LiandanRecipe fromJson(ResourceLocation pRecipeId, JsonObject pSerializedRecipe) {
         Ingredient ingredient = Ingredient.fromJson(GsonHelper.getAsJsonObject(pSerializedRecipe, "ingredient"));
         JsonObject resultObj = GsonHelper.getAsJsonObject(pSerializedRecipe, "result");
-        ResourceLocation itemId = new ResourceLocation(GsonHelper.getAsString(resultObj, "item"));
+        ResourceLocation itemId = ResourceLocation.tryParse(GsonHelper.getAsString(resultObj, "item"));
         ItemStack result = new ItemStack(ForgeRegistries.ITEMS.getValue(itemId));
         int cookTime = GsonHelper.getAsInt(pSerializedRecipe, "cookTime", 200);
         int recipeLevel = GsonHelper.getAsInt(pSerializedRecipe, "recipeLevel", 1);
@@ -37,7 +37,6 @@ public class LiandanRecipeSerializer implements RecipeSerializer<LiandanRecipe> 
         pRecipe.getIngredient().toNetwork(pBuffer);
         pBuffer.writeItem(pRecipe.getResultItem(null));
         pBuffer.writeInt(pRecipe.getCookTime());
-        // 新增：向网络写入 level
         pBuffer.writeInt(pRecipe.getRecipeLevel());
     }
 }

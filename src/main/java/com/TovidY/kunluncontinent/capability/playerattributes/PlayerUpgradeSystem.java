@@ -1,6 +1,8 @@
 package com.TovidY.kunluncontinent.capability.playerattributes;
 
+import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapability;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
+import com.TovidY.kunluncontinent.network.SynsAPI;
 import com.TovidY.kunluncontinent.network.server.SPacketSyncPlayerAttribute;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
@@ -10,10 +12,13 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraftforge.network.PacketDistributor;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import static com.TovidY.kunluncontinent.capability.playerattributes.PlayerHunhuanAPI.addWuHun;
 import net.minecraft.ChatFormatting;
+import org.antlr.v4.codegen.model.Sync;
 import org.jetbrains.annotations.NotNull;
 
 //天赋系统
@@ -45,7 +50,7 @@ public class PlayerUpgradeSystem {
         if (attemptUpgrade(capability)) {
             processSuccessfulUpgrade(capability, nextLevel);
             player.sendSystemMessage(Component.literal("§a突破成功！晋升至 " + nextLevel + " 级！"));
-            syncAttributesToClient(player, capability);
+            SynsAPI.synsPlayerAttribute(player);
         } else {
             processUpgradeFailure(player, capability);
         }
@@ -83,7 +88,7 @@ public class PlayerUpgradeSystem {
         // 凡人阶段的魂环限制 (每10级需要一个魂环才能继续升级)
         int rings = getMaxRings(cap);
         if (level >= rings * 10 + 10) {
-            player.connection.send(new ClientboundSetTitleTextPacket(Component.translatable("需要吸收魂环才能继续突破")));
+            player.connection.send(new ClientboundSetTitleTextPacket(Component.translatable("需要吸收魂环").withStyle(ChatFormatting.RED)));
             return false;
         }
 
@@ -107,9 +112,13 @@ public class PlayerUpgradeSystem {
      * 请根据你的 Capability 实际字段修改此处的获取逻辑
      */
     private static int getMaxRings(PlayerAttributeCapability cap) {
-        // 这里假设你的 Capability 里存了魂环列表或数量
-        // 例如：return cap.getHunhuanList().size();
-        return 0; // 暂时占位
+        int max = 0;
+        Map<String, List<MobAttributeCapability>> map = cap.getMonsterCapabilityLists();
+        if (map == null || map.isEmpty()) return 0;
+        for (List<MobAttributeCapability> list : map.values()) {
+            if (list != null && list.size() > max) max = list.size();
+        }
+        return max;
     }
 
     private static void processAwakening(ServerPlayer player, PlayerAttributeCapability capability) {
@@ -209,7 +218,7 @@ public class PlayerUpgradeSystem {
         float penalty = capability.getMaxjingyan() * 0.8f;
         capability.setJingyan(Math.max(0, capability.getJingyan() - penalty));
         player.sendSystemMessage(Component.literal("§c突破失败！保底率提升至: " + capability.getTupochenggonglv() + "%"));
-        syncAttributesToClient(player, capability);
+        SynsAPI.synsPlayerAttribute(player);
     }
 
     private static void processSuccessfulUpgrade(PlayerAttributeCapability capability, int newLevel) {

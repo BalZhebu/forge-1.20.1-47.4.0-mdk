@@ -2,13 +2,18 @@ package com.TovidY.kunluncontinent.block.klblock;
 
 import com.TovidY.kunluncontinent.block.ModBlockEntities;
 import com.TovidY.kunluncontinent.block.blockentity.LiandanluBlockEntity;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
@@ -21,6 +26,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class LiandanluBlock extends BaseEntityBlock {
     private final int tier;
@@ -79,5 +85,10 @@ public class LiandanluBlock extends BaseEntityBlock {
             }
             super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
         }
+    }
+
+    @Override
+    public void appendHoverText(ItemStack pStack, @org.jetbrains.annotations.Nullable BlockGetter pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
+        pTooltip.add(Component.translatable("tooltip.kunluncontinent.liandanlu").withStyle(ChatFormatting.DARK_GRAY));
     }
 }

@@ -31,6 +31,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModBlocks.LIANDANLU1.get(),"一阶炼丹炉");
         add(ModBlocks.LIANDANLU2.get(),"二阶炼丹炉");
         add(ModBlocks.LIANDANLU3.get(),"三阶炼丹炉");
+        add("tooltip.kunluncontinent.liandanlu","不同等阶的炼丹炉只不过是炼丹速度上的差异");
 
         //测试物品类
         add(ModItems.DANYAO_TEST.get(),"测试物品---经验+9999999");
@@ -110,6 +111,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("putuan.xiulian.finish","§c你感到浑身清爽，但打坐时间太长你感到有被心魔入侵的风险，出去走走吧");
         add(ModBlocks.DROSS_BLOCK.get(), "丹渣块");
 
+
         //JEI类
         add("liandalu","炼丹炉");
 
@@ -131,6 +133,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("武魂已关闭", "§a武魂已关闭");
         add("请开启武魂","§c请先开启武魂");
         add("阶段等级","§c请先升级到下一个等级阶段再吸收魂环（10的倍数）");
+        add("需要吸收魂环","需要吸收魂环才能继续突破");
 
         //药水类
         add(ModEffects.ARMOR_PIERCING.get(),"§9破甲");

@@ -8,14 +8,10 @@ import java.util.Random;
 
 public class QualityCalculator {
     public static int calculate(IItemHandler inv) {
-        // 1. 初始权重 (破碎概率最高，红色极低)
         float[] weights = {100f, 50f, 20f, 10f, 5f, 1f};
-
-        // 2. 检查 0-4 槽内丹品质 (假设内丹 NBT 里存了 Quality)
         for (int i = 0; i < 5; i++) {
             ItemStack stack = inv.getStackInSlot(i);
             int neidanQuality = stack.getOrCreateTag().getInt("Quality");
-            // 每一个等级的内丹品质，提升对应档位的权重
             for (int q = 1; q <= neidanQuality; q++) {
                 weights[Math.min(q, 5)] += 15f;
             }
