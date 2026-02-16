@@ -40,6 +40,11 @@ public class ModItems {
     public static final RegistryObject<Item> NEIDAN4 = ITEMS.register("neidan4",()->new NeidanItem(new Item.Properties(),4));
     public static final RegistryObject<Item> NEIDAN5 = ITEMS.register("neidan5",()->new NeidanItem(new Item.Properties(),5));
 
+    public static final RegistryObject<Item> NEIDAN6 = ITEMS.register("neidan6",()->new NeidanItem(new Item.Properties(),6));
+    public static final RegistryObject<Item> NEIDAN7 = ITEMS.register("neidan7",()->new NeidanItem(new Item.Properties(),7));
+    public static final RegistryObject<Item> NEIDAN8 = ITEMS.register("neidan8",()->new NeidanItem(new Item.Properties(),8));
+    public static final RegistryObject<Item> NEIDAN9 = ITEMS.register("neidan9",()->new NeidanItem(new Item.Properties(),9));
+
     //矿石宝石
     public static final RegistryObject<Item> GRAY_IRON_INGOT = ITEMS.register("gray_iron_ingot",()->new Item(new Item.Properties()));
     public static final RegistryObject<Item> CLOUD_PATTERNED_BRONZE_INGOT = ITEMS.register("cloud_patterned_bronze_ingot",()->new Item(new Item.Properties()));
@@ -141,6 +146,10 @@ public class ModItems {
         NEIDANLIST.add(NEIDAN3);
         NEIDANLIST.add(NEIDAN4);
         NEIDANLIST.add(NEIDAN5);
+        NEIDANLIST.add(NEIDAN6);
+        NEIDANLIST.add(NEIDAN7);
+        NEIDANLIST.add(NEIDAN8);
+        NEIDANLIST.add(NEIDAN9);
     }
 
 

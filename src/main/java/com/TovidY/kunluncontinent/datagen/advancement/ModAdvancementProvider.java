@@ -73,6 +73,78 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                     )
                     .addCriterion("reached_lvl", LevelTrigger.Instance.levelReached(30))
                     .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/level_30"), existingFileHelper);
+
+            Advancement level40 = Advancement.Builder.advancement()
+                    .parent(level10)
+                    .display(
+                            ModItems.WANPOXUAN_DAN.get(),
+                            Component.translatable("adv.kunlun.lvl40.title"),
+                            Component.translatable("adv.kunlun.lvl40.desc"),
+                            null,
+                            FrameType.GOAL, true, true, false
+                    )
+                    .addCriterion("reached_lvl", LevelTrigger.Instance.levelReached(40))
+                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/level_40"), existingFileHelper);
+
+            Advancement level50 = Advancement.Builder.advancement()
+                    .parent(level10)
+                    .display(
+                            ModItems.SHIFANGJIE_DAN.get(),
+                            Component.translatable("adv.kunlun.lvl50.title"),
+                            Component.translatable("adv.kunlun.lvl50.desc"),
+                            null,
+                            FrameType.GOAL, true, true, false
+                    )
+                    .addCriterion("reached_lvl", LevelTrigger.Instance.levelReached(50))
+                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/level_50"), existingFileHelper);
+
+            Advancement level60 = Advancement.Builder.advancement()
+                    .parent(level10)
+                    .display(
+                            ModItems.HUANYUANYIQI_DAN.get(),
+                            Component.translatable("adv.kunlun.lvl60.title"),
+                            Component.translatable("adv.kunlun.lvl60.desc"),
+                            null,
+                            FrameType.GOAL, true, true, false
+                    )
+                    .addCriterion("reached_lvl", LevelTrigger.Instance.levelReached(60))
+                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/level_60"), existingFileHelper);
+
+            Advancement level70 = Advancement.Builder.advancement()
+                    .parent(level10)
+                    .display(
+                            ModItems.TAIXUPOWANG_DAN.get(),
+                            Component.translatable("adv.kunlun.lvl70.title"),
+                            Component.translatable("adv.kunlun.lvl70.desc"),
+                            null,
+                            FrameType.GOAL, true, true, false
+                    )
+                    .addCriterion("reached_lvl", LevelTrigger.Instance.levelReached(70))
+                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/level_70"), existingFileHelper);
+
+            Advancement level80 = Advancement.Builder.advancement()
+                    .parent(level10)
+                    .display(
+                            ModItems.QIANWANXINGCHEN_DAN.get(),
+                            Component.translatable("adv.kunlun.lvl80.title"),
+                            Component.translatable("adv.kunlun.lvl80.desc"),
+                            null,
+                            FrameType.GOAL, true, true, false
+                    )
+                    .addCriterion("reached_lvl", LevelTrigger.Instance.levelReached(80))
+                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/level_80"), existingFileHelper);
+
+            Advancement level90 = Advancement.Builder.advancement()
+                    .parent(level10)
+                    .display(
+                            ModItems.YIZAICHUANGSHENG_DAN.get(),
+                            Component.translatable("adv.kunlun.lvl90.title"),
+                            Component.translatable("adv.kunlun.lvl90.desc"),
+                            null,
+                            FrameType.GOAL, true, true, false
+                    )
+                    .addCriterion("reached_lvl", LevelTrigger.Instance.levelReached(90))
+                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/level_90"), existingFileHelper);
         }
     }
 }

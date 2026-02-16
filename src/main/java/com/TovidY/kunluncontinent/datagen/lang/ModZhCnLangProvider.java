@@ -25,6 +25,19 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("adv.kunlun.lvl20.desc", "相比你已经学会了如何吸收魂环了吧");
         add("adv.kunlun.lvl30.title", "魂尊");
         add("adv.kunlun.lvl30.desc", "你觉得你能够吸收一个千年魂环了吗=-=？");
+        add("adv.kunlun.lvl40.title", "魂宗");
+        add("adv.kunlun.lvl40.desc", "你觉得你能够吸收一个万年魂环了吗=-=？");
+        add("adv.kunlun.lvl50.title", "魂王");
+        add("adv.kunlun.lvl50.desc", "'像你这个年纪都能吸收十万年魂环了'");
+        add("adv.kunlun.lvl60.title", "魂帝");
+        add("adv.kunlun.lvl60.desc", "属性质的飞跃！");
+        add("adv.kunlun.lvl70.title", "魂圣");
+        add("adv.kunlun.lvl70.desc", "你觉得你能够吸收一个百万年魂环了吗=-=？");
+        add("adv.kunlun.lvl80.title", "魂斗罗");
+        add("adv.kunlun.lvl80.desc", "潜力高运气好的是不是拿到神位了呢~");
+        add("adv.kunlun.lvl90.title", "封号斗罗");
+        add("adv.kunlun.lvl90.desc", "是时候去拿到神位传承了！");
+
 
         //刻刀类
         add(ModItems.IRON_ENGRAVING_KNIFE.get(), "铁制刻刀");
@@ -46,6 +59,11 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.NEIDAN3.get(),"三阶内丹");
         add(ModItems.NEIDAN4.get(),"四阶内丹");
         add(ModItems.NEIDAN5.get(),"五阶内丹");
+        add(ModItems.NEIDAN6.get(),"六阶内丹");
+        add(ModItems.NEIDAN7.get(),"七阶内丹");
+        add(ModItems.NEIDAN8.get(),"八阶内丹");
+        add(ModItems.NEIDAN9.get(),"九阶内丹");
+
 
         //炼丹炉
         add(ModBlocks.LIANDANLU1.get(),"一阶炼丹炉");
@@ -145,7 +163,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModBlocks.GRAY_IRON_ORE.get(),"灰铁矿");
         add(ModBlocks.CLOUD_PATTERNED_BRONZE_ORE.get(),"云纹铜矿");
         add(ModBlocks.RED_FIRE_ORE.get(), "赤火矿");
-        add(ModBlocks.RUBY_ORE.get(), "红宝石原矿");
+        add(ModBlocks.RUBY_ORE.get(), "深层红宝石原矿");
         add(ModBlocks.PUTUAN_BLOCK.get(),"蒲团");
         add("putuan.xiulian.finish","§c你感到浑身清爽，但打坐时间太长你感到有被心魔入侵的风险，出去走走吧");
         add(ModBlocks.DROSS_BLOCK.get(), "丹渣块");
