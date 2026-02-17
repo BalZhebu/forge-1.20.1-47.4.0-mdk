@@ -22,7 +22,13 @@ public class ModItemTagsProvider extends ItemTagsProvider {
         this.tag(ModTags.Items.DANYAO_DROSS)
                 .add(ModItems.CHUYUAN_DAN.get())
                 .add(ModItems.BAICAOLING_DAN.get())
-                .add(ModItems.QIANHUABAO_DAN.get());
+                .add(ModItems.QIANHUABAO_DAN.get())
+                .add(ModItems.WANPOXUAN_DAN.get())
+                .add(ModItems.SHIFANGJIE_DAN.get())
+                .add(ModItems.HUANYUANYIQI_DAN.get())
+                .add(ModItems.TAIXUPOWANG_DAN.get())
+                .add(ModItems.QIANWANXINGCHEN_DAN.get())
+                .add(ModItems.YIZAICHUANGSHENG_DAN.get());
         this.tag(ModTags.Items.ENGRAVING_KNIFE)
                 .add(ModItems.IRON_ENGRAVING_KNIFE.get())
                 .add(ModItems.DIAMOND_ENGRAVING_KNIFE.get());

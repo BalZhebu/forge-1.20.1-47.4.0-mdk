@@ -38,10 +38,18 @@ public class ModBlocks {
             registerBlock("red_fire_ore",()->
                     new Block(BlockBehaviour.Properties.copy(Blocks.NETHER_GOLD_ORE)));
 
+    public static final RegistryObject<Block> SUNKEN_SILVER_ORE =
+            registerBlock("sunken_silver_ore",()->
+                    new Block(BlockBehaviour.Properties.copy(Blocks.NETHER_GOLD_ORE)));
+
 
     public static final RegistryObject<Block> RUBY_ORE =
             registerBlock("ruby_ore",()->
                     new Block(BlockBehaviour.Properties.copy(Blocks.NETHER_GOLD_ORE)));
+
+    public static final RegistryObject<Block> AMETHYST_ORE =
+            registerBlock("amethyst_ore",()->
+                    new Block(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)));
 
 
     public static final RegistryObject<Block> DROSS_BLOCK =
@@ -64,6 +72,30 @@ public class ModBlocks {
             registerBlock("liandanlu3",()->
                     new LiandanluBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion(),3));
 
+    public static final RegistryObject<Block> LIANDANLU4 =
+            registerBlock("liandanlu4",()->
+                    new LiandanluBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion(),4));
+
+    public static final RegistryObject<Block> LIANDANLU5 =
+            registerBlock("liandanlu5",()->
+                    new LiandanluBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion(),5));
+
+    public static final RegistryObject<Block> LIANDANLU6 =
+            registerBlock("liandanlu6",()->
+                    new LiandanluBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion(),6));
+
+    public static final RegistryObject<Block> LIANDANLU7 =
+            registerBlock("liandanlu7",()->
+                    new LiandanluBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion(),7));
+
+    public static final RegistryObject<Block> LIANDANLU8 =
+            registerBlock("liandanlu8",()->
+                    new LiandanluBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion(),8));
+
+    public static final RegistryObject<Block> LIANDANLU9 =
+            registerBlock("liandanlu9",()->
+                    new LiandanluBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion(),9));
+
 
 
     //炼丹炉
@@ -72,6 +104,12 @@ public class ModBlocks {
         LIANDANLULIST.add(LIANDANLU1);
         LIANDANLULIST.add(LIANDANLU2);
         LIANDANLULIST.add(LIANDANLU3);
+        LIANDANLULIST.add(LIANDANLU4);
+        LIANDANLULIST.add(LIANDANLU5);
+        LIANDANLULIST.add(LIANDANLU6);
+        LIANDANLULIST.add(LIANDANLU7);
+        LIANDANLULIST.add(LIANDANLU8);
+        LIANDANLULIST.add(LIANDANLU9);
     }
 
     //mod矿物
@@ -80,7 +118,10 @@ public class ModBlocks {
         MODORE.add(GRAY_IRON_ORE);
         MODORE.add(CLOUD_PATTERNED_BRONZE_ORE);
         MODORE.add(RED_FIRE_ORE);
+        MODORE.add(SUNKEN_SILVER_ORE);
+
         MODORE.add(RUBY_ORE);
+        MODORE.add(AMETHYST_ORE);
     }
 
     //mod方块

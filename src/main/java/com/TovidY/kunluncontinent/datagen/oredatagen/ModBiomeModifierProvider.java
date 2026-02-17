@@ -19,6 +19,8 @@ public class ModBiomeModifierProvider {
     public static final ResourceKey<BiomeModifier> ADD_RUBY_ORE = createKey("add_ruby_ore");
     public static final ResourceKey<BiomeModifier> ADD_BRONZE_ORE = createKey("add_bronze_ore");
     public static final ResourceKey<BiomeModifier> ADD_RED_FIRE = createKey("add_red_fire_ore");
+    public static final ResourceKey<BiomeModifier> ADD_AMETHYST_ORE = createKey("add_amethyst_ore");
+    public static final ResourceKey<BiomeModifier> ADD_SUNKEN_SILVER_ORE = createKey("add_sunken_silver_ore");
 
     public static void bootstrap(BootstapContext<BiomeModifier> context) {
         var placedFeatures = context.lookup(Registries.PLACED_FEATURE);
@@ -30,7 +32,7 @@ public class ModBiomeModifierProvider {
                 HolderSet.direct(placedFeatures.getOrThrow(ModWorldGenProvider.createPlaceKey(ModBlocks.GRAY_IRON_ORE.get()))),
                 GenerationStep.Decoration.UNDERGROUND_ORES // 生成阶段：地下矿石
         ));
-
+        //红宝石矿
         context.register(ADD_RUBY_ORE, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
                 biomes.getOrThrow(BiomeTags.IS_OVERWORLD), // 维度/生物群系限定
                 HolderSet.direct(placedFeatures.getOrThrow(ModWorldGenProvider.createPlaceKey(ModBlocks.RUBY_ORE.get()))),
@@ -44,9 +46,24 @@ public class ModBiomeModifierProvider {
                 GenerationStep.Decoration.UNDERGROUND_ORES
         ));
 
+        //赤火矿
         context.register(ADD_RED_FIRE, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
                 biomes.getOrThrow(BiomeTags.IS_NETHER),
                 HolderSet.direct(placedFeatures.getOrThrow(ModWorldGenProvider.createPlaceKey(ModBlocks.RED_FIRE_ORE.get()))),
+                GenerationStep.Decoration.UNDERGROUND_ORES
+        ));
+
+        //沉银矿
+        context.register(ADD_SUNKEN_SILVER_ORE, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                biomes.getOrThrow(BiomeTags.IS_END),
+                HolderSet.direct(placedFeatures.getOrThrow(ModWorldGenProvider.createPlaceKey(ModBlocks.SUNKEN_SILVER_ORE.get()))),
+                GenerationStep.Decoration.UNDERGROUND_ORES
+        ));
+
+        //紫水晶矿
+        context.register(ADD_AMETHYST_ORE, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                biomes.getOrThrow(BiomeTags.IS_END),
+                HolderSet.direct(placedFeatures.getOrThrow(ModWorldGenProvider.createPlaceKey(ModBlocks.AMETHYST_ORE.get()))),
                 GenerationStep.Decoration.UNDERGROUND_ORES
         ));
     }

@@ -37,7 +37,26 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("adv.kunlun.lvl80.desc", "潜力高运气好的是不是拿到神位了呢~");
         add("adv.kunlun.lvl90.title", "封号斗罗");
         add("adv.kunlun.lvl90.desc", "是时候去拿到神位传承了！");
-
+        add("adv.kunlun.lvl99.title", "极限斗罗");
+        add("adv.kunlun.lvl99.desc", "是时候去封神了！");
+        add("adv.kunlun.liandanlu1.title","一级炼丹炉");
+        add("adv.kunlun.liandanlu1.desc","内丹品质高丹炉品质低炼丹速度越慢，反之炼丹速度更快");
+        add("adv.kunlun.liandanlu2.title","二级炼丹炉！");
+        add("adv.kunlun.liandanlu2.desc","内丹品质高丹炉品质低炼丹速度越慢，反之炼丹速度更快");
+        add("adv.kunlun.liandanlu3.title","三级炼丹炉！");
+        add("adv.kunlun.liandanlu3.desc","内丹品质高丹炉品质低炼丹速度越慢，反之炼丹速度更快");
+        add("adv.kunlun.liandanlu4.title","四级炼丹炉！");
+        add("adv.kunlun.liandanlu4.desc","内丹品质高丹炉品质低炼丹速度越慢，反之炼丹速度更快");
+        add("adv.kunlun.liandanlu5.title","五级炼丹炉！");
+        add("adv.kunlun.liandanlu5.desc","内丹品质高丹炉品质低炼丹速度越慢，反之炼丹速度更快");
+        add("adv.kunlun.liandanlu6.title","六级炼丹炉！");
+        add("adv.kunlun.liandanlu6.desc","内丹品质高丹炉品质低炼丹速度越慢，反之炼丹速度更快");
+        add("adv.kunlun.liandanlu7.title","七级炼丹炉！");
+        add("adv.kunlun.liandanlu7.desc","材料的难以获取");
+        add("adv.kunlun.liandanlu8.title","八级炼丹炉！");
+        add("adv.kunlun.liandanlu8.desc","高效的炼丹");
+        add("adv.kunlun.liandanlu9.title","§c九§b阶§5炼§a丹§e炉！");
+        add("adv.kunlun.liandanlu9.desc","材料要求极高实用性确不高");
 
         //刻刀类
         add(ModItems.IRON_ENGRAVING_KNIFE.get(), "铁制刻刀");
@@ -51,7 +70,9 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.GRAY_IRON_INGOT.get(),"§8灰铁锭");
         add(ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get(),"§6云纹铜");
         add(ModItems.RED_FIRE_INGOT.get(), "§c赤火锭");
+        add(ModItems.SUNKEN_SILVER.get(), "§f沉银");
         add(ModItems.RUBY.get(), "§c红宝石");
+        add(ModItems.AMETHYST.get(), "§5紫瑛");
 
         //内丹类
         add(ModItems.NEIDAN1.get(),"一阶内丹");
@@ -69,6 +90,12 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModBlocks.LIANDANLU1.get(),"一阶炼丹炉");
         add(ModBlocks.LIANDANLU2.get(),"二阶炼丹炉");
         add(ModBlocks.LIANDANLU3.get(),"三阶炼丹炉");
+        add(ModBlocks.LIANDANLU4.get(),"四阶炼丹炉");
+        add(ModBlocks.LIANDANLU5.get(),"五阶炼丹炉");
+        add(ModBlocks.LIANDANLU6.get(),"六阶炼丹炉");
+        add(ModBlocks.LIANDANLU7.get(),"七阶炼丹炉");
+        add(ModBlocks.LIANDANLU8.get(),"八阶炼丹炉");
+        add(ModBlocks.LIANDANLU9.get(),"§c九§b阶§5炼§a丹§e炉");
         add("tooltip.kunluncontinent.liandanlu","不同等阶的炼丹炉只不过是炼丹速度上的差异");
 
         //测试物品类
@@ -138,6 +165,12 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.RED_FIRE_SHOVEL.get(), "§c赤火铲");
         add(ModItems.RED_FIRE_HOE.get(), "§c赤火锄");
 
+        add(ModItems.SUNKEN_SILVER_SWORD.get(), "§f沉银剑");
+        add(ModItems.SUNKEN_SILVER_PICKAXE.get(), "§f沉银镐");
+        add(ModItems.SUNKEN_SILVER_AXE.get(), "§f沉银斧");
+        add(ModItems.SUNKEN_SILVER_SHOVEL.get(), "§f沉银铲");
+        add(ModItems.SUNKEN_SILVER_HOE.get(), "§f沉银锄");
+
         //实体类
         add(EntityInit.HUNHUAN.get(),"§b魂环");
         add(EntityInit.HUNHE.get(),"§e魂核");
@@ -158,12 +191,19 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.RED_FIRE_LEGGINGS.get(), "§c赤火护腿");
         add(ModItems.RED_FIRE_BOOTS.get(), "§c赤火靴子");
 
+        add(ModItems.SUNKEN_SILVER_HELMET.get(), "§f沉银头盔");
+        add(ModItems.SUNKEN_SILVER_CHESTPLATE.get(), "§f沉银胸甲");
+        add(ModItems.SUNKEN_SILVER_LEGGINGS.get(), "§f沉银护腿");
+        add(ModItems.SUNKEN_SILVER_BOOTS.get(), "§f沉银靴子");
+
         //方块类
         add(ModBlocks.CULTIVATION_PLATFORM.get(),"修炼台");
         add(ModBlocks.GRAY_IRON_ORE.get(),"灰铁矿");
         add(ModBlocks.CLOUD_PATTERNED_BRONZE_ORE.get(),"云纹铜矿");
         add(ModBlocks.RED_FIRE_ORE.get(), "赤火矿");
+        add(ModBlocks.SUNKEN_SILVER_ORE.get(), "沉银矿");
         add(ModBlocks.RUBY_ORE.get(), "深层红宝石原矿");
+        add(ModBlocks.AMETHYST_ORE.get(),"紫瑛原矿");
         add(ModBlocks.PUTUAN_BLOCK.get(),"蒲团");
         add("putuan.xiulian.finish","§c你感到浑身清爽，但打坐时间太长你感到有被心魔入侵的风险，出去走走吧");
         add(ModBlocks.DROSS_BLOCK.get(), "丹渣块");

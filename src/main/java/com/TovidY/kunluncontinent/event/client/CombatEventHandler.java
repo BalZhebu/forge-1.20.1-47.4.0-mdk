@@ -27,11 +27,18 @@ public class CombatEventHandler {
         float shanbi = ModAttributeAPI.getShanbi(target);
         float mingzhong = ModAttributeAPI.getMingzhong(attacker);
         float dodgeChance = Math.max(0, shanbi - mingzhong) / (Math.max(0, shanbi - mingzhong) + 100f);
+        //闪避处理
         if (RANDOM.nextFloat() <= dodgeChance) {
             event.setCanceled(true);
+            if (attacker instanceof Player player) {
+                String targetName = target.getDisplayName().getString();
+                player.displayClientMessage(
+                        Component.literal("§e" + targetName + " §7§l闪避了这次攻击！"),
+                        true
+                );
+            }
             return;
         }
-
         float gongji = ModAttributeAPI.getGongji(attacker);
         float wuchuan = ModAttributeAPI.getWuchuan(attacker);
         float fangyu = ModAttributeAPI.getEffectiveFangyu(target);

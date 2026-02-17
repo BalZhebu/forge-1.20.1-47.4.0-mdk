@@ -55,6 +55,9 @@ public class ModArmorBaseItem extends ArmorItem {
         if(material == ModArmorMaterials.RED_FIRE){
             return 3;
         }
+        if(material == ModArmorMaterials.SUNKEN_SILVER){
+            return 4;
+        }
         return 0;
     }
 
@@ -84,6 +87,12 @@ public class ModArmorBaseItem extends ArmorItem {
         if(this.getMaterial() == ModArmorMaterials.CLOUD_PATTERNED_BRONZE){
             return value*0.15f;
         }
+        if(this.getMaterial() == ModArmorMaterials.RED_FIRE){
+            return value*0.2f;
+        }
+        if(this.getMaterial() == ModArmorMaterials.SUNKEN_SILVER){
+            return value*0.35f;
+        }
         return 0;
     }
 
@@ -102,6 +111,9 @@ public class ModArmorBaseItem extends ArmorItem {
         if(this.getMaterial() == ModArmorMaterials.RED_FIRE){
             return value*0.4f;
         }
+        if(this.getMaterial() == ModArmorMaterials.SUNKEN_SILVER){
+            return value*0.6f;
+        }
         return 0;
     }
 
@@ -114,6 +126,9 @@ public class ModArmorBaseItem extends ArmorItem {
         }
         if(this.getMaterial() == ModArmorMaterials.RED_FIRE){
             return 12;
+        }
+        if(this.getMaterial() == ModArmorMaterials.SUNKEN_SILVER){
+            return 16;
         }
         return 0;
     }
@@ -161,6 +176,11 @@ public class ModArmorBaseItem extends ArmorItem {
             list.add(Component.translatable("最大生命","10%").withStyle(ChatFormatting.AQUA));
             list.add(Component.translatable("防御力","20%").withStyle(ChatFormatting.AQUA));
             list.add(Component.translatable("生命恢复","4").withStyle(ChatFormatting.AQUA));
+        }
+        if(this.getMaterial() == ModArmorMaterials.SUNKEN_SILVER){
+            list.add(Component.translatable("最大生命","35%").withStyle(ChatFormatting.AQUA));
+            list.add(Component.translatable("防御力","60%").withStyle(ChatFormatting.AQUA));
+            list.add(Component.translatable("生命恢复","16").withStyle(ChatFormatting.AQUA));
         }
         if(this.getMaterial() == ModArmorMaterials.CLOUD_PATTERNED_BRONZE){
             list.add(Component.translatable("最大生命","15%").withStyle(ChatFormatting.AQUA));

@@ -50,19 +50,10 @@ public class ModDataGenerator {
         generator.addProvider(event.includeClient(),new ModItemModelsProvider(packOutput,existingFileHelper));
         generator.addProvider(event.includeClient(),new ModZhCnLangProvider(packOutput));
 
-        generator.addProvider(event.includeServer(), new DatapackBuiltinEntriesProvider(packOutput, lookupProvider,
-                new RegistrySetBuilder()
-                        // 1. 注册矿物配置 (大小、替换目标)
-                        .add(Registries.CONFIGURED_FEATURE, ModWorldGenProvider::bootstrap)
-                        // 2. 注册矿物放置 (高度、频率)
-                        .add(Registries.PLACED_FEATURE, ModWorldGenProvider::placement)
-                        // 3. 注册维度/生物群系绑定 (哪个矿在哪出现)
-                        .add(ForgeRegistries.Keys.BIOME_MODIFIERS, ModBiomeModifierProvider::bootstrap),
-                Set.of(KlMain.MOD_ID)));
+        generator.addProvider(event.includeServer(), new DatapackBuiltinEntriesProvider(packOutput, lookupProvider, new RegistrySetBuilder().add(Registries.CONFIGURED_FEATURE, ModWorldGenProvider::bootstrap).add(Registries.PLACED_FEATURE, ModWorldGenProvider::placement) .add(ForgeRegistries.Keys.BIOME_MODIFIERS, ModBiomeModifierProvider::bootstrap), Set.of(KlMain.MOD_ID)));
 
         //成就
-        generator.addProvider(event.includeServer(),
-                new ModAdvancementProvider(packOutput, lookupProvider, existingFileHelper));
+        generator.addProvider(event.includeServer(), new ModAdvancementProvider(packOutput, lookupProvider, existingFileHelper));
 
     }
 }

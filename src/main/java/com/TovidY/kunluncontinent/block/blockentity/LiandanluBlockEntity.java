@@ -114,7 +114,7 @@ public class LiandanluBlockEntity extends BlockEntity implements MenuProvider {
             finalTimeInSeconds = 10 - (luLevel - danLevel);
         } else {
             // 炉阶 < 丹阶：10秒 + (差值 * 10秒)
-            finalTimeInSeconds = 10 + (danLevel - luLevel) * 10;
+            finalTimeInSeconds = 10 + (danLevel - luLevel) * 30;
         }
         // 保底1秒，转为Tick
         return Math.max(finalTimeInSeconds, 1) * 20;

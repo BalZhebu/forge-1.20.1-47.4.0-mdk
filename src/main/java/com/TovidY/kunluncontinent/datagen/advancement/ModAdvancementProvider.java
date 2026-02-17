@@ -2,9 +2,11 @@ package com.TovidY.kunluncontinent.datagen.advancement;
 
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.advancement.LevelTrigger;
+import com.TovidY.kunluncontinent.block.ModBlocks;
 import com.TovidY.kunluncontinent.item.ModItems;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.FrameType;
+import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.advancements.critereon.PlayerTrigger;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -37,6 +39,120 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                     .addCriterion("on_join", PlayerTrigger.TriggerInstance.tick())
                     .save(saver,ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/root"), existingFileHelper);
 
+            // 1. 检查获得特定物品/方块的成就
+            Advancement obtainItem = Advancement.Builder.advancement()
+                    .parent(root)
+                    .display(
+                            ModBlocks.LIANDANLU1.get(),
+                            Component.translatable("adv.kunlun.liandanlu1.title"),
+                            Component.translatable("adv.kunlun.liandanlu1.desc"),
+                            null,
+                            FrameType.TASK, true, true, false
+                    )
+                    .addCriterion("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(ModBlocks.LIANDANLU1.get()))
+                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/liandanlu1"), existingFileHelper);
+
+            // 1. 检查获得特定物品/方块的成就
+            Advancement liandanlu2 = Advancement.Builder.advancement()
+                    .parent(obtainItem)
+                    .display(
+                            ModBlocks.LIANDANLU2.get(),
+                            Component.translatable("adv.kunlun.liandanlu2.title"),
+                            Component.translatable("adv.kunlun.liandanlu2.desc"),
+                            null,
+                            FrameType.TASK, true, true, false
+                    )
+                    .addCriterion("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(ModBlocks.LIANDANLU2.get()))
+                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/liandanlu2"), existingFileHelper);
+
+            Advancement liandanlu3 = Advancement.Builder.advancement()
+                    .parent(liandanlu2)
+                    .display(
+                            ModBlocks.LIANDANLU3.get(),
+                            Component.translatable("adv.kunlun.liandanlu3.title"),
+                            Component.translatable("adv.kunlun.liandanlu3.desc"),
+                            null,
+                            FrameType.TASK, true, true, false
+                    )
+                    .addCriterion("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(ModBlocks.LIANDANLU3.get()))
+                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/liandanlu3"), existingFileHelper);
+
+            Advancement liandanlu4 = Advancement.Builder.advancement()
+                    .parent(liandanlu3)
+                    .display(
+                            ModBlocks.LIANDANLU4.get(),
+                            Component.translatable("adv.kunlun.liandanlu4.title"),
+                            Component.translatable("adv.kunlun.liandanlu4.desc"),
+                            null,
+                            FrameType.GOAL, true, true, false
+                    )
+                    .addCriterion("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(ModBlocks.LIANDANLU4.get()))
+                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/liandanlu4"), existingFileHelper);
+
+            Advancement liandanlu5 = Advancement.Builder.advancement()
+                    .parent(liandanlu4)
+                    .display(
+                            ModBlocks.LIANDANLU5.get(),
+                            Component.translatable("adv.kunlun.liandanlu5.title"),
+                            Component.translatable("adv.kunlun.liandanlu5.desc"),
+                            null,
+                            FrameType.GOAL, true, true, false
+                    )
+
+                    .addCriterion("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(ModBlocks.LIANDANLU5.get()))
+                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/liandanlu5"), existingFileHelper);
+
+            Advancement liandanlu6 = Advancement.Builder.advancement()
+                    .parent(liandanlu5)
+                    .display(
+                            ModBlocks.LIANDANLU6.get(),
+                            Component.translatable("adv.kunlun.liandanlu6.title"),
+                            Component.translatable("adv.kunlun.liandanlu6.desc"),
+                            null,
+                            FrameType.GOAL, true, true, false
+                    )
+
+                    .addCriterion("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(ModBlocks.LIANDANLU6.get()))
+                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/liandanlu6"), existingFileHelper);
+
+            Advancement liandanlu7 = Advancement.Builder.advancement()
+                    .parent(liandanlu6)
+                    .display(
+                            ModBlocks.LIANDANLU7.get(),
+                            Component.translatable("adv.kunlun.liandanlu7.title"),
+                            Component.translatable("adv.kunlun.liandanlu7.desc"),
+                            null,
+                            FrameType.CHALLENGE, true, true, false
+                    )
+
+                    .addCriterion("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(ModBlocks.LIANDANLU7.get()))
+                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/liandanlu7"), existingFileHelper);
+
+            Advancement liandanlu8 = Advancement.Builder.advancement()
+                    .parent(liandanlu7)
+                    .display(
+                            ModBlocks.LIANDANLU8.get(),
+                            Component.translatable("adv.kunlun.liandanlu8.title"),
+                            Component.translatable("adv.kunlun.liandanlu8.desc"),
+                            null,
+                            FrameType.CHALLENGE, true, true, false
+                    )
+
+                    .addCriterion("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(ModBlocks.LIANDANLU8.get()))
+                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/liandanlu8"), existingFileHelper);
+
+            Advancement liandanlu9 = Advancement.Builder.advancement()
+                    .parent(liandanlu8)
+                    .display(
+                            ModBlocks.LIANDANLU9.get(),
+                            Component.translatable("adv.kunlun.liandanlu9.title"),
+                            Component.translatable("adv.kunlun.liandanlu9.desc"),
+                            null,
+                            FrameType.CHALLENGE, true, true, false
+                    )
+                    .addCriterion("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(ModBlocks.LIANDANLU9.get()))
+                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/liandanlu9"), existingFileHelper);
+
             Advancement level10 = Advancement.Builder.advancement()
                     .parent(root)
                     .display(
@@ -63,7 +179,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                     .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/level_20"), existingFileHelper);
 
             Advancement level30 = Advancement.Builder.advancement()
-                    .parent(level10)
+                    .parent(level20)
                     .display(
                             ModItems.QIANHUABAO_DAN.get(),
                             Component.translatable("adv.kunlun.lvl30.title"),
@@ -75,7 +191,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                     .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/level_30"), existingFileHelper);
 
             Advancement level40 = Advancement.Builder.advancement()
-                    .parent(level10)
+                    .parent(level30)
                     .display(
                             ModItems.WANPOXUAN_DAN.get(),
                             Component.translatable("adv.kunlun.lvl40.title"),
@@ -87,7 +203,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                     .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/level_40"), existingFileHelper);
 
             Advancement level50 = Advancement.Builder.advancement()
-                    .parent(level10)
+                    .parent(level40)
                     .display(
                             ModItems.SHIFANGJIE_DAN.get(),
                             Component.translatable("adv.kunlun.lvl50.title"),
@@ -99,7 +215,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                     .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/level_50"), existingFileHelper);
 
             Advancement level60 = Advancement.Builder.advancement()
-                    .parent(level10)
+                    .parent(level50)
                     .display(
                             ModItems.HUANYUANYIQI_DAN.get(),
                             Component.translatable("adv.kunlun.lvl60.title"),
@@ -111,7 +227,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                     .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/level_60"), existingFileHelper);
 
             Advancement level70 = Advancement.Builder.advancement()
-                    .parent(level10)
+                    .parent(level60)
                     .display(
                             ModItems.TAIXUPOWANG_DAN.get(),
                             Component.translatable("adv.kunlun.lvl70.title"),
@@ -123,28 +239,40 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                     .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/level_70"), existingFileHelper);
 
             Advancement level80 = Advancement.Builder.advancement()
-                    .parent(level10)
+                    .parent(level70)
                     .display(
                             ModItems.QIANWANXINGCHEN_DAN.get(),
                             Component.translatable("adv.kunlun.lvl80.title"),
                             Component.translatable("adv.kunlun.lvl80.desc"),
                             null,
-                            FrameType.GOAL, true, true, false
+                            FrameType.CHALLENGE, true, true, false
                     )
                     .addCriterion("reached_lvl", LevelTrigger.Instance.levelReached(80))
                     .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/level_80"), existingFileHelper);
 
             Advancement level90 = Advancement.Builder.advancement()
-                    .parent(level10)
+                    .parent(level80)
                     .display(
                             ModItems.YIZAICHUANGSHENG_DAN.get(),
                             Component.translatable("adv.kunlun.lvl90.title"),
                             Component.translatable("adv.kunlun.lvl90.desc"),
                             null,
-                            FrameType.GOAL, true, true, false
+                            FrameType.CHALLENGE, true, true, false
                     )
                     .addCriterion("reached_lvl", LevelTrigger.Instance.levelReached(90))
                     .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/level_90"), existingFileHelper);
+
+            Advancement level99 = Advancement.Builder.advancement()
+                    .parent(level90)
+                    .display(
+                            ModItems.YIZAICHUANGSHENG_DAN.get(),
+                            Component.translatable("adv.kunlun.lvl99.title"),
+                            Component.translatable("adv.kunlun.lvl99.desc"),
+                            null,
+                            FrameType.CHALLENGE, true, true, false
+                    )
+                    .addCriterion("reached_lvl", LevelTrigger.Instance.levelReached(99))
+                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/level_99"), existingFileHelper);
         }
     }
 }

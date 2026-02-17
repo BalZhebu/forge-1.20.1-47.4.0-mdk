@@ -18,6 +18,9 @@ public enum ModToolTiers implements Tier {
     RED_FIRE(5, 4500, 26.0F, 20.0F, 30,
             () -> Ingredient.of(ModItems.RED_FIRE_INGOT.get())),
 
+    SUNKEN_SILVER(6, 6600, 40.0F, 50.0F, 30,
+            () -> Ingredient.of(ModItems.SUNKEN_SILVER.get())),
+
     //测试物品
     TEST_ITEM(1,100,5.0F,3.0F,15,
             ()->Ingredient.of(ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get()));

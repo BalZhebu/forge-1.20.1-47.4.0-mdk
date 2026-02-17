@@ -5,6 +5,7 @@ import com.TovidY.kunluncontinent.block.ModBlocks;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.tags.BlockTags;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
@@ -29,10 +30,19 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(ModBlocks.GRAY_IRON_ORE.get())
                 .add(ModBlocks.CLOUD_PATTERNED_BRONZE_ORE.get())
                 .add(ModBlocks.RED_FIRE_ORE.get())
+                .add(ModBlocks.SUNKEN_SILVER_ORE.get())
                 .add(ModBlocks.RUBY_ORE.get())
+                .add(ModBlocks.AMETHYST_ORE.get())
                 .add(ModBlocks.LIANDANLU1.get())
                 .add(ModBlocks.LIANDANLU2.get())
                 .add(ModBlocks.LIANDANLU3.get())
+                .add(ModBlocks.LIANDANLU4.get())
+                .add(ModBlocks.LIANDANLU5.get())
+                .add(ModBlocks.LIANDANLU6.get())
+                .add(ModBlocks.LIANDANLU7.get())
+                .add(ModBlocks.LIANDANLU8.get())
+                .add(ModBlocks.LIANDANLU9.get())
+
         ;
         //需要铁镐破坏
         tag(BlockTags.NEEDS_IRON_TOOL)
@@ -42,10 +52,20 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
         //需要钻石镐
         tag(BlockTags.NEEDS_DIAMOND_TOOL)
                 .add(ModBlocks.CLOUD_PATTERNED_BRONZE_ORE.get())
+                .add(ModBlocks.AMETHYST_ORE.get())
                 .add(ModBlocks.RED_FIRE_ORE.get())
                 .add(ModBlocks.LIANDANLU1.get())
                 .add(ModBlocks.LIANDANLU2.get())
                 .add(ModBlocks.LIANDANLU3.get())
+                .add(ModBlocks.LIANDANLU4.get())
+                .add(ModBlocks.LIANDANLU5.get())
+                .add(ModBlocks.LIANDANLU6.get())
+        ;
+        tag(Tags.Blocks.NEEDS_NETHERITE_TOOL)
+                .add(ModBlocks.SUNKEN_SILVER_ORE.get())
+                .add(ModBlocks.LIANDANLU7.get())
+                .add(ModBlocks.LIANDANLU8.get())
+                .add(ModBlocks.LIANDANLU9.get())
         ;
     }
 }

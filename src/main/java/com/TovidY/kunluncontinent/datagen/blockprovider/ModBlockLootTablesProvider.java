@@ -28,7 +28,10 @@ public class ModBlockLootTablesProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.GRAY_IRON_ORE.get());
         dropSelf(ModBlocks.CLOUD_PATTERNED_BRONZE_ORE.get());
         dropSelf(ModBlocks.RED_FIRE_ORE.get());
+        dropSelf(ModBlocks.SUNKEN_SILVER_ORE.get());
+        //宝石矿
         dropSelf(ModBlocks.RUBY_ORE.get());
+        dropSelf(ModBlocks.AMETHYST_ORE.get());
 
         dropSelf(ModBlocks.PUTUAN_BLOCK.get());
 
@@ -37,8 +40,16 @@ public class ModBlockLootTablesProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.LIANDANLU1.get());
         dropSelf(ModBlocks.LIANDANLU2.get());
         dropSelf(ModBlocks.LIANDANLU3.get());
+        dropSelf(ModBlocks.LIANDANLU4.get());
+        dropSelf(ModBlocks.LIANDANLU5.get());
+        dropSelf(ModBlocks.LIANDANLU6.get());
+        dropSelf(ModBlocks.LIANDANLU7.get());
+        dropSelf(ModBlocks.LIANDANLU8.get());
+        dropSelf(ModBlocks.LIANDANLU9.get());
+
         // 红宝石矿石（使用矿石破坏战利品列表）
         this.add(ModBlocks.RUBY_ORE.get(), block -> createCopperOreLikeDrops(block, ModItems.RUBY.get()));
+        this.add(ModBlocks.AMETHYST_ORE.get(), block -> createCopperOreLikeDrops(block, ModItems.AMETHYST.get()));
     }
 
     //该方法是矿石类，挖矿石会掉落更多矿物，将原本的block方块替换成该方法即可

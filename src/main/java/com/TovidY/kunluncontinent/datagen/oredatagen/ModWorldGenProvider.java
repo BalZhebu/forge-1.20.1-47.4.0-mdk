@@ -7,11 +7,13 @@ import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
 import net.minecraft.world.level.levelgen.placement.*;
+import net.minecraft.world.level.levelgen.structure.templatesystem.BlockMatchTest;
 import net.minecraft.world.level.levelgen.structure.templatesystem.TagMatchTest;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -29,10 +31,14 @@ public class ModWorldGenProvider {
         registerOre(context, ModBlocks.GRAY_IRON_ORE.get(), 7);
         // 红玉参考
         registerOre(context, ModBlocks.RUBY_ORE.get(), 5);
+        //紫水晶
+        registerOre(context, ModBlocks.AMETHYST_ORE.get(), 5);
         // 钻石参考：原版 size 为 4 到 8
         registerOre(context, ModBlocks.CLOUD_PATTERNED_BRONZE_ORE.get(), 9);
         //赤火矿
         registerOre(context, ModBlocks.RED_FIRE_ORE.get(), 3);
+        //银矿
+        registerOre(context, ModBlocks.SUNKEN_SILVER_ORE.get(), 5);
     }
 
     /**
@@ -53,6 +59,9 @@ public class ModWorldGenProvider {
         registerPlacement(context, configuredFeatures, ModBlocks.CLOUD_PATTERNED_BRONZE_ORE, -64, -0, 3);
         //赤火矿
         registerPlacement(context, configuredFeatures, ModBlocks.RED_FIRE_ORE, 1, 100, 3);
+        registerPlacement(context, configuredFeatures, ModBlocks.SUNKEN_SILVER_ORE, 0, 128, 5);
+        //紫水晶
+        registerPlacement(context, configuredFeatures, ModBlocks.AMETHYST_ORE, 0, 100, 3);
     }
 
     // 在 registerOre 中增加对不同维度的支持
@@ -63,8 +72,8 @@ public class ModWorldGenProvider {
                 OreConfiguration.target(new TagMatchTest(BlockTags.DEEPSLATE_ORE_REPLACEABLES), block.defaultBlockState()),
                 // 下界：地狱岩 (如果以后有下界矿物，这行就起作用了)
                 OreConfiguration.target(new TagMatchTest(BlockTags.NETHER_CARVER_REPLACEABLES), block.defaultBlockState()),
-                // 末地：末地石 (末地通常需要自定义 Tag，这里预留)
-                OreConfiguration.target(new TagMatchTest(BlockTags.DIRT), block.defaultBlockState())
+                // 末地：末地石 (更改自定义方块写入BlockMatchTest方法)
+                OreConfiguration.target(new BlockMatchTest(Blocks.END_STONE), block.defaultBlockState())
         );
         context.register(createConfigKey(block), new ConfiguredFeature<>(Feature.ORE, new OreConfiguration(targets, size)));
     }
