@@ -4,17 +4,12 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public class NeidanItem extends Item implements INeidanData {
     private final int tier;
 
     public NeidanItem(Properties properties, int tier) {
-        super(properties);
+        super(tier >= 7 ? properties.fireResistant() : properties);
         this.tier = tier;
     }
 
@@ -23,16 +18,34 @@ public class NeidanItem extends Item implements INeidanData {
         return this.tier;
     }
 
-    // 从物品堆的 NBT 中获取品质
+    public NeidanQuality getBaseQualityByTier() {
+        return switch (this.tier) {
+            case 9 -> NeidanQuality.JUE;
+            case 8 -> NeidanQuality.ZHEN;
+            case 7 -> NeidanQuality.SHANG;
+
+            default -> NeidanQuality.FAN;
+        };
+    }
+
     @Override
     public NeidanQuality getQuality(ItemStack stack) {
         if (stack.hasTag() && stack.getTag().contains("Quality")) {
-            return NeidanQuality.valueOf(stack.getTag().getString("Quality"));
+            try {
+                return NeidanQuality.valueOf(stack.getTag().getString("Quality"));
+            } catch (IllegalArgumentException e) {
+                return getBaseQualityByTier();
+            }
         }
-        return NeidanQuality.FAN; // 默认凡品
+        return getBaseQualityByTier();
     }
 
-    // 根据品质改变名称颜色
+
+    @Override
+    public NeidanQuality getQuality() {
+        return null;
+    }
+
     @Override
     public Component getName(ItemStack stack) {
         NeidanQuality q = getQuality(stack);
@@ -44,16 +57,8 @@ public class NeidanItem extends Item implements INeidanData {
             case JUE -> ChatFormatting.GOLD;
             case XIAN -> ChatFormatting.RED;
         };
+        // 渲染名字：[品质] X阶内丹
         return Component.literal("[" + q.name + "] ").withStyle(color)
                 .append(super.getName(stack));
-    }
-
-    // 预留接口：以后给炼丹炉调用
-    public NeidanQuality getQuality() { return null; } // 接口兼容占位
-
-    @Override
-    public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
-        pTooltipComponents.add(Component.translatable("tooltip.kunlun.neidan_item").withStyle(ChatFormatting.DARK_GRAY));
-        pTooltipComponents.add(Component.translatable("tooltip.kunlun.neidan_item_tier").withStyle(ChatFormatting.DARK_GRAY));
     }
 }

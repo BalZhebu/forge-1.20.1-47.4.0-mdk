@@ -37,6 +37,9 @@ public class NeidanDropHandler {
     }
 
     private static int getTier(long nianxian) {
+        if (nianxian >= 100000000) return 8;
+        if (nianxian >= 10000000) return 7;
+        if (nianxian >= 1000000) return 6;
         if (nianxian >= 100000) return 5;
         if (nianxian >= 10000) return 4;
         if (nianxian >= 1000) return 3;
@@ -92,6 +95,9 @@ public class NeidanDropHandler {
             case 3 -> ModItems.NEIDAN3.get();
             case 4 -> ModItems.NEIDAN4.get();
             case 5 -> ModItems.NEIDAN5.get();
+            case 6 -> ModItems.NEIDAN6.get();
+            case 7 -> ModItems.NEIDAN7.get();
+            case 8 -> ModItems.NEIDAN8.get();
             default -> null;
         };
 

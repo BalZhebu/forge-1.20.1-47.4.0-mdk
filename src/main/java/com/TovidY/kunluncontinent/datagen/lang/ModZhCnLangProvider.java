@@ -7,7 +7,6 @@ import com.TovidY.kunluncontinent.entity.EntityInit;
 import com.TovidY.kunluncontinent.item.ModItems;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.LanguageProvider;
-import net.minecraftforge.fml.common.Mod;
 
 public class ModZhCnLangProvider extends LanguageProvider {
     public ModZhCnLangProvider(PackOutput output) {
@@ -70,7 +69,9 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.GRAY_IRON_INGOT.get(),"§8灰铁锭");
         add(ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get(),"§6云纹铜");
         add(ModItems.RED_FIRE_INGOT.get(), "§c赤火锭");
-        add(ModItems.SUNKEN_SILVER.get(), "§f沉银");
+        add(ModItems.SUNKEN_SILVER_INGOT.get(), "§f沉银");
+        add(ModItems.COLD_HEARTED_STEEL_INGOT.get(), "§7寒心钢锭");
+
         add(ModItems.RUBY.get(), "§c红宝石");
         add(ModItems.AMETHYST.get(), "§5紫瑛");
 
@@ -104,6 +105,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.TEST_SWORD.get(),"测试物品---剑");
         add(ModItems.DANYAO_DENGJI_JIA.get(),"测试物品---等级+1");
         add(ModItems.DANYAO_DENGJI_JIAN.get(),"测试物品---等级-1");
+        add(ModItems.INSTANT_KILL_SWORD.get(),"测试物品---天道裁决剑");
 
         //魂环收纳器
         add(ModItems.HUNHUAN_STORAGE_ONE.get(),"一级魂环收纳器");
@@ -171,6 +173,12 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.SUNKEN_SILVER_SHOVEL.get(), "§f沉银铲");
         add(ModItems.SUNKEN_SILVER_HOE.get(), "§f沉银锄");
 
+        add(ModItems.COLD_HEARTED_STEEL_SWORD.get(), "§7寒心钢剑");
+        add(ModItems.COLD_HEARTED_STEEL_PICKAXE.get(), "§7寒心钢镐");
+        add(ModItems.COLD_HEARTED_STEEL_AXE.get(), "§7寒心钢斧");
+        add(ModItems.COLD_HEARTED_STEEL_SHOVEL.get(), "§7寒心钢铲");
+        add(ModItems.COLD_HEARTED_STEEL_HOE.get(), "§7寒心钢锄");
+
         //实体类
         add(EntityInit.HUNHUAN.get(),"§b魂环");
         add(EntityInit.HUNHE.get(),"§e魂核");
@@ -196,6 +204,11 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.SUNKEN_SILVER_LEGGINGS.get(), "§f沉银护腿");
         add(ModItems.SUNKEN_SILVER_BOOTS.get(), "§f沉银靴子");
 
+        add(ModItems.COLD_HEARTED_STEEL_HELMET.get(), "§7寒心钢头盔");
+        add(ModItems.COLD_HEARTED_STEEL_CHESTPLATE.get(), "§7寒心钢胸甲");
+        add(ModItems.COLD_HEARTED_STEEL_LEGGINGS.get(), "§7寒心钢护腿");
+        add(ModItems.COLD_HEARTED_STEEL_BOOTS.get(), "§7寒心钢靴子");
+
         //方块类
         add(ModBlocks.CULTIVATION_PLATFORM.get(),"修炼台");
         add(ModBlocks.GRAY_IRON_ORE.get(),"灰铁矿");
@@ -207,6 +220,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModBlocks.PUTUAN_BLOCK.get(),"蒲团");
         add("putuan.xiulian.finish","§c你感到浑身清爽，但打坐时间太长你感到有被心魔入侵的风险，出去走走吧");
         add(ModBlocks.DROSS_BLOCK.get(), "丹渣块");
+        add("tooltip.kunluncontinent.dross_block","放入炼丹炉\n可明显减少破碎丹药概率");
 
         //JEI类
         add("liandalu","炼丹炉");
@@ -239,7 +253,8 @@ public class ModZhCnLangProvider extends LanguageProvider {
         //普通文字
         add("心神受损","你受到攻击，心神受损，被迫停止了修炼！");
         add("tooltip.kunlun.neidan_item","击杀不同年限生物概率掉落");
-        add("tooltip.kunlun.neidan_item_tier","内屏高品质低概率掉落");
-
+        add("tooltip.kunlun.neidan_item_tier","高品质内丹低概率掉落");
+        add("tooltip.kunlun.instant_kill_sword.1","代码级秒杀：无视防御，强制抹除数据。");
+        add("tooltip.kunlun.instant_kill_sword.2","世间万物，皆为定数；唯我一剑，可断因果。");
     }
 }

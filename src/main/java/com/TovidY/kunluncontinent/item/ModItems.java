@@ -6,6 +6,7 @@ import com.TovidY.kunluncontinent.item.armor.ModArmorMaterials;
 import com.TovidY.kunluncontinent.item.klitem.DanYaoItem;
 import com.TovidY.kunluncontinent.item.klitem.EngravingKnifeItem;
 import com.TovidY.kunluncontinent.item.klitem.HunHuanStorageItem;
+import com.TovidY.kunluncontinent.item.klitem.InstantKillSwordItem;
 import com.TovidY.kunluncontinent.item.neidanitems.NeidanItem;
 import com.TovidY.kunluncontinent.item.testitemblock.TestLevelUp;
 import com.TovidY.kunluncontinent.item.tool.ModSwordBaseItem;
@@ -33,13 +34,15 @@ public class ModItems {
     public static final RegistryObject<Item> DANYAO_DENGJI_JIAN = ITEMS.register("danyao_dengji_jian",
             () -> new TestLevelUp(new Item.Properties().stacksTo(1), -1));
 
+    public static final RegistryObject<Item> INSTANT_KILL_SWORD =
+            ITEMS.register("instant_kill_sword", InstantKillSwordItem::new);
+
     //内丹
     public static final RegistryObject<Item> NEIDAN1 = ITEMS.register("neidan1",()->new NeidanItem(new Item.Properties(),1));
     public static final RegistryObject<Item> NEIDAN2 = ITEMS.register("neidan2",()->new NeidanItem(new Item.Properties(),2));
     public static final RegistryObject<Item> NEIDAN3 = ITEMS.register("neidan3",()->new NeidanItem(new Item.Properties(),3));
     public static final RegistryObject<Item> NEIDAN4 = ITEMS.register("neidan4",()->new NeidanItem(new Item.Properties(),4));
     public static final RegistryObject<Item> NEIDAN5 = ITEMS.register("neidan5",()->new NeidanItem(new Item.Properties(),5));
-
     public static final RegistryObject<Item> NEIDAN6 = ITEMS.register("neidan6",()->new NeidanItem(new Item.Properties(),6));
     public static final RegistryObject<Item> NEIDAN7 = ITEMS.register("neidan7",()->new NeidanItem(new Item.Properties(),7));
     public static final RegistryObject<Item> NEIDAN8 = ITEMS.register("neidan8",()->new NeidanItem(new Item.Properties(),8));
@@ -49,7 +52,8 @@ public class ModItems {
     public static final RegistryObject<Item> GRAY_IRON_INGOT = ITEMS.register("gray_iron_ingot",()->new Item(new Item.Properties()));
     public static final RegistryObject<Item> CLOUD_PATTERNED_BRONZE_INGOT = ITEMS.register("cloud_patterned_bronze_ingot",()->new Item(new Item.Properties()));
     public static final RegistryObject<Item> RED_FIRE_INGOT = ITEMS.register("red_fire_ingot",()->new Item(new Item.Properties()));
-    public static final RegistryObject<Item> SUNKEN_SILVER = ITEMS.register("sunken_silver",()->new Item(new Item.Properties()));
+    public static final RegistryObject<Item> SUNKEN_SILVER_INGOT = ITEMS.register("sunken_silver_ingot",()->new Item(new Item.Properties()));
+    public static final RegistryObject<Item> COLD_HEARTED_STEEL_INGOT = ITEMS.register("cold_hearted_steel_ingot",()->new Item(new Item.Properties()));
 
     public static final RegistryObject<Item> RUBY = ITEMS.register("ruby",()->new Item(new Item.Properties()));
     public static final RegistryObject<Item> AMETHYST = ITEMS.register("amethyst",()->new Item(new Item.Properties()));
@@ -75,6 +79,11 @@ public class ModItems {
     public static final RegistryObject<Item> SUNKEN_SILVER_LEGGINGS = ITEMS.register("sunken_silver_leggings",()->new ModArmorBaseItem(ModArmorMaterials.SUNKEN_SILVER,ArmorItem.Type.LEGGINGS,new Item.Properties()));
     public static final RegistryObject<Item> SUNKEN_SILVER_BOOTS = ITEMS.register("sunken_silver_boots",()->new ModArmorBaseItem(ModArmorMaterials.SUNKEN_SILVER,ArmorItem.Type.BOOTS,new Item.Properties()));
 
+    public static final RegistryObject<Item> COLD_HEARTED_STEEL_HELMET = ITEMS.register("cold_hearted_steel_helmet",()->new ModArmorBaseItem(ModArmorMaterials.COLD_HEARTED_STEEL,ArmorItem.Type.HELMET,new Item.Properties()));
+    public static final RegistryObject<Item> COLD_HEARTED_STEEL_CHESTPLATE = ITEMS.register("cold_hearted_steel_chestplate",()->new ModArmorBaseItem(ModArmorMaterials.COLD_HEARTED_STEEL,ArmorItem.Type.CHESTPLATE,new Item.Properties()));
+    public static final RegistryObject<Item> COLD_HEARTED_STEEL_LEGGINGS = ITEMS.register("cold_hearted_steel_leggings",()->new ModArmorBaseItem(ModArmorMaterials.COLD_HEARTED_STEEL,ArmorItem.Type.LEGGINGS,new Item.Properties()));
+    public static final RegistryObject<Item> COLD_HEARTED_STEEL_BOOTS = ITEMS.register("cold_hearted_steel_boots",()->new ModArmorBaseItem(ModArmorMaterials.COLD_HEARTED_STEEL,ArmorItem.Type.BOOTS,new Item.Properties()));
+
     //工具
     public static final RegistryObject<Item> GRAY_IRON_SWORD = ITEMS.register("gray_iron_sword",()->new ModSwordBaseItem(ModToolTiers.GRAY_IRON,3,-1.8F,new Item.Properties()));
     public static final RegistryObject<Item> GRAY_IRON_PICKAXE = ITEMS.register("gray_iron_pickaxe",()->new PickaxeItem(ModToolTiers.GRAY_IRON,1, -2.0F,new Item.Properties()));
@@ -83,22 +92,28 @@ public class ModItems {
     public static final RegistryObject<Item> GRAY_IRON_HOE = ITEMS.register("gray_iron_hoe",()->new HoeItem(ModToolTiers.GRAY_IRON,-2, 0.5F,new Item.Properties()));
 
     public static final RegistryObject<Item> CLOUD_PATTERNED_BRONZE_SWORD = ITEMS.register("cloud_patterned_bronze_sword",()->new ModSwordBaseItem(ModToolTiers.CLOUD_PATTERNED_BRONZE,5,-1.3F,new Item.Properties()));
-    public static final RegistryObject<Item> CLOUD_PATTERNED_BRONZE_PICKAXE = ITEMS.register("cloud_patterned_bronze_pickaxe",()->new PickaxeItem(ModToolTiers.CLOUD_PATTERNED_BRONZE,3, -1.5F,new Item.Properties()));
+    public static final RegistryObject<Item> CLOUD_PATTERNED_BRONZE_PICKAXE = ITEMS.register("cloud_patterned_bronze_pickaxe",()->new PickaxeItem(ModToolTiers.CLOUD_PATTERNED_BRONZE,4, -1.5F,new Item.Properties()));
     public static final RegistryObject<Item> CLOUD_PATTERNED_BRONZE_AXE = ITEMS.register("cloud_patterned_bronze_axe",()->new AxeItem(ModToolTiers.CLOUD_PATTERNED_BRONZE,10.0F, -1.9F,new Item.Properties()));
     public static final RegistryObject<Item> CLOUD_PATTERNED_BRONZE_SHOVEL = ITEMS.register("cloud_patterned_bronze_shovel",()->new ShovelItem(ModToolTiers.CLOUD_PATTERNED_BRONZE,2.8F, -0.8F,new Item.Properties()));
     public static final RegistryObject<Item> CLOUD_PATTERNED_BRONZE_HOE = ITEMS.register("cloud_patterned_bronze_hoe",()->new HoeItem(ModToolTiers.CLOUD_PATTERNED_BRONZE,-1, 1.0F,new Item.Properties()));
 
     public static final RegistryObject<Item> RED_FIRE_SWORD = ITEMS.register("red_fire_sword",()->new ModSwordBaseItem(ModToolTiers.RED_FIRE,6,-1.0F,new Item.Properties()));
-    public static final RegistryObject<Item> RED_FIRE_PICKAXE = ITEMS.register("red_fire_pickaxe",()->new PickaxeItem(ModToolTiers.RED_FIRE,2, -1.1F,new Item.Properties()));
+    public static final RegistryObject<Item> RED_FIRE_PICKAXE = ITEMS.register("red_fire_pickaxe",()->new PickaxeItem(ModToolTiers.RED_FIRE,4, -1.1F,new Item.Properties()));
     public static final RegistryObject<Item> RED_FIRE_AXE = ITEMS.register("red_fire_axe",()->new AxeItem(ModToolTiers.RED_FIRE,12.0F, -3.0F,new Item.Properties()));
     public static final RegistryObject<Item> RED_FIRE_SHOVEL = ITEMS.register("red_fire_shovel",()->new ShovelItem(ModToolTiers.RED_FIRE,2.6F, -2.0F,new Item.Properties()));
     public static final RegistryObject<Item> RED_FIRE_HOE = ITEMS.register("red_fire_hoe",()->new HoeItem(ModToolTiers.RED_FIRE,-1, 1.0F,new Item.Properties()));
 
     public static final RegistryObject<Item> SUNKEN_SILVER_SWORD = ITEMS.register("sunken_silver_sword",()->new ModSwordBaseItem(ModToolTiers.SUNKEN_SILVER,4,-1.5F,new Item.Properties()));
-    public static final RegistryObject<Item> SUNKEN_SILVER_PICKAXE = ITEMS.register("sunken_silver_pickaxe",()->new PickaxeItem(ModToolTiers.SUNKEN_SILVER,1, -2.0F,new Item.Properties()));
+    public static final RegistryObject<Item> SUNKEN_SILVER_PICKAXE = ITEMS.register("sunken_silver_pickaxe",()->new PickaxeItem(ModToolTiers.SUNKEN_SILVER,4, -2.0F,new Item.Properties()));
     public static final RegistryObject<Item> SUNKEN_SILVER_AXE = ITEMS.register("sunken_silver_axe",()->new AxeItem(ModToolTiers.SUNKEN_SILVER,8.0F, -3.0F,new Item.Properties()));
     public static final RegistryObject<Item> SUNKEN_SILVER_SHOVEL = ITEMS.register("sunken_silver_shovel",()->new ShovelItem(ModToolTiers.SUNKEN_SILVER,1.6F, -2.0F,new Item.Properties()));
     public static final RegistryObject<Item> SUNKEN_SILVER_HOE = ITEMS.register("sunken_silver_hoe",()->new HoeItem(ModToolTiers.SUNKEN_SILVER,-2, 0.5F,new Item.Properties()));
+
+    public static final RegistryObject<Item> COLD_HEARTED_STEEL_SWORD = ITEMS.register("cold_hearted_steel_sword",()->new ModSwordBaseItem(ModToolTiers.COLD_HEARTED_STEEL,7,-1.2F,new Item.Properties()));
+    public static final RegistryObject<Item> COLD_HEARTED_STEEL_PICKAXE = ITEMS.register("cold_hearted_steel_pickaxe",()->new PickaxeItem(ModToolTiers.COLD_HEARTED_STEEL,4, -1.5F,new Item.Properties()));
+    public static final RegistryObject<Item> COLD_HEARTED_STEEL_AXE = ITEMS.register("cold_hearted_steel_axe",()->new AxeItem(ModToolTiers.COLD_HEARTED_STEEL,10.0F, -1.9F,new Item.Properties()));
+    public static final RegistryObject<Item> COLD_HEARTED_STEEL_SHOVEL = ITEMS.register("cold_hearted_steel_shovel",()->new ShovelItem(ModToolTiers.COLD_HEARTED_STEEL,2.8F, -0.8F,new Item.Properties()));
+    public static final RegistryObject<Item> COLD_HEARTED_STEEL_HOE = ITEMS.register("cold_hearted_steel_hoe",()->new HoeItem(ModToolTiers.COLD_HEARTED_STEEL,-1, 1.0F,new Item.Properties()));
 
     //丹药类
     public static final RegistryObject<Item> CHUYUAN_DAN = ITEMS.register("chuyuan_dan",()->new DanYaoItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setJingyan(16).setMinLevel(1).setTier(1));
@@ -194,7 +209,8 @@ public class ModItems {
         MODSTONE.add(GRAY_IRON_INGOT);
         MODSTONE.add(CLOUD_PATTERNED_BRONZE_INGOT);
         MODSTONE.add(RED_FIRE_INGOT);
-        MODSTONE.add(SUNKEN_SILVER);
+        MODSTONE.add(SUNKEN_SILVER_INGOT);
+        MODSTONE.add(COLD_HEARTED_STEEL_INGOT);
 
         MODSTONE.add(RUBY);
         MODSTONE.add(AMETHYST);
@@ -233,6 +249,10 @@ public class ModItems {
         EQUIPMENT.add(SUNKEN_SILVER_CHESTPLATE);
         EQUIPMENT.add(SUNKEN_SILVER_LEGGINGS);
         EQUIPMENT.add(SUNKEN_SILVER_BOOTS);
+        EQUIPMENT.add(COLD_HEARTED_STEEL_HELMET);
+        EQUIPMENT.add(COLD_HEARTED_STEEL_CHESTPLATE);
+        EQUIPMENT.add(COLD_HEARTED_STEEL_LEGGINGS);
+        EQUIPMENT.add(COLD_HEARTED_STEEL_BOOTS);
     }
 
     public static ArrayList<RegistryObject<Item>> TOOL = new ArrayList<>();
@@ -257,6 +277,11 @@ public class ModItems {
         TOOL.add(SUNKEN_SILVER_AXE);
         TOOL.add(SUNKEN_SILVER_SHOVEL);
         TOOL.add(SUNKEN_SILVER_HOE);
+        TOOL.add(COLD_HEARTED_STEEL_SWORD);
+        TOOL.add(COLD_HEARTED_STEEL_PICKAXE);
+        TOOL.add(COLD_HEARTED_STEEL_AXE);
+        TOOL.add(COLD_HEARTED_STEEL_SHOVEL);
+        TOOL.add(COLD_HEARTED_STEEL_HOE);
     }
 
 

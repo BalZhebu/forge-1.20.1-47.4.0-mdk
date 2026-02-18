@@ -58,6 +58,9 @@ public class ModArmorBaseItem extends ArmorItem {
         if(material == ModArmorMaterials.SUNKEN_SILVER){
             return 4;
         }
+        if(material == ModArmorMaterials.COLD_HEARTED_STEEL){
+            return 5;
+        }
         return 0;
     }
 
@@ -93,6 +96,9 @@ public class ModArmorBaseItem extends ArmorItem {
         if(this.getMaterial() == ModArmorMaterials.SUNKEN_SILVER){
             return value*0.35f;
         }
+        if(this.getMaterial() == ModArmorMaterials.COLD_HEARTED_STEEL){
+            return value*0.5f;
+        }
         return 0;
     }
 
@@ -114,6 +120,9 @@ public class ModArmorBaseItem extends ArmorItem {
         if(this.getMaterial() == ModArmorMaterials.SUNKEN_SILVER){
             return value*0.6f;
         }
+        if(this.getMaterial() == ModArmorMaterials.COLD_HEARTED_STEEL){
+            return value*0.8f;
+        }
         return 0;
     }
 
@@ -129,6 +138,9 @@ public class ModArmorBaseItem extends ArmorItem {
         }
         if(this.getMaterial() == ModArmorMaterials.SUNKEN_SILVER){
             return 16;
+        }
+        if(this.getMaterial() == ModArmorMaterials.COLD_HEARTED_STEEL){
+            return 22;
         }
         return 0;
     }
@@ -176,6 +188,11 @@ public class ModArmorBaseItem extends ArmorItem {
             list.add(Component.translatable("最大生命","10%").withStyle(ChatFormatting.AQUA));
             list.add(Component.translatable("防御力","20%").withStyle(ChatFormatting.AQUA));
             list.add(Component.translatable("生命恢复","4").withStyle(ChatFormatting.AQUA));
+        }
+        if(this.getMaterial() == ModArmorMaterials.COLD_HEARTED_STEEL){
+            list.add(Component.translatable("最大生命","50%").withStyle(ChatFormatting.AQUA));
+            list.add(Component.translatable("防御力","80%").withStyle(ChatFormatting.AQUA));
+            list.add(Component.translatable("生命恢复","22").withStyle(ChatFormatting.AQUA));
         }
         if(this.getMaterial() == ModArmorMaterials.SUNKEN_SILVER){
             list.add(Component.translatable("最大生命","35%").withStyle(ChatFormatting.AQUA));

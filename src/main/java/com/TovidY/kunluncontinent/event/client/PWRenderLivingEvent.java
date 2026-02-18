@@ -51,29 +51,35 @@ public class PWRenderLivingEvent {
     }
 
     public static void renderHunhuanAttribute(Matrix4f matrix4f, long nianxian, float partialTick, int count) {
-        if (nianxian >= 10000000) {
-            RenderSystem.setShaderColor(0.0f, 0.6f, 1.0f, 0.8f);
-            matrix4f.scale(1.5f + (float) Math.sin(partialTick * 0.02f) * 0.15f, 1, 1.5f + (float) Math.sin(partialTick * 0.01f) * 0.15f);
-        }else if(nianxian>=1000000){
-            RenderSystem.setShaderColor(1.0f, 0.6f, 0.1f,0.8f);
-            matrix4f.scale(1.5f+(float) Math.sin(partialTick*0.02f)*0.15f,1, 1.5f+(float) Math.sin(partialTick*0.01f)*0.15f);
-        }else if(nianxian>=100000){
-            RenderSystem.setShaderColor(1.0f, 0, 0,0.6f);
-            matrix4f.scale(1.18f, 1,1.18f);
-        }else if(nianxian>=10000){
-            RenderSystem.setShaderColor(0f, 0f, 0f,0.8f);
-            matrix4f.scale(0.9f, 1,0.9f);
-        }else if(nianxian>=1000){
-            RenderSystem.setShaderColor(1.0f, 0f, 1.0f,0.4f);
-            matrix4f.scale(0.76f, 1,0.76f);
-        }else if(nianxian>=100){
-            RenderSystem.setShaderColor(1.0f, 1.0f, 0,0.4f);
-            matrix4f.scale(0.60f, 1, 0.60f);
-        }else if(nianxian>=1){
-            RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f,0.8f);
-            matrix4f.scale(0.4f,1, 0.4f);
+        if (nianxian >= 100000000) {
+            RenderSystem.setShaderColor(0.0f, 1.0f, 0.2f, 1.0f);
+            float scaleBase = 2.0f + (float) Math.sin(partialTick * 0.05f) * 0.2f;
+            matrix4f.scale(scaleBase, 1.0f, scaleBase);
         }
-
+        else if (nianxian >= 10000000) {
+            RenderSystem.setShaderColor(0.0f, 0.4f, 1.0f, 0.9f);
+            float breathing = 1.6f + (float) Math.sin(partialTick * 0.02f) * 0.1f;
+            matrix4f.scale(breathing, 1.0f, breathing);
+        } else if (nianxian >= 1000000) {
+            RenderSystem.setShaderColor(1.0f, 0.5f, 0.0f, 0.8f);
+            float s = 1.4f + (float) Math.sin(partialTick * 0.02f) * 0.1f;
+            matrix4f.scale(s, 1.0f, s);
+        } else if (nianxian >= 100000) {
+            RenderSystem.setShaderColor(1.0f, 0.0f, 0.0f, 0.7f);
+            matrix4f.scale(1.2f, 1.0f, 1.2f);
+        } else if (nianxian >= 10000) {
+            RenderSystem.setShaderColor(0.1f, 0.05f, 0.1f, 0.9f);
+            matrix4f.scale(1.0f, 1.0f, 1.0f);
+        } else if (nianxian >= 1000) {
+            RenderSystem.setShaderColor(0.8f, 0.0f, 0.8f, 0.5f);
+            matrix4f.scale(0.8f, 1.0f, 0.8f);
+        } else if (nianxian >= 100) {
+            RenderSystem.setShaderColor(1.0f, 1.0f, 0.0f, 0.5f);
+            matrix4f.scale(0.6f, 1.0f, 0.6f);
+        } else if (nianxian >= 1) {
+            RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 0.8f);
+            matrix4f.scale(0.4f, 1.0f, 0.4f);
+        }
     }
 
     public static void renderAnimation(Matrix4f matrix4f, int nianxian, float partialTick, int count) {

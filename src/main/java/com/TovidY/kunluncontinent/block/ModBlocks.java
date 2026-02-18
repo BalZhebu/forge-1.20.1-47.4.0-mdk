@@ -4,8 +4,13 @@ import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.block.klblock.LiandanluBlock;
 import com.TovidY.kunluncontinent.block.klblock.PutuanBlock;
 import com.TovidY.kunluncontinent.item.ModItems;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -13,8 +18,10 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 //方块注册类
@@ -54,7 +61,12 @@ public class ModBlocks {
 
     public static final RegistryObject<Block> DROSS_BLOCK =
             registerBlock("dross_block",()->
-                    new Block(BlockBehaviour.Properties.copy(Blocks.HAY_BLOCK)));
+                    new Block(BlockBehaviour.Properties.copy(Blocks.HAY_BLOCK)){
+                        @Override
+                        public void appendHoverText(ItemStack pStack, @Nullable BlockGetter pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
+                            pTooltip.add(Component.translatable("tooltip.kunluncontinent.dross_block").withStyle(ChatFormatting.DARK_GRAY));
+                        }
+                    });
 
     public static final RegistryObject<Block> PUTUAN_BLOCK =
             registerBlock("putuan_block",()->

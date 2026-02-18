@@ -44,7 +44,22 @@ public enum ModArmorMaterials implements ArmorMaterial {
         map.put(ArmorItem.Type.CHESTPLATE, 20);
         map.put(ArmorItem.Type.LEGGINGS, 15);
         map.put(ArmorItem.Type.BOOTS, 10);
-    }), 30, SoundEvents.ARMOR_EQUIP_NETHERITE, 10.0F, 0.5F, () -> Ingredient.of(ModItems.SUNKEN_SILVER.get()))
+    }), 30, SoundEvents.ARMOR_EQUIP_NETHERITE, 10.0F, 0.5F, () -> Ingredient.of(ModItems.SUNKEN_SILVER_INGOT.get())),
+
+    COLD_HEARTED_STEEL("cold_heated_steel", 45, Util.make(new EnumMap<>(ArmorItem.Type.class), (map) -> {
+        map.put(ArmorItem.Type.HELMET, 15);
+        map.put(ArmorItem.Type.CHESTPLATE, 25);
+        map.put(ArmorItem.Type.LEGGINGS, 20);
+        map.put(ArmorItem.Type.BOOTS, 15);
+    }), 30, SoundEvents.ARMOR_EQUIP_NETHERITE, 15.0F, 0.8F, () -> Ingredient.of(ModItems.COLD_HEARTED_STEEL_INGOT.get())),
+
+
+
+
+
+
+
+
     ;
 
 

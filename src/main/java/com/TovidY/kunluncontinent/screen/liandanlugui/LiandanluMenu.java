@@ -111,6 +111,10 @@ public class LiandanluMenu extends AbstractContainerMenu {
             this.addSlot(new Slot(inv, i, 26 + i * 18, 144));
     }
 
+    public boolean hasDrossBlock() {
+        return !this.getSlot(5).getItem().isEmpty();
+    }
+
     @Override
     public boolean stillValid(Player player) {
         return AbstractContainerMenu.stillValid(this.access, player, blockEntity.getBlockState().getBlock());

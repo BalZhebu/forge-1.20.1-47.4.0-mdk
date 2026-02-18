@@ -45,6 +45,7 @@ public class ModWorldGenProvider {
      * 第二步：放置特征 (PlacedFeature)
      * 定义：矿物的稀有度、高度范围、分布方式
      */
+
     public static void placement(BootstapContext<PlacedFeature> context) {
         HolderGetter<ConfiguredFeature<?, ?>> configuredFeatures = context.lookup(Registries.CONFIGURED_FEATURE);
         // 参数含义解析：
@@ -59,6 +60,7 @@ public class ModWorldGenProvider {
         registerPlacement(context, configuredFeatures, ModBlocks.CLOUD_PATTERNED_BRONZE_ORE, -64, -0, 3);
         //赤火矿
         registerPlacement(context, configuredFeatures, ModBlocks.RED_FIRE_ORE, 1, 100, 3);
+        //银矿
         registerPlacement(context, configuredFeatures, ModBlocks.SUNKEN_SILVER_ORE, 0, 128, 5);
         //紫水晶
         registerPlacement(context, configuredFeatures, ModBlocks.AMETHYST_ORE, 0, 100, 3);

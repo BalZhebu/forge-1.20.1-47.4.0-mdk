@@ -7,6 +7,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import java.util.Random;
 
 //各个年限生物的属性生成
+
 public class MobAttributeCapability extends CapabilityAttributeBase implements INBTSerializable<CompoundTag> {
     private static final Random RANDOM = new Random();
     private long nianxian;
@@ -26,7 +27,6 @@ public class MobAttributeCapability extends CapabilityAttributeBase implements I
         if (nianxian < 100) {
             float g = 2 + (float) nianxian / 10 + RANDOM.nextInt(10);
             float l = 10 + (float) nianxian / 20;
-
             applyBaseGrowth(g, l);
         } else if (nianxian < 1000) {
             float g = 50 + (float) nianxian / 10 + RANDOM.nextInt(50);
@@ -44,10 +44,18 @@ public class MobAttributeCapability extends CapabilityAttributeBase implements I
             float g = 3750 + (float) nianxian / 133 + RANDOM.nextInt(3750);
             float l = 50 + (float) nianxian / 1000000 * 10;
             applyGrowth(g, l, 5, 50, 10);
+        } else if (nianxian < 10000000) {
+            float g = 15000 + (float) nianxian / 500 + RANDOM.nextInt(15000);
+            float l = 120 + (float) nianxian / 10000000 * 20;
+            applyGrowth(g, l, 10, 200, 150);
+        } else if (nianxian < 100000000) {
+            float g = 100000 + (float) nianxian / 1000 + RANDOM.nextInt(100000);
+            float l = 200 + (float) nianxian / 100000000 * 50;
+            applyGrowth(g, l, 25, 500, 400);
         } else {
-            float g = 13750 + (float) nianxian / 681 + RANDOM.nextInt(13750);
-            float l = 100 + (float) nianxian / 10000000 * 10;
-            applyGrowth(g, l, 8, 100, 15);
+            float g = 500000 + (float) nianxian / 2000 + RANDOM.nextInt(500000);
+            float l = 500 + (float) nianxian / 1000000000 * 100;
+            applyGrowth(g, l, 60, 1200, 1000);
         }
     }
 

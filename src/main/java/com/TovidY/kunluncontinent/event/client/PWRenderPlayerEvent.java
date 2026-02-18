@@ -215,33 +215,24 @@ private static void renderShenhuan(Entity entity, float partialTick, PoseStack p
         KLRenderApi.renderStart(HUNHUAN, poseStack);
         Matrix4f matrix4f = poseStack.last().pose();
 
-        // 1. 获取动画进度
         float progress = 1f;
         if (entity instanceof Player player) {
             progress = getAnimationProgress(player, count, 9);
         }
 
-        // 2. 高度设定：调高至 0.25f 避免蹲下穿模
-        // 同时也给 Y 轴加了极小的偏移 (0.01f)，防止多枚魂环在同一高度导致贴图闪烁
         float footY = 0.25f + (count * 0.01f);
         matrix4f.translate(0, footY, 0);
 
-        // 3. 旋转逻辑：匀速转动，没有任何呼吸抖动
         float time = entity.level().getGameTime() + partialTick;
         float rotationAngle = (float)Math.PI * 0.005f * time * (count % 2 == 0 ? -1 : 1);
         matrix4f.rotate(rotationAngle, 0.0F, 1.0F, 0.0F);
 
-        // 4. 缩放逻辑（调整间隔）：
-        // 基础大小设定为 0.28f（离身体很近）
-        // 间隔设定为 0.11f（比之前的 0.08 稍微大了一点点，让魂环之间有清晰的空隙）
         float targetScale = 0.28f + (count * 0.11f);
         float currentScale = targetScale * progress;
         matrix4f.scale(currentScale, 1.0f, currentScale);
 
-        // 5. 颜色与透明度：固定 0.8f，移除所有淡化效果
         renderHunhuanColorWithAlpha(nianxian, 1.0f);
 
-        // 6. 绘制
         BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
         bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
         float s = 6.0f; // 模型原始大小
@@ -254,43 +245,28 @@ private static void renderShenhuan(Entity entity, float partialTick, PoseStack p
         KLRenderApi.renderEnd(poseStack);
     }
 
-    public static void renderAnimation(Matrix4f matrix4f, int nianxian, float partialTick, int count) {
-        matrix4f.rotate((float)Math.PI*0.005f*partialTick*(count%2==0? -1:1), 0.0F, 1.0F, 0.0F);
-        matrix4f.translate(0, 0.01f*count, 0);
-    }
-
     private static void renderHunhuanColorWithAlpha(int nianxian, float alphaModifier) {
-        // 强制使用固定不透明度，不随动画进度变化
+        // 基础不透明度 0.8，亿年级适当增加厚重感
         float baseAlpha = 0.8f;
-
-        if (nianxian >= 10000000) RenderSystem.setShaderColor(0.0f, 0.6f, 1.0f, baseAlpha);
-        else if(nianxian >= 1000000) RenderSystem.setShaderColor(1.0f, 0.6f, 0.1f, baseAlpha);
-        else if(nianxian >= 100000) RenderSystem.setShaderColor(1.0f, 0, 0, baseAlpha);
-        else if(nianxian >= 10000) RenderSystem.setShaderColor(0.1f, 0.1f, 0.1f, baseAlpha);
-        else if(nianxian >= 1000) RenderSystem.setShaderColor(0.8f, 0.0f, 0.8f, baseAlpha);
-        else if(nianxian >= 100) RenderSystem.setShaderColor(1.0f, 1.0f, 0, baseAlpha);
-        else RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, baseAlpha);
-    }
-
-    public static void renderHunhuanColor(Matrix4f matrix4f, int nianxian, float partialTick, int count) {
-        if (nianxian >= 10000000) {
-            RenderSystem.setShaderColor(0.0f, 0.6f, 1.0f, 0.8f);
-        } else if(nianxian >= 1000000) {
-            RenderSystem.setShaderColor(1.0f, 0.6f, 0.1f, 0.8f);
-        } else if(nianxian >= 100000) {
-            RenderSystem.setShaderColor(1.0f, 0, 0, 0.6f);
-        } else if(nianxian >= 10000) {
-            RenderSystem.setShaderColor(0, 0f, 0, 0.6f);
-        } else if(nianxian >= 1000) {
-            RenderSystem.setShaderColor(1.0f, 0f, 1.0f, 0.4f);
-        } else if(nianxian >= 100) {
-            RenderSystem.setShaderColor(1.0f, 1.0f, 0, 0.4f);
-        } else if(nianxian >= 1) {
-            RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 0.8f);
+        if (nianxian >= 100000000) {
+            RenderSystem.setShaderColor(0.0f, 1.0f, 0.2f, 1.0f);
+        }else if (nianxian >= 10000000) {
+            RenderSystem.setShaderColor(0.0f, 0.4f, 1.0f, baseAlpha);
+        }else if (nianxian >= 1000000) {
+            RenderSystem.setShaderColor(1.0f, 0.6f, 0.1f, baseAlpha);
+        } else if (nianxian >= 100000) {
+            RenderSystem.setShaderColor(1.0f, 0.0f, 0.0f, baseAlpha);
+        } else if (nianxian >= 10000) {
+            RenderSystem.setShaderColor(0.1f, 0.1f, 0.1f, baseAlpha);
+        } else if (nianxian >= 1000) {
+            RenderSystem.setShaderColor(0.8f, 0.0f, 0.8f, baseAlpha);
+        } else if (nianxian >= 100) {
+            RenderSystem.setShaderColor(1.0f, 1.0f, 0.0f, baseAlpha);
         } else {
-            RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 0.8f);
+            RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, baseAlpha);
         }
     }
+
 
     public static void renderHunhuanscale(Matrix4f matrix4f, int nianxian, float partialTick, int count) {
         matrix4f.scale(0.4f+count*0.12f, 1, 0.4f+count*0.12f);

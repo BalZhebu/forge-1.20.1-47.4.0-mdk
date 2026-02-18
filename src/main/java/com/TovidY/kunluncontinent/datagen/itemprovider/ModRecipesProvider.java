@@ -6,7 +6,6 @@ import com.TovidY.kunluncontinent.item.ModItems;
 import com.TovidY.kunluncontinent.item.ModTags;
 import com.TovidY.kunluncontinent.recipe.ModRecipes;
 import com.TovidY.kunluncontinent.recipe.liandanlurecipe.LiandanRecipeBuilder;
-import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
 import net.minecraft.resources.ResourceLocation;
@@ -15,7 +14,6 @@ import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
 
@@ -42,8 +40,8 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
         oreBlasting(pWriter,CLOUD_PATTERNED_BRONZE,RecipeCategory.MISC,ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get(),0.30F,200,"cloud_patterned_bronze");
         oreSmelting(pWriter,RED_FIRE,RecipeCategory.MISC,ModItems.RED_FIRE_INGOT.get(),0.35F,400,"red_fire");
         oreBlasting(pWriter,RED_FIRE,RecipeCategory.MISC,ModItems.RED_FIRE_INGOT.get(),0.35F,200,"red_fire");
-        oreSmelting(pWriter,SUNKEN_SILVER,RecipeCategory.MISC,ModItems.SUNKEN_SILVER.get(),0.35F,400,"sunken_silver");
-        oreBlasting(pWriter,SUNKEN_SILVER,RecipeCategory.MISC,ModItems.SUNKEN_SILVER.get(),0.35F,200,"sunken_silver");
+        oreSmelting(pWriter,SUNKEN_SILVER,RecipeCategory.MISC,ModItems.SUNKEN_SILVER_INGOT.get(),0.35F,400,"sunken_silver");
+        oreBlasting(pWriter,SUNKEN_SILVER,RecipeCategory.MISC,ModItems.SUNKEN_SILVER_INGOT.get(),0.35F,200,"sunken_silver");
 
 
         //丹药炼制代码
@@ -125,6 +123,19 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .define('Y', ModBlocks.LIANDANLU2.get())
                 .unlockedBy("has_liandanlu3", has(ModBlocks.LIANDANLU3.get()))
                 .save(pWriter);
+
+        //四阶炼丹炉
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,ModBlocks.LIANDANLU4.get())
+                .pattern("#Y#")
+                .pattern("ZXZ")
+                .pattern("#Z#")
+                .define('#', Blocks.OBSIDIAN)
+                .define('X', ModItems.MIDDLE_LEVEL_HEXIN.get())
+                .define('Z', ModItems.SUNKEN_SILVER_INGOT.get())
+                .define('Y', ModBlocks.LIANDANLU3.get())
+                .unlockedBy("has_liandanlu4", has(ModBlocks.LIANDANLU4.get()))
+                .save(pWriter);
+
 
         //丹渣块
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.DROSS_BLOCK.get())
@@ -370,67 +381,135 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .pattern("#")
                 .pattern("#")
                 .pattern("M")
-                .define('#',ModItems.SUNKEN_SILVER.get())
+                .define('#',ModItems.SUNKEN_SILVER_INGOT.get())
                 .define('M', Items.STICK)
-                .unlockedBy("has_sunken_silver_ingot", has(ModItems.SUNKEN_SILVER.get()))
+                .unlockedBy("has_sunken_silver_ingot", has(ModItems.SUNKEN_SILVER_INGOT.get()))
                 .save(pWriter);
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS,ModItems.SUNKEN_SILVER_PICKAXE.get())
                 .pattern("###")
                 .pattern(" M ")
                 .pattern(" M ")
-                .define('#',ModItems.SUNKEN_SILVER.get())
+                .define('#',ModItems.SUNKEN_SILVER_INGOT.get())
                 .define('M', Items.STICK)
-                .unlockedBy("has_sunken_silver_ingot", has(ModItems.SUNKEN_SILVER.get()))
+                .unlockedBy("has_sunken_silver_ingot", has(ModItems.SUNKEN_SILVER_INGOT.get()))
                 .save(pWriter);
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS,ModItems.SUNKEN_SILVER_AXE.get())
                 .pattern("##")
                 .pattern("#M")
                 .pattern(" M")
-                .define('#',ModItems.SUNKEN_SILVER.get())
+                .define('#',ModItems.SUNKEN_SILVER_INGOT.get())
                 .define('M', Items.STICK)
-                .unlockedBy("has_sunken_silver_ingot", has(ModItems.SUNKEN_SILVER.get()))
+                .unlockedBy("has_sunken_silver_ingot", has(ModItems.SUNKEN_SILVER_INGOT.get()))
                 .save(pWriter);
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS,ModItems.SUNKEN_SILVER_SHOVEL.get())
                 .pattern("#")
                 .pattern("M")
                 .pattern("M")
-                .define('#',ModItems.SUNKEN_SILVER.get())
+                .define('#',ModItems.SUNKEN_SILVER_INGOT.get())
                 .define('M', Items.STICK)
-                .unlockedBy("has_sunken_silver_ingot", has(ModItems.SUNKEN_SILVER.get()))
+                .unlockedBy("has_sunken_silver_ingot", has(ModItems.SUNKEN_SILVER_INGOT.get()))
                 .save(pWriter);
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS,ModItems.SUNKEN_SILVER_HOE.get())
                 .pattern("##")
                 .pattern(" M")
                 .pattern(" M")
-                .define('#',ModItems.SUNKEN_SILVER.get())
+                .define('#',ModItems.SUNKEN_SILVER_INGOT.get())
                 .define('M', Items.STICK)
-                .unlockedBy("has_sunken_silver_ingot", has(ModItems.SUNKEN_SILVER.get()))
+                .unlockedBy("has_sunken_silver_ingot", has(ModItems.SUNKEN_SILVER_INGOT.get()))
                 .save(pWriter);
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT,ModItems.SUNKEN_SILVER_HELMET.get())
                 .pattern("###")
                 .pattern("# #")
-                .define('#',ModItems.SUNKEN_SILVER.get())
-                .unlockedBy("has_sunken_silver_ingot", has(ModItems.SUNKEN_SILVER.get()))
+                .define('#',ModItems.SUNKEN_SILVER_INGOT.get())
+                .unlockedBy("has_sunken_silver_ingot", has(ModItems.SUNKEN_SILVER_INGOT.get()))
                 .save(pWriter);
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT,ModItems.SUNKEN_SILVER_CHESTPLATE.get())
                 .pattern("# #")
                 .pattern("###")
                 .pattern("###")
-                .define('#',ModItems.SUNKEN_SILVER.get())
-                .unlockedBy("has_sunken_silver_ingot", has(ModItems.SUNKEN_SILVER.get()))
+                .define('#',ModItems.SUNKEN_SILVER_INGOT.get())
+                .unlockedBy("has_sunken_silver_ingot", has(ModItems.SUNKEN_SILVER_INGOT.get()))
                 .save(pWriter);
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT,ModItems.SUNKEN_SILVER_LEGGINGS.get())
                 .pattern("###")
                 .pattern("# #")
                 .pattern("# #")
-                .define('#',ModItems.SUNKEN_SILVER.get())
-                .unlockedBy("has_sunken_silver_ingot", has(ModItems.SUNKEN_SILVER.get()))
+                .define('#',ModItems.SUNKEN_SILVER_INGOT.get())
+                .unlockedBy("has_sunken_silver_ingot", has(ModItems.SUNKEN_SILVER_INGOT.get()))
                 .save(pWriter);
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT,ModItems.SUNKEN_SILVER_BOOTS.get())
                 .pattern("# #")
                 .pattern("# #")
-                .define('#',ModItems.SUNKEN_SILVER.get())
-                .unlockedBy("has_sunken_silver_ingot", has(ModItems.SUNKEN_SILVER.get()))
+                .define('#',ModItems.SUNKEN_SILVER_INGOT.get())
+                .unlockedBy("has_sunken_silver_ingot", has(ModItems.SUNKEN_SILVER_INGOT.get()))
+                .save(pWriter);
+
+        //寒心钢
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT,ModItems.COLD_HEARTED_STEEL_SWORD.get())
+                .pattern("#")
+                .pattern("#")
+                .pattern("M")
+                .define('#',ModItems.COLD_HEARTED_STEEL_INGOT.get())
+                .define('M', ModItems.SUNKEN_SILVER_INGOT.get())
+                .unlockedBy("has_hearted_steel_ingot", has(ModItems.COLD_HEARTED_STEEL_INGOT.get()))
+                .save(pWriter);
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS,ModItems.COLD_HEARTED_STEEL_PICKAXE.get())
+                .pattern("###")
+                .pattern(" M ")
+                .pattern(" M ")
+                .define('#',ModItems.COLD_HEARTED_STEEL_INGOT.get())
+                .define('M', ModItems.SUNKEN_SILVER_INGOT.get())
+                .unlockedBy("has_hearted_steel_ingot", has(ModItems.COLD_HEARTED_STEEL_INGOT.get()))
+                .save(pWriter);
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS,ModItems.COLD_HEARTED_STEEL_AXE.get())
+                .pattern("##")
+                .pattern("#M")
+                .pattern(" M")
+                .define('#',ModItems.COLD_HEARTED_STEEL_INGOT.get())
+                .define('M', ModItems.SUNKEN_SILVER_INGOT.get())
+                .unlockedBy("has_hearted_steel_ingot", has(ModItems.COLD_HEARTED_STEEL_INGOT.get()))
+                .save(pWriter);
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS,ModItems.COLD_HEARTED_STEEL_SHOVEL.get())
+                .pattern("#")
+                .pattern("M")
+                .pattern("M")
+                .define('#',ModItems.COLD_HEARTED_STEEL_INGOT.get())
+                .define('M', ModItems.SUNKEN_SILVER_INGOT.get())
+                .unlockedBy("has_hearted_steel_ingot", has(ModItems.COLD_HEARTED_STEEL_INGOT.get()))
+                .save(pWriter);
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS,ModItems.COLD_HEARTED_STEEL_HOE.get())
+                .pattern("##")
+                .pattern(" M")
+                .pattern(" M")
+                .define('#',ModItems.COLD_HEARTED_STEEL_INGOT.get())
+                .define('M', ModItems.SUNKEN_SILVER_INGOT.get())
+                .unlockedBy("has_hearted_steel_ingot", has(ModItems.COLD_HEARTED_STEEL_INGOT.get()))
+                .save(pWriter);
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT,ModItems.COLD_HEARTED_STEEL_HELMET.get())
+                .pattern("###")
+                .pattern("# #")
+                .define('#',ModItems.COLD_HEARTED_STEEL_INGOT.get())
+                .unlockedBy("has_hearted_steel_ingot", has(ModItems.COLD_HEARTED_STEEL_INGOT.get()))
+                .save(pWriter);
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT,ModItems.COLD_HEARTED_STEEL_CHESTPLATE.get())
+                .pattern("# #")
+                .pattern("###")
+                .pattern("###")
+                .define('#',ModItems.COLD_HEARTED_STEEL_INGOT.get())
+                .unlockedBy("has_hearted_steel_ingot", has(ModItems.COLD_HEARTED_STEEL_INGOT.get()))
+                .save(pWriter);
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT,ModItems.COLD_HEARTED_STEEL_LEGGINGS.get())
+                .pattern("###")
+                .pattern("# #")
+                .pattern("# #")
+                .define('#',ModItems.COLD_HEARTED_STEEL_INGOT.get())
+                .unlockedBy("has_hearted_steel_ingot", has(ModItems.COLD_HEARTED_STEEL_INGOT.get()))
+                .save(pWriter);
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT,ModItems.COLD_HEARTED_STEEL_BOOTS.get())
+                .pattern("# #")
+                .pattern("# #")
+                .define('#',ModItems.COLD_HEARTED_STEEL_INGOT.get())
+                .unlockedBy("has_hearted_steel_ingot", has(ModItems.COLD_HEARTED_STEEL_INGOT.get()))
                 .save(pWriter);
     }
 

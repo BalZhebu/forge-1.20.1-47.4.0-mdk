@@ -28,6 +28,8 @@ public class ModItemModelsProvider extends ItemModelProvider {
                     .texture("layer0", sharedTexture);
         }
 
+        handheldItem(ModItems.INSTANT_KILL_SWORD.get());
+
         //刻刀类
         for (RegistryObject<Item> itemRegistry : ModItems.ENGRAVING_KNIFE){
             basicItem(itemRegistry.get());

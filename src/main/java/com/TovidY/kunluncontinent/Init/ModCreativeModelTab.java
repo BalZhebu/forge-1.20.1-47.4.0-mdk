@@ -27,6 +27,8 @@ public class ModCreativeModelTab {
                         for (RegistryObject<Item> itemRegistryObject : ModItems.DEBUG_ITEM_BLOCK){
                             pOutput.accept(itemRegistryObject.get());
                         }
+                        pOutput.accept(ModItems.INSTANT_KILL_SWORD.get());
+
 
                         for (RegistryObject<Block> itemRegistryObject : ModBlocks.MODBLOCKS){
                             pOutput.accept(itemRegistryObject.get());

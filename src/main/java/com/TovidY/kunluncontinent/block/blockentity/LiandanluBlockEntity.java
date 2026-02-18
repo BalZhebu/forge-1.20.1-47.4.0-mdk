@@ -32,6 +32,7 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
+
 public class LiandanluBlockEntity extends BlockEntity implements MenuProvider {
     private final int furnaceLevel;
     private int progress = 0;
@@ -105,18 +106,15 @@ public class LiandanluBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     private int getAdjustedCookingTime(LiandanRecipe recipe) {
-        int danLevel = recipe.getRecipeLevel(); // 需在Recipe类中实现此方法
+        int danLevel = recipe.getRecipeLevel();
         int luLevel = this.furnaceLevel;
         int finalTimeInSeconds;
 
         if (luLevel >= danLevel) {
-            // 炉阶 >= 丹阶：基础10秒，每高出一阶减1秒
             finalTimeInSeconds = 10 - (luLevel - danLevel);
         } else {
-            // 炉阶 < 丹阶：10秒 + (差值 * 10秒)
-            finalTimeInSeconds = 10 + (danLevel - luLevel) * 30;
+            finalTimeInSeconds = 10 + (danLevel - luLevel) * 100;
         }
-        // 保底1秒，转为Tick
         return Math.max(finalTimeInSeconds, 1) * 20;
     }
 

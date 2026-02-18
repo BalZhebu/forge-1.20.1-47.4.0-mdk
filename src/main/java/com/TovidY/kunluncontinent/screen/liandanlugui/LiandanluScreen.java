@@ -104,20 +104,19 @@ public class LiandanluScreen extends AbstractContainerScreen<LiandanluMenu> {
     }
 
     private double[] calculateWeightsForDisplay() {
-        // 这里的逻辑与 AlchemicalCalculator 必须完全一致
         double[] weights = {40.0, 30.0, 15.0, 10.0, 4.0, 1.0};
 
-        // 丹渣块稳定
-        if (!this.menu.getSlot(17).getItem().isEmpty()) {
-            double brokenWeight = weights[0];
-            weights[0] = 0;
-            weights[1] += brokenWeight;
+        if (this.menu.hasDrossBlock()) {
+            double currentBrokenWeight = weights[0];
+            double reduction = currentBrokenWeight * 0.88;
+            weights[0] -= reduction;
+            weights[1] += reduction;
         }
 
         double pressure = 0;
+
         boolean hasXian = false;
         boolean hasJue = false;
-
         for (int i = 0; i < 5; i++) {
             ItemStack stack = this.menu.getSlot(i).getItem();
             if (stack.getItem() instanceof NeidanItem) {
@@ -131,15 +130,15 @@ public class LiandanluScreen extends AbstractContainerScreen<LiandanluMenu> {
                 };
             }
         }
-
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 5; i++) {
             double shift = Math.min(weights[i], pressure);
             weights[i] -= shift;
-            weights[i + 1] += shift;
+            if (i + 1 < weights.length) {
+                weights[i + 1] += shift;
+            }
             pressure -= shift;
             if (pressure <= 0) break;
         }
-
         if (hasXian) {
             weights[0]=0; weights[1]=0; weights[2]=0;
             weights[3]=35.0; weights[4]=60.0; weights[5]=5.0;
