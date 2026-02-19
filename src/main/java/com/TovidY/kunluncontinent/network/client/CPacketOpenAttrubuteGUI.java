@@ -1,6 +1,6 @@
 package com.TovidY.kunluncontinent.network.client;
 
-import com.TovidY.kunluncontinent.screen.AttributeMenu;
+import com.TovidY.kunluncontinent.screen.attribute.AttributeMenu;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;

@@ -1,4 +1,4 @@
-package com.TovidY.kunluncontinent.screen;
+package com.TovidY.kunluncontinent.screen.attribute;
 
 import net.minecraft.client.Minecraft;
 import org.lwjgl.glfw.GLFW;

@@ -1,6 +1,8 @@
 package com.TovidY.kunluncontinent.screen;
 
 import com.TovidY.kunluncontinent.KlMain;
+import com.TovidY.kunluncontinent.screen.attribute.AttributeMenu;
+import com.TovidY.kunluncontinent.screen.attribute.AttributeScreen;
 import com.TovidY.kunluncontinent.screen.liandanlugui.LiandanluMenu;
 import com.TovidY.kunluncontinent.screen.liandanlugui.LiandanluScreen;
 import net.minecraft.client.gui.screens.MenuScreens;

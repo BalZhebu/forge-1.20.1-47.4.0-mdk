@@ -1,5 +1,6 @@
-package com.TovidY.kunluncontinent.screen;
+package com.TovidY.kunluncontinent.screen.attribute;
 
+import com.TovidY.kunluncontinent.screen.ModMenuTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
