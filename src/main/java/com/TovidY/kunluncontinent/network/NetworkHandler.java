@@ -5,6 +5,7 @@ import com.TovidY.kunluncontinent.network.client.CPacketOpenAttrubuteGUI;
 import com.TovidY.kunluncontinent.network.client.CPacketQiehuanWuhun;
 import com.TovidY.kunluncontinent.network.client.SyncShenciAttributesPacket;
 import com.TovidY.kunluncontinent.network.client.SyncWuhunDataPacket;
+import com.TovidY.kunluncontinent.network.server.PacketSyncPage;
 import com.TovidY.kunluncontinent.network.server.SPacketEntityAttribute;
 import com.TovidY.kunluncontinent.network.server.SPacketPlayerAttribute;
 import com.TovidY.kunluncontinent.network.server.SPacketSyncPlayerAttribute;
@@ -42,6 +43,7 @@ public class NetworkHandler {
         register(SyncWuhunDataPacket.class, SyncWuhunDataPacket::encode, SyncWuhunDataPacket::decode, SyncWuhunDataPacket::handle);
         register(SyncShenciAttributesPacket.class, SyncShenciAttributesPacket::encode, SyncShenciAttributesPacket::decode, SyncShenciAttributesPacket::handle);
         //服务端
+        register(PacketSyncPage.class, PacketSyncPage::encode, PacketSyncPage::decode, PacketSyncPage::handle);
         register(SPacketEntityAttribute.class, SPacketEntityAttribute::encode, SPacketEntityAttribute::decode, SPacketEntityAttribute::handle);
         register(SPacketSyncPlayerAttribute.class, SPacketSyncPlayerAttribute::encode, SPacketSyncPlayerAttribute::decode, SPacketSyncPlayerAttribute::handle);
         register(SPacketPlayerAttribute.class, SPacketPlayerAttribute::encode, SPacketPlayerAttribute::decode, SPacketPlayerAttribute::handle);

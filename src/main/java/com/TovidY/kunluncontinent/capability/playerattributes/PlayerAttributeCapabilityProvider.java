@@ -44,6 +44,7 @@ public class PlayerAttributeCapabilityProvider implements ICapabilityProvider, I
     @Override
     public CompoundTag serializeNBT() {
         return createPlayerCapability().serializeNBT();
+
     }
 
     @Override

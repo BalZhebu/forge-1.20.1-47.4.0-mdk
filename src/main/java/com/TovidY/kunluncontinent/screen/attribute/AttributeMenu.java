@@ -18,6 +18,18 @@ public class AttributeMenu extends AbstractContainerMenu implements MenuProvider
         this(pContainerId, inv, inv.player, new SimpleContainerData(7));
     }
 
+    public static class Provider implements MenuProvider {
+        @Override
+        public Component getDisplayName() {
+            return Component.literal("属性面板");
+        }
+
+        @Override
+        public AbstractContainerMenu createMenu(int id, Inventory inv, Player player) {
+            return new AttributeMenu(id, inv);
+        }
+    }
+
     public AttributeMenu(int pContainerId, Inventory inv) {
         this(pContainerId, inv, inv.player, new SimpleContainerData(7));
     }

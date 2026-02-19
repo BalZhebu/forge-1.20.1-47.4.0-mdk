@@ -35,6 +35,11 @@ public class ModItemModelsProvider extends ItemModelProvider {
             basicItem(itemRegistry.get());
         }
 
+        //魂骨类
+        for (RegistryObject<Item> itemRegistry : ModItems.HUNGULIST){
+            basicItem(itemRegistry.get());
+        }
+
         //核心类
         for (RegistryObject<Item> itemRegistry : ModItems.HEXIN){
             basicItem(itemRegistry.get());

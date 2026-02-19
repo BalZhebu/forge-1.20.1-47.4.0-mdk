@@ -41,11 +41,11 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("adv.kunlun.liandanlu1.title","一级炼丹炉");
         add("adv.kunlun.liandanlu1.desc","内丹品质高丹炉品质低炼丹速度越慢，反之炼丹速度更快");
         add("adv.kunlun.liandanlu2.title","二级炼丹炉！");
-        add("adv.kunlun.liandanlu2.desc","内丹品质高丹炉品质低炼丹速度越慢，反之炼丹速度更快");
+        add("adv.kunlun.liandanlu2.desc","建议使用更高级炼丹炉");
         add("adv.kunlun.liandanlu3.title","三级炼丹炉！");
-        add("adv.kunlun.liandanlu3.desc","内丹品质高丹炉品质低炼丹速度越慢，反之炼丹速度更快");
+        add("adv.kunlun.liandanlu3.desc","可以让炼丹速度加快！");
         add("adv.kunlun.liandanlu4.title","四级炼丹炉！");
-        add("adv.kunlun.liandanlu4.desc","内丹品质高丹炉品质低炼丹速度越慢，反之炼丹速度更快");
+        add("adv.kunlun.liandanlu4.desc","但若用低于等阶炼丹炉炼制高阶内丹，炼制速度将会提高10000%");
         add("adv.kunlun.liandanlu5.title","五级炼丹炉！");
         add("adv.kunlun.liandanlu5.desc","内丹品质高丹炉品质低炼丹速度越慢，反之炼丹速度更快");
         add("adv.kunlun.liandanlu6.title","六级炼丹炉！");
@@ -56,6 +56,15 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("adv.kunlun.liandanlu8.desc","高效的炼丹");
         add("adv.kunlun.liandanlu9.title","§c九§b阶§5炼§a丹§e炉！");
         add("adv.kunlun.liandanlu9.desc","材料要求极高实用性确不高");
+
+        //魂骨类
+        add(ModItems.SOUL_BEAST_SKULL.get(), "头骨");
+        add(ModItems.SOUL_BEAST_BREASTBONE.get(), "躯干骨");
+        add(ModItems.SOUL_BEAST_LEFT_HAND_BONE.get(), "左臂骨");
+        add(ModItems.SOUL_BEAST_RIGHT_HAND_BONE.get(), "右臂骨");
+        add(ModItems.SOUL_BEAST_LEFT_LEG_BONE.get(), "左腿骨");
+        add(ModItems.SOUL_BEAST_RIGHT_LEG_BONE.get(), "右腿骨");
+        add(ModItems.SOUL_BEAST_EXTERNAL_APPENDAGES.get(), "外附骨");
 
         //刻刀类
         add(ModItems.IRON_ENGRAVING_KNIFE.get(), "铁制刻刀");

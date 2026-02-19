@@ -5,9 +5,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -50,6 +52,12 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
     private String forcedTalent = "";
     private int xiantianTalent = 0;
 
+    private final ItemStackHandler hunguInventory = new ItemStackHandler(7) {
+        @Override
+        protected void onContentsChanged(int slot) {
+        }
+    };
+
 
     public PlayerAttributeCapability(){
         super();
@@ -86,6 +94,8 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
 
         tag.putInt("xiulianTime", this.xiulianTime);
         tag.putBoolean("usingAll", this.usingAll);
+
+        tag.put("HunguSlots", hunguInventory.serializeNBT());
 
         tag.putInt("Hunhuankuaiguan", hunhuankuaiguan);
 
@@ -129,6 +139,10 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         this.xiulianTime = nbt.getInt("xiulianTime");
         this.usingAll = nbt.getBoolean("usingAll");
 
+        if (nbt.contains("HunguSlots")) {
+            hunguInventory.deserializeNBT(nbt.getCompound("HunguSlots"));
+        }
+
         this.hunhuankuaiguan = nbt.getInt("Hunhuankuaiguan");
 
         for (String s : wuhunListsnameall) {
@@ -149,6 +163,11 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
             }
         }
     }
+
+    public ItemStackHandler getHunguInventory() {
+        return hunguInventory;
+    }
+
 
     public void setForcedTalent(String talent) { this.forcedTalent = talent; }
     public String getForcedTalent() { return this.forcedTalent; }

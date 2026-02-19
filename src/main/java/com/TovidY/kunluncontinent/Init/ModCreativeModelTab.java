@@ -27,49 +27,66 @@ public class ModCreativeModelTab {
                         for (RegistryObject<Item> itemRegistryObject : ModItems.DEBUG_ITEM_BLOCK){
                             pOutput.accept(itemRegistryObject.get());
                         }
+
+                        //秒杀剑
                         pOutput.accept(ModItems.INSTANT_KILL_SWORD.get());
 
-
+                        //MOD方块
                         for (RegistryObject<Block> itemRegistryObject : ModBlocks.MODBLOCKS){
                             pOutput.accept(itemRegistryObject.get());
                         }
 
+                        //魂骨
+                        for (RegistryObject<Item> itemRegistryObject : ModItems.HUNGULIST){
+                            pOutput.accept(itemRegistryObject.get());
+                        }
+
+                        //魂环收纳器
                         for (RegistryObject<Item> itemRegistryObject : ModItems.hunhuanstorage){
                             pOutput.accept(itemRegistryObject.get());
                         }
 
+                        //刻刀
                         for (RegistryObject<Item> itemRegistryObject : ModItems.ENGRAVING_KNIFE){
                             pOutput.accept(itemRegistryObject.get());
                         }
 
+                        //丹炉核心
                         for (RegistryObject<Item> itemRegistryObject : ModItems.HEXIN){
                             pOutput.accept(itemRegistryObject.get());
                         }
 
+                        //内丹
                         for (RegistryObject<Item> itemRegistryObject : ModItems.NEIDANLIST){
                             pOutput.accept(itemRegistryObject.get());
                         }
 
+                        //炼丹炉
                         for (RegistryObject<Block> itemRegistryObject : ModBlocks.LIANDANLULIST){
                             pOutput.accept(itemRegistryObject.get());
                         }
 
+                        //丹药
                         for (RegistryObject<Item> itemRegistryObject : ModItems.DANYAOITEM) {
                             pOutput.accept(itemRegistryObject.get());
                         }
 
+                        //MOD矿物
                         for (RegistryObject<Block> itemRegistryObject : ModBlocks.MODORE) {
                             pOutput.accept(itemRegistryObject.get());
                         }
 
+                        //MOD锭
                         for (RegistryObject<Item> itemRegistryObject : ModItems.MODSTONE) {
                             pOutput.accept(itemRegistryObject.get());
                         }
 
+                        //MOD装备
                         for (RegistryObject<Item> itemRegistryObject : ModItems.EQUIPMENT) {
                             pOutput.accept(itemRegistryObject.get());
                         }
 
+                        //MOD工具
                         for (RegistryObject<Item> itemRegistryObject : ModItems.TOOL) {
                             pOutput.accept(itemRegistryObject.get());
                         }

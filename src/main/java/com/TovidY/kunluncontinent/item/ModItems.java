@@ -3,6 +3,7 @@ package com.TovidY.kunluncontinent.item;
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.item.armor.ModArmorBaseItem;
 import com.TovidY.kunluncontinent.item.armor.ModArmorMaterials;
+import com.TovidY.kunluncontinent.item.hungu.BoneItem;
 import com.TovidY.kunluncontinent.item.klitem.DanYaoItem;
 import com.TovidY.kunluncontinent.item.klitem.EngravingKnifeItem;
 import com.TovidY.kunluncontinent.item.klitem.HunHuanStorageItem;
@@ -36,6 +37,15 @@ public class ModItems {
 
     public static final RegistryObject<Item> INSTANT_KILL_SWORD =
             ITEMS.register("instant_kill_sword", InstantKillSwordItem::new);
+
+    //魂骨
+    public static final RegistryObject<Item> SOUL_BEAST_SKULL = ITEMS.register("soul_beast_skull",()->new BoneItem(new Item.Properties()));
+    public static final RegistryObject<Item> SOUL_BEAST_BREASTBONE = ITEMS.register("soul_beast_breastbone",()->new BoneItem(new Item.Properties()));
+    public static final RegistryObject<Item> SOUL_BEAST_LEFT_HAND_BONE = ITEMS.register("soul_beast_left_hand_bone",()->new BoneItem(new Item.Properties()));
+    public static final RegistryObject<Item> SOUL_BEAST_RIGHT_HAND_BONE = ITEMS.register("soul_beast_right_hand_bone",()->new BoneItem(new Item.Properties()));
+    public static final RegistryObject<Item> SOUL_BEAST_LEFT_LEG_BONE = ITEMS.register("soul_beast_left_leg_bone",()->new BoneItem(new Item.Properties()));
+    public static final RegistryObject<Item> SOUL_BEAST_RIGHT_LEG_BONE = ITEMS.register("soul_beast_right_leg_bone",()->new BoneItem(new Item.Properties()));
+    public static final RegistryObject<Item> SOUL_BEAST_EXTERNAL_APPENDAGES = ITEMS.register("soul_beast_external_appendages",()->new BoneItem(new Item.Properties()));
 
     //内丹
     public static final RegistryObject<Item> NEIDAN1 = ITEMS.register("neidan1",()->new NeidanItem(new Item.Properties(),1));
@@ -154,6 +164,16 @@ public class ModItems {
     public static final RegistryObject<Item> HUNHUAN_STORAGE_FIVE = ITEMS.register("hunhuan_storage_five",
             () -> new HunHuanStorageItem(new Item.Properties().stacksTo(1).fireResistant(), 1, 20000000));
 
+    public static ArrayList<RegistryObject<Item>> HUNGULIST = new ArrayList<>();
+    static {
+        HUNGULIST.add(SOUL_BEAST_SKULL);
+        HUNGULIST.add(SOUL_BEAST_BREASTBONE);
+        HUNGULIST.add(SOUL_BEAST_LEFT_HAND_BONE);
+        HUNGULIST.add(SOUL_BEAST_RIGHT_HAND_BONE);
+        HUNGULIST.add(SOUL_BEAST_LEFT_LEG_BONE);
+        HUNGULIST.add(SOUL_BEAST_RIGHT_LEG_BONE);
+        HUNGULIST.add(SOUL_BEAST_EXTERNAL_APPENDAGES);
+    }
 
     public static ArrayList<RegistryObject<Item>> HEXIN = new ArrayList<>();
     static {
