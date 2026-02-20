@@ -12,15 +12,20 @@ import com.TovidY.kunluncontinent.item.neidanitems.NeidanItem;
 import com.TovidY.kunluncontinent.item.testitemblock.TestLevelUp;
 import com.TovidY.kunluncontinent.item.tool.ModSwordBaseItem;
 import com.TovidY.kunluncontinent.item.tool.ModToolTiers;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+import org.jetbrains.annotations.Nullable;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 //物品注册
 public class ModItems {
@@ -37,6 +42,15 @@ public class ModItems {
 
     public static final RegistryObject<Item> INSTANT_KILL_SWORD =
             ITEMS.register("instant_kill_sword", InstantKillSwordItem::new);
+
+    //普通物品
+    public static final RegistryObject<Item> EXTREME_COLD_SNOWFLAKE = ITEMS.register("extreme_cold_snowflake",()->new EngravingKnifeItem(new Item.Properties()){
+        @Override
+        public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
+            pTooltipComponents.add(Component.translatable("tooltip.kunluncontinent.extreme_cold_snowflake1").withStyle(ChatFormatting.DARK_GRAY));
+            pTooltipComponents.add(Component.translatable("tooltip.kunluncontinent.extreme_cold_snowflake2").withStyle(ChatFormatting.DARK_GRAY));
+        }
+    });
 
     //魂骨
     public static final RegistryObject<Item> SOUL_BEAST_SKULL = ITEMS.register("soul_beast_skull",()->new BoneItem(new Item.Properties()));
@@ -147,6 +161,10 @@ public class ModItems {
     public static final RegistryObject<Item> MIDDLE_LEVEL_HEXIN = ITEMS.register("middle_level_hexin",()->new Item(new Item.Properties()));
     public static final RegistryObject<Item> HIGH_LEVEL_HEXIN = ITEMS.register("high_level_hexin",()->new Item(new Item.Properties()));
 
+    //魂环储存器核心
+    public static final RegistryObject<Item> LOW_HUNHUAN_STORAGE_CORE = ITEMS.register("low_hunhuan_storage_core",()->new Item(new Item.Properties()));
+    public static final RegistryObject<Item> MIDDLE_HUNHUAN_STORAGE_CORE = ITEMS.register("middle_hunhuan_storage_core",()->new Item(new Item.Properties()));
+    public static final RegistryObject<Item> HIGH_HUNHUAN_STORAGE_CORE = ITEMS.register("high_hunhuan_storage_core",()->new Item(new Item.Properties()));
 
     // 魂环储存器
     public static final RegistryObject<Item> HUNHUAN_STORAGE_ONE = ITEMS.register("hunhuan_storage_one",
@@ -181,6 +199,19 @@ public class ModItems {
         HEXIN.add(MIDDLE_LEVEL_HEXIN);
         HEXIN.add(HIGH_LEVEL_HEXIN);
     }
+
+    public static ArrayList<RegistryObject<Item>> PUTONGITEM = new ArrayList<>();
+    static {
+        PUTONGITEM.add(EXTREME_COLD_SNOWFLAKE);
+    }
+
+    public static ArrayList<RegistryObject<Item>> HUNHUAN_STORAGE_CORE = new ArrayList<>();
+    static {
+        HUNHUAN_STORAGE_CORE.add(LOW_HUNHUAN_STORAGE_CORE);
+        HUNHUAN_STORAGE_CORE.add(MIDDLE_HUNHUAN_STORAGE_CORE);
+        HUNHUAN_STORAGE_CORE.add(HIGH_HUNHUAN_STORAGE_CORE);
+    }
+
 
     public static ArrayList<RegistryObject<Item>> ENGRAVING_KNIFE = new ArrayList<>();
     static {

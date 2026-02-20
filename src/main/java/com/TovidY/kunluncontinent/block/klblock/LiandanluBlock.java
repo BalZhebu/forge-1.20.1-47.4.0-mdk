@@ -57,21 +57,18 @@ public class LiandanluBlock extends BaseEntityBlock {
         if (!pLevel.isClientSide()) {
             BlockEntity entity = pLevel.getBlockEntity(pPos);
             if (entity instanceof LiandanluBlockEntity) {
-                // 打开 GUI
                 NetworkHooks.openScreen((ServerPlayer) pPlayer, (MenuProvider) entity, pPos);
             }
         }
         return InteractionResult.sidedSuccess(pLevel.isClientSide());
     }
 
-    // 在你的 LiandanluBlock 类中
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         return level.isClientSide ? null : createTickerHelper(type, ModBlockEntities.LIANDANLU_BE.get(), LiandanluBlockEntity::serverTick);
     }
 
-    // 方块破坏时掉落内部物品
     @Override
     public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
         if (pState.getBlock() != pNewState.getBlock()) {

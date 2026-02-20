@@ -31,6 +31,13 @@ public class ModCreativeModelTab {
                         //秒杀剑
                         pOutput.accept(ModItems.INSTANT_KILL_SWORD.get());
 
+                        pOutput.accept(ModBlocks.POLAR_ICE_PORTAL_BLOCK.get());
+
+                        //普通方块
+                        for (RegistryObject<Item> itemRegistryObject : ModItems.PUTONGITEM){
+                            pOutput.accept(itemRegistryObject.get());
+                        }
+
                         //MOD方块
                         for (RegistryObject<Block> itemRegistryObject : ModBlocks.MODBLOCKS){
                             pOutput.accept(itemRegistryObject.get());
@@ -53,6 +60,11 @@ public class ModCreativeModelTab {
 
                         //丹炉核心
                         for (RegistryObject<Item> itemRegistryObject : ModItems.HEXIN){
+                            pOutput.accept(itemRegistryObject.get());
+                        }
+
+                        //魂环储存核心
+                        for (RegistryObject<Item> itemRegistryObject : ModItems.HUNHUAN_STORAGE_CORE){
                             pOutput.accept(itemRegistryObject.get());
                         }
 

@@ -30,6 +30,11 @@ public class ModItemModelsProvider extends ItemModelProvider {
 
         handheldItem(ModItems.INSTANT_KILL_SWORD.get());
 
+        //普通物品
+        for (RegistryObject<Item> itemRegistry : ModItems.PUTONGITEM){
+            basicItem(itemRegistry.get());
+        }
+
         //刻刀类
         for (RegistryObject<Item> itemRegistry : ModItems.ENGRAVING_KNIFE){
             basicItem(itemRegistry.get());
@@ -42,6 +47,11 @@ public class ModItemModelsProvider extends ItemModelProvider {
 
         //核心类
         for (RegistryObject<Item> itemRegistry : ModItems.HEXIN){
+            basicItem(itemRegistry.get());
+        }
+
+        //魂环核心类
+        for (RegistryObject<Item> itemRegistry : ModItems.HUNHUAN_STORAGE_CORE){
             basicItem(itemRegistry.get());
         }
 

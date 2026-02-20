@@ -47,6 +47,9 @@ public class ModBlockLootTablesProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.LIANDANLU8.get());
         dropSelf(ModBlocks.LIANDANLU9.get());
 
+        //传送门框架
+        dropSelf(ModBlocks.POLAR_ICE_PORTAL_BLOCK.get());
+
         // 红宝石矿石（使用矿石破坏战利品列表）
         this.add(ModBlocks.RUBY_ORE.get(), block -> createCopperOreLikeDrops(block, ModItems.RUBY.get()));
         this.add(ModBlocks.AMETHYST_ORE.get(), block -> createCopperOreLikeDrops(block, ModItems.AMETHYST.get()));

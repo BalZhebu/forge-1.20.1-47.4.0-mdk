@@ -19,7 +19,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.List;
 
-public class ModWorldGenProvider {
+public class ModWorldGenOreProvider {
 
     /**
      * 第一步：配置特征 (ConfiguredFeature)

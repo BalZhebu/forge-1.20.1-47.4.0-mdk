@@ -68,11 +68,67 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
         SpecialRecipeBuilder.special(ModRecipes.DROSS_CONVERSION_SERIALIZER.get())
                 .save(pWriter, KlMain.MOD_ID + ":dross_conversion");
 
-        //低阶核心
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.LOW_LEVEL_HEXIN.get())
+        //低阶魂环存储核心
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.LOW_HUNHUAN_STORAGE_CORE.get())
                 .pattern(" R ")
                 .pattern("RKR")
                 .pattern(" R ")
+                .define('K', Ingredient.of(ModTags.Items.ENGRAVING_KNIFE))
+                .define('R', ModItems.RUBY.get())
+                .unlockedBy("has_knife", has(ModTags.Items.ENGRAVING_KNIFE))
+                .save(pWriter);
+
+        //中阶魂环存储核心
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.MIDDLE_HUNHUAN_STORAGE_CORE.get())
+                .pattern("XRX")
+                .pattern("RKR")
+                .pattern("XRX")
+                .define('K', Ingredient.of(ModTags.Items.ENGRAVING_KNIFE))
+                .define('R', ModItems.AMETHYST.get())
+                .define('X', ModItems.LOW_HUNHUAN_STORAGE_CORE.get())
+                .unlockedBy("has_knife", has(ModTags.Items.ENGRAVING_KNIFE))
+                .save(pWriter);
+
+        //高阶魂环存储核心
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.HIGH_HUNHUAN_STORAGE_CORE.get())
+                .pattern("XRX")
+                .pattern("RKR")
+                .pattern("XRX")
+                .define('K', Ingredient.of(ModTags.Items.ENGRAVING_KNIFE))
+                .define('R', ModItems.AMETHYST.get())
+                .define('X', ModItems.MIDDLE_HUNHUAN_STORAGE_CORE.get())
+                .unlockedBy("has_knife", has(ModTags.Items.ENGRAVING_KNIFE))
+                .save(pWriter);
+
+        //一阶魂环储存器
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,ModItems.HUNHUAN_STORAGE_ONE.get())
+                .pattern("#Y#")
+                .pattern("ZXZ")
+                .pattern("#Z#")
+                .define('#', ModItems.GRAY_IRON_INGOT.get())
+                .define('X', ModItems.LOW_HUNHUAN_STORAGE_CORE.get())
+                .define('Z', Items.IRON_INGOT)
+                .define('Y', ModItems.NEIDAN1.get())
+                .unlockedBy("has_hunhuan_storage", has(ModItems.HUNHUAN_STORAGE_ONE.get()))
+                .save(pWriter);
+
+        //二阶魂环储存器
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,ModItems.HUNHUAN_STORAGE_TWO.get())
+                .pattern("#Y#")
+                .pattern("ZXZ")
+                .pattern("#Z#")
+                .define('#', ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get())
+                .define('X', ModItems.LOW_HUNHUAN_STORAGE_CORE.get())
+                .define('Z', ModItems.GRAY_IRON_INGOT.get())
+                .define('Y', ModItems.HUNHUAN_STORAGE_ONE.get())
+                .unlockedBy("has_hunhuan_storage", has(ModItems.HUNHUAN_STORAGE_TWO.get()))
+                .save(pWriter);
+
+        //低阶核心
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.LOW_LEVEL_HEXIN.get())
+                .pattern("RRR")
+                .pattern("RKR")
+                .pattern("RRR")
                 .define('K', Ingredient.of(ModTags.Items.ENGRAVING_KNIFE))
                 .define('R', ModItems.RUBY.get())
                 .unlockedBy("has_knife", has(ModTags.Items.ENGRAVING_KNIFE))

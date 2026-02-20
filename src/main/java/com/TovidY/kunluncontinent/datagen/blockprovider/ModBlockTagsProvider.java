@@ -33,6 +33,7 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(ModBlocks.SUNKEN_SILVER_ORE.get())
                 .add(ModBlocks.RUBY_ORE.get())
                 .add(ModBlocks.AMETHYST_ORE.get())
+                .add(ModBlocks.POLAR_ICE_PORTAL_BLOCK.get())
                 .add(ModBlocks.LIANDANLU1.get())
                 .add(ModBlocks.LIANDANLU2.get())
                 .add(ModBlocks.LIANDANLU3.get())
@@ -60,6 +61,7 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(ModBlocks.LIANDANLU4.get())
                 .add(ModBlocks.LIANDANLU5.get())
                 .add(ModBlocks.LIANDANLU6.get())
+                .add(ModBlocks.POLAR_ICE_PORTAL_BLOCK.get())
         ;
         tag(Tags.Blocks.NEEDS_NETHERITE_TOOL)
                 .add(ModBlocks.SUNKEN_SILVER_ORE.get())

@@ -10,7 +10,7 @@ import com.TovidY.kunluncontinent.datagen.itemprovider.ModItemTagsProvider;
 import com.TovidY.kunluncontinent.datagen.itemprovider.ModRecipesProvider;
 import com.TovidY.kunluncontinent.datagen.lang.ModZhCnLangProvider;
 import com.TovidY.kunluncontinent.datagen.oredatagen.ModBiomeModifierProvider;
-import com.TovidY.kunluncontinent.datagen.oredatagen.ModWorldGenProvider;
+import com.TovidY.kunluncontinent.datagen.oredatagen.ModWorldGenOreProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
@@ -30,8 +30,20 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 //数据生成
-@Mod.EventBusSubscriber(modid = KlMain.MOD_ID,bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModDataGenerator {
+
+    // 所有的注册表逻辑（维度、矿物、群系修改器）全部合并到这一个 BUILDER 里
+    public static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
+            // 维度相关
+            .add(Registries.BIOME, com.TovidY.kunluncontinent.datagen.worldgenprovider.ModWorldGenProvider::bootstrapBiome)
+            .add(Registries.DIMENSION_TYPE, com.TovidY.kunluncontinent.datagen.worldgenprovider.ModWorldGenProvider::bootstrapType)
+            .add(Registries.LEVEL_STEM, com.TovidY.kunluncontinent.datagen.worldgenprovider.ModWorldGenProvider::bootstrapStem)
+            // 矿物生成相关 (从你之前的第二个 Provider 挪过来的)
+            .add(Registries.CONFIGURED_FEATURE, ModWorldGenOreProvider::bootstrap)
+            .add(Registries.PLACED_FEATURE, ModWorldGenOreProvider::placement)
+            .add(ForgeRegistries.Keys.BIOME_MODIFIERS, ModBiomeModifierProvider::bootstrap);
+
     @SubscribeEvent
     public static void gatherData(GatherDataEvent event){
         DataGenerator generator = event.getGenerator();
@@ -39,21 +51,24 @@ public class ModDataGenerator {
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
-        generator.addProvider(event.includeServer(),new ModRecipesProvider(packOutput));
-        generator.addProvider(event.includeServer(),new LootTableProvider(packOutput, Set.of(), List.of(new LootTableProvider.SubProviderEntry(ModBlockLootTablesProvider::new, LootContextParamSets.BLOCK))));
+        // 基础 Provider
+        generator.addProvider(event.includeServer(), new ModRecipesProvider(packOutput));
+        generator.addProvider(event.includeServer(), new LootTableProvider(packOutput, Set.of(), List.of(new LootTableProvider.SubProviderEntry(ModBlockLootTablesProvider::new, LootContextParamSets.BLOCK))));
 
+        // 标签 Provider
         BlockTagsProvider blockTagsProvider = generator.addProvider(event.includeServer(),
-                new ModBlockTagsProvider(packOutput,lookupProvider,existingFileHelper));
-        generator.addProvider(event.includeServer(),new ModItemTagsProvider(packOutput,lookupProvider,blockTagsProvider.contentsGetter(),existingFileHelper));
+                new ModBlockTagsProvider(packOutput, lookupProvider, existingFileHelper));
+        generator.addProvider(event.includeServer(), new ModItemTagsProvider(packOutput, lookupProvider, blockTagsProvider.contentsGetter(), existingFileHelper));
 
-        generator.addProvider(event.includeClient(),new ModBlockStateProvider(packOutput,existingFileHelper));
-        generator.addProvider(event.includeClient(),new ModItemModelsProvider(packOutput,existingFileHelper));
-        generator.addProvider(event.includeClient(),new ModZhCnLangProvider(packOutput));
+        // 客户端渲染相关 Provider
+        generator.addProvider(event.includeClient(), new ModBlockStateProvider(packOutput, existingFileHelper));
+        generator.addProvider(event.includeClient(), new ModItemModelsProvider(packOutput, existingFileHelper));
+        generator.addProvider(event.includeClient(), new ModZhCnLangProvider(packOutput));
 
-        generator.addProvider(event.includeServer(), new DatapackBuiltinEntriesProvider(packOutput, lookupProvider, new RegistrySetBuilder().add(Registries.CONFIGURED_FEATURE, ModWorldGenProvider::bootstrap).add(Registries.PLACED_FEATURE, ModWorldGenProvider::placement) .add(ForgeRegistries.Keys.BIOME_MODIFIERS, ModBiomeModifierProvider::bootstrap), Set.of(KlMain.MOD_ID)));
-
-        //成就
+        // 成就
         generator.addProvider(event.includeServer(), new ModAdvancementProvider(packOutput, lookupProvider, existingFileHelper));
 
+        // 包含了维度和矿物
+        generator.addProvider(event.includeServer(), new DatapackBuiltinEntriesProvider(packOutput, lookupProvider, BUILDER, Set.of(KlMain.MOD_ID)));
     }
 }

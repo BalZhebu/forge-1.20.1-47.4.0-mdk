@@ -73,6 +73,17 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.LOW_LEVEL_HEXIN.get(), "§7低级丹炉核心");
         add(ModItems.HIGH_LEVEL_HEXIN.get(), "§4顶级丹炉核心");
         add(ModItems.MIDDLE_LEVEL_HEXIN.get(), "§6中级丹炉核心");
+        //魂环存储器核心
+        add(ModItems.LOW_HUNHUAN_STORAGE_CORE.get(), "§7低级魂环存储器核心");
+        add(ModItems.HIGH_HUNHUAN_STORAGE_CORE.get(), "§4顶级魂环存储器核心");
+        add(ModItems.MIDDLE_HUNHUAN_STORAGE_CORE.get(), "§6中级魂环存储器核心");
+
+        //传送门方块
+        add(ModBlocks.POLAR_ICE_PORTAL_BLOCK.get(), "§b极寒冰域传送门框架");
+        //传送门
+        add(ModBlocks.POLAR_ICE_PORTAL.get(), "极寒冰域传送门");
+        //普通物品
+        add(ModItems.EXTREME_COLD_SNOWFLAKE.get(), "§b极寒雪晶");
 
         //矿石类
         add(ModItems.GRAY_IRON_INGOT.get(),"§8灰铁锭");
@@ -265,5 +276,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("tooltip.kunlun.neidan_item_tier","高品质内丹低概率掉落");
         add("tooltip.kunlun.instant_kill_sword.1","代码级秒杀：无视防御，强制抹除数据。");
         add("tooltip.kunlun.instant_kill_sword.2","世间万物，皆为定数；唯我一剑，可断因果。");
+        add("tooltip.kunluncontinent.extreme_cold_snowflake1","需右键最底下传送门框架");
+        add("tooltip.kunluncontinent.extreme_cold_snowflake2","从左往右的第二个方块最上面的一面激活传送门");
     }
 }

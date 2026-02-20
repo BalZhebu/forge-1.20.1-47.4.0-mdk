@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.block;
 
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.block.klblock.LiandanluBlock;
+import com.TovidY.kunluncontinent.block.portal.polarice.PolarIcePortalBlock;
 import com.TovidY.kunluncontinent.block.klblock.PutuanBlock;
 import com.TovidY.kunluncontinent.item.ModItems;
 import net.minecraft.ChatFormatting;
@@ -108,7 +109,14 @@ public class ModBlocks {
             registerBlock("liandanlu9",()->
                     new LiandanluBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion(),9));
 
+    //传送门框架
+    public static final RegistryObject<Block> POLAR_ICE_PORTAL_BLOCK =
+            registerBlock("polar_ice_portal_block",()->
+                    new Block(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)));
 
+    //传送门方块
+    public static final RegistryObject<Block> POLAR_ICE_PORTAL =
+            registerBlock("polar_ice_portal", PolarIcePortalBlock::new);
 
     //炼丹炉
     public static ArrayList<RegistryObject<Block>> LIANDANLULIST = new ArrayList<>();
