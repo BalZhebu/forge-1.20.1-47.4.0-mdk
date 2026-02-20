@@ -58,13 +58,13 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("adv.kunlun.liandanlu9.desc","材料要求极高实用性确不高");
 
         //魂骨类
-        add(ModItems.SOUL_BEAST_SKULL.get(), "头骨");
-        add(ModItems.SOUL_BEAST_BREASTBONE.get(), "躯干骨");
-        add(ModItems.SOUL_BEAST_LEFT_HAND_BONE.get(), "左臂骨");
-        add(ModItems.SOUL_BEAST_RIGHT_HAND_BONE.get(), "右臂骨");
-        add(ModItems.SOUL_BEAST_LEFT_LEG_BONE.get(), "左腿骨");
-        add(ModItems.SOUL_BEAST_RIGHT_LEG_BONE.get(), "右腿骨");
-        add(ModItems.SOUL_BEAST_EXTERNAL_APPENDAGES.get(), "外附骨");
+        add(ModItems.SOUL_BEAST_SKULL.get(), "§c§k------§r §e《魂骨 · 头骨》 §r§c§k------");
+        add(ModItems.SOUL_BEAST_BREASTBONE.get(), "§c§k------§r §e《魂骨 · 躯干骨》 §r§c§k------");
+        add(ModItems.SOUL_BEAST_LEFT_HAND_BONE.get(), "§c§k------§r §e《魂骨 · 左臂骨》 §r§c§k------");
+        add(ModItems.SOUL_BEAST_RIGHT_HAND_BONE.get(), "§c§k------§r §e《魂骨 · 右臂骨》 §r§c§k------");
+        add(ModItems.SOUL_BEAST_LEFT_LEG_BONE.get(), "§c§k------§r §e《魂骨 · 左腿骨》 §r§c§k------");
+        add(ModItems.SOUL_BEAST_RIGHT_LEG_BONE.get(), "§c§k------§r §e《魂骨 · 右腿骨》 §r§c§k------");
+        add(ModItems.SOUL_BEAST_EXTERNAL_APPENDAGES.get(), "§c§k------§r §e《魂骨 · 外附骨》 §r§c§k------");
 
         //刻刀类
         add(ModItems.IRON_ENGRAVING_KNIFE.get(), "铁制刻刀");

@@ -23,28 +23,34 @@ public class ItemAttributeCapability extends CapabilityAttributeBase implements 
     public void toUpdateNianxian(int nianxian) {
         this.nianxian = nianxian;
         float g, l;
-        if (nianxian < 100) {
+
+        if (nianxian < 100) { // 十年
             g = (10 + nianxian / 5.0f + random.nextInt(10)) * 0.1f;
             l = 1 + nianxian / 100f;
-        } else if (nianxian < 1000) {
+        } else if (nianxian < 1000) { // 百年
             g = (50 + nianxian / 10.0f + random.nextInt(50)) * 0.1f;
             l = 2 + nianxian / 1000f;
-        } else if (nianxian < 10000) {
+        } else if (nianxian < 10000) { // 千年
             g = (250 + nianxian / 20.0f + random.nextInt(250)) * 0.1f;
             l = 3 + nianxian / 10000f;
-        } else if (nianxian < 100000) {
+        } else if (nianxian < 100000) { // 万年
             g = (750 + nianxian / 67.0f + random.nextInt(750)) * 0.1f;
             l = 4 + nianxian / 100000f;
-        } else if (nianxian < 1000000) {
+        } else if (nianxian < 1000000) { // 十万年
             g = (3750 + nianxian / 133.0f + random.nextInt(3750)) * 0.1f;
-            l = 5 + nianxian / 1000000f;
+            l = 6 + nianxian / 1000000f;
+        } else if (nianxian < 10000000) { // 百万年
+            g = (15000 + nianxian / 400.0f + random.nextInt(10000)) * 0.1f;
+            l = 10 + nianxian / 10000000f;
+        } else if (nianxian < 100000000) { // 千万年
+            g = (50000 + nianxian / 1000.0f + random.nextInt(30000)) * 0.1f;
+            l = 20 + nianxian / 100000000f;
         } else {
-            // 十万年以上
-            g = (7750 + nianxian / 700.0f + random.nextInt(17750)) * 0.1f;
-            l = 8 + nianxian / 10000000f;
+            g = (200000 + nianxian / 5000.0f + random.nextInt(100000)) * 0.1f;
+            l = 50 + nianxian / 1000000000f;
         }
 
-        // 2. 统一赋值逻辑 (避免重复写几百行)
+        // 2. 统一赋值逻辑
         applyAttributes(g, l);
     }
 

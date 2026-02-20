@@ -27,6 +27,12 @@ import static com.TovidY.kunluncontinent.capability.hunhuanattributes.HunhuanAtt
 
 public class ModAttributeAPI {
 
+    private static float getBoneBonus(Player player, String key) {
+        return player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
+                .map(cap -> cap.getBoneOnlyStats().getOrDefault(key, 0f))
+                .orElse(0f);
+    }
+
     public static float getShengming(Entity entity) {
         float value = 0;
         if (entity instanceof Player player) {
@@ -55,6 +61,8 @@ public class ModAttributeAPI {
                     .map(PlayerAttributeCapability::getMaxshengming).orElse(0f);
 
             value += getWuhunBonus(player, MobAttributeCapability::getMaxshengming);
+
+            value += getBoneBonus(player, "maxshengming");
         }
         if (entity instanceof Mob mob) {
             value += mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY)
@@ -96,6 +104,7 @@ public class ModAttributeAPI {
                     .map(PlayerAttributeCapability::getGongji).orElse(0f);
 
             value += getWuhunBonus(player, MobAttributeCapability::getGongji);
+            value += getBoneBonus(player, "gongji");
         }
         if (entity instanceof Mob mob) {
             value += mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY)
@@ -126,6 +135,9 @@ public class ModAttributeAPI {
                     .map(PlayerAttributeCapability::getFangyu).orElse(0f);
 
             baseFangyu += getWuhunBonus(player, MobAttributeCapability::getFangyu);
+
+            baseFangyu += getBoneBonus(player, "fangyu");
+
         } else if (living instanceof Mob mob) {
             baseFangyu = mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY)
                     .map(MobAttributeCapability::getFangyu).orElse(0f);
@@ -170,6 +182,7 @@ public class ModAttributeAPI {
         if (entity instanceof Player player) {
             value += player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
                     .map(PlayerAttributeCapability::getShengmingHuifu).orElse(0f);
+            value += getBoneBonus(player, "shengminghuifu");
         }
 
         if(entity instanceof LivingEntity livingEntity){
@@ -240,6 +253,7 @@ public class ModAttributeAPI {
         if (entity instanceof Player player) {
             value += player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
                     .map(PlayerAttributeCapability::getMingzhong).orElse(0f);
+            value += getBoneBonus(player, "mingzhong");
         }
         if (entity instanceof Mob mob) {
             value += mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY)
@@ -261,6 +275,7 @@ public class ModAttributeAPI {
         if (entity instanceof Player player) {
             value += player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
                     .map(PlayerAttributeCapability::getBaojilv).orElse(0f);
+            value += getBoneBonus(player, "baojilv");
         }
         if (entity instanceof Mob mob) {
             value += mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY)
@@ -291,6 +306,7 @@ public class ModAttributeAPI {
         if (entity instanceof Player player) {
             value += player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
                     .map(PlayerAttributeCapability::getBaojishanghai).orElse(0f);
+            value += getBoneBonus(player, "baojishanghai");
         }
         if (entity instanceof Mob mob) {
             value += mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY)
@@ -321,6 +337,7 @@ public class ModAttributeAPI {
         if (entity instanceof Player player) {
             value += player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
                     .map(PlayerAttributeCapability::getXixue).orElse(0f);
+            value += getBoneBonus(player, "xixue");
         }
         if (entity instanceof Mob mob) {
             value += mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY)
@@ -351,6 +368,7 @@ public class ModAttributeAPI {
         if (entity instanceof Player player) {
             value += player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
                     .map(PlayerAttributeCapability::getWuchuan).orElse(0f);
+            value += getBoneBonus(player, "wuchuan");
         }
         if (entity instanceof Mob mob) {
             value += mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY)
@@ -381,6 +399,7 @@ public class ModAttributeAPI {
         if (entity instanceof Player player) {
             value += player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
                     .map(PlayerAttributeCapability::getShanbi).orElse(0f);
+            value += getBoneBonus(player, "shanbi");
         }
         if (entity instanceof Mob mob) {
             value += mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY)
@@ -402,6 +421,7 @@ public class ModAttributeAPI {
         if (entity instanceof Player player) {
             value += player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
                     .map(PlayerAttributeCapability::getKangbao).orElse(0f);
+            value += getBoneBonus(player, "kangbao");
         }
         if (entity instanceof Mob mob) {
             value += mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY)

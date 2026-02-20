@@ -1,6 +1,9 @@
 package com.TovidY.kunluncontinent.capability.playerattributes;
 
+import com.TovidY.kunluncontinent.capability.itemattribute.ItemAttributeCapability;
+import com.TovidY.kunluncontinent.capability.itemattribute.ItemAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapability;
+import com.TovidY.kunluncontinent.network.SynsAPI;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -58,6 +61,9 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         }
     };
 
+    private final Map<String, Float> boneOnlyStats = new HashMap<>();
+    public Map<String, Float> getBoneOnlyStats() { return boneOnlyStats; }
+
 
     public PlayerAttributeCapability(){
         super();
@@ -108,6 +114,13 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
                 nameindex++;
             }
         }
+
+        CompoundTag boneTag = new CompoundTag();
+        for (Map.Entry<String, Float> entry : boneOnlyStats.entrySet()) {
+            boneTag.putFloat(entry.getKey(), entry.getValue());
+        }
+        tag.put("BoneOnlyStats", boneTag);
+
         return tag;
     }
 
@@ -162,6 +175,54 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
                 this.wuhunListsname.add(s);
             }
         }
+
+        if (nbt.contains("BoneOnlyStats")) {
+            CompoundTag boneTag = nbt.getCompound("BoneOnlyStats");
+            this.boneOnlyStats.clear();
+            for (String key : boneTag.getAllKeys()) {
+                this.boneOnlyStats.put(key, boneTag.getFloat(key));
+            }
+        }
+    }
+
+    public void refreshBoneAttributes(Player player) {
+        // 仅仅刷新 Map 缓存，不碰任何 this.gongji 等主字段！
+        this.boneOnlyStats.clear();
+
+        for (int i = 0; i < 7; i++) {
+            ItemStack stack = hunguInventory.getStackInSlot(i);
+            if (!stack.isEmpty()) {
+                stack.getCapability(ItemAttributeCapabilityProvider.CAPABILITY).ifPresent(attr -> {
+                    List<String> active = attr.getActiveAttributes();
+                    // 仅把魂骨属性累加进 Map
+                    for (String key : active) {
+                        float val = getAttrValueByKey(attr, key);
+                        if (val > 0) {
+                            boneOnlyStats.put(key, boneOnlyStats.getOrDefault(key, 0f) + val);
+                        }
+                    }
+                });
+            }
+        }
+        SynsAPI.synsPlayerAttribute(player);
+    }
+
+    // 辅助工具：根据字符串获取属性值
+    private float getAttrValueByKey(ItemAttributeCapability attr, String key) {
+        return switch (key) {
+            case "gongji" -> attr.getGongji();
+            case "fangyu" -> attr.getFangyu();
+            case "maxshengming" -> attr.getMaxshengming();
+            case "baojilv" -> attr.getBaojilv();
+            case "baojishanghai" -> attr.getBaojishanghai();
+            case "xixue" -> attr.getXixue();
+            case "shanbi" -> attr.getShanbi();
+            case "mingzhong" -> attr.getMingzhong();
+            case "wuchuan" -> attr.getWuchuan();
+            case "kangbao" -> attr.getKangbao();
+            case "shengminghuifu" -> attr.getShengminghuifu();
+            default -> 0f;
+        };
     }
 
     public ItemStackHandler getHunguInventory() {

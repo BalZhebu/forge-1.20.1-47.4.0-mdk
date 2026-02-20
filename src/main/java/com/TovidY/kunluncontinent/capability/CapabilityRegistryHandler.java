@@ -103,7 +103,6 @@ public class CapabilityRegistryHandler {
 
     //魂环加入世界时赋予属性
     public static void hunhuanJoin(HunhuanEntity entity){
-
         if(!entity.level().isClientSide){
             LazyOptional<MobAttributeCapability> capability = entity.getCapability(MobAttributeCapabilityProvider.CAPABILITY);
             capability.ifPresent(monsterentity -> {

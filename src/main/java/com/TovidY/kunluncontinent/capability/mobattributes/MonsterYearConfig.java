@@ -17,12 +17,12 @@ public class MonsterYearConfig {
     //max为最大年限
 
     static {
-
         //末影龙
         register(EntityType.ENDER_DRAGON, 500000, 2000000);
-
         //凋零
         register(EntityType.WITHER, 800000, 1500000);
+        //坚守者
+        register(EntityType.WARDEN, 500000, 1300000);
     }
 
     private static void register(EntityType<?> type, int min, int max) {

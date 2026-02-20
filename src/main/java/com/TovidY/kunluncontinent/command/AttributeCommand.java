@@ -209,7 +209,7 @@ public class AttributeCommand {
             attr.getShengming(), attr.getMaxshengming(), attr.getJingshenli(), attr.getMaxjingshenli(),
             attr.getMingzhong(), attr.getFangyu(), attr.getGongji(), attr.getBaojilv(), attr.getBaojishanghai(),
             attr.getXixue(), attr.getShanbi(), attr.getKangbao(), attr.getJingyan(), attr.getDengji(), attr.getMaxjingyan(),
-                (int)attr.getWuchuan(),attr.getShengmingHuifu()
+                (int)attr.getWuchuan(),attr.getShengmingHuifu(),attr.getBoneOnlyStats()
         );
         NetworkHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), packet);
     }

@@ -6,6 +6,8 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 /**
@@ -31,12 +33,14 @@ public class SPacketSyncPlayerAttribute {
     private final float wuchuan;
     private final float shengminghuifu;
 
+    private final Map<String, Float> boneOnlyStats;
+
 
     public SPacketSyncPlayerAttribute(
         float shengming, float maxshengming, float jingshenli, float maxjingshenli,
         float mingzhong, float fangyu, float gongji, float baojilv, float baojishanghai,
         float wuchuan, float shengminghuifu, float xixue, float shanbi, float kangbao,
-        float jingyan, int dengji, float maxjingyan
+        float jingyan, int dengji, float maxjingyan,Map<String, Float> boneOnlyStats
     ) {
         this.shengming = shengming;
         this.maxshengming = maxshengming;
@@ -55,6 +59,7 @@ public class SPacketSyncPlayerAttribute {
         this.maxjingyan = maxjingyan;
         this.wuchuan = wuchuan;
         this.shengminghuifu = shengminghuifu;
+        this.boneOnlyStats = boneOnlyStats;
 
     }
 
@@ -76,14 +81,45 @@ public class SPacketSyncPlayerAttribute {
         buf.writeFloat(msg.maxjingyan);
         buf.writeFloat(msg.wuchuan);
         buf.writeFloat(msg.shengminghuifu);
+
+        buf.writeInt(msg.boneOnlyStats.size());
+        msg.boneOnlyStats.forEach((key, val) -> {
+            buf.writeUtf(key);
+            buf.writeFloat(val);
+        });
     }
 
     public static SPacketSyncPlayerAttribute decode(FriendlyByteBuf buf) {
+        // 按顺序读取
+        float shengming = buf.readFloat();
+        float maxshengming = buf.readFloat();
+        float jingshenli = buf.readFloat();
+        float maxjingshenli = buf.readFloat();
+        float mingzhong = buf.readFloat();
+        float fangyu = buf.readFloat();
+        float gongji = buf.readFloat();
+        float baojilv = buf.readFloat();
+        float baojishanghai = buf.readFloat();
+        float xixue = buf.readFloat();
+        float shanbi = buf.readFloat();
+        float kangbao = buf.readFloat();
+        float jingyan = buf.readFloat();
+        int dengji = buf.readInt();
+        float maxjingyan = buf.readFloat();
+        float wuchuan = buf.readFloat();
+        float shengminghuifu = buf.readFloat();
+
+        int size = buf.readInt();
+        Map<String, Float> boneMap = new HashMap<>();
+        for (int i = 0; i < size; i++) {
+            boneMap.put(buf.readUtf(), buf.readFloat());
+        }
+
         return new SPacketSyncPlayerAttribute(
-            buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(),
-            buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(),
-            buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(),
-            buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readInt(), buf.readFloat()
+                shengming, maxshengming, jingshenli, maxjingshenli,
+                mingzhong, fangyu, gongji, baojilv, baojishanghai,
+                wuchuan, shengminghuifu, xixue, shanbi, kangbao,
+                jingyan, dengji, maxjingyan, boneMap
         );
     }
 
@@ -109,6 +145,9 @@ public class SPacketSyncPlayerAttribute {
                     attr.setMaxjingyan(msg.maxjingyan);
                     attr.setWuchuan(msg.wuchuan);
                     attr.setShengmingHuifu(msg.shengminghuifu);
+
+                    attr.getBoneOnlyStats().clear();
+                    attr.getBoneOnlyStats().putAll(msg.boneOnlyStats);
                 });
             }
         });

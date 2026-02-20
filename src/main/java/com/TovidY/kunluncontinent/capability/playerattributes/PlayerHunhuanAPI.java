@@ -210,7 +210,6 @@ public class PlayerHunhuanAPI {
             if (capability.getJingyan() >= capability.getMaxjingyan()) {
                 performUpgrade(player, capability);
             }
-            syncPlayerAttributeToClient(player, capability);
         });
         String formattedValue = String.format("%.2f", value);
         int currentExp = (int) ModAttributeAPI.getJingyan(player);
@@ -344,7 +343,7 @@ public class PlayerHunhuanAPI {
                 capability.getShengming(), capability.getMaxshengming(), capability.getJingshenli(), capability.getMaxjingshenli(),
                 capability.getMingzhong(), capability.getFangyu(), capability.getGongji(), capability.getBaojilv(), capability.getBaojishanghai(),
                 capability.getXixue(), capability.getShanbi(), capability.getKangbao(), capability.getJingyan(), capability.getDengji(), capability.getMaxjingyan(),
-                    (int)capability.getWuchuan(),capability.getShengmingHuifu()
+                    (int)capability.getWuchuan(),capability.getShengmingHuifu(),capability.getBoneOnlyStats()
             );
         com.TovidY.kunluncontinent.network.NetworkHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), packet);
     }

@@ -73,12 +73,13 @@ public class PlayerAttributeInit {
         maxHealthAttr.setBaseValue(targetMaxHealth);
     }
 
+
     private static void syncAllAttributesToClient(ServerPlayer player, PlayerAttributeCapability attr) {
         SPacketSyncPlayerAttribute packet = new SPacketSyncPlayerAttribute(
             attr.getShengming(), attr.getMaxshengming(), attr.getJingshenli(), attr.getMaxjingshenli(),
             attr.getMingzhong(), attr.getFangyu(), attr.getGongji(), attr.getBaojilv(), attr.getBaojishanghai(),
             attr.getXixue(), attr.getShanbi(), attr.getKangbao(), attr.getJingyan(), attr.getDengji(), attr.getMaxjingyan()
-                , (int)attr.getShengmingHuifu(), attr.getWuchuan()
+                , (int)attr.getShengmingHuifu(), attr.getWuchuan(),attr.getBoneOnlyStats()
         );
         NetworkHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), packet);
     }

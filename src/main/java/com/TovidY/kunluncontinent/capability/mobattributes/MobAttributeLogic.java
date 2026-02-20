@@ -22,13 +22,13 @@ public class MobAttributeLogic {
         long maxNianxian;
         if (dimension == Level.OVERWORLD) {
             minNianxian = 1;
-            maxNianxian = 12000;
+            maxNianxian = 18000;
         } else if (dimension == Level.NETHER) {
             minNianxian = 100;
-            maxNianxian = 120000;
+            maxNianxian = 150000;
         } else if (dimension == Level.END) {
             minNianxian = 1000;
-            maxNianxian = 1200000;
+            maxNianxian = 1500000;
         } else {
             // 其他维度默认
             minNianxian = 1;

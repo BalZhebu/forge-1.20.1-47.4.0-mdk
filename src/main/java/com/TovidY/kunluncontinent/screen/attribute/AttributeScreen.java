@@ -88,8 +88,9 @@ public class AttributeScreen extends AbstractContainerScreen<AttributeMenu> {
         mutableComponents.clear();
         int startX = this.leftPos + ATTRIBUTE_TEXT_OFFSET_X - 6;
         int startY = this.topPos + ATTRIBUTE_TEXT_OFFSET_Y - 5;
-        int textColor = -65436;
+        int textColor = -65436; // 也就是你的自定义颜色
         final int SPACING = 12;
+
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(attributes -> {
             int y = startY;
             guiGraphics.drawString(this.font, "生命值: " + NumberFormatter.formatHealth(player.getHealth(), player.getMaxHealth()), startX, y, textColor, false);
@@ -98,30 +99,37 @@ public class AttributeScreen extends AbstractContainerScreen<AttributeMenu> {
             y += SPACING;
             guiGraphics.drawString(this.font, "经验: " + NumberFormatter.formatRange(attributes.getJingyan(), attributes.getMaxjingyan()), startX, y, textColor, false);
             y += SPACING;
-            guiGraphics.drawString(this.font, "攻击力: " + NumberFormatter.formatNumber(attributes.getGongji()), startX, y, textColor, false);
+            float totalGongji = ModAttributeAPI.getGongji(player);
+            guiGraphics.drawString(this.font, "攻击力: " + NumberFormatter.formatNumber(totalGongji), startX, y, textColor, false);
             y += SPACING;
             float finalDefense = ModAttributeAPI.getFangyu(player);
             guiGraphics.drawString(this.font, "防御力: " + NumberFormatter.formatNumber(finalDefense), startX, y, textColor, false);
             y += SPACING;
-            guiGraphics.drawString(this.font, "暴击率: " + NumberFormatter.formatPercentage(attributes.getBaojilv()) + "%", startX, y, textColor, false);
+            float totalBaojilv = ModAttributeAPI.getBaojilv(player);
+            guiGraphics.drawString(this.font, "暴击率: " + NumberFormatter.formatPercentage(totalBaojilv) + "%", startX, y, textColor, false);
             y += SPACING;
-            guiGraphics.drawString(this.font, "暴击伤害: " + NumberFormatter.formatPercentage(attributes.getBaojishanghai()) + "%", startX, y, textColor, false);
+            float totalBaojiShanghai = ModAttributeAPI.getBaojishanghai(player);
+            guiGraphics.drawString(this.font, "暴击伤害: " + NumberFormatter.formatPercentage(totalBaojiShanghai) + "%", startX, y, textColor, false);
             y += SPACING;
-            guiGraphics.drawString(this.font, "吸血: " + NumberFormatter.formatNumber(attributes.getXixue()), startX, y, textColor, false);
+            float totalXixue = ModAttributeAPI.getXixue(player);
+            guiGraphics.drawString(this.font, "吸血: " + NumberFormatter.formatNumber(totalXixue), startX, y, textColor, false);
             y += SPACING;
-            guiGraphics.drawString(this.font, "闪避: " + NumberFormatter.formatNumber(attributes.getShanbi()), startX, y, textColor, false);
+            float totalShanbi = ModAttributeAPI.getShanbi(player);
+            guiGraphics.drawString(this.font, "闪避: " + NumberFormatter.formatNumber(totalShanbi), startX, y, textColor, false);
             y += SPACING;
-            guiGraphics.drawString(this.font, "命中: " + NumberFormatter.formatNumber(attributes.getMingzhong()), startX, y, textColor, false);
+            float totalMingzhong = ModAttributeAPI.getMingzhong(player);
+            guiGraphics.drawString(this.font, "命中: " + NumberFormatter.formatNumber(totalMingzhong), startX, y, textColor, false);
             y += SPACING;
-            guiGraphics.drawString(this.font, "物穿: " + NumberFormatter.formatNumber(attributes.getWuchuan()), startX, y, textColor, false);
+            float totalWuchuan = ModAttributeAPI.getWuchuan(player);
+            guiGraphics.drawString(this.font, "物穿: " + NumberFormatter.formatNumber(totalWuchuan), startX, y, textColor, false);
             y += SPACING;
-            guiGraphics.drawString(this.font, "抗暴: " + NumberFormatter.formatNumber(attributes.getKangbao()), startX, y, textColor, false);
+            float totalKangbao = ModAttributeAPI.getKangbao(player);
+            guiGraphics.drawString(this.font, "抗暴: " + NumberFormatter.formatNumber(totalKangbao), startX, y, textColor, false);
             y += SPACING;
             float shengmingHuifu = ModAttributeAPI.getShengminghuifu(player);
             guiGraphics.drawString(this.font, "生命恢复: " + NumberFormatter.formatNumber(shengmingHuifu), startX, y, textColor, false);
             y += SPACING;
-            guiGraphics.drawString(this.font, "等级: " + (int)attributes.getDengji(), startX, y, textColor, false);
-
+            guiGraphics.drawString(this.font, "等级: " + attributes.getDengji(), startX, y, textColor, false);
             int xiulianTime = attributes.getXiulianTime();
             String timeText = "可修炼时间: " + (xiulianTime / 60) + "分" + (xiulianTime % 60) + "秒";
             int timeTextWidth = this.font.width(timeText);

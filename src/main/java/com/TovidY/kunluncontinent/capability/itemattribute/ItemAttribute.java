@@ -14,9 +14,7 @@ public interface ItemAttribute {
                 }
 
                 tooltip.add(Component.literal("年限: " + attr.getNianxian() + "年").withStyle(ChatFormatting.GOLD));
-
                 List<String> active = attr.getActiveAttributes();
-
                 if (active.contains("maxshengming"))
                     tooltip.add(Component.literal("生命加成: +" + String.format("%.1f", attr.getMaxshengming())).withStyle(ChatFormatting.BLUE));
 

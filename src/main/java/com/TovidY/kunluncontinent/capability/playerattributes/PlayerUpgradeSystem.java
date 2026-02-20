@@ -55,6 +55,8 @@ public class PlayerUpgradeSystem {
         } else {
             processUpgradeFailure(player, capability);
         }
+
+        SynsAPI.synsPlayerAttribute(player);
     }
 
     static boolean isTupoDengji(ServerPlayer player, @NotNull PlayerAttributeCapability cap) {
@@ -243,7 +245,7 @@ public class PlayerUpgradeSystem {
                 capability.getShengming(), capability.getMaxshengming(), capability.getJingshenli(), capability.getMaxjingshenli(),
                 capability.getMingzhong(), capability.getFangyu(), capability.getGongji(), capability.getBaojilv(), capability.getBaojishanghai(),
                 capability.getXixue(), capability.getShanbi(), capability.getKangbao(), capability.getJingyan(), capability.getDengji(), capability.getMaxjingyan(),
-                (int)capability.getWuchuan(),capability.getShengmingHuifu()
+                (int)capability.getWuchuan(),capability.getShengmingHuifu(), capability.getBoneOnlyStats()
         );
         NetworkHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), packet);
     }
