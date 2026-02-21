@@ -4,6 +4,7 @@ import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.potion.specialeffects.ArmorPiercingEffect;
 import com.TovidY.kunluncontinent.potion.specialeffects.DizzinessEffect;
 import com.TovidY.kunluncontinent.potion.specialeffects.ScorchingEffect;
+import com.TovidY.kunluncontinent.potion.specialeffects.coldeffect.ExtremeColdEffect;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -17,6 +18,7 @@ public class ModEffects {
     public static final RegistryObject<MobEffect> ARMOR_PIERCING = REGISTER.register("armor_piercing", ArmorPiercingEffect::new);
     public static final RegistryObject<MobEffect> SCORCHING = REGISTER.register("scorching", ScorchingEffect::new);
     public static final RegistryObject<MobEffect> DIZZINESS = REGISTER.register("dizziness", DizzinessEffect::new);
+    public static final RegistryObject<MobEffect> EXTREME_COLD = REGISTER.register("extreme_cold", ExtremeColdEffect::new);
 
     public static void register(IEventBus eventBus) {
         REGISTER.register(eventBus);

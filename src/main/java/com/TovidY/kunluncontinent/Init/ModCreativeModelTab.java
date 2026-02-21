@@ -53,6 +53,10 @@ public class ModCreativeModelTab {
                             pOutput.accept(itemRegistryObject.get());
                         }
 
+                        for (RegistryObject<Item> itemRegistryObject : ModItems.COLDPROTECTIONLIST){
+                            pOutput.accept(itemRegistryObject.get());
+                        }
+
                         //刻刀
                         for (RegistryObject<Item> itemRegistryObject : ModItems.ENGRAVING_KNIFE){
                             pOutput.accept(itemRegistryObject.get());

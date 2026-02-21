@@ -50,6 +50,11 @@ public class ModItemModelsProvider extends ItemModelProvider {
             basicItem(itemRegistry.get());
         }
 
+        //御寒魂导器
+        for (RegistryObject<Item> itemRegistry : ModItems.COLDPROTECTIONLIST){
+            basicItem(itemRegistry.get());
+        }
+
         //魂环核心类
         for (RegistryObject<Item> itemRegistry : ModItems.HUNHUAN_STORAGE_CORE){
             basicItem(itemRegistry.get());

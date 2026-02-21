@@ -80,7 +80,7 @@ public class KLConfig {
         dropChanceTier6 = builder.comment("1000000-9999999年魂兽的魂骨爆率")
                 .defineInRange("tier6", 0.01, 0.0, 1.0);
         dropChanceTier7 = builder.comment("10000000年魂兽的魂骨爆率")
-                .defineInRange("tier7", 0.10, 0.0, 1.0);
+                .defineInRange("tier7", 1.0, 0.0, 1.0);
 
         builder.pop();
         CONFIG = builder.build();

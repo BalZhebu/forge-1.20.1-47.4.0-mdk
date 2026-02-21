@@ -248,6 +248,12 @@ public class ModZhCnLangProvider extends LanguageProvider {
         //创造物品栏
         add("itemGroup.kunlun_tab","昆仑大陆");
 
+        //御寒魂导器
+        add(ModItems.LOW_COLD_PROTECTION.get(), "低阶御寒魂导器");
+        add(ModItems.HIGH_COLD_PROTECTION.get(), "高阶御寒魂导器");
+        add(ModItems.MID_COLD_PROTECTION.get(), "中阶御寒魂导器");
+        add(ModItems.TOP_COLD_PROTECTION.get(), "顶阶御寒魂导器");
+
         //按键
         add("attribute_mapping","玩家属性面板");
         add("kunluncontinent","昆仑大陆");
@@ -269,6 +275,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModEffects.ARMOR_PIERCING.get(),"§9破甲");
         add(ModEffects.SCORCHING.get(),"§c灼烧");
         add(ModEffects.DIZZINESS.get(),"§6眩晕");
+        add(ModEffects.EXTREME_COLD.get(),"§d极寒");
 
         //普通文字
         add("心神受损","你受到攻击，心神受损，被迫停止了修炼！");

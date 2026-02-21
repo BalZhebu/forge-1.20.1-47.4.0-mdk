@@ -78,44 +78,31 @@ public class KLivingDeathEvent {
 
     private static void handleHunguDrop(LivingEntity entity, int nianxian, Player player) {
         if (ModItems.HUNGULIST == null || ModItems.HUNGULIST.isEmpty()) return;
-
         double dropChance = HunguAdminStatus.isAlwaysDrop(player) ? 1.0 :
                 (KLConfig.hungupingheng.get() ? calculateHunguChance(nianxian) : KLConfig.baseDropChance.get());
-
         if (RANDOM.nextDouble() > dropChance) return;
-
         Item item = ModItems.HUNGULIST.get(RANDOM.nextInt(ModItems.HUNGULIST.size())).get();
         ItemStack stack = new ItemStack(item);
-
         stack.getCapability(ItemAttributeCapabilityProvider.CAPABILITY).ifPresent(attr -> {
             attr.toUpdateNianxian(nianxian);
-
             String fullName = entity.getDisplayName().getString();
             String cleanName = fullName;
             if (fullName.contains("-----")) {
                 cleanName = fullName.substring(0, fullName.indexOf("-----"));
             }
             attr.setSourceName(cleanName);
-
             int count = rollAttributeCount();
             List<String> pool = new ArrayList<>(List.of(
                     "gongji", "fangyu", "baojilv", "baojishanghai",
                     "wuchuan", "shanbi", "mingzhong", "kangbao", "shengminghuifu", "xixue"
             ));
-
-            // E. 属性分配逻辑
             attr.getActiveAttributes().clear();
-            // 保底必得：生命加成
             attr.getActiveAttributes().add("maxshengming");
-
-            // 随机打乱池子，抽取剩余词条
             Collections.shuffle(pool);
             for (int i = 0; i < count - 1 && !pool.isEmpty(); i++) {
                 attr.getActiveAttributes().add(pool.get(i));
             }
-
             stack.getOrCreateTag().put("shanhaiitematuble", attr.serializeNBT());
-
             ItemEntity itemEntity = entity.spawnAtLocation(stack);
             if (itemEntity != null) itemEntity.setExtendedLifetime();
         });
@@ -136,6 +123,7 @@ public class KLivingDeathEvent {
     }
 
     private static double calculateHunguChance(int nianxian) {
+        if (nianxian >= 100000000) return KLConfig.dropChanceTier7.get();
         if (nianxian >= 10000000) return KLConfig.dropChanceTier7.get();
         if (nianxian >= 1000000)  return KLConfig.dropChanceTier6.get();
         if (nianxian >= 100000)   return KLConfig.dropChanceTier5.get();
@@ -155,6 +143,7 @@ public class KLivingDeathEvent {
 
     private static double getHunhuanProb(long nianxian) {
         if (nianxian >= 10000000) return KLConfig.TIER7_PROB.get();
+        if (nianxian >= 1000000)  return KLConfig.TIER6_PROB.get();
         if (nianxian >= 100000)  return KLConfig.TIER5_PROB.get();
         if (nianxian >= 10000)   return KLConfig.TIER4_PROB.get();
         if (nianxian >= 1000)    return KLConfig.TIER3_PROB.get();

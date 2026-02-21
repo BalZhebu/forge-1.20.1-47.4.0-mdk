@@ -4,10 +4,7 @@ import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.item.armor.ModArmorBaseItem;
 import com.TovidY.kunluncontinent.item.armor.ModArmorMaterials;
 import com.TovidY.kunluncontinent.item.hungu.BoneItem;
-import com.TovidY.kunluncontinent.item.klitem.DanYaoItem;
-import com.TovidY.kunluncontinent.item.klitem.EngravingKnifeItem;
-import com.TovidY.kunluncontinent.item.klitem.HunHuanStorageItem;
-import com.TovidY.kunluncontinent.item.klitem.InstantKillSwordItem;
+import com.TovidY.kunluncontinent.item.klitem.*;
 import com.TovidY.kunluncontinent.item.neidanitems.NeidanItem;
 import com.TovidY.kunluncontinent.item.testitemblock.TestLevelUp;
 import com.TovidY.kunluncontinent.item.tool.ModSwordBaseItem;
@@ -35,10 +32,8 @@ public class ModItems {
     public static final RegistryObject<Item> DANYAO_TEST = ITEMS.register("danyao_test",()->new DanYaoItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setJingyan(999999).setMinLevel(999));
     public static final RegistryObject<Item> DANYAO_JINGSHENLI = ITEMS.register("danyao_jingshenli",()->new DanYaoItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setJingshenlibaifenbi(100).setMinLevel(999));
     public static final RegistryObject<Item> TEST_SWORD = ITEMS.register("test_sword",()->new ModSwordBaseItem(ModToolTiers.TEST_ITEM,3,-1.8F,new Item.Properties()));
-    public static final RegistryObject<Item> DANYAO_DENGJI_JIA = ITEMS.register("danyao_dengji_jia",
-            () -> new TestLevelUp(new Item.Properties().stacksTo(1), 1));
-    public static final RegistryObject<Item> DANYAO_DENGJI_JIAN = ITEMS.register("danyao_dengji_jian",
-            () -> new TestLevelUp(new Item.Properties().stacksTo(1), -1));
+    public static final RegistryObject<Item> DANYAO_DENGJI_JIA = ITEMS.register("danyao_dengji_jia", () -> new TestLevelUp(new Item.Properties().stacksTo(1), 1));
+    public static final RegistryObject<Item> DANYAO_DENGJI_JIAN = ITEMS.register("danyao_dengji_jian", () -> new TestLevelUp(new Item.Properties().stacksTo(1), -1));
 
     public static final RegistryObject<Item> INSTANT_KILL_SWORD =
             ITEMS.register("instant_kill_sword", InstantKillSwordItem::new);
@@ -51,6 +46,12 @@ public class ModItems {
             pTooltipComponents.add(Component.translatable("tooltip.kunluncontinent.extreme_cold_snowflake2").withStyle(ChatFormatting.DARK_GRAY));
         }
     });
+
+    //御寒魂导器
+    public static final RegistryObject<Item> LOW_COLD_PROTECTION = ITEMS.register("low_cold_protection",()->new ThermalAmuletItem(new Item.Properties().stacksTo(1).durability(3000),false));
+    public static final RegistryObject<Item> MID_COLD_PROTECTION = ITEMS.register("mid_cold_protection",()->new ThermalAmuletItem(new Item.Properties().stacksTo(1).durability(8999),false));
+    public static final RegistryObject<Item> HIGH_COLD_PROTECTION = ITEMS.register("high_cold_protection",()->new ThermalAmuletItem(new Item.Properties().stacksTo(1).durability(35888),false));
+    public static final RegistryObject<Item> TOP_COLD_PROTECTION = ITEMS.register("top_cold_protection",()->new ThermalAmuletItem(new Item.Properties().stacksTo(1),true));
 
     //魂骨
     public static final RegistryObject<Item> SOUL_BEAST_SKULL = ITEMS.register("soul_beast_skull",()->new BoneItem(new Item.Properties()));
@@ -150,7 +151,7 @@ public class ModItems {
     public static final RegistryObject<Item> QIANWANXINGCHEN_DAN = ITEMS.register("qianwanxingchen_dan",()->new DanYaoItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setJingyan(8192).setMinLevel(70).setTier(8));
     public static final RegistryObject<Item> YIZAICHUANGSHENG_DAN = ITEMS.register("yizhaichuangsheng_dan",()->new DanYaoItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setJingyan(16384).setMinLevel(80).setTier(9));
 
-    public static final RegistryObject <Item> DROSS = ITEMS.register("dross",()->new Item(new Item.Properties()));
+    public static final RegistryObject<Item> DROSS = ITEMS.register("dross",()->new Item(new Item.Properties()));
 
     //刻刀类
     public static final RegistryObject<Item> IRON_ENGRAVING_KNIFE = ITEMS.register("iron_engravings_knife",()->new EngravingKnifeItem(new Item.Properties().durability(30)));
@@ -191,6 +192,14 @@ public class ModItems {
         HUNGULIST.add(SOUL_BEAST_LEFT_LEG_BONE);
         HUNGULIST.add(SOUL_BEAST_RIGHT_LEG_BONE);
         HUNGULIST.add(SOUL_BEAST_EXTERNAL_APPENDAGES);
+    }
+
+    public static ArrayList<RegistryObject<Item>> COLDPROTECTIONLIST = new ArrayList<>();
+    static {
+        COLDPROTECTIONLIST.add(LOW_COLD_PROTECTION);
+        COLDPROTECTIONLIST.add(MID_COLD_PROTECTION);
+        COLDPROTECTIONLIST.add(HIGH_COLD_PROTECTION);
+        COLDPROTECTIONLIST.add(TOP_COLD_PROTECTION);
     }
 
     public static ArrayList<RegistryObject<Item>> HEXIN = new ArrayList<>();
