@@ -40,10 +40,9 @@ public class ModDataGenerator {
             .add(Registries.LEVEL_STEM, com.TovidY.kunluncontinent.datagen.worldgenprovider.ModWorldGenProvider::bootstrapStem)
             .add(Registries.CONFIGURED_FEATURE, ModWorldGenOreProvider::bootstrap)
             .add(Registries.PLACED_FEATURE, ModWorldGenOreProvider::placement)
-            // 关键修正：只留一个 BIOME_MODIFIERS 入口，改写为调用一个合并方法
             .add(ForgeRegistries.Keys.BIOME_MODIFIERS, context -> {
-                ModBiomeModifierProvider.bootstrap(context); // 原有的矿物/其他修改器
-                ModBiomeModifiers.bootstrap(context);        // 你的怪物生成修改器
+                ModBiomeModifierProvider.bootstrap(context);
+                ModBiomeModifiers.bootstrap(context);
             });
 
     @SubscribeEvent

@@ -201,6 +201,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
 
         //生物蛋
         add(ModItems.ICE_CRYSTAL_SPAWN_EGG.get(), "冰晶刷怪蛋");
+        add(ModItems.SNOW_DEMON_SPAWN_EGG.get(), "雪魔刷怪蛋");
 
         //实体类
         add(EntityInit.HUNHUAN.get(),"§b魂环");

@@ -100,7 +100,7 @@ public class HunguMenu extends AbstractContainerMenu {
             // 根据你的 ModItems 里的具体注册名进行匹配
             // 假设槽位顺序是：0头, 1胸, 2左手, 3右手, 4左腿, 5右腿, 6外附
             return switch (this.slotType) {
-                case 0 -> item == ModItems.SOUL_BEAST_SKULL.get(); // 替换为你头骨的变量名
+                case 0 -> item == ModItems.SOUL_BEAST_SKULL.get();
                 case 1 -> item == ModItems.SOUL_BEAST_BREASTBONE.get();
                 case 2 -> item == ModItems.SOUL_BEAST_LEFT_HAND_BONE.get();
                 case 3 -> item == ModItems.SOUL_BEAST_RIGHT_HAND_BONE.get();

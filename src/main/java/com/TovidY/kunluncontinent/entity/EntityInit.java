@@ -9,6 +9,9 @@ import com.TovidY.kunluncontinent.entity.hunhe.HunheEntity;
 import com.TovidY.kunluncontinent.entity.hunhe.HunheRender;
 import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanEntity;
 import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanRender;
+import com.TovidY.kunluncontinent.entity.snowdemon.SnowDemonEntity;
+import com.TovidY.kunluncontinent.entity.snowdemon.SnowDemonModel;
+import com.TovidY.kunluncontinent.entity.snowdemon.SnowDemonRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.world.entity.EntityType;
@@ -53,12 +56,18 @@ public class EntityInit {
                     .updateInterval(10)
                     .build("ice_shard"));
 
+    public static final RegistryObject<EntityType<SnowDemonEntity>> SNOW_DEMON = ENTITY_TYPES.register("snow_demon",
+            () -> EntityType.Builder.of(SnowDemonEntity::new, MobCategory.MONSTER)
+                    .sized(1.0F, 1.2F)
+                    .build("snow_demon"));
+
     @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {
 
         @SubscribeEvent
         public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
             event.registerLayerDefinition(CustomModel.LAYER_LOCATION, CustomModel::createBodyLayer);
+            event.registerLayerDefinition(SnowDemonModel.LAYER_LOCATION, SnowDemonModel::createBodyLayer);
         }
 
         @SubscribeEvent
@@ -67,6 +76,7 @@ public class EntityInit {
             EntityRenderers.register(EntityInit.HUNHE.get(), HunheRender::new);
             EntityRenderers.register(EntityInit.ICE_CRYSTAL.get(), IceCrystalRenderer::new);
             EntityRenderers.register(EntityInit.ICE_SHARD.get(), ThrownItemRenderer::new);
+            EntityRenderers.register(EntityInit.SNOW_DEMON.get(), SnowDemonRenderer::new);
         }
     }
 
@@ -75,6 +85,7 @@ public class EntityInit {
         @SubscribeEvent
         public static void registerAttributes(EntityAttributeCreationEvent event) {
             event.put(EntityInit.ICE_CRYSTAL.get(), IceCrystalEntity.createAttributes().build());
+            event.put(EntityInit.SNOW_DEMON.get(), SnowDemonEntity.createAttributes().build());
         }
     }
 

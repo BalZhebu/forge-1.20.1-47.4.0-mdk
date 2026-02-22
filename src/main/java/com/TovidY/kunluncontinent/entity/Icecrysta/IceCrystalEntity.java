@@ -27,7 +27,7 @@ public class IceCrystalEntity extends Monster implements RangedAttackMob {
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
                 .add(Attributes.FOLLOW_RANGE, 35.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.30D) // 0.43有点快，凋灵骷髅才0.25
+                .add(Attributes.MOVEMENT_SPEED, 0.30D)
                 .add(Attributes.ATTACK_DAMAGE, 8.0D)
                 .add(Attributes.ARMOR, 9.0D);
     }
