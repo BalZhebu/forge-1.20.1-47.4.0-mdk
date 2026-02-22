@@ -53,6 +53,7 @@ public class ModCreativeModelTab {
                             pOutput.accept(itemRegistryObject.get());
                         }
 
+                        //御寒魂导器
                         for (RegistryObject<Item> itemRegistryObject : ModItems.COLDPROTECTIONLIST){
                             pOutput.accept(itemRegistryObject.get());
                         }
@@ -104,6 +105,11 @@ public class ModCreativeModelTab {
 
                         //MOD工具
                         for (RegistryObject<Item> itemRegistryObject : ModItems.TOOL) {
+                            pOutput.accept(itemRegistryObject.get());
+                        }
+
+                        //生物蛋
+                        for (RegistryObject<Item> itemRegistryObject : ModItems.SPAWNEGGLIST) {
                             pOutput.accept(itemRegistryObject.get());
                         }
 

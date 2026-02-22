@@ -48,7 +48,7 @@ public class CapabilityAttributeBase implements INBTSerializable<CompoundTag> {
         this.shengminghuifu = 1;
     }
 
-    public CapabilityAttributeBase(float shengming, float maxshengming, float gongji, float wufang, float baojishanghai, float baojilv, float jingshenli, float maxjingshenli, float kangbao, float xixue, float mingzhong, float shanbi) {
+    public CapabilityAttributeBase(float shengming, float maxshengming, float gongji, float wufang, float baojishanghai, float baojilv, float jingshenli, float maxjingshenli, float kangbao, float xixue, float mingzhong, float shanbi,float shengminghuifu,float wuchuan) {
         this.shengming = shengming;
         this.maxshengming = maxshengming;
         this.jingshenli = jingshenli;

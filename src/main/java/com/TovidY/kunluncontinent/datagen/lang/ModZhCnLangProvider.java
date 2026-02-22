@@ -199,9 +199,14 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.COLD_HEARTED_STEEL_SHOVEL.get(), "§7寒心钢铲");
         add(ModItems.COLD_HEARTED_STEEL_HOE.get(), "§7寒心钢锄");
 
+        //生物蛋
+        add(ModItems.ICE_CRYSTAL_SPAWN_EGG.get(), "冰晶刷怪蛋");
+
         //实体类
         add(EntityInit.HUNHUAN.get(),"§b魂环");
         add(EntityInit.HUNHE.get(),"§e魂核");
+        add(EntityInit.ICE_CRYSTAL.get(), "§b冰晶");
+        add(EntityInit.ICE_SHARD.get(), "§b冰凌");
 
         //装备类
         add(ModItems.GRAY_IRON_HELMET.get(),"§8灰铁头盔");

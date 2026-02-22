@@ -4,6 +4,7 @@ import com.TovidY.kunluncontinent.Init.KLConfig;
 import com.TovidY.kunluncontinent.advancement.ModTriggers;
 import com.TovidY.kunluncontinent.block.ModBlockEntities;
 import com.TovidY.kunluncontinent.block.ModBlocks;
+import com.TovidY.kunluncontinent.entity.Icecrysta.IceCrystalEntity;
 import com.TovidY.kunluncontinent.potion.ModEffects;
 import com.TovidY.kunluncontinent.entity.EntityInit;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
@@ -11,8 +12,11 @@ import com.TovidY.kunluncontinent.recipe.ModRecipes;
 import com.TovidY.kunluncontinent.screen.ModMenuTypes;
 import com.TovidY.kunluncontinent.Init.ModCreativeModelTab;
 import com.TovidY.kunluncontinent.item.ModItems;
+import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -65,7 +69,12 @@ public class KlMain {
 
     }
 
-    private void commonSetup(final FMLCommonSetupEvent event) {
+    @SubscribeEvent
+    public void commonSetup(FMLCommonSetupEvent event) {
+        event.enqueueWork(() -> {
+            // 设置冰晶的生成规则：怪物类型、高度(地表)、生成规则(怪物通用规则)
+            SpawnPlacements.register(EntityInit.ICE_CRYSTAL.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, IceCrystalEntity::checkIceCrystalSpawnRules);
+        });
     }
 
     @SubscribeEvent

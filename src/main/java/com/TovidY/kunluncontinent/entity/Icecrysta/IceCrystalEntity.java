@@ -1,0 +1,109 @@
+package com.TovidY.kunluncontinent.entity.Icecrysta;
+
+import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
+import com.TovidY.kunluncontinent.worldgen.ModDimensions;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.monster.RangedAttackMob;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
+
+public class IceCrystalEntity extends Monster implements RangedAttackMob {
+    public IceCrystalEntity(EntityType<? extends IceCrystalEntity> type, Level level) {
+        super(type, level);
+    }
+
+    public static AttributeSupplier.Builder createAttributes() {
+        return Monster.createMonsterAttributes()
+                .add(Attributes.FOLLOW_RANGE, 35.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.30D) // 0.43有点快，凋灵骷髅才0.25
+                .add(Attributes.ATTACK_DAMAGE, 8.0D)
+                .add(Attributes.ARMOR, 9.0D);
+    }
+
+    @Override
+    protected void registerGoals() {
+        this.goalSelector.addGoal(1, new FloatGoal(this));
+        this.goalSelector.addGoal(2, new RangedAttackGoal(this, 1.0D, 40, 20.0F) {
+            @Override
+            public boolean canUse() {
+                return super.canUse() && IceCrystalEntity.this.distanceTo(IceCrystalEntity.this.getTarget()) > 4.0D;
+            }
+        });
+        this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.2D, false) {
+            @Override
+            public boolean canUse() {
+                return super.canUse() && IceCrystalEntity.this.distanceTo(IceCrystalEntity.this.getTarget()) <= 4.0D;
+            }
+        });
+        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
+    }
+
+    @Override
+    public boolean doHurtTarget(Entity target) {
+        float damage = ModAttributeAPI.getGongji(this);
+        boolean flag = target.hurt(this.damageSources().mobAttack(this), damage);
+        if (flag && target instanceof LivingEntity living) {
+            living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 1));
+        }
+        return flag;
+    }
+
+    @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
+        // 假设你有一个同步年限的 DataParameter，当它更新时刷新碰撞箱
+        super.onSyncedDataUpdated(key);
+        this.refreshDimensions();
+    }
+
+    @Override
+    public EntityDimensions getDimensions(Pose pose) {
+        // 根据年限计算碰撞箱大小
+        float scale = 1.0F;
+        // 这里需要获取年限来计算 scale，逻辑同 Renderer
+        return super.getDimensions(pose).scale(scale);
+    }
+
+    public static boolean checkIceCrystalSpawnRules(EntityType<IceCrystalEntity> entityType, ServerLevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
+        // 1. 维度特有的概率过滤
+        if (level.getBiome(pos).is(ModDimensions.POLAR_ICE_BIOME)) {
+            if (random.nextFloat() > 0.05F) {
+                return false;
+            }
+        }
+        // 2. 亮度检查 (如果在极寒维度想白天生，可以把这个 if 删掉或修改)
+        // Monster.checkMonsterSpawnRules 默认要求亮度 <= 7
+        if (!Monster.checkMonsterSpawnRules(entityType, level, spawnType, pos, random)) {
+            return false;
+        }
+
+        // 3. 必须看到天空（防止刷在地底）
+        return level.canSeeSky(pos);
+    }
+
+    @Override
+    public void performRangedAttack(LivingEntity target, float velocity) {
+        IceShardEntity shard = new IceShardEntity(this.level(), this);
+        double d0 = target.getEyeY() - 1.1;
+        double d1 = target.getX() - this.getX();
+        double d2 = d0 - shard.getY();
+        double d3 = target.getZ() - this.getZ();
+        double d4 = Math.sqrt(d1 * d1 + d3 * d3) * 0.2;
+        shard.shoot(d1, d2 + d4, d3, 1.6F, 1.0F);
+
+        this.playSound(SoundEvents.SNOWBALL_THROW, 1.0F, 0.4F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
+        this.level().addFreshEntity(shard);
+    }
+}

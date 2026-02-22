@@ -1,5 +1,6 @@
 package com.TovidY.kunluncontinent.capability.mobattributes;
 
+import com.TovidY.kunluncontinent.entity.EntityInit;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -23,6 +24,8 @@ public class MonsterYearConfig {
         register(EntityType.WITHER, 800000, 1500000);
         //坚守者
         register(EntityType.WARDEN, 500000, 1300000);
+        //冰晶
+        register(EntityInit.ICE_CRYSTAL.get(), 566, 110000);
     }
 
     private static void register(EntityType<?> type, int min, int max) {

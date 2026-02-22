@@ -1,6 +1,7 @@
 package com.TovidY.kunluncontinent.item;
 
 import com.TovidY.kunluncontinent.KlMain;
+import com.TovidY.kunluncontinent.entity.EntityInit;
 import com.TovidY.kunluncontinent.item.armor.ModArmorBaseItem;
 import com.TovidY.kunluncontinent.item.armor.ModArmorMaterials;
 import com.TovidY.kunluncontinent.item.hungu.BoneItem;
@@ -14,6 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -72,6 +74,9 @@ public class ModItems {
     public static final RegistryObject<Item> NEIDAN7 = ITEMS.register("neidan7",()->new NeidanItem(new Item.Properties(),7));
     public static final RegistryObject<Item> NEIDAN8 = ITEMS.register("neidan8",()->new NeidanItem(new Item.Properties(),8));
     public static final RegistryObject<Item> NEIDAN9 = ITEMS.register("neidan9",()->new NeidanItem(new Item.Properties(),9));
+
+    //生物蛋
+    public static final RegistryObject<Item> ICE_CRYSTAL_SPAWN_EGG = ITEMS.register("ice_crystal_spawn_egg", () -> new ForgeSpawnEggItem(EntityInit.ICE_CRYSTAL, 0xD9F3FF, 0x32A4FF, new Item.Properties()));
 
     //矿石宝石
     public static final RegistryObject<Item> GRAY_IRON_INGOT = ITEMS.register("gray_iron_ingot",()->new Item(new Item.Properties()));
@@ -182,6 +187,12 @@ public class ModItems {
 
     public static final RegistryObject<Item> HUNHUAN_STORAGE_FIVE = ITEMS.register("hunhuan_storage_five",
             () -> new HunHuanStorageItem(new Item.Properties().stacksTo(1).fireResistant(), 1, 20000000));
+
+
+    public static ArrayList<RegistryObject<Item>> SPAWNEGGLIST = new ArrayList<>();
+    static {
+        SPAWNEGGLIST.add(ICE_CRYSTAL_SPAWN_EGG);
+    }
 
     public static ArrayList<RegistryObject<Item>> HUNGULIST = new ArrayList<>();
     static {

@@ -90,6 +90,11 @@ public class ModItemModelsProvider extends ItemModelProvider {
             handheldItem(itemRegistry.get());
         }
 
+        //生物蛋
+        for (RegistryObject<Item> itemRegistry : ModItems.SPAWNEGGLIST){
+            spawnEggItem(itemRegistry.get());
+        }
+
     }
 
     /**
@@ -105,6 +110,11 @@ public class ModItemModelsProvider extends ItemModelProvider {
                 ResourceLocation.withDefaultNamespace("item/handheld"))
                 .texture("layer0",
                         ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "item/" + id.getPath()));
+    }
+
+    private void spawnEggItem(Item item) {
+        ResourceLocation id = ForgeRegistries.ITEMS.getKey(item);
+        withExistingParent(id.getPath(), ResourceLocation.withDefaultNamespace("item/template_spawn_egg"));
     }
 
 }

@@ -1,11 +1,14 @@
 package com.TovidY.kunluncontinent.capability.mobattributes;
 
 import com.TovidY.kunluncontinent.KlMain;
+import com.TovidY.kunluncontinent.entity.EntityInit;
 import com.TovidY.kunluncontinent.network.SynsAPI;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -31,6 +34,11 @@ public class MobAttributeInit {
             }
             applyAttributesToEntity(mob, attr);
         });
+    }
+
+    @SubscribeEvent
+    public static void onAttributeCreate(EntityAttributeCreationEvent event) {
+        event.put(EntityInit.ICE_CRYSTAL.get(), Monster.createMonsterAttributes().build());
     }
 
     @SubscribeEvent

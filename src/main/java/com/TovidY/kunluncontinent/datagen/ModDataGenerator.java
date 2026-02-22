@@ -11,6 +11,7 @@ import com.TovidY.kunluncontinent.datagen.itemprovider.ModRecipesProvider;
 import com.TovidY.kunluncontinent.datagen.lang.ModZhCnLangProvider;
 import com.TovidY.kunluncontinent.datagen.oredatagen.ModBiomeModifierProvider;
 import com.TovidY.kunluncontinent.datagen.oredatagen.ModWorldGenOreProvider;
+import com.TovidY.kunluncontinent.datagen.worldgenprovider.ModBiomeModifiers;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
@@ -33,16 +34,17 @@ import java.util.concurrent.CompletableFuture;
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModDataGenerator {
 
-    // 所有的注册表逻辑（维度、矿物、群系修改器）全部合并到这一个 BUILDER 里
     public static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
-            // 维度相关
             .add(Registries.BIOME, com.TovidY.kunluncontinent.datagen.worldgenprovider.ModWorldGenProvider::bootstrapBiome)
             .add(Registries.DIMENSION_TYPE, com.TovidY.kunluncontinent.datagen.worldgenprovider.ModWorldGenProvider::bootstrapType)
             .add(Registries.LEVEL_STEM, com.TovidY.kunluncontinent.datagen.worldgenprovider.ModWorldGenProvider::bootstrapStem)
-            // 矿物生成相关 (从你之前的第二个 Provider 挪过来的)
             .add(Registries.CONFIGURED_FEATURE, ModWorldGenOreProvider::bootstrap)
             .add(Registries.PLACED_FEATURE, ModWorldGenOreProvider::placement)
-            .add(ForgeRegistries.Keys.BIOME_MODIFIERS, ModBiomeModifierProvider::bootstrap);
+            // 关键修正：只留一个 BIOME_MODIFIERS 入口，改写为调用一个合并方法
+            .add(ForgeRegistries.Keys.BIOME_MODIFIERS, context -> {
+                ModBiomeModifierProvider.bootstrap(context); // 原有的矿物/其他修改器
+                ModBiomeModifiers.bootstrap(context);        // 你的怪物生成修改器
+            });
 
     @SubscribeEvent
     public static void gatherData(GatherDataEvent event){
