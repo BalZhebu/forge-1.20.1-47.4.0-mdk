@@ -29,9 +29,12 @@ public class ModBlockLootTablesProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.CLOUD_PATTERNED_BRONZE_ORE.get());
         dropSelf(ModBlocks.RED_FIRE_ORE.get());
         dropSelf(ModBlocks.SUNKEN_SILVER_ORE.get());
+
         //宝石矿
         dropSelf(ModBlocks.RUBY_ORE.get());
         dropSelf(ModBlocks.AMETHYST_ORE.get());
+        dropSelf(ModBlocks.SAPPHIRE_ORE.get());
+        dropSelf(ModBlocks.STARLIGHT_STONE_ORE.get());
 
         dropSelf(ModBlocks.PUTUAN_BLOCK.get());
 
@@ -53,6 +56,8 @@ public class ModBlockLootTablesProvider extends BlockLootSubProvider {
         // 红宝石矿石（使用矿石破坏战利品列表）
         this.add(ModBlocks.RUBY_ORE.get(), block -> createCopperOreLikeDrops(block, ModItems.RUBY.get()));
         this.add(ModBlocks.AMETHYST_ORE.get(), block -> createCopperOreLikeDrops(block, ModItems.AMETHYST.get()));
+        this.add(ModBlocks.SAPPHIRE_ORE.get(), block -> createCopperOreLikeDrops(block, ModItems.SAPPHIRE.get()));
+        this.add(ModBlocks.STARLIGHT_STONE_ORE.get(), block -> createCopperOreLikeDropsTwo(block, ModItems.STARLIGHT_STONE.get()));
     }
 
     //该方法是矿石类，挖矿石会掉落更多矿物，将原本的block方块替换成该方法即可
@@ -61,6 +66,13 @@ public class ModBlockLootTablesProvider extends BlockLootSubProvider {
         return createSilkTouchDispatchTable(pBlock,
                 this.applyExplosionDecay(pBlock, LootItem.lootTableItem(item)
                         .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 3.0F)))
+                        .apply(ApplyBonusCount.addOreBonusCount(Enchantments.BLOCK_FORTUNE))));
+    }
+
+    protected LootTable.Builder createCopperOreLikeDropsTwo(Block pBlock, Item item) {
+        return createSilkTouchDispatchTable(pBlock,
+                this.applyExplosionDecay(pBlock, LootItem.lootTableItem(item)
+                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 2.0F)))
                         .apply(ApplyBonusCount.addOreBonusCount(Enchantments.BLOCK_FORTUNE))));
     }
 

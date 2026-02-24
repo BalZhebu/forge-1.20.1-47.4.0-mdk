@@ -59,6 +59,14 @@ public class ModBlocks {
             registerBlock("amethyst_ore",()->
                     new Block(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)));
 
+    public static final RegistryObject<Block> SAPPHIRE_ORE =
+            registerBlock("sapphire_ore",()->
+                    new Block(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)));
+
+    public static final RegistryObject<Block> STARLIGHT_STONE_ORE =
+            registerBlock("starlight_stone_ore",()->
+                    new Block(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)));
+
 
     public static final RegistryObject<Block> DROSS_BLOCK =
             registerBlock("dross_block",()->
@@ -142,6 +150,8 @@ public class ModBlocks {
 
         MODORE.add(RUBY_ORE);
         MODORE.add(AMETHYST_ORE);
+        MODORE.add(SAPPHIRE_ORE);
+        MODORE.add(STARLIGHT_STONE_ORE);
     }
 
     //mod方块

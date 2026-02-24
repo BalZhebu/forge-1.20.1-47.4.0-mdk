@@ -40,7 +40,7 @@ public class ModItems {
     public static final RegistryObject<Item> INSTANT_KILL_SWORD =
             ITEMS.register("instant_kill_sword", InstantKillSwordItem::new);
 
-    //普通物品
+    //传送门
     public static final RegistryObject<Item> EXTREME_COLD_SNOWFLAKE = ITEMS.register("extreme_cold_snowflake",()->new EngravingKnifeItem(new Item.Properties()){
         @Override
         public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
@@ -48,6 +48,9 @@ public class ModItems {
             pTooltipComponents.add(Component.translatable("tooltip.kunluncontinent.extreme_cold_snowflake2").withStyle(ChatFormatting.DARK_GRAY));
         }
     });
+
+    //材料物品
+    public static final RegistryObject<Item> EXTREME_COLD_SNOWFLAKE_FRAGMENT = ITEMS.register("extreme_cold_snowflake_fragment",()->new Item(new Item.Properties()));
 
     //御寒魂导器
     public static final RegistryObject<Item> LOW_COLD_PROTECTION = ITEMS.register("low_cold_protection",()->new ThermalAmuletItem(new Item.Properties().stacksTo(1).durability(3000),false));
@@ -88,6 +91,8 @@ public class ModItems {
 
     public static final RegistryObject<Item> RUBY = ITEMS.register("ruby",()->new Item(new Item.Properties()));
     public static final RegistryObject<Item> AMETHYST = ITEMS.register("amethyst",()->new Item(new Item.Properties()));
+    public static final RegistryObject<Item> SAPPHIRE = ITEMS.register("sapphire",()->new Item(new Item.Properties()));
+    public static final RegistryObject<Item> STARLIGHT_STONE = ITEMS.register("starlight_stone",()->new Item(new Item.Properties()));
 
     //装备
     public static final RegistryObject<Item> GRAY_IRON_HELMET = ITEMS.register("gray_iron_helmet",()->new ModArmorBaseItem(ModArmorMaterials.GRAY_IRON,ArmorItem.Type.HELMET,new Item.Properties()));
@@ -167,11 +172,13 @@ public class ModItems {
     public static final RegistryObject<Item> LOW_LEVEL_HEXIN = ITEMS.register("low_level_hexin",()->new Item(new Item.Properties()));
     public static final RegistryObject<Item> MIDDLE_LEVEL_HEXIN = ITEMS.register("middle_level_hexin",()->new Item(new Item.Properties()));
     public static final RegistryObject<Item> HIGH_LEVEL_HEXIN = ITEMS.register("high_level_hexin",()->new Item(new Item.Properties()));
+    public static final RegistryObject<Item> TOP_LEVEL_HEXIN = ITEMS.register("top_level_hexin",()->new Item(new Item.Properties()));
 
     //魂环储存器核心
     public static final RegistryObject<Item> LOW_HUNHUAN_STORAGE_CORE = ITEMS.register("low_hunhuan_storage_core",()->new Item(new Item.Properties()));
     public static final RegistryObject<Item> MIDDLE_HUNHUAN_STORAGE_CORE = ITEMS.register("middle_hunhuan_storage_core",()->new Item(new Item.Properties()));
     public static final RegistryObject<Item> HIGH_HUNHUAN_STORAGE_CORE = ITEMS.register("high_hunhuan_storage_core",()->new Item(new Item.Properties()));
+    public static final RegistryObject<Item> TOP_HUNHUAN_STORAGE_CORE = ITEMS.register("top_hunhuan_storage_core",()->new Item(new Item.Properties()));
 
     // 魂环储存器
     public static final RegistryObject<Item> HUNHUAN_STORAGE_ONE = ITEMS.register("hunhuan_storage_one",
@@ -189,6 +196,10 @@ public class ModItems {
     public static final RegistryObject<Item> HUNHUAN_STORAGE_FIVE = ITEMS.register("hunhuan_storage_five",
             () -> new HunHuanStorageItem(new Item.Properties().stacksTo(1).fireResistant(), 1, 20000000));
 
+    public static ArrayList<RegistryObject<Item>> NORMALITEMSLIST = new ArrayList<>();
+    static {
+        NORMALITEMSLIST.add(EXTREME_COLD_SNOWFLAKE_FRAGMENT);
+    }
 
     public static ArrayList<RegistryObject<Item>> SPAWNEGGLIST = new ArrayList<>();
     static {
@@ -220,6 +231,7 @@ public class ModItems {
         HEXIN.add(LOW_LEVEL_HEXIN);
         HEXIN.add(MIDDLE_LEVEL_HEXIN);
         HEXIN.add(HIGH_LEVEL_HEXIN);
+        HEXIN.add(TOP_LEVEL_HEXIN);
     }
 
     public static ArrayList<RegistryObject<Item>> PUTONGITEM = new ArrayList<>();
@@ -232,6 +244,7 @@ public class ModItems {
         HUNHUAN_STORAGE_CORE.add(LOW_HUNHUAN_STORAGE_CORE);
         HUNHUAN_STORAGE_CORE.add(MIDDLE_HUNHUAN_STORAGE_CORE);
         HUNHUAN_STORAGE_CORE.add(HIGH_HUNHUAN_STORAGE_CORE);
+        HUNHUAN_STORAGE_CORE.add(TOP_HUNHUAN_STORAGE_CORE);
     }
 
 
@@ -287,6 +300,8 @@ public class ModItems {
 
         MODSTONE.add(RUBY);
         MODSTONE.add(AMETHYST);
+        MODSTONE.add(SAPPHIRE);
+        MODSTONE.add(STARLIGHT_STONE);
     }
 
     public static ArrayList<RegistryObject<Item>> DANYAOITEM = new ArrayList<>();

@@ -27,6 +27,8 @@ import net.minecraftforge.client.model.generators.ModelFile;
             //宝石矿
             simpleBlockWithItem(ModBlocks.RUBY_ORE.get(), cubeAll(ModBlocks.RUBY_ORE.get()));
             simpleBlockWithItem(ModBlocks.AMETHYST_ORE.get(), cubeAll(ModBlocks.AMETHYST_ORE.get()));
+            simpleBlockWithItem(ModBlocks.SAPPHIRE_ORE.get(), cubeAll(ModBlocks.SAPPHIRE_ORE.get()));
+            simpleBlockWithItem(ModBlocks.STARLIGHT_STONE_ORE.get(), cubeAll(ModBlocks.STARLIGHT_STONE_ORE.get()));
             //丹渣块
             simpleBlockWithItem(ModBlocks.DROSS_BLOCK.get(), cubeAll(ModBlocks.DROSS_BLOCK.get()));
             //传送门方块

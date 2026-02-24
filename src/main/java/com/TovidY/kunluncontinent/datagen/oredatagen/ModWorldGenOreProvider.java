@@ -33,6 +33,10 @@ public class ModWorldGenOreProvider {
         registerOre(context, ModBlocks.RUBY_ORE.get(), 5);
         //紫水晶
         registerOre(context, ModBlocks.AMETHYST_ORE.get(), 5);
+        //蓝晶
+        registerOre(context, ModBlocks.SAPPHIRE_ORE.get(), 10);
+        //星辰石
+        registerOre(context, ModBlocks.STARLIGHT_STONE_ORE.get(), 5);
         // 钻石参考：原版 size 为 4 到 8
         registerOre(context, ModBlocks.CLOUD_PATTERNED_BRONZE_ORE.get(), 9);
         //赤火矿
@@ -64,6 +68,10 @@ public class ModWorldGenOreProvider {
         registerPlacement(context, configuredFeatures, ModBlocks.SUNKEN_SILVER_ORE, 0, 128, 5);
         //紫水晶
         registerPlacement(context, configuredFeatures, ModBlocks.AMETHYST_ORE, 0, 100, 3);
+        //蓝晶
+        registerPlacement(context, configuredFeatures, ModBlocks.SAPPHIRE_ORE, 0, 110, 5);
+        //星辰石
+        registerPlacement(context, configuredFeatures, ModBlocks.STARLIGHT_STONE_ORE, -64, 0, 5);
     }
 
     // 在 registerOre 中增加对不同维度的支持

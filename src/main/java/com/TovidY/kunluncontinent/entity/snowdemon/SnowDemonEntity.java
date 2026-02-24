@@ -1,11 +1,15 @@
 package com.TovidY.kunluncontinent.entity.snowdemon;
 
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapabilityProvider;
+import com.TovidY.kunluncontinent.entity.Icecrysta.IceCrystalEntity;
+import com.TovidY.kunluncontinent.worldgen.ModDimensions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -17,6 +21,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -24,8 +29,7 @@ import net.minecraftforge.event.ForgeEventFactory;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class SnowDemonEntity extends Monster {
-    private int breakCooldown = 0;
-    // 假设你已经在 EntityInit 里注册了它
+
     public SnowDemonEntity(EntityType<? extends Monster> type, Level level) {
         super(type, level);
     }
@@ -33,12 +37,11 @@ public class SnowDemonEntity extends Monster {
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
                 .add(Attributes.FOLLOW_RANGE, 35.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.30D) // 0.43有点快，凋灵骷髅才0.25
+                .add(Attributes.MOVEMENT_SPEED, 0.30D)
                 .add(Attributes.ATTACK_DAMAGE, 8.0D)
                 .add(Attributes.ARMOR, 9.0D);
     }
 
-    // AI 行为
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new FloatGoal(this));
@@ -46,6 +49,18 @@ public class SnowDemonEntity extends Monster {
         this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
+    }
+
+    public static boolean checkSnowDemonSpawnRules(EntityType<SnowDemonEntity> entityType, ServerLevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
+        if (level.getBiome(pos).is(ModDimensions.POLAR_ICE_BIOME)) {
+            if (random.nextFloat() > 0.05F) {
+                return false;
+            }
+        }
+        if (!Monster.checkMonsterSpawnRules(entityType, level, spawnType, pos, random)) {
+            return false;
+        }
+        return level.canSeeSky(pos);
     }
 
     @Override
@@ -77,7 +92,6 @@ public class SnowDemonEntity extends Monster {
         }
     }
 
-    // 刷新碰撞箱
     @Override
     public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
         super.onSyncedDataUpdated(key);
@@ -90,7 +104,6 @@ public class SnowDemonEntity extends Monster {
     }
 
     public float getVisualScale() {
-        // 建议在实体类里封装一个获取缩放比例的方法，渲染器也能调
         AtomicReference<Float> s = new AtomicReference<>(1.0F);
         this.getCapability(MobAttributeCapabilityProvider.CAPABILITY).ifPresent(attr -> {
             s.set(1.0F + (float)attr.getNianxian() / 50000.0F);

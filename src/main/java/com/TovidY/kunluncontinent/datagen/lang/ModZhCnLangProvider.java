@@ -71,19 +71,25 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.DIAMOND_ENGRAVING_KNIFE.get(), "钻石制刻刀");
         //核心类
         add(ModItems.LOW_LEVEL_HEXIN.get(), "§7低级丹炉核心");
-        add(ModItems.HIGH_LEVEL_HEXIN.get(), "§4顶级丹炉核心");
+        add(ModItems.HIGH_LEVEL_HEXIN.get(), "§4高级丹炉核心");
         add(ModItems.MIDDLE_LEVEL_HEXIN.get(), "§6中级丹炉核心");
+        add(ModItems.TOP_LEVEL_HEXIN.get(), "§e§l顶级丹炉核心");
+
         //魂环存储器核心
         add(ModItems.LOW_HUNHUAN_STORAGE_CORE.get(), "§7低级魂环存储器核心");
-        add(ModItems.HIGH_HUNHUAN_STORAGE_CORE.get(), "§4顶级魂环存储器核心");
+        add(ModItems.HIGH_HUNHUAN_STORAGE_CORE.get(), "§4高级魂环存储器核心");
         add(ModItems.MIDDLE_HUNHUAN_STORAGE_CORE.get(), "§6中级魂环存储器核心");
+        add(ModItems.TOP_HUNHUAN_STORAGE_CORE.get(), "§e§l顶级魂环存储器核心");
 
         //传送门方块
         add(ModBlocks.POLAR_ICE_PORTAL_BLOCK.get(), "§b极寒冰域传送门框架");
         //传送门
         add(ModBlocks.POLAR_ICE_PORTAL.get(), "极寒冰域传送门");
-        //普通物品
+        //打火石
         add(ModItems.EXTREME_COLD_SNOWFLAKE.get(), "§b极寒雪晶");
+
+        //普通物品
+        add(ModItems.EXTREME_COLD_SNOWFLAKE_FRAGMENT.get(), "§b极寒雪晶碎片");
 
         //矿石类
         add(ModItems.GRAY_IRON_INGOT.get(),"§8灰铁锭");
@@ -94,6 +100,8 @@ public class ModZhCnLangProvider extends LanguageProvider {
 
         add(ModItems.RUBY.get(), "§c红宝石");
         add(ModItems.AMETHYST.get(), "§5紫瑛");
+        add(ModItems.SAPPHIRE.get(), "§6蓝晶");
+        add(ModItems.STARLIGHT_STONE.get(), "§7星辰石");
 
         //内丹类
         add(ModItems.NEIDAN1.get(),"一阶内丹");
@@ -208,6 +216,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(EntityInit.HUNHE.get(),"§e魂核");
         add(EntityInit.ICE_CRYSTAL.get(), "§b冰晶");
         add(EntityInit.ICE_SHARD.get(), "§b冰凌");
+        add(EntityInit.SNOW_DEMON.get(),"§b雪魔");
 
         //装备类
         add(ModItems.GRAY_IRON_HELMET.get(),"§8灰铁头盔");
@@ -241,8 +250,12 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModBlocks.CLOUD_PATTERNED_BRONZE_ORE.get(),"云纹铜矿");
         add(ModBlocks.RED_FIRE_ORE.get(), "赤火矿");
         add(ModBlocks.SUNKEN_SILVER_ORE.get(), "沉银矿");
+
         add(ModBlocks.RUBY_ORE.get(), "深层红宝石原矿");
         add(ModBlocks.AMETHYST_ORE.get(),"紫瑛原矿");
+        add(ModBlocks.SAPPHIRE_ORE.get(), "蓝晶原矿");
+        add(ModBlocks.STARLIGHT_STONE_ORE.get(), "星辰石矿");
+
         add(ModBlocks.PUTUAN_BLOCK.get(),"蒲团");
         add("putuan.xiulian.finish","§c你感到浑身清爽，但打坐时间太长你感到有被心魔入侵的风险，出去走走吧");
         add(ModBlocks.DROSS_BLOCK.get(), "丹渣块");

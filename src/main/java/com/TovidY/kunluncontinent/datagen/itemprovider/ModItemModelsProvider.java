@@ -30,8 +30,13 @@ public class ModItemModelsProvider extends ItemModelProvider {
 
         handheldItem(ModItems.INSTANT_KILL_SWORD.get());
 
-        //普通物品
+        //打火石类似
         for (RegistryObject<Item> itemRegistry : ModItems.PUTONGITEM){
+            basicItem(itemRegistry.get());
+        }
+
+        //普通物品
+        for (RegistryObject<Item> itemRegistry : ModItems.NORMALITEMSLIST){
             basicItem(itemRegistry.get());
         }
 

@@ -5,6 +5,7 @@ import com.TovidY.kunluncontinent.advancement.ModTriggers;
 import com.TovidY.kunluncontinent.block.ModBlockEntities;
 import com.TovidY.kunluncontinent.block.ModBlocks;
 import com.TovidY.kunluncontinent.entity.Icecrysta.IceCrystalEntity;
+import com.TovidY.kunluncontinent.entity.snowdemon.SnowDemonEntity;
 import com.TovidY.kunluncontinent.potion.ModEffects;
 import com.TovidY.kunluncontinent.entity.EntityInit;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
@@ -74,6 +75,7 @@ public class KlMain {
         event.enqueueWork(() -> {
             // 设置冰晶的生成规则：怪物类型、高度(地表)、生成规则(怪物通用规则)
             SpawnPlacements.register(EntityInit.ICE_CRYSTAL.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, IceCrystalEntity::checkIceCrystalSpawnRules);
+            SpawnPlacements.register(EntityInit.SNOW_DEMON.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SnowDemonEntity::checkSnowDemonSpawnRules);
         });
     }
 

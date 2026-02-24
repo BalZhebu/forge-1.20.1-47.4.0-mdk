@@ -68,6 +68,24 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
         SpecialRecipeBuilder.special(ModRecipes.DROSS_CONVERSION_SERIALIZER.get())
                 .save(pWriter, KlMain.MOD_ID + ":dross_conversion");
 
+        //极寒冰晶
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.EXTREME_COLD_SNOWFLAKE.get())
+                .pattern("II")
+                .pattern("II")
+                .define('I', ModItems.EXTREME_COLD_SNOWFLAKE_FRAGMENT.get())
+                .unlockedBy("has_extreme_cold_snowflake_peif", has(ModItems.EXTREME_COLD_SNOWFLAKE_FRAGMENT.get()))
+                .save(pWriter);
+
+        //极寒冰晶框架
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.POLAR_ICE_PORTAL_BLOCK.get())
+                .pattern("III")
+                .pattern("IWI")
+                .pattern("III")
+                .define('W', ModItems.EXTREME_COLD_SNOWFLAKE.get())
+                .define('I', Items.SNOW_BLOCK)
+                .unlockedBy("has_polar_ice_portal_block_peifang)", has(ModItems.EXTREME_COLD_SNOWFLAKE.get()))
+                .save(pWriter);
+
         //低阶魂环存储核心
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.LOW_HUNHUAN_STORAGE_CORE.get())
                 .pattern(" R ")
@@ -84,7 +102,7 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .pattern("RKR")
                 .pattern("XRX")
                 .define('K', Ingredient.of(ModTags.Items.ENGRAVING_KNIFE))
-                .define('R', ModItems.AMETHYST.get())
+                .define('R', ModItems.SAPPHIRE.get())
                 .define('X', ModItems.LOW_HUNHUAN_STORAGE_CORE.get())
                 .unlockedBy("has_knife", has(ModTags.Items.ENGRAVING_KNIFE))
                 .save(pWriter);
@@ -141,7 +159,7 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .pattern("XRX")
                 .define('K', Ingredient.of(ModTags.Items.ENGRAVING_KNIFE))
                 .define('X', ModItems.RUBY.get())
-                .define('R', ModItems.AMETHYST.get())
+                .define('R', ModItems.SAPPHIRE.get())
                 .unlockedBy("has_knife", has(ModTags.Items.ENGRAVING_KNIFE))
                 .save(pWriter);
 

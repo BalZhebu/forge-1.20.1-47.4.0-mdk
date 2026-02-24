@@ -9,6 +9,7 @@ import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraftforge.common.world.BiomeModifier;
@@ -35,11 +36,6 @@ public class ModBiomeModifiers {
             ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "add_ice_crystal_ice")
     );
 
-    public static final ResourceKey<BiomeModifier> ADD_SNOWDEMON = ResourceKey.create(
-            ForgeRegistries.Keys.BIOME_MODIFIERS,
-            ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "add_snowdemon")
-    );
-
     public static void bootstrap(BootstapContext<BiomeModifier> context) {
         var biomes = context.lookup(Registries.BIOME);
 
@@ -60,14 +56,16 @@ public class ModBiomeModifiers {
         //让这个生物生成在极寒冰域
         context.register(ADD_ICE_CRYSTAL_ICE, new ForgeBiomeModifiers.AddSpawnsBiomeModifier(
                 HolderSet.direct(biomes.getOrThrow(ModDimensions.POLAR_ICE_BIOME)),
-                List.of(new MobSpawnSettings.SpawnerData(EntityInit.ICE_CRYSTAL.get(), 5, 1, 1))
+                List.of(
+                        //冰晶
+                        new MobSpawnSettings.SpawnerData(EntityInit.ICE_CRYSTAL.get(), 5, 1, 1),
+                        //雪魔
+                        new MobSpawnSettings.SpawnerData(EntityInit.SNOW_DEMON.get(), 2, 1, 1),
+                        //流浪者
+                        new MobSpawnSettings.SpawnerData(EntityType.STRAY, 20, 2, 4),
+                        //苦力怕
+                        new MobSpawnSettings.SpawnerData(EntityType.CREEPER, 10, 1, 1)
+                )
         ));
-
-        //雪魔
-        context.register(ADD_SNOWDEMON, new ForgeBiomeModifiers.AddSpawnsBiomeModifier(
-                HolderSet.direct(biomes.getOrThrow(ModDimensions.POLAR_ICE_BIOME)),
-                List.of(new MobSpawnSettings.SpawnerData(EntityInit.SNOW_DEMON.get(), 10, 1, 2))
-        ));
-
     }
 }

@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.datagen.oredatagen;
 
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.block.ModBlocks;
+import com.TovidY.kunluncontinent.worldgen.ModDimensions;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;
@@ -18,8 +19,12 @@ public class ModBiomeModifierProvider {
     public static final ResourceKey<BiomeModifier> ADD_GRAY_IRON_ORE = createKey("add_gray_iron_ore");
     public static final ResourceKey<BiomeModifier> ADD_RUBY_ORE = createKey("add_ruby_ore");
     public static final ResourceKey<BiomeModifier> ADD_BRONZE_ORE = createKey("add_bronze_ore");
+
     public static final ResourceKey<BiomeModifier> ADD_RED_FIRE = createKey("add_red_fire_ore");
     public static final ResourceKey<BiomeModifier> ADD_AMETHYST_ORE = createKey("add_amethyst_ore");
+    public static final ResourceKey<BiomeModifier> ADD_SAPPHIRE_ORE = createKey("add_sapphire_ore");
+    public static final ResourceKey<BiomeModifier> ADD_STARLIGHT_STONE_ORE = createKey("add_starlight_stone_ore");
+
     public static final ResourceKey<BiomeModifier> ADD_SUNKEN_SILVER_ORE = createKey("add_sunken_silver_ore");
 
     public static void bootstrap(BootstapContext<BiomeModifier> context) {
@@ -53,6 +58,13 @@ public class ModBiomeModifierProvider {
                 GenerationStep.Decoration.UNDERGROUND_ORES
         ));
 
+        //蓝晶
+        context.register(ADD_SAPPHIRE_ORE, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                biomes.getOrThrow(BiomeTags.IS_NETHER),
+                HolderSet.direct(placedFeatures.getOrThrow(ModWorldGenOreProvider.createPlaceKey(ModBlocks.SAPPHIRE_ORE.get()))),
+                GenerationStep.Decoration.UNDERGROUND_ORES
+        ));
+
         //沉银矿
         context.register(ADD_SUNKEN_SILVER_ORE, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
                 biomes.getOrThrow(BiomeTags.IS_END),
@@ -66,6 +78,14 @@ public class ModBiomeModifierProvider {
                 HolderSet.direct(placedFeatures.getOrThrow(ModWorldGenOreProvider.createPlaceKey(ModBlocks.AMETHYST_ORE.get()))),
                 GenerationStep.Decoration.UNDERGROUND_ORES
         ));
+
+        //星辰石
+        context.register(ADD_STARLIGHT_STONE_ORE, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                HolderSet.direct(biomes.getOrThrow(ModDimensions.POLAR_ICE_BIOME)),
+                HolderSet.direct(placedFeatures.getOrThrow(ModWorldGenOreProvider.createPlaceKey(ModBlocks.STARLIGHT_STONE_ORE.get()))),
+                GenerationStep.Decoration.UNDERGROUND_ORES
+        ));
+
     }
 
     private static ResourceKey<BiomeModifier> createKey(String name) {

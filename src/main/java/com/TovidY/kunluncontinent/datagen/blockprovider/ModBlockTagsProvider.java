@@ -33,6 +33,9 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(ModBlocks.SUNKEN_SILVER_ORE.get())
                 .add(ModBlocks.RUBY_ORE.get())
                 .add(ModBlocks.AMETHYST_ORE.get())
+                .add(ModBlocks.SAPPHIRE_ORE.get())
+                .add(ModBlocks.STARLIGHT_STONE_ORE.get())
+
                 .add(ModBlocks.POLAR_ICE_PORTAL_BLOCK.get())
                 .add(ModBlocks.LIANDANLU1.get())
                 .add(ModBlocks.LIANDANLU2.get())
@@ -53,7 +56,7 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
         //需要钻石镐
         tag(BlockTags.NEEDS_DIAMOND_TOOL)
                 .add(ModBlocks.CLOUD_PATTERNED_BRONZE_ORE.get())
-                .add(ModBlocks.AMETHYST_ORE.get())
+                .add(ModBlocks.SAPPHIRE_ORE.get())
                 .add(ModBlocks.RED_FIRE_ORE.get())
                 .add(ModBlocks.LIANDANLU1.get())
                 .add(ModBlocks.LIANDANLU2.get())
@@ -64,6 +67,8 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(ModBlocks.POLAR_ICE_PORTAL_BLOCK.get())
         ;
         tag(Tags.Blocks.NEEDS_NETHERITE_TOOL)
+                .add(ModBlocks.AMETHYST_ORE.get())
+                .add(ModBlocks.STARLIGHT_STONE_ORE.get())
                 .add(ModBlocks.SUNKEN_SILVER_ORE.get())
                 .add(ModBlocks.LIANDANLU7.get())
                 .add(ModBlocks.LIANDANLU8.get())

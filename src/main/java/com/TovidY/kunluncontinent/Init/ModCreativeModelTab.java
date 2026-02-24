@@ -33,8 +33,13 @@ public class ModCreativeModelTab {
 
                         pOutput.accept(ModBlocks.POLAR_ICE_PORTAL_BLOCK.get());
 
-                        //普通方块
+                        //打火石
                         for (RegistryObject<Item> itemRegistryObject : ModItems.PUTONGITEM){
+                            pOutput.accept(itemRegistryObject.get());
+                        }
+
+                        //普通物品
+                        for (RegistryObject<Item> itemRegistryObject : ModItems.NORMALITEMSLIST){
                             pOutput.accept(itemRegistryObject.get());
                         }
 

@@ -1,11 +1,13 @@
 package com.TovidY.kunluncontinent.entity.Icecrysta;
 
 import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
+import com.TovidY.kunluncontinent.item.ModItems;
 import com.TovidY.kunluncontinent.worldgen.ModDimensions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
@@ -83,14 +85,16 @@ public class IceCrystalEntity extends Monster implements RangedAttackMob {
                 return false;
             }
         }
-        // 2. 亮度检查 (如果在极寒维度想白天生，可以把这个 if 删掉或修改)
-        // Monster.checkMonsterSpawnRules 默认要求亮度 <= 7
-        if (!Monster.checkMonsterSpawnRules(entityType, level, spawnType, pos, random)) {
-            return false;
-        }
-
         // 3. 必须看到天空（防止刷在地底）
         return level.canSeeSky(pos);
+    }
+
+    @Override
+    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean hitByPlayer) {
+        super.dropCustomDeathLoot(source, looting, hitByPlayer);
+        if (this.random.nextFloat() < 0.05F) {
+            this.spawnAtLocation(ModItems.EXTREME_COLD_SNOWFLAKE_FRAGMENT.get());
+        }
     }
 
     @Override
