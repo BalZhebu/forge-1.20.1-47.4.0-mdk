@@ -3,6 +3,7 @@ package com.TovidY.kunluncontinent.event.client;
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
+import com.TovidY.kunluncontinent.item.ModItems;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.server.SPacketSyncPlayerAttribute;
 import com.mojang.logging.LogUtils;
@@ -10,6 +11,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -21,20 +23,21 @@ import org.slf4j.Logger;
 public class PlayerAttributeInit {
 
     @SubscribeEvent
-    public static void onPlayerLogin(EntityJoinLevelEvent event) {
-        if (event.getEntity() instanceof Player player) {
-            if (player.level().isClientSide) return;
-            
+    public static void onPlayerJoin(EntityJoinLevelEvent event) {
+        if (event.getEntity() instanceof Player player && !player.level().isClientSide) {
             if (player instanceof ServerPlayer serverPlayer) {
                 serverPlayer.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(attributes -> {
 
-                    boolean isRespawn = attributes.isInitialized() || 
-                                       attributes.getGongji() != 1.0f || 
-                                       attributes.getMaxshengming() != 20.0f || 
-                                       attributes.getFangyu() != 1.0f ||
-                                        attributes.getJingyan() !=0.0f;
+                    // 判断是否是真正意义上的“新角色”
+                    boolean isNotInitialized = !attributes.isInitialized();
 
-                    if (!attributes.isInitialized() && !isRespawn) {
+                    // 额外保险：如果属性全是初始值，说明是彻头彻尾的新人
+                    boolean isBrandNew = attributes.getGongji() == 1.0f &&
+                            attributes.getMaxshengming() == 20.0f &&
+                            attributes.getDengji() == 0;
+
+                    if (isNotInitialized && isBrandNew) {
+                        // 1. 设置基础属性
                         attributes.setShengming(20.0f);
                         attributes.setMaxshengming(20.0f);
                         attributes.setJingshenli(20.0f);
@@ -52,10 +55,15 @@ public class PlayerAttributeInit {
                         attributes.setMaxjingyan(20.0f);
                         attributes.setShengmingHuifu(1.0f);
                         attributes.setWuchuan(1.0f);
-                        attributes.setXiulianTime((int) 600.0f);
+                        attributes.setXiulianTime(600);
+
+                        ItemStack book = new ItemStack(ModItems.GUIDE_BOOK.get());
+                        if (!serverPlayer.getInventory().add(book)) {
+                            serverPlayer.drop(book, false);
+                        }
                         attributes.setInitialized(true);
                     } else {
-                        if (!attributes.isInitialized()) {
+                        if (isNotInitialized) {
                             attributes.setInitialized(true);
                         }
                     }

@@ -15,6 +15,13 @@ public class ModZhCnLangProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
+        //引导书
+        add(ModItems.GUIDE_BOOK.get(), "§b《昆仑大陆 · 引导书》");
+        add("guide.kunlun.chapter1.content","§1§l《欢迎来到昆仑大陆！祝您玩的愉快 ~ 》\n[本引导书更新与’1.0‘版本]§r\n§c§l请各位玩家务必认真仔细查看，基本收录了正常游玩时遇到的所有常见攻略\n§c以下为基础教程：§r\n§l属性面板系统：§r默认按O键打开属性面板，在属性面板下按住Shift键可查询具体数值，例如玩家的攻击力为10000时属性面板会自动缩进变为1万，按下Shift即可查看具体数值。\n§l觉醒武魂：§r玩家击杀生物、炼制丹药、用蒲团修炼，都可以获得经验，经验值满了后自动突破下一个等级，当玩家第一次突破成功时，将会觉醒武魂并分配玩家的天赋。\n§l天赋系统：§r天赋在玩家觉醒武魂时出现，普通天赋最为常见，废物和天才天赋概率一致，是废物还是天才都在一念之间，不同的天赋会略微影响一点点数值，但后期均可通过努力提升。\n§l武魂系统：§r默认按K键可打开武魂，打开武魂时会消耗精神力，打开武魂时可以吸收魂环。\n§l魂环吸收:§r玩家每到10/20/30级等10的倍数的等级时，会锁定等级，必须吸收魂环才可突破下一阶段，吸收时需打开武魂后右键生物掉落的魂环坐上去后消耗精神力吸收魂环，精神力不足将停止吸收，吸收进度重置。\n§l内丹系统：§r击杀不同年限的生物会掉落不同品质的内丹，内丹可以炼制经验丹药，不同等级的炼丹炉炼制速度不一样，例如1级炼丹炉炼制1级丹药需要10秒，而炼制9级丹药需要10秒的100倍的时间。\n§l丹药品级系统：§r不同品质的内丹炼制出的丹药品质不一样，使用时的倍率不一样，详情自己炼制查看。炼制时可能出现丹渣品质的丹药，放入合成台一个丹渣品质丹药可合成一个丹渣，丹渣9个合成一个丹渣块，可减少炼制丹药时丹渣的概率。\n§l年限生成系统：§r玩家距离世界坐标越远，生成高年限的生物概率越高，最远10000格以外，，到达一万格后，这个值将会到达极限。\n§l魂骨系统：§r玩家在击杀生物时有极低概率掉落魂骨，魂骨是词条制，最低为1词条，最高为10词条。词条越多，概率越低。\n§l蒲团修炼系统：§r玩家在前期难以修炼时可以用蒲团修炼，玩家在前期时修满一个周期（10分钟）可直升两级，修炼时玩家有10分钟周期限制，10分钟后不准修炼，可通过除不修炼的任何情况下都可以恢复这个修炼时间，提示：若玩家修炼时间已满，但仍然可以修炼，但这次修炼只会恢复精神力，而不会增加修为。\n§l飞行系统：§r当玩家的最大精神力到达5000并等级大于25级时，玩家将解锁飞行能力，飞行时精神力消耗加快，等级越高消耗越慢。\n§l进阶维度系统：§r根据某些特殊生物掉落的物品可合成传送门框架，请查看传送门框架描述来搭建传送门结构，可前往生成高年限生物的维度。\n§l特殊攻击系统：§r玩家攻击生物时有低概率触发特殊效果，例如撕裂、燃烧、震撼、湮灭、等特殊效果，特殊效果可增加玩家对生物造成的那次伤害并附加debuff，注意：怪物也可以对你造成这些特殊效果。\n§l玩家屏幕的GUI属性解释：§r左上角GUI的红色部分的代表玩家血量，血量条右侧体力代表玩家的饱食度，下面浅青色代表玩家的精神力，物品栏上方中间多边形内空白处的数值为玩家当前等级（当玩家进入世界、或更新事件时这个数值会异变，这是正常现象，通常几秒即可恢复），物品栏上方黄色进度条为经验条，满了后自动突破，注意：数值在玩家做出某种事件更替时会出现异常变动，这是正常现象，稍等几秒即可恢复。");
+        add("item.kunluncontinent.guide_book.tooltip","§7第一次进入游戏即可获得");
+        add("item.kunluncontinent.guide_book.tooltip1","§7请务必认真仔细查看");
+        add("item.kunluncontinent.guide_book.tooltip2","§7建议不要弄丢");
+
         //成就类
         add("advancements.kunluncontinent.root.title", "初入世界");
         add("advancements.kunluncontinent.root.description", "踏入昆仑大陆的第一步。");
@@ -74,12 +81,16 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.HIGH_LEVEL_HEXIN.get(), "§4高级丹炉核心");
         add(ModItems.MIDDLE_LEVEL_HEXIN.get(), "§6中级丹炉核心");
         add(ModItems.TOP_LEVEL_HEXIN.get(), "§e§l顶级丹炉核心");
+        //核心
+        add(ModItems.LOW_HUNHUAN_STORAGE_CORE.get(), "§7低级核心");
+        add(ModItems.HIGH_HUNHUAN_STORAGE_CORE.get(), "§4高级核心");
+        add(ModItems.MIDDLE_HUNHUAN_STORAGE_CORE.get(), "§6中级核心");
+        add(ModItems.TOP_HUNHUAN_STORAGE_CORE.get(), "§e§l顶级核心");
 
-        //魂环存储器核心
-        add(ModItems.LOW_HUNHUAN_STORAGE_CORE.get(), "§7低级魂环存储器核心");
-        add(ModItems.HIGH_HUNHUAN_STORAGE_CORE.get(), "§4高级魂环存储器核心");
-        add(ModItems.MIDDLE_HUNHUAN_STORAGE_CORE.get(), "§6中级魂环存储器核心");
-        add(ModItems.TOP_HUNHUAN_STORAGE_CORE.get(), "§e§l顶级魂环存储器核心");
+        //伤害源
+        add("death.attack.extreme_cold","%1$s 被极寒永久冰封了...");
+        add("death.attack.extreme_cold.player","%1$s 在极寒中化作了永恒的冰雕");
+        add("death.attack.extreme_cold.item","%1$s 逃离 %2$s 时被极寒永久冰封了...");
 
         //传送门方块
         add(ModBlocks.POLAR_ICE_PORTAL_BLOCK.get(), "§b极寒冰域传送门框架");

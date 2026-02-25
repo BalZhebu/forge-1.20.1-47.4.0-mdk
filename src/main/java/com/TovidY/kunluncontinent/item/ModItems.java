@@ -49,8 +49,9 @@ public class ModItems {
         }
     });
 
-    //材料物品
+    //材料物品（普通物品）
     public static final RegistryObject<Item> EXTREME_COLD_SNOWFLAKE_FRAGMENT = ITEMS.register("extreme_cold_snowflake_fragment",()->new Item(new Item.Properties()));
+    public static final RegistryObject<Item> GUIDE_BOOK = ITEMS.register("guide_book",()->new GuideBookItem(new Item.Properties()));
 
     //御寒魂导器
     public static final RegistryObject<Item> LOW_COLD_PROTECTION = ITEMS.register("low_cold_protection",()->new ThermalAmuletItem(new Item.Properties().stacksTo(1).durability(3000),false));
@@ -182,23 +183,24 @@ public class ModItems {
 
     // 魂环储存器
     public static final RegistryObject<Item> HUNHUAN_STORAGE_ONE = ITEMS.register("hunhuan_storage_one",
-            () -> new HunHuanStorageItem(new Item.Properties().stacksTo(1).fireResistant(), 1, 6666));
+            () -> new HunHuanStorageItem(new Item.Properties().stacksTo(1).fireResistant(), 1, 16666));
 
     public static final RegistryObject<Item> HUNHUAN_STORAGE_TWO = ITEMS.register("hunhuan_storage_two",
-            () -> new HunHuanStorageItem(new Item.Properties().stacksTo(1).fireResistant(), 1, 50000));
+            () -> new HunHuanStorageItem(new Item.Properties().stacksTo(1).fireResistant(), 1, 150000));
 
     public static final RegistryObject<Item> HUNHUAN_STORAGE_THREE = ITEMS.register("hunhuan_storage_three",
-            () -> new HunHuanStorageItem(new Item.Properties().stacksTo(1).fireResistant(), 1, 900000));
+            () -> new HunHuanStorageItem(new Item.Properties().stacksTo(1).fireResistant(), 1, 1900000));
 
     public static final RegistryObject<Item> HUNHUAN_STORAGE_FOUR = ITEMS.register("hunhuan_storage_four",
-            () -> new HunHuanStorageItem(new Item.Properties().stacksTo(1).fireResistant(), 1, 3000000));
+            () -> new HunHuanStorageItem(new Item.Properties().stacksTo(1).fireResistant(), 1, 33000000));
 
     public static final RegistryObject<Item> HUNHUAN_STORAGE_FIVE = ITEMS.register("hunhuan_storage_five",
-            () -> new HunHuanStorageItem(new Item.Properties().stacksTo(1).fireResistant(), 1, 20000000));
+            () -> new HunHuanStorageItem(new Item.Properties().stacksTo(1).fireResistant(), 1, 120000000));
 
     public static ArrayList<RegistryObject<Item>> NORMALITEMSLIST = new ArrayList<>();
     static {
         NORMALITEMSLIST.add(EXTREME_COLD_SNOWFLAKE_FRAGMENT);
+        NORMALITEMSLIST.add(GUIDE_BOOK);
     }
 
     public static ArrayList<RegistryObject<Item>> SPAWNEGGLIST = new ArrayList<>();

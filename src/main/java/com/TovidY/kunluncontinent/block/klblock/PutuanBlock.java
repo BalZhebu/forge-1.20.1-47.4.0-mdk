@@ -36,7 +36,6 @@ public class PutuanBlock extends Block {
                 flags = (byte)(flags | 1);
                 flags = (byte)(flags | 16);
                 seat.getEntityData().set(ArmorStand.DATA_CLIENT_FLAGS, flags);
-
                 seat.setInvisible(true);
                 seat.setNoGravity(true);
                 seat.setInvulnerable(true);

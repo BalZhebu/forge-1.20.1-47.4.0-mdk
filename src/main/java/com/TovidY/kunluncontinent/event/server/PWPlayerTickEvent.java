@@ -1,7 +1,6 @@
 package com.TovidY.kunluncontinent.event.server;
 
 import com.TovidY.kunluncontinent.KlMain;
-import com.TovidY.kunluncontinent.block.klblock.PutuanBlock;
 import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
@@ -62,6 +61,18 @@ public class PWPlayerTickEvent {
 
         if (isMeditating) {
             if (gameTime % 20 == 0) {
+                float currentJs = cap.getJingshenli();
+                float maxJs = cap.getMaxjingshenli();
+                if (currentJs < maxJs) {
+                    float recoveryAmount = (maxJs * 0.02f) + 5.0f;
+                    cap.setJingshenli(Math.min(maxJs, currentJs + recoveryAmount));
+                    if (cap.getXiulianTime() <= 0) {
+                        SynsAPI.synsPlayerAttribute(player);
+                    }
+                }
+            }
+
+            if (gameTime % 20 == 0) {
                 int currentTime = cap.getXiulianTime();
                 if (currentTime > 0) {
                     cap.setXiulianTime(currentTime - 1);
@@ -70,7 +81,9 @@ public class PWPlayerTickEvent {
                     float gain = cap.getMaxjingyan() / (minutesToLevel * 60f);
                     cap.setJingyan(cap.getJingyan() + gain);
                     PlayerUpgradeSystem.checkAndProcessUpgrade(player, cap);
+
                     if (gameTime % 40 == 0) SynsAPI.synsPlayerAttribute(player);
+
                     if (cap.getXiulianTime() <= 0) {
                         cap.setUsingAll(true);
                         player.sendSystemMessage(Component.translatable("putuan.xiulian.finish"));
@@ -79,7 +92,6 @@ public class PWPlayerTickEvent {
                 }
             }
         } else {
-            // 恢复逻辑
             int recoverTickRate = cap.isUsingAll() ? 87 : 100;
             if (gameTime % recoverTickRate == 0) {
                 if (cap.getXiulianTime() < 600) {

@@ -34,17 +34,18 @@ public class PWRenderLivingEvent {
 
         renderAnimation(matrix4f, nianxian, (entity.level().getGameTime() + partialTick), count);
         renderHunhuanAttribute(matrix4f, nianxian, (entity.level().getGameTime() + partialTick), count);
-
+        float heightOffset = 0.22f;
         BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
         bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        bufferbuilder.vertex(matrix4f, -6f, 0.1f, -6f).uv(0, 0).endVertex();
-        bufferbuilder.vertex(matrix4f, -6f, 0.1f, 6f).uv(0, 1).endVertex();
-        bufferbuilder.vertex(matrix4f, 6f, 0.1f, 6f).uv(1, 1).endVertex();
-        bufferbuilder.vertex(matrix4f, 6f, 0.1f, -6f).uv(1, 0).endVertex();
-        bufferbuilder.vertex(matrix4f, 6f, 0.1f, -6f).uv(1, 0).endVertex();
-        bufferbuilder.vertex(matrix4f, 6f, 0.1f, 6f).uv(1, 1).endVertex();
-        bufferbuilder.vertex(matrix4f, -6f, 0.1f, 6f).uv(0, 1).endVertex();
-        bufferbuilder.vertex(matrix4f, -6f, 0.1f, -6f).uv(0, 0).endVertex();
+        bufferbuilder.vertex(matrix4f, -6f, heightOffset, -6f).uv(0, 0).endVertex();
+        bufferbuilder.vertex(matrix4f, -6f, heightOffset, 6f).uv(0, 1).endVertex();
+        bufferbuilder.vertex(matrix4f, 6f, heightOffset, 6f).uv(1, 1).endVertex();
+        bufferbuilder.vertex(matrix4f, 6f, heightOffset, -6f).uv(1, 0).endVertex();
+        bufferbuilder.vertex(matrix4f, 6f, heightOffset, -6f).uv(1, 0).endVertex();
+        bufferbuilder.vertex(matrix4f, 6f, heightOffset, 6f).uv(1, 1).endVertex();
+        bufferbuilder.vertex(matrix4f, -6f, heightOffset, 6f).uv(0, 1).endVertex();
+        bufferbuilder.vertex(matrix4f, -6f, heightOffset, -6f).uv(0, 0).endVertex();
+
         BufferUploader.drawWithShader(bufferbuilder.end());
 
         KLRenderApi.renderEnd(poseStack);

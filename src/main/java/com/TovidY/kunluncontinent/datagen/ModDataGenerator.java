@@ -1,5 +1,6 @@
 package com.TovidY.kunluncontinent.datagen;
 
+import com.TovidY.kunluncontinent.Init.ModDamageTypes;
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.datagen.advancement.ModAdvancementProvider;
 import com.TovidY.kunluncontinent.datagen.blockprovider.ModBlockLootTablesProvider;
@@ -40,6 +41,7 @@ public class ModDataGenerator {
             .add(Registries.LEVEL_STEM, com.TovidY.kunluncontinent.datagen.worldgenprovider.ModWorldGenProvider::bootstrapStem)
             .add(Registries.CONFIGURED_FEATURE, ModWorldGenOreProvider::bootstrap)
             .add(Registries.PLACED_FEATURE, ModWorldGenOreProvider::placement)
+            .add(Registries.DAMAGE_TYPE, ModDamageTypes::bootstrap)
             .add(ForgeRegistries.Keys.BIOME_MODIFIERS, context -> {
                 ModBiomeModifierProvider.bootstrap(context);
                 ModBiomeModifiers.bootstrap(context);

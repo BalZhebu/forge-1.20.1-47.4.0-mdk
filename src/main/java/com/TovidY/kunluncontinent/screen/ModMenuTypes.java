@@ -5,6 +5,8 @@ import com.TovidY.kunluncontinent.screen.attribute.AttributeMenu;
 import com.TovidY.kunluncontinent.screen.attribute.AttributeScreen;
 import com.TovidY.kunluncontinent.screen.attribute.hungu.HunguMenu;
 import com.TovidY.kunluncontinent.screen.attribute.hungu.HunguScreen;
+import com.TovidY.kunluncontinent.screen.guide.GuidBookScreen;
+import com.TovidY.kunluncontinent.screen.guide.GuideBookMenu;
 import com.TovidY.kunluncontinent.screen.liandanlugui.LiandanluMenu;
 import com.TovidY.kunluncontinent.screen.liandanlugui.LiandanluScreen;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -37,6 +39,10 @@ public class ModMenuTypes {
     public static final RegistryObject<MenuType<HunguMenu>> HUNGU_MENU =
             registerMenuType("hungu_menu", HunguMenu::new);
 
+    //引导书
+    public static final RegistryObject<MenuType<GuideBookMenu>> GUIDE_BOOK_MENU =
+            registerMenuType("guide_book_menu", GuideBookMenu::new);
+
     private static <T extends AbstractContainerMenu> RegistryObject<MenuType<T>> registerMenuType(String name, IContainerFactory<T> factory) {
         return MENUS.register(name, () -> IForgeMenuType.create(factory));
     }
@@ -54,6 +60,8 @@ public class ModMenuTypes {
             MenuScreens.register(ModMenuTypes.ATTRUBUTE_MENU.get(), AttributeScreen::new);
             MenuScreens.register(ModMenuTypes.LIANDANLU_MENU.get(), LiandanluScreen::new);
             MenuScreens.register(ModMenuTypes.HUNGU_MENU.get(), HunguScreen::new);
+            MenuScreens.register(ModMenuTypes.GUIDE_BOOK_MENU.get(), GuidBookScreen::new);
+
         }
     }
 

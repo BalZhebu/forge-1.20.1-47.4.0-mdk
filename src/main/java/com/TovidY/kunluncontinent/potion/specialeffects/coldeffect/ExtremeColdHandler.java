@@ -6,113 +6,93 @@ import com.TovidY.kunluncontinent.item.klitem.ThermalAmuletItem;
 import com.TovidY.kunluncontinent.potion.ModEffects;
 import com.TovidY.kunluncontinent.worldgen.ModDimensions;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID)
 public class ExtremeColdHandler {
     private static final String COLD_TICK_KEY = "kunlun_stay_ticks";
     private static final String LAST_LEVEL_KEY = "kunlun_last_level";
 
+    public static final ResourceKey<DamageType> EXTREME_COLD_TYPE = ResourceKey.create(
+            Registries.DAMAGE_TYPE,
+            ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "extreme_cold")
+    );
+
+    private static DamageSource getExtremeColdDamageSource(LivingEntity entity) {
+        return new DamageSource(
+                entity.level().registryAccess()
+                        .registryOrThrow(Registries.DAMAGE_TYPE)
+                        .getHolderOrThrow(EXTREME_COLD_TYPE)
+        );
+    }
+
     @SubscribeEvent
     public static void onPlayerTick(LivingEvent.LivingTickEvent event) {
-        // 每秒执行一次逻辑 (20 ticks)
         if (!(event.getEntity() instanceof Player player) || player.level().isClientSide || player.tickCount % 20 != 0) return;
-
         Level level = player.level();
         ResourceKey<Level> currentDim = level.dimension();
         boolean isInPolarIce = currentDim == ModDimensions.POLAR_ICE_REALM_LEVEL_KEY;
-
         ItemStack amulet = getThermalAmulet(player);
         boolean hasProtection = !amulet.isEmpty();
-
-        // --- 逻辑 A: 保护与重置 ---
         if (hasProtection || !isInPolarIce) {
-            // 只要有保护或不在该维度，清空计时
             player.getPersistentData().putInt(COLD_TICK_KEY, 0);
-
             if (hasProtection) {
-                // 1. 拥有指定物品立刻清除 Buff
                 if (player.hasEffect(ModEffects.EXTREME_COLD.get())) {
                     player.removeEffect(ModEffects.EXTREME_COLD.get());
                 }
-
-                // 2. 仅在极寒维度执行耐久消耗逻辑
                 if (isInPolarIce) {
                     handleAmuletConsumption(player, amulet, level);
                 }
             }
-
-            // 如果不在维度内，后面逻辑不再执行
             if (!isInPolarIce) return;
         }
-
-        // --- 逻辑 B: 处理已经获得的极寒 Buff (扣血与升级) ---
         MobEffectInstance effect = player.getEffect(ModEffects.EXTREME_COLD.get());
         if (effect != null) {
             handleBuffLogic(player, effect);
             return;
         }
-
-        // --- 逻辑 C: 还没得病，计算停留时长 ---
         if (isInPolarIce && !player.isCreative() && !player.isSpectator()) {
             int currentTicks = player.getPersistentData().getInt(COLD_TICK_KEY);
             currentTicks += 20;
-
             int maxTicksToStay = getMaxStayTicks(player.experienceLevel);
-
             if (currentTicks >= maxTicksToStay) {
-                // 触发极寒 I (10秒)
                 player.addEffect(new MobEffectInstance(ModEffects.EXTREME_COLD.get(), 200, 0));
                 player.getPersistentData().putInt(COLD_TICK_KEY, 0);
                 player.displayClientMessage(Component.literal("寒气侵入了你的身体...").withStyle(ChatFormatting.RED), true);
                 player.playSound(SoundEvents.PLAYER_HURT_FREEZE, 1.0F, 0.8F);
             } else {
                 player.getPersistentData().putInt(COLD_TICK_KEY, currentTicks);
-                // 剩余 10 秒警告
                 if (maxTicksToStay - currentTicks <= 200 && maxTicksToStay - currentTicks > 180) {
                     player.displayClientMessage(Component.literal("你感到四肢开始发僵...").withStyle(ChatFormatting.YELLOW), true);
                     player.playSound(SoundEvents.SNOW_BREAK, 1.0F, 0.5F);
                 }
             }
-
-            // 等级变化监测反馈
-            int currentLevel = player.experienceLevel;
-            int lastLevel = player.getPersistentData().getInt(LAST_LEVEL_KEY);
-            if (currentLevel > lastLevel) {
-                player.displayClientMessage(Component.literal("你的意志增强了，在寒冷中能撑得更久了！").withStyle(ChatFormatting.GREEN), true);
-            }
-            player.getPersistentData().putInt(LAST_LEVEL_KEY, currentLevel);
         }
     }
 
-    /**
-     * 处理魂导器耐久消耗逻辑（包含环境判定）
-     */
     private static void handleAmuletConsumption(Player player, ItemStack amulet, Level level) {
-        // 默认消耗间隔：5秒 (100 ticks)
         int interval = 100;
-
-        // 环境检测：如果正在下雪 且 玩家头顶没有遮挡(能看到天空)
         if (level.isRaining() && level.canSeeSky(player.blockPosition())) {
-            // 加速消耗间隔：3秒 (60 ticks)
             interval = 60;
-
-            // 每 6 秒给玩家一个淡淡的警告提示，增加代入感
             if (player.tickCount % 120 == 0) {
                 player.displayClientMessage(Component.literal("暴风雪正在加速侵蚀魂导器...").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), true);
             }
         }
-
-        // 根据计算出的间隔扣除耐久
         if (player.tickCount % interval == 0) {
             consumeAmuletDurability(player, amulet);
         }
@@ -123,6 +103,13 @@ public class ExtremeColdHandler {
         int duration = effect.getDuration();
         float maxHealth = player.getMaxHealth();
         float damage = 0;
+
+        switch (amplifier) {
+            case 0: damage = player.getMaxHealth() * 0.01f; break;
+            case 1: damage = player.getMaxHealth() * 0.05f; break;
+            case 2: damage = player.getMaxHealth() * 0.10f; break;
+            case 3: damage = player.getMaxHealth() * 0.60f; break;
+        }
 
         switch (amplifier) {
             case 0:
@@ -150,7 +137,7 @@ public class ExtremeColdHandler {
                 break;
         }
         if (damage > 0) {
-            player.hurt(player.damageSources().magic(), damage);
+            player.hurt(getExtremeColdDamageSource(player), damage);
         }
     }
 

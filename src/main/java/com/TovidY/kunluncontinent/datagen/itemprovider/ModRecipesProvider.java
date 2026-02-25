@@ -68,6 +68,14 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
         SpecialRecipeBuilder.special(ModRecipes.DROSS_CONVERSION_SERIALIZER.get())
                 .save(pWriter, KlMain.MOD_ID + ":dross_conversion");
 
+        //引导书
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.GUIDE_BOOK.get())
+                .pattern("IX")
+                .define('I', Items.BOOK)
+                .define('X', Items.IRON_INGOT)
+                .unlockedBy("has_guide_book", has(ModItems.GUIDE_BOOK.get()))
+                .save(pWriter);
+
         //极寒冰晶
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.EXTREME_COLD_SNOWFLAKE.get())
                 .pattern("II")
@@ -118,6 +126,17 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .unlockedBy("has_knife", has(ModTags.Items.ENGRAVING_KNIFE))
                 .save(pWriter);
 
+        //顶级魂环存储核心
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.TOP_HUNHUAN_STORAGE_CORE.get())
+                .pattern("XRX")
+                .pattern("RKR")
+                .pattern("XRX")
+                .define('K', Ingredient.of(ModTags.Items.ENGRAVING_KNIFE))
+                .define('R', ModItems.STARLIGHT_STONE.get())
+                .define('X', ModItems.HIGH_HUNHUAN_STORAGE_CORE.get())
+                .unlockedBy("has_knife", has(ModTags.Items.ENGRAVING_KNIFE))
+                .save(pWriter);
+
         //一阶魂环储存器
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC,ModItems.HUNHUAN_STORAGE_ONE.get())
                 .pattern("#Y#")
@@ -142,6 +161,42 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .unlockedBy("has_hunhuan_storage", has(ModItems.HUNHUAN_STORAGE_TWO.get()))
                 .save(pWriter);
 
+        //三阶魂环储存器
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,ModItems.HUNHUAN_STORAGE_THREE.get())
+                .pattern("#Y#")
+                .pattern("ZXZ")
+                .pattern("#Z#")
+                .define('#', ModItems.RED_FIRE_INGOT.get())
+                .define('X', ModItems.MIDDLE_HUNHUAN_STORAGE_CORE.get())
+                .define('Z', ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get())
+                .define('Y', ModItems.HUNHUAN_STORAGE_TWO.get())
+                .unlockedBy("has_hunhuan_storage", has(ModItems.HUNHUAN_STORAGE_THREE.get()))
+                .save(pWriter);
+
+        //四阶魂环储存器
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,ModItems.HUNHUAN_STORAGE_FOUR.get())
+                .pattern("#Y#")
+                .pattern("ZXZ")
+                .pattern("#Z#")
+                .define('#', ModItems.SUNKEN_SILVER_INGOT.get())
+                .define('X', ModItems.HIGH_HUNHUAN_STORAGE_CORE.get())
+                .define('Z', ModItems.RED_FIRE_INGOT.get())
+                .define('Y', ModItems.HUNHUAN_STORAGE_THREE.get())
+                .unlockedBy("has_hunhuan_storage", has(ModItems.HUNHUAN_STORAGE_FOUR.get()))
+                .save(pWriter);
+
+        //五阶魂环储存器
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,ModItems.HUNHUAN_STORAGE_FIVE.get())
+                .pattern("#Y#")
+                .pattern("ZXZ")
+                .pattern("#Z#")
+                .define('#', ModItems.COLD_HEARTED_STEEL_INGOT.get())
+                .define('X', ModItems.TOP_HUNHUAN_STORAGE_CORE.get())
+                .define('Z', ModItems.SUNKEN_SILVER_INGOT.get())
+                .define('Y', ModItems.HUNHUAN_STORAGE_FOUR.get())
+                .unlockedBy("has_hunhuan_storage", has(ModItems.HUNHUAN_STORAGE_FIVE.get()))
+                .save(pWriter);
+
         //低阶核心
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.LOW_LEVEL_HEXIN.get())
                 .pattern("RRR")
@@ -161,6 +216,72 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .define('X', ModItems.RUBY.get())
                 .define('R', ModItems.SAPPHIRE.get())
                 .unlockedBy("has_knife", has(ModTags.Items.ENGRAVING_KNIFE))
+                .save(pWriter);
+
+        //高阶核心
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.HIGH_LEVEL_HEXIN.get())
+                .pattern("XRX")
+                .pattern("RKR")
+                .pattern("XRX")
+                .define('K', ModItems.MIDDLE_LEVEL_HEXIN.get())
+                .define('X', ModItems.AMETHYST.get())
+                .define('R', ModItems.RED_FIRE_INGOT.get())
+                .unlockedBy("has_knife", has(ModItems.HIGH_LEVEL_HEXIN.get()))
+                .save(pWriter);
+
+        //顶级核心
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.TOP_LEVEL_HEXIN.get())
+                .pattern("XRX")
+                .pattern("RKR")
+                .pattern("XRX")
+                .define('K', ModItems.HIGH_LEVEL_HEXIN.get())
+                .define('X', ModItems.SUNKEN_SILVER_INGOT.get())
+                .define('R', ModItems.STARLIGHT_STONE.get())
+                .unlockedBy("has_knife", has(ModItems.TOP_LEVEL_HEXIN.get()))
+                .save(pWriter);
+
+        //低阶御寒魂导器
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.LOW_COLD_PROTECTION.get())
+                .pattern("XRX")
+                .pattern("RKR")
+                .pattern("XRX")
+                .define('K', ModItems.LOW_HUNHUAN_STORAGE_CORE.get())
+                .define('X', Items.REDSTONE_BLOCK)
+                .define('R', ModItems.GRAY_IRON_INGOT.get())
+                .unlockedBy("has_cold_protections", has(ModItems.LOW_COLD_PROTECTION.get()))
+                .save(pWriter);
+
+        //中阶御寒魂导器
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.MID_COLD_PROTECTION.get())
+                .pattern("XRX")
+                .pattern("RKR")
+                .pattern("XRX")
+                .define('K', ModItems.MIDDLE_HUNHUAN_STORAGE_CORE.get())
+                .define('X', ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get())
+                .define('R', ModItems.SAPPHIRE.get())
+                .unlockedBy("has_cold_protections", has(ModItems.MID_COLD_PROTECTION.get()))
+                .save(pWriter);
+
+        //高阶御寒魂导器
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.HIGH_COLD_PROTECTION.get())
+                .pattern("XRX")
+                .pattern("RKR")
+                .pattern("XRX")
+                .define('K', ModItems.HIGH_HUNHUAN_STORAGE_CORE.get())
+                .define('X', ModItems.RED_FIRE_INGOT.get())
+                .define('R', ModItems.AMETHYST.get())
+                .unlockedBy("has_cold_protections", has(ModItems.HIGH_COLD_PROTECTION.get()))
+                .save(pWriter);
+
+        //顶级御寒魂导器
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.TOP_COLD_PROTECTION.get())
+                .pattern("XRX")
+                .pattern("RKR")
+                .pattern("XRX")
+                .define('K', ModItems.TOP_HUNHUAN_STORAGE_CORE.get())
+                .define('X', ModItems.SUNKEN_SILVER_INGOT.get())
+                .define('R', ModItems.STARLIGHT_STONE.get())
+                .unlockedBy("has_cold_protections", has(ModItems.TOP_COLD_PROTECTION.get()))
                 .save(pWriter);
 
         //一阶炼丹炉
@@ -210,6 +331,17 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .unlockedBy("has_liandanlu4", has(ModBlocks.LIANDANLU4.get()))
                 .save(pWriter);
 
+        //五阶炼丹炉
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,ModBlocks.LIANDANLU5.get())
+                .pattern("#Y#")
+                .pattern("ZXZ")
+                .pattern("#Z#")
+                .define('#', Blocks.OBSIDIAN)
+                .define('X', ModItems.MIDDLE_LEVEL_HEXIN.get())
+                .define('Z', ModItems.COLD_HEARTED_STEEL_INGOT.get())
+                .define('Y', ModBlocks.LIANDANLU4.get())
+                .unlockedBy("has_liandanlu5", has(ModBlocks.LIANDANLU5.get()))
+                .save(pWriter);
 
         //丹渣块
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.DROSS_BLOCK.get())
