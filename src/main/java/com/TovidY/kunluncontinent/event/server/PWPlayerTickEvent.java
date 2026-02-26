@@ -170,7 +170,9 @@ public class PWPlayerTickEvent {
             if (capability.getWuhunName() != null && player.level().getGameTime() % 20 == 0) {
                 int level = capability.getDengji();
                 float cost;
-                if (level <= 30) {
+                if (level <= 20) {
+                    cost = 1.0f + (level * 0.01f);
+                }else if (level <= 30) {
                     cost = 3.0f + (level * 0.1f);
                 } else if (level <= 89) {
                     cost = 10.0f + (level * 0.2f);

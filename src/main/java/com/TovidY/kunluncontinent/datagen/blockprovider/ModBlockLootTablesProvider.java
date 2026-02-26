@@ -29,6 +29,7 @@ public class ModBlockLootTablesProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.CLOUD_PATTERNED_BRONZE_ORE.get());
         dropSelf(ModBlocks.RED_FIRE_ORE.get());
         dropSelf(ModBlocks.SUNKEN_SILVER_ORE.get());
+        dropSelf(ModBlocks.COLD_HEARTED_STEEL_ORE.get());
 
         //宝石矿
         dropSelf(ModBlocks.RUBY_ORE.get());

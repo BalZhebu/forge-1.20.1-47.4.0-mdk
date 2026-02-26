@@ -31,6 +31,7 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
     public static final List<ItemLike> CLOUD_PATTERNED_BRONZE = List.of(ModBlocks.CLOUD_PATTERNED_BRONZE_ORE.get());
     public static final List<ItemLike> RED_FIRE = List.of(ModBlocks.RED_FIRE_ORE.get());
     public static final List<ItemLike> SUNKEN_SILVER = List.of(ModBlocks.SUNKEN_SILVER_ORE.get());
+    public static final List<ItemLike> COLD_HEARTED_STEEL = List.of(ModBlocks.COLD_HEARTED_STEEL_ORE.get());
 
     @Override
     protected void buildRecipes(Consumer<FinishedRecipe> pWriter) {
@@ -40,9 +41,10 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
         oreBlasting(pWriter,CLOUD_PATTERNED_BRONZE,RecipeCategory.MISC,ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get(),0.30F,200,"cloud_patterned_bronze");
         oreSmelting(pWriter,RED_FIRE,RecipeCategory.MISC,ModItems.RED_FIRE_INGOT.get(),0.35F,400,"red_fire");
         oreBlasting(pWriter,RED_FIRE,RecipeCategory.MISC,ModItems.RED_FIRE_INGOT.get(),0.35F,200,"red_fire");
-        oreSmelting(pWriter,SUNKEN_SILVER,RecipeCategory.MISC,ModItems.SUNKEN_SILVER_INGOT.get(),0.35F,400,"sunken_silver");
-        oreBlasting(pWriter,SUNKEN_SILVER,RecipeCategory.MISC,ModItems.SUNKEN_SILVER_INGOT.get(),0.35F,200,"sunken_silver");
-
+        oreSmelting(pWriter,SUNKEN_SILVER,RecipeCategory.MISC,ModItems.SUNKEN_SILVER_INGOT.get(),0.35F,800,"sunken_silver");
+        oreBlasting(pWriter,SUNKEN_SILVER,RecipeCategory.MISC,ModItems.SUNKEN_SILVER_INGOT.get(),0.35F,400,"sunken_silver");
+        oreSmelting(pWriter,COLD_HEARTED_STEEL,RecipeCategory.MISC,ModItems.COLD_HEARTED_STEEL_INGOT.get(),0.45F,1000,"cold_hearterd_steel");
+        oreBlasting(pWriter,COLD_HEARTED_STEEL,RecipeCategory.MISC,ModItems.COLD_HEARTED_STEEL_INGOT.get(),0.45F,800,"cold_hearterd_steel");
 
         //丹药炼制代码
         LiandanRecipeBuilder.create(ModItems.NEIDAN1.get(), ModItems.CHUYUAN_DAN.get(), 400)

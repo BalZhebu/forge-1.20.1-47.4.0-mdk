@@ -50,6 +50,10 @@ public class ModBlocks {
             registerBlock("sunken_silver_ore",()->
                     new Block(BlockBehaviour.Properties.copy(Blocks.NETHER_GOLD_ORE)));
 
+    public static final RegistryObject<Block> COLD_HEARTED_STEEL_ORE =
+            registerBlock("cold_hearterd_steel_ore",()->
+                    new Block(BlockBehaviour.Properties.copy(Blocks.NETHER_GOLD_ORE)));
+
 
     public static final RegistryObject<Block> RUBY_ORE =
             registerBlock("ruby_ore",()->
@@ -147,6 +151,7 @@ public class ModBlocks {
         MODORE.add(CLOUD_PATTERNED_BRONZE_ORE);
         MODORE.add(RED_FIRE_ORE);
         MODORE.add(SUNKEN_SILVER_ORE);
+        MODORE.add(COLD_HEARTED_STEEL_ORE);
 
         MODORE.add(RUBY_ORE);
         MODORE.add(AMETHYST_ORE);

@@ -55,6 +55,8 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
     private String forcedTalent = "";
     private int xiantianTalent = 0;
 
+    private int zhuanshengshu = 0;
+
     private final ItemStackHandler hunguInventory = new ItemStackHandler(7) {
         @Override
         protected void onContentsChanged(int slot) {
@@ -103,6 +105,8 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
 
         tag.put("HunguSlots", hunguInventory.serializeNBT());
 
+        tag.putInt("Zhuanshengshu", zhuanshengshu);
+
         tag.putInt("Hunhuankuaiguan", hunhuankuaiguan);
 
         for (Map.Entry<String, List<MobAttributeCapability>> stringListEntry : monsterCapabilityLists.entrySet()) {
@@ -149,6 +153,8 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         this.tupochenggonglv = nbt.getFloat("TupoChenggonglv");  // 突破成功率
         this.shengminghuifu = nbt.getFloat("ShengmingHuifu");
 
+        this.zhuanshengshu = nbt.getInt("Zhuanshengshu");
+
         this.xiulianTime = nbt.getInt("xiulianTime");
         this.usingAll = nbt.getBoolean("usingAll");
 
@@ -158,6 +164,8 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
 
         this.hunhuankuaiguan = nbt.getInt("Hunhuankuaiguan");
 
+        this.monsterCapabilityLists.clear();
+        this.wuhunListsname.clear();
         for (String s : wuhunListsnameall) {
             int nameindex = 0;
             Tag tag = nbt.get(s + nameindex);
@@ -170,9 +178,10 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
                 tag = nbt.get(s + nameindex);
             }
             if(nbt.getBoolean("iswuhun"+s)){
-                this.monsterCapabilityLists.put(s,list);
-
-                this.wuhunListsname.add(s);
+                this.monsterCapabilityLists.put(s, list);
+                if(!this.wuhunListsname.contains(s)) {
+                    this.wuhunListsname.add(s);
+                }
             }
         }
 
@@ -236,7 +245,6 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
     public void setXiantianTalent(int talent) { this.xiantianTalent = talent; }
     public int getXiantianTalent() { return this.xiantianTalent; }
 
-
     public int getXiulianTime() {
         return this.xiulianTime;
     }
@@ -262,6 +270,11 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
     public List<MobAttributeCapability> getWuhunList() {
         if(wuhunListsname.size()-1<hunhuankuaiguan||hunhuankuaiguan<0)return null;
         return monsterCapabilityLists.get(wuhunListsname.get(hunhuankuaiguan));
+    }
+
+    public int getZhuanshengshu() {return zhuanshengshu;}
+    public void setZhuanshengshu(int zhuanshengshu) {
+        this.zhuanshengshu = zhuanshengshu;
     }
 
     public float getShengming() { return shengming; }

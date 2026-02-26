@@ -24,6 +24,7 @@ import net.minecraftforge.client.model.generators.ModelFile;
             simpleBlockWithItem(ModBlocks.CLOUD_PATTERNED_BRONZE_ORE.get(), cubeAll(ModBlocks.CLOUD_PATTERNED_BRONZE_ORE.get()));
             simpleBlockWithItem(ModBlocks.RED_FIRE_ORE.get(), cubeAll(ModBlocks.RED_FIRE_ORE.get()));
             simpleBlockWithItem(ModBlocks.SUNKEN_SILVER_ORE.get(), cubeAll(ModBlocks.SUNKEN_SILVER_ORE.get()));
+            simpleBlockWithItem(ModBlocks.COLD_HEARTED_STEEL_ORE.get(), cubeAll(ModBlocks.COLD_HEARTED_STEEL_ORE.get()));
             //宝石矿
             simpleBlockWithItem(ModBlocks.RUBY_ORE.get(), cubeAll(ModBlocks.RUBY_ORE.get()));
             simpleBlockWithItem(ModBlocks.AMETHYST_ORE.get(), cubeAll(ModBlocks.AMETHYST_ORE.get()));

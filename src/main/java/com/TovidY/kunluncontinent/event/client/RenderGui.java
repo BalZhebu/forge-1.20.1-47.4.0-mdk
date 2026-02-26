@@ -17,7 +17,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 //玩家物品栏和属性界面渲染
-
 @Mod.EventBusSubscriber({Dist.CLIENT})
 public class RenderGui {
     @SubscribeEvent(priority = EventPriority.NORMAL)

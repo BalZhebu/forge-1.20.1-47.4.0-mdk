@@ -1,6 +1,7 @@
 package com.TovidY.kunluncontinent.item;
 
 import com.TovidY.kunluncontinent.KlMain;
+import com.TovidY.kunluncontinent.capability.playerattributes.Wuhunname;
 import com.TovidY.kunluncontinent.entity.EntityInit;
 import com.TovidY.kunluncontinent.item.armor.ModArmorBaseItem;
 import com.TovidY.kunluncontinent.item.armor.ModArmorMaterials;
@@ -36,6 +37,7 @@ public class ModItems {
     public static final RegistryObject<Item> TEST_SWORD = ITEMS.register("test_sword",()->new ModSwordBaseItem(ModToolTiers.TEST_ITEM,3,-1.8F,new Item.Properties()));
     public static final RegistryObject<Item> DANYAO_DENGJI_JIA = ITEMS.register("danyao_dengji_jia", () -> new TestLevelUp(new Item.Properties().stacksTo(1), 1));
     public static final RegistryObject<Item> DANYAO_DENGJI_JIAN = ITEMS.register("danyao_dengji_jian", () -> new TestLevelUp(new Item.Properties().stacksTo(1), -1));
+    public static final RegistryObject<Item> TEST_ZHUANSHENG = ITEMS.register("test_zhuansheng", () -> new ZhuanShengTestItem(new Item.Properties().stacksTo(1)));
 
     public static final RegistryObject<Item> INSTANT_KILL_SWORD =
             ITEMS.register("instant_kill_sword", InstantKillSwordItem::new);
@@ -48,6 +50,12 @@ public class ModItems {
             pTooltipComponents.add(Component.translatable("tooltip.kunluncontinent.extreme_cold_snowflake2").withStyle(ChatFormatting.DARK_GRAY));
         }
     });
+
+    //武魂果实
+    public static final RegistryObject<Item> GUOSHI_POHUNQIANG = ITEMS.register("guoshi_pohunqiang",()->new WuhunguoshiItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setWuhunname(Wuhunname.pohunqiang));
+    public static final RegistryObject<Item> GUOSHI_BAHUANGJI = ITEMS.register("guoshi_bahuangji",()->new WuhunguoshiItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setWuhunname(Wuhunname.bahuangji));
+    public static final RegistryObject<Item> GUOSHI_LEIJINHU = ITEMS.register("guoshi_leijinhu",()->new WuhunguoshiItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setWuhunname(Wuhunname.liejinhu));
+    public static final RegistryObject<Item> GUOSHI_PANSHIJUYUAN = ITEMS.register("guoshi_panshijuyuan",()->new WuhunguoshiItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setWuhunname(Wuhunname.panshijuyuan));
 
     //材料物品（普通物品）
     public static final RegistryObject<Item> EXTREME_COLD_SNOWFLAKE_FRAGMENT = ITEMS.register("extreme_cold_snowflake_fragment",()->new Item(new Item.Properties()));
@@ -197,6 +205,14 @@ public class ModItems {
     public static final RegistryObject<Item> HUNHUAN_STORAGE_FIVE = ITEMS.register("hunhuan_storage_five",
             () -> new HunHuanStorageItem(new Item.Properties().stacksTo(1).fireResistant(), 1, 120000000));
 
+    public static ArrayList<RegistryObject<Item>> WUHUNGUOSHI = new ArrayList<>();
+    static {
+        WUHUNGUOSHI.add(GUOSHI_POHUNQIANG);
+        WUHUNGUOSHI.add(GUOSHI_BAHUANGJI);
+        WUHUNGUOSHI.add(GUOSHI_LEIJINHU);
+        WUHUNGUOSHI.add(GUOSHI_PANSHIJUYUAN);
+    }
+
     public static ArrayList<RegistryObject<Item>> NORMALITEMSLIST = new ArrayList<>();
     static {
         NORMALITEMSLIST.add(EXTREME_COLD_SNOWFLAKE_FRAGMENT);
@@ -286,6 +302,7 @@ public class ModItems {
         DEBUG_ITEM_BLOCK.add(TEST_SWORD);
         DEBUG_ITEM_BLOCK.add(DANYAO_DENGJI_JIA);
         DEBUG_ITEM_BLOCK.add(DANYAO_DENGJI_JIAN);
+        DEBUG_ITEM_BLOCK.add(TEST_ZHUANSHENG);
     }
 
     public static void register(IEventBus eventBus){

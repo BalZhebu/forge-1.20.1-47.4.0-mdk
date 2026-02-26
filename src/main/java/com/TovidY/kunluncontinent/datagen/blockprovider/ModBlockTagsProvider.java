@@ -35,6 +35,7 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(ModBlocks.AMETHYST_ORE.get())
                 .add(ModBlocks.SAPPHIRE_ORE.get())
                 .add(ModBlocks.STARLIGHT_STONE_ORE.get())
+                .add(ModBlocks.COLD_HEARTED_STEEL_ORE.get())
 
                 .add(ModBlocks.POLAR_ICE_PORTAL_BLOCK.get())
                 .add(ModBlocks.LIANDANLU1.get())
@@ -70,6 +71,7 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(ModBlocks.AMETHYST_ORE.get())
                 .add(ModBlocks.STARLIGHT_STONE_ORE.get())
                 .add(ModBlocks.SUNKEN_SILVER_ORE.get())
+                .add(ModBlocks.COLD_HEARTED_STEEL_ORE.get())
                 .add(ModBlocks.LIANDANLU7.get())
                 .add(ModBlocks.LIANDANLU8.get())
                 .add(ModBlocks.LIANDANLU9.get())

@@ -232,7 +232,7 @@ public class PlayerUpgradeSystem {
         capability.setMaxshengming(capability.getMaxshengming() + (newLevel * 1.4f) * 0.7f);
         capability.setFangyu(capability.getFangyu() + (newLevel * 0.3f) * 0.7f);
         capability.setGongji(capability.getGongji() + (newLevel * 0.5f) * 0.65f);
-        capability.setMaxjingshenli(capability.getMaxjingshenli() + (newLevel * 2f) * 0.7f);
+        capability.setMaxjingshenli(capability.getMaxjingshenli() + (newLevel * 2f) * 0.9f);
         capability.setMaxjingyan(capability.getMaxjingyan() + (newLevel * 1.4f) * 1.3f);
         capability.setShengming(capability.getShengming() + 1f);
         capability.setWuchuan(capability.getWuchuan() + 1f);

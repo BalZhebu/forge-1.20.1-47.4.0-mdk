@@ -42,5 +42,7 @@ public class GuideBookItem extends Item {
     @Override
     public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
         pTooltipComponents.add(Component.translatable("item.kunluncontinent.guide_book.tooltip"));
+        pTooltipComponents.add(Component.translatable("item.kunluncontinent.guide_book.tooltip1"));
+        pTooltipComponents.add(Component.translatable("item.kunluncontinent.guide_book.tooltip2"));
     }
 }

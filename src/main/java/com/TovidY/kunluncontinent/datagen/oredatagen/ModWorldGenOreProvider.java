@@ -43,6 +43,8 @@ public class ModWorldGenOreProvider {
         registerOre(context, ModBlocks.RED_FIRE_ORE.get(), 3);
         //银矿
         registerOre(context, ModBlocks.SUNKEN_SILVER_ORE.get(), 5);
+        //寒心钢
+        registerOre(context, ModBlocks.COLD_HEARTED_STEEL_ORE.get(), 3);
     }
 
     /**
@@ -66,6 +68,8 @@ public class ModWorldGenOreProvider {
         registerPlacement(context, configuredFeatures, ModBlocks.RED_FIRE_ORE, 1, 100, 3);
         //银矿
         registerPlacement(context, configuredFeatures, ModBlocks.SUNKEN_SILVER_ORE, 0, 128, 5);
+        //寒心钢
+        registerPlacement(context, configuredFeatures, ModBlocks.COLD_HEARTED_STEEL_ORE, -64, 0, 3);
         //紫水晶
         registerPlacement(context, configuredFeatures, ModBlocks.AMETHYST_ORE, 0, 100, 3);
         //蓝晶

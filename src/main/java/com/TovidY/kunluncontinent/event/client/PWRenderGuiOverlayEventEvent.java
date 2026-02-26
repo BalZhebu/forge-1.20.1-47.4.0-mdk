@@ -3,6 +3,7 @@ package com.TovidY.kunluncontinent.event.client;
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -58,94 +59,69 @@ public class PWRenderGuiOverlayEventEvent {
     }
 
     private static void renderPlayerHealth(RenderGuiOverlayEvent.Pre event) {
-
         LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null) return;
+
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(capability -> {
-
-            int width = event.getWindow().getGuiScaledWidth();
-            int height = event.getWindow().getGuiScaledHeight();
-            int w = event.getWindow().getGuiScaledWidth();
-            int h = event.getWindow().getGuiScaledHeight();
-
-            Level world = null;
-            double x = 0;
-            double y = 0;
-            double z = 0;
-            Player entity = Minecraft.getInstance().player;
-            if (entity != null) {
-                world = entity.level();
-                x = entity.getX();
-                y = entity.getY();
-                z = entity.getZ();
-            }
-
             GuiGraphics guiGraphics = event.getGuiGraphics();
+            int screenWidth = event.getWindow().getGuiScaledWidth();
+            int screenHeight = event.getWindow().getGuiScaledHeight();
+            PoseStack pose = guiGraphics.pose();
 
-            PoseStack pose1 = event.getGuiGraphics().pose();
-            Matrix4f matrix4f =event.getGuiGraphics().pose().last().pose();
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
-            pose1.pushPose();
-            matrix4f.scale(0.5f,0.5F,1f);
-            int centerX = width/2 - 12;
-            int centerY = height - 48 - 2;
-            PoseStack textPose = new PoseStack();
-            textPose.pushPose();
-            float textScale = 0.7f;
-            int level = capability.getDengji();
-            String levelText = String.valueOf(level);
-            int textWidth = (int)(Minecraft.getInstance().font.width(levelText) * textScale);
-            int textX = centerX + 10 - textWidth / 2;
-            int textY = centerY + 10 - (int)(4 * textScale);
-            textPose.translate(centerX + 10, centerY + 10, 0);
-            textPose.scale(textScale, textScale, 1f);
-            textPose.translate(-(centerX + 10), -(centerY + 10), 0);
-            Minecraft.getInstance().font.drawInBatch(
-                    Component.literal(levelText)
-                            .withStyle(style -> style
-                                    .withColor(0xFFD700)
-                                    .withBold(true)
-                            ),
-                    textX, textY,
-                    0xFFD700,
-                    true,
-                    textPose.last().pose(),
-                    guiGraphics.bufferSource(),
-                    Font.DisplayMode.NORMAL,
-                    0,
-                    15728880
-            );
-            textPose.popPose();
+            double healthRatio = player.getMaxHealth() > 0 ? (double) player.getHealth() / player.getMaxHealth() : 0;
+            guiGraphics.blit(health_kong, 43, 23, 0, 0, 49, 6, 49, 6);
+            guiGraphics.blit(health, 43, 23, 0, 0, (int) (49 * Math.min(1.0, healthRatio)), 6, 49, 6);
 
-            guiGraphics.blit(health_kong,43, 23, 0, 0, 49, 6, 49, 6);
-            guiGraphics.blit(health, 43, 23,0,0, Math.min(49,(int) (49*(player.getHealth()/player.getMaxHealth()))), 6, Math.min(49,(int) (49*(player.getHealth()/player.getMaxHealth()))), 6);
-            Minecraft.getInstance().font.drawInBatch(Component.literal((int)player.getHealth() + "/" + (int)player.getMaxHealth()),90, 48, -1, false, matrix4f, guiGraphics.bufferSource(), Font.DisplayMode.SEE_THROUGH, 100, 000000);
-
+            double jsRatio = capability.getMaxjingshenli() > 0 ? (double) capability.getJingshenli() / capability.getMaxjingshenli() : 0;
             guiGraphics.blit(jingshenlibeijing, 44, 31, 0, 0, 91, 7, 91, 7);
-            guiGraphics.blit(jingshenli, 44, 31, 0, 0, Math.min(91,(int) (91*(ModAttributeAPI.getJingshenli(player)/ModAttributeAPI.getMaxjingshenli(player)))), 7, Math.min(91,(int) (91*(capability.getJingshenli()/capability.getMaxjingshenli()))), 7);
-            Minecraft.getInstance().font.drawInBatch(Component.translatable("精神力",(int) ModAttributeAPI.getJingshenli(player),(int)ModAttributeAPI.getMaxjingshenli(player)), 108, 65, 0, false, matrix4f, guiGraphics.bufferSource(), Font.DisplayMode.SEE_THROUGH, 100, 000000);
+            guiGraphics.blit(jingshenli, 44, 31, 0, 0, (int) (91 * Math.min(1.0, jsRatio)), 7, 91, 7);
 
+            int expX = screenWidth / 2 - 64;
+            int expY = screenHeight - 26;
+            double expRatio = capability.getMaxjingyan() > 0 ? (double) capability.getJingyan() / capability.getMaxjingyan() : 0;
+            guiGraphics.blit(exp_kong, expX, expY, 0, 0, 130, 3, 130, 3);
+            guiGraphics.blit(exp, expX, expY, 0, 0, (int) (130 * Math.min(1.0, expRatio)), 3, 130, 3);
+
+            double foodRatio = player.getFoodData().getFoodLevel() / 20.0;
             guiGraphics.blit(food_kong, 102, 23, 0, 0, 39, 6, 39, 6);
-            guiGraphics.blit(food, 102, 23, 0, 0, Math.min(39,(int) (39*(player.getFoodData().getFoodLevel()/20f))), 6, Math.min(39,(int) (39*(player.getFoodData().getFoodLevel()/20f))), 6);
-            Minecraft.getInstance().font.drawInBatch(Component.translatable("体力",player.getFoodData().getFoodLevel(),20), 214, 48, 0, false, matrix4f, guiGraphics.bufferSource(), Font.DisplayMode.SEE_THROUGH, 100, 000000);
+            guiGraphics.blit(food, 102, 23, 0, 0, (int) (39 * Math.min(1.0, foodRatio)), 6, 39, 6);
 
-            guiGraphics.blit(exp_kong,  w / 2 + -64, h - 26, 0, 0, 130, 3, 130, 3);
-            guiGraphics.blit(exp, w / 2 + -64, h - 26, 0, 0, Math.min(130,(int) (130*capability.getJingyan()/capability.getMaxjingyan())), 3, Math.min(130,(int) (130*capability.getJingyan()/capability.getMaxjingyan())), 3);
+            pose.pushPose();
+            pose.scale(0.5f, 0.5f, 1.0f);
 
-            int expBarX = w / 2 - 64;
-            int expBarY = h - 26;
-            int expTextX = expBarX + 50- Minecraft.getInstance().font.width("经验") / 2; // 水平居中
-            int expTextY = expBarY + 0;
-            guiGraphics.blit(exp_kong, expBarX, expBarY, 0, 0, 130, 3, 130, 3);
-            guiGraphics.blit(exp, expBarX, expBarY, 0, 0,
-                    Math.min(130, (int)(130*capability.getJingyan()/capability.getMaxjingyan())),
-                    3, 130, 3);
-            pose1.pushPose();
-            pose1.scale(0.5f, 0.5f, 1f);
-            Minecraft.getInstance().font.drawInBatch(Component.translatable("经验", (int)capability.getJingyan(), (int)capability.getMaxjingyan()), expTextX * 2, expTextY * 2, -1, false, pose1.last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.SEE_THROUGH, 100, 000000);
-            pose1.popPose();
-            matrix4f.scale(2f,2F,1f);
-            pose1.popPose();
+            String healthInfo = formatBigNum(player.getHealth()) + "/" + formatBigNum(player.getMaxHealth());
+            guiGraphics.drawString(Minecraft.getInstance().font, healthInfo, 86, 48, 0xFFFFFF, true);
+
+            String jsInfo = "精神力: " + formatBigNum(capability.getJingshenli()) + "/" + formatBigNum(capability.getMaxjingshenli());
+            guiGraphics.drawString(Minecraft.getInstance().font, jsInfo, 88, 65, 0x55FFFF, true);
+
+            String foodInfo = "体力: " + player.getFoodData().getFoodLevel() + "/20";
+            guiGraphics.drawString(Minecraft.getInstance().font, foodInfo, 204, 48, 0xFFCC00, true);
+
+            String expInfo = "经验: " + formatBigNum(capability.getJingyan()) + "/" + formatBigNum(capability.getMaxjingyan());
+            int expTextX = (screenWidth / 2) * 2 - (Minecraft.getInstance().font.width(expInfo) / 2);
+            guiGraphics.drawString(Minecraft.getInstance().font, expInfo, expTextX, (screenHeight - 32) * 2 + 10, 0xAAAAAA, true);
+
+            pose.popPose();
+
+            pose.pushPose();
+            float levelScale = 0.7f;
+            int centerX = screenWidth / 2 - 12;
+            int centerY = screenHeight - 48 - 2;
+            pose.translate(centerX + 10, centerY + 10, 0);
+            pose.scale(levelScale, levelScale, 1.0f);
+            guiGraphics.drawCenteredString(Minecraft.getInstance().font, String.valueOf(capability.getDengji()), 2, 0, 0xFFD700);
+            pose.popPose();
         });
+    }
+
+    private static String formatBigNum(float value) {
+        if (value >= 100000000) {
+            return String.format("%.2f亿", value / 100000000.0);
+        }
+        return String.valueOf((long) value);
     }
 
     private static void renderCustomExperienceBar(GuiGraphics guiGraphics, Player player, int width, int height) {
@@ -175,6 +151,8 @@ public class PWRenderGuiOverlayEventEvent {
         guiGraphics.drawString(Minecraft.getInstance().font, levelText, textX, textY, 0x80FF20, false);
         poseStack.popPose();
     }
+
+
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onRenderGuiPre(RenderGuiOverlayEvent.Pre event) {

@@ -28,6 +28,11 @@ public class ModCreativeModelTab {
                             pOutput.accept(itemRegistryObject.get());
                         }
 
+                        //武魂果实
+                        for (RegistryObject<Item> itemRegistryObject : ModItems.WUHUNGUOSHI){
+                            pOutput.accept(itemRegistryObject.get());
+                        }
+
                         //秒杀剑
                         pOutput.accept(ModItems.INSTANT_KILL_SWORD.get());
 

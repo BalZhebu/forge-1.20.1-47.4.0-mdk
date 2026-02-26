@@ -40,6 +40,11 @@ public class ModItemModelsProvider extends ItemModelProvider {
             basicItem(itemRegistry.get());
         }
 
+        //武魂果实
+        for (RegistryObject<Item> itemRegistry : ModItems.WUHUNGUOSHI){
+            basicItem(itemRegistry.get());
+        }
+
         //刻刀类
         for (RegistryObject<Item> itemRegistry : ModItems.ENGRAVING_KNIFE){
             basicItem(itemRegistry.get());

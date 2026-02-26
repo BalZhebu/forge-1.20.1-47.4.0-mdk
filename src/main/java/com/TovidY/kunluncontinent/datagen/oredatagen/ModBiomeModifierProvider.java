@@ -26,6 +26,7 @@ public class ModBiomeModifierProvider {
     public static final ResourceKey<BiomeModifier> ADD_STARLIGHT_STONE_ORE = createKey("add_starlight_stone_ore");
 
     public static final ResourceKey<BiomeModifier> ADD_SUNKEN_SILVER_ORE = createKey("add_sunken_silver_ore");
+    public static final ResourceKey<BiomeModifier> ADD_COLD_HEARTED_STEEL_ORE = createKey("add_cold_hearter_stone_ore");
 
     public static void bootstrap(BootstapContext<BiomeModifier> context) {
         var placedFeatures = context.lookup(Registries.PLACED_FEATURE);
@@ -69,6 +70,13 @@ public class ModBiomeModifierProvider {
         context.register(ADD_SUNKEN_SILVER_ORE, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
                 biomes.getOrThrow(BiomeTags.IS_END),
                 HolderSet.direct(placedFeatures.getOrThrow(ModWorldGenOreProvider.createPlaceKey(ModBlocks.SUNKEN_SILVER_ORE.get()))),
+                GenerationStep.Decoration.UNDERGROUND_ORES
+        ));
+
+        //冷心钢矿
+        context.register(ADD_COLD_HEARTED_STEEL_ORE, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                HolderSet.direct(biomes.getOrThrow(ModDimensions.POLAR_ICE_BIOME)),
+                HolderSet.direct(placedFeatures.getOrThrow(ModWorldGenOreProvider.createPlaceKey(ModBlocks.COLD_HEARTED_STEEL_ORE.get()))),
                 GenerationStep.Decoration.UNDERGROUND_ORES
         ));
 
