@@ -1,6 +1,7 @@
 package com.TovidY.kunluncontinent.block;
 
 import com.TovidY.kunluncontinent.KlMain;
+import com.TovidY.kunluncontinent.block.klblock.CultivationPlatformBlock;
 import com.TovidY.kunluncontinent.block.klblock.LiandanluBlock;
 import com.TovidY.kunluncontinent.block.portal.polarice.PolarIcePortalBlock;
 import com.TovidY.kunluncontinent.block.klblock.PutuanBlock;
@@ -32,7 +33,7 @@ public class ModBlocks {
 
     public static final RegistryObject<Block> CULTIVATION_PLATFORM =
             registerBlock("cultivation_platform",()->
-                    new Block(BlockBehaviour.Properties.of().strength(1.5f,3.0f).noOcclusion()));
+                    new CultivationPlatformBlock(BlockBehaviour.Properties.of().strength(1.5f,3.0f).noOcclusion()));
 
     public static final RegistryObject<Block> GRAY_IRON_ORE =
             registerBlock("gray_iron_ore",()->

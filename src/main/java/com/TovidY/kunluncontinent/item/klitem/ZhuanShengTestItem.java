@@ -76,7 +76,7 @@ public class ZhuanShengTestItem extends Item{
         }
     }
 
-    private static void completeReincarnation(ServerPlayer player, PlayerAttributeCapability oldCap) {
+    public static void completeReincarnation(ServerPlayer player, PlayerAttributeCapability oldCap) {
         for (String wuhunName : oldCap.getWuhunListsname()) {
             ItemStack fruit = WuhunguoshiItem.getWuhunguo(wuhunName);
             if (!fruit.isEmpty() && !player.addItem(fruit)) {

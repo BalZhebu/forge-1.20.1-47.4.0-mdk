@@ -315,6 +315,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModEffects.SCORCHING.get(),"§c灼烧");
         add(ModEffects.DIZZINESS.get(),"§6眩晕");
         add(ModEffects.EXTREME_COLD.get(),"§d极寒");
+        add(ModEffects.RED_SPIDER_LILY_POTION.get(),"§c彼岸");
 
         //普通文字
         add("心神受损","你受到攻击，心神受损，被迫停止了修炼！");
