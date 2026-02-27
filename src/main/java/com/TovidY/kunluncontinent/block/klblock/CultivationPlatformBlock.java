@@ -44,7 +44,7 @@ public class CultivationPlatformBlock extends Block {
                 serverPlayer.sendSystemMessage(Component.literal("重修准备已取消。").withStyle(ChatFormatting.YELLOW));
             } else {
                 data.putBoolean("IsPreparingReincarnation", true);
-                data.putInt("ReincarnationTimer", 200); // 10秒 (200 ticks)
+                data.putInt("ReincarnationTimer", 200);
                 serverPlayer.sendSystemMessage(Component.literal("重修准备开始，10秒后引动雷劫，再次右键可取消。").withStyle(ChatFormatting.GOLD));
             }
         }

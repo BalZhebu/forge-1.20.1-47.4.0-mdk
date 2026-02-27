@@ -35,6 +35,16 @@ public class ModItemModelsProvider extends ItemModelProvider {
             basicItem(itemRegistry.get());
         }
 
+        //草药
+        for (RegistryObject<Item> itemRegistry : ModItems.CAOYAOLIST){
+            basicItem(itemRegistry.get());
+        }
+
+        //种子
+        for (RegistryObject<Item> itemRegistry : ModItems.SEEDSLIST){
+            basicItem(itemRegistry.get());
+        }
+
         //普通物品
         for (RegistryObject<Item> itemRegistry : ModItems.NORMALITEMSLIST){
             basicItem(itemRegistry.get());

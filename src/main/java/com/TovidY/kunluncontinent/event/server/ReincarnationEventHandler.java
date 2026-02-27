@@ -21,30 +21,23 @@ public class ReincarnationEventHandler {
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END || event.player.level().isClientSide) return;
-
         ServerPlayer player = (ServerPlayer) event.player;
         CompoundTag data = player.getPersistentData();
-
         ZhuanShengTestItem.checkReincarnationProgress(player);
-
-        // 2. 重修台：倒计时阶段
         if (data.getBoolean("IsPreparingReincarnation")) {
             int timer = data.getInt("ReincarnationTimer");
             if (timer > 0) {
                 data.putInt("ReincarnationTimer", timer - 1);
-                // 每隔2秒提醒一次
-                if (timer % 40 == 0) {
+                if (timer % 20 == 0) {
                     player.sendSystemMessage(Component.literal("天劫倒计时: " + (timer / 20) + "秒").withStyle(ChatFormatting.RED));
                 }
             } else {
-                // 倒计时结束，进入雷劫阶段
                 data.remove("IsPreparingReincarnation");
                 data.putBoolean("IsLightningPhase", true);
                 data.putInt("LightningCount", 0);
-                player.sendSystemMessage(Component.literal("天威降临，雷劫开始！").withStyle(ChatFormatting.DARK_RED));
+                player.sendSystemMessage(Component.literal("天威降临，雷劫开始！（天雷会压低血量但不至死，20血以下时将获得转生重修的机会）").withStyle(ChatFormatting.DARK_RED));
             }
         }
-
         if (data.getBoolean("IsLightningPhase")) {
             if (player.level().getGameTime() % 20 == 0) {
                 int count = data.getInt("LightningCount");
@@ -81,6 +74,7 @@ public class ReincarnationEventHandler {
         if (!event.getEntity().level().isClientSide && event.getEntity() instanceof Player player) {
             // 取消物品转生
             ZhuanShengTestItem.cancelReincarnation(player);
+
             // 取消重修台转生进度
             CompoundTag data = player.getPersistentData();
             if (data.contains("IsPreparingReincarnation") || data.contains("IsLightningPhase")) {

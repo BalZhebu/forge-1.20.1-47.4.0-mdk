@@ -1,6 +1,7 @@
 package com.TovidY.kunluncontinent.item;
 
 import com.TovidY.kunluncontinent.KlMain;
+import com.TovidY.kunluncontinent.block.ModBlocks;
 import com.TovidY.kunluncontinent.capability.playerattributes.Wuhunname;
 import com.TovidY.kunluncontinent.entity.EntityInit;
 import com.TovidY.kunluncontinent.item.armor.ModArmorBaseItem;
@@ -41,6 +42,17 @@ public class ModItems {
 
     public static final RegistryObject<Item> INSTANT_KILL_SWORD =
             ITEMS.register("instant_kill_sword", InstantKillSwordItem::new);
+
+    //药草种子
+    public static final RegistryObject<Item> RED_SPIDER_SEEDS = ITEMS.register("red_spider_seeds",
+            () -> new ItemNameBlockItem(ModBlocks.RED_SPIDER_LILY_BLOCK.get(), new Item.Properties()));
+
+    //草药物品
+    public static final RegistryObject<Item> RED_SPIDER_LILY_ITEM = ITEMS.register("red_spider_lily_item",
+            () -> new Item(new Item.Properties()));
+
+
+
 
     //传送门
     public static final RegistryObject<Item> EXTREME_COLD_SNOWFLAKE = ITEMS.register("extreme_cold_snowflake",()->new EngravingKnifeItem(new Item.Properties()){
@@ -250,6 +262,16 @@ public class ModItems {
         HEXIN.add(MIDDLE_LEVEL_HEXIN);
         HEXIN.add(HIGH_LEVEL_HEXIN);
         HEXIN.add(TOP_LEVEL_HEXIN);
+    }
+
+    public static ArrayList<RegistryObject<Item>> CAOYAOLIST = new ArrayList<>();
+    static {
+        CAOYAOLIST.add(RED_SPIDER_LILY_ITEM);
+    }
+
+    public static ArrayList<RegistryObject<Item>> SEEDSLIST = new ArrayList<>();
+    static {
+        SEEDSLIST.add(RED_SPIDER_SEEDS);
     }
 
     public static ArrayList<RegistryObject<Item>> PUTONGITEM = new ArrayList<>();

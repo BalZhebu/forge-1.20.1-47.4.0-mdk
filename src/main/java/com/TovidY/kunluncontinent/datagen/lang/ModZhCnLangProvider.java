@@ -325,5 +325,11 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("tooltip.kunlun.instant_kill_sword.2","世间万物，皆为定数；唯我一剑，可断因果。");
         add("tooltip.kunluncontinent.extreme_cold_snowflake1","需右键最底下传送门框架");
         add("tooltip.kunluncontinent.extreme_cold_snowflake2","从左往右的第二个方块最上面的一面激活传送门");
+
+        //草药
+        add(ModItems.RED_SPIDER_LILY_ITEM.get(), "§c彼岸花");
+
+        //种子
+        add(ModItems.RED_SPIDER_SEEDS.get(), "§c彼岸花种子");
     }
 }

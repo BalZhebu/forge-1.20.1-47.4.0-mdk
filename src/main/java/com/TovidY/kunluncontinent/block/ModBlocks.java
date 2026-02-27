@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.block;
 
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.block.klblock.CultivationPlatformBlock;
+import com.TovidY.kunluncontinent.block.klblock.KLCropBlock;
 import com.TovidY.kunluncontinent.block.klblock.LiandanluBlock;
 import com.TovidY.kunluncontinent.block.portal.polarice.PolarIcePortalBlock;
 import com.TovidY.kunluncontinent.block.klblock.PutuanBlock;
@@ -71,6 +72,9 @@ public class ModBlocks {
     public static final RegistryObject<Block> STARLIGHT_STONE_ORE =
             registerBlock("starlight_stone_ore",()->
                     new Block(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)));
+
+    //草药
+    public static final RegistryObject<Block> RED_SPIDER_LILY_BLOCK = BLOCKS.register("red_spider_lily_block", () -> new KLCropBlock(BlockBehaviour.Properties.copy(Blocks.WHEAT).noOcclusion(), () -> Blocks.NETHERRACK, () -> ModItems.RED_SPIDER_SEEDS.get(),10));
 
 
     public static final RegistryObject<Block> DROSS_BLOCK =

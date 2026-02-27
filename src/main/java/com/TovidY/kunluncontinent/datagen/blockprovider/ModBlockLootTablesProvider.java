@@ -2,15 +2,21 @@ package com.TovidY.kunluncontinent.datagen.blockprovider;
 
 import com.TovidY.kunluncontinent.block.ModBlocks;
 import com.TovidY.kunluncontinent.item.ModItems;
+import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
+import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -59,6 +65,33 @@ public class ModBlockLootTablesProvider extends BlockLootSubProvider {
         this.add(ModBlocks.AMETHYST_ORE.get(), block -> createCopperOreLikeDrops(block, ModItems.AMETHYST.get()));
         this.add(ModBlocks.SAPPHIRE_ORE.get(), block -> createCopperOreLikeDrops(block, ModItems.SAPPHIRE.get()));
         this.add(ModBlocks.STARLIGHT_STONE_ORE.get(), block -> createCopperOreLikeDropsTwo(block, ModItems.STARLIGHT_STONE.get()));
+
+        // 草药类
+        // 参数：方块对象, 成熟掉落物, 种子, 最大等级
+        this.add(ModBlocks.RED_SPIDER_LILY_BLOCK.get(),
+                block -> createFortuneCropDrops(block, ModItems.RED_SPIDER_LILY_ITEM.get(), ModItems.RED_SPIDER_SEEDS.get(), 3));
+
+        // 如果你有其他草药，直接复制这一行即可
+        // this.add(ModBlocks.OTHER_HERB.get(), block -> createFortuneCropDrops(block, ModItems.OTHER_HERB_ITEM.get(), ModItems.OTHER_SEEDS.get(), 3));
+
+    }
+
+    protected LootTable.Builder createFortuneCropDrops(Block block, Item product, Item seed, int maxAge) {
+        LootItemCondition.Builder isMaxAge = LootItemBlockStatePropertyCondition
+                .hasBlockStateProperties(block)
+                .setProperties(StatePropertiesPredicate.Builder.properties()
+                        .hasProperty(BlockStateProperties.AGE_3, maxAge));
+        return LootTable.lootTable()
+                .withPool(LootPool.lootPool()
+                        .setRolls(ConstantValue.exactly(1.0F))
+                        .add(LootItem.lootTableItem(seed)
+                                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 3.0F)))
+                        ))
+                .withPool(LootPool.lootPool()
+                        .setRolls(ConstantValue.exactly(1.0F))
+                        .when(isMaxAge)
+                        .add(LootItem.lootTableItem(product)
+                                .apply(ApplyBonusCount.addOreBonusCount(Enchantments.BLOCK_FORTUNE))));
     }
 
     //该方法是矿石类，挖矿石会掉落更多矿物，将原本的block方块替换成该方法即可

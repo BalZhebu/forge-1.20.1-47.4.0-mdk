@@ -7,10 +7,13 @@ import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
-    import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
+import net.minecraftforge.common.data.ExistingFileHelper;
     //方块模型生成例如blockstates文件之类的
     public class ModBlockStateProvider extends BlockStateProvider {
         public ModBlockStateProvider(PackOutput output, ExistingFileHelper exFileHelper) {
@@ -34,6 +37,9 @@ import net.minecraftforge.client.model.generators.ModelFile;
             simpleBlockWithItem(ModBlocks.DROSS_BLOCK.get(), cubeAll(ModBlocks.DROSS_BLOCK.get()));
             //传送门方块
             simpleBlockWithItem(ModBlocks.POLAR_ICE_PORTAL_BLOCK.get(), cubeAll(ModBlocks.POLAR_ICE_PORTAL_BLOCK.get()));
+
+            //草药
+            makeCrop((CropBlock) ModBlocks.RED_SPIDER_LILY_BLOCK.get(), "red_spider_lily");
 
             //传送门
             Block portalBlock = ModBlocks.POLAR_ICE_PORTAL.get();
@@ -118,5 +124,16 @@ import net.minecraftforge.client.model.generators.ModelFile;
             itemModels().withExistingParent("putuan_block",
                     ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/putuan_block"));
 
+        }
+
+        private void makeCrop(CropBlock block, String name) {
+            VariantBlockStateBuilder builder = getVariantBuilder(block);
+            for (int age = 0; age <= 3; age++) {
+                ModelFile model = models().cross(name + "_stage" + age,
+                        modLoc("block/" + name + "_stage" + age)).renderType("cutout");
+
+                builder.partialState().with(BlockStateProperties.AGE_3, age)
+                        .modelForState().modelFile(model).addModel();
+            }
         }
     }

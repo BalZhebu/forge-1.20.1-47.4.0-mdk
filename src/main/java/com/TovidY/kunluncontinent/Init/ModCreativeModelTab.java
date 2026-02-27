@@ -33,6 +33,17 @@ public class ModCreativeModelTab {
                             pOutput.accept(itemRegistryObject.get());
                         }
 
+                        //草药
+                        for (RegistryObject<Item> itemRegistryObject : ModItems.CAOYAOLIST){
+                            pOutput.accept(itemRegistryObject.get());
+                        }
+
+                        //种子
+                        for (RegistryObject<Item> itemRegistryObject : ModItems.SEEDSLIST){
+                            pOutput.accept(itemRegistryObject.get());
+                        }
+
+
                         //秒杀剑
                         pOutput.accept(ModItems.INSTANT_KILL_SWORD.get());
 
