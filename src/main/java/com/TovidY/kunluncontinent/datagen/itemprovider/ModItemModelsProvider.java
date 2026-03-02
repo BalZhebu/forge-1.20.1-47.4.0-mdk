@@ -30,6 +30,9 @@ public class ModItemModelsProvider extends ItemModelProvider {
 
         handheldItem(ModItems.INSTANT_KILL_SWORD.get());
 
+        //药水
+        basicItem(ModItems.RED_SPIDER_LILY_POTION.get());
+
         //打火石类似
         for (RegistryObject<Item> itemRegistry : ModItems.PUTONGITEM){
             basicItem(itemRegistry.get());

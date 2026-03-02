@@ -12,8 +12,10 @@ import com.TovidY.kunluncontinent.item.neidanitems.NeidanItem;
 import com.TovidY.kunluncontinent.item.testitemblock.TestLevelUp;
 import com.TovidY.kunluncontinent.item.tool.ModSwordBaseItem;
 import com.TovidY.kunluncontinent.item.tool.ModToolTiers;
+import com.TovidY.kunluncontinent.potion.ModEffects;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
@@ -51,8 +53,16 @@ public class ModItems {
     public static final RegistryObject<Item> RED_SPIDER_LILY_ITEM = ITEMS.register("red_spider_lily_item",
             () -> new Item(new Item.Properties()));
 
-
-
+    //药水
+    public static final RegistryObject<Item> RED_SPIDER_LILY_POTION = ITEMS.register("red_spider_lily_potion",
+            () -> new Item(new Item.Properties()
+                    .stacksTo(1)
+                    .food(new FoodProperties.Builder()
+                            .alwaysEat()
+                            .nutrition(0)
+                            .saturationMod(0)
+                            .effect(() -> new MobEffectInstance(ModEffects.RED_SPIDER_LILY_POTION.get(), 600, 0), 1.0F)
+                            .build())));
 
     //传送门
     public static final RegistryObject<Item> EXTREME_COLD_SNOWFLAKE = ITEMS.register("extreme_cold_snowflake",()->new EngravingKnifeItem(new Item.Properties()){

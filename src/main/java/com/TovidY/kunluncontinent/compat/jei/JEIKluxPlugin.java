@@ -26,6 +26,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -52,11 +55,21 @@ public class JEIKluxPlugin implements IModPlugin {
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
+        IVanillaRecipeFactory factory = registration.getVanillaRecipeFactory();
         // 这里的逻辑是正确的
         RecipeManager recipeManager = Minecraft.getInstance().level.getRecipeManager();
         List<LiandanRecipe> liandanRecipes = recipeManager.getAllRecipesFor(ModRecipes.LIANDAN_TYPE.get());
 
         registration.addRecipes(JEIKlCategory.LIANDANLU_TYPE, liandanRecipes);
+
+        //忘川药水配方
+        registration.addRecipes(RecipeTypes.BREWING, List.of(
+                factory.createBrewingRecipe(
+                        List.of(new ItemStack(ModItems.RED_SPIDER_LILY_ITEM.get())),
+                        List.of(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.AWKWARD)),
+                        new ItemStack(ModItems.RED_SPIDER_LILY_POTION.get())
+                )
+        ));
     }
 
     @Override

@@ -28,6 +28,8 @@ public class ModCreativeModelTab {
                             pOutput.accept(itemRegistryObject.get());
                         }
 
+
+
                         //武魂果实
                         for (RegistryObject<Item> itemRegistryObject : ModItems.WUHUNGUOSHI){
                             pOutput.accept(itemRegistryObject.get());
@@ -48,6 +50,9 @@ public class ModCreativeModelTab {
                         pOutput.accept(ModItems.INSTANT_KILL_SWORD.get());
 
                         pOutput.accept(ModBlocks.POLAR_ICE_PORTAL_BLOCK.get());
+
+                        //药水
+                        pOutput.accept(ModItems.RED_SPIDER_LILY_POTION.get());
 
                         //打火石
                         for (RegistryObject<Item> itemRegistryObject : ModItems.PUTONGITEM){
