@@ -83,6 +83,8 @@ public class ModItems {
     public static final RegistryObject<Item> EXTREME_COLD_SNOWFLAKE_FRAGMENT = ITEMS.register("extreme_cold_snowflake_fragment",()->new Item(new Item.Properties()));
     public static final RegistryObject<Item> GUIDE_BOOK = ITEMS.register("guide_book",()->new GuideBookItem(new Item.Properties()));
 
+    public static final RegistryObject<Item> EYE_TRANSFORMATION  = ITEMS.register("eye_transformation",()->new EyeTransformationItem(new Item.Properties()));
+
     //御寒魂导器
     public static final RegistryObject<Item> LOW_COLD_PROTECTION = ITEMS.register("low_cold_protection",()->new ThermalAmuletItem(new Item.Properties().stacksTo(1).durability(3000),false));
     public static final RegistryObject<Item> MID_COLD_PROTECTION = ITEMS.register("mid_cold_protection",()->new ThermalAmuletItem(new Item.Properties().stacksTo(1).durability(8999),false));
@@ -239,6 +241,8 @@ public class ModItems {
     static {
         NORMALITEMSLIST.add(EXTREME_COLD_SNOWFLAKE_FRAGMENT);
         NORMALITEMSLIST.add(GUIDE_BOOK);
+
+        NORMALITEMSLIST.add(EYE_TRANSFORMATION);
     }
 
     public static ArrayList<RegistryObject<Item>> SPAWNEGGLIST = new ArrayList<>();

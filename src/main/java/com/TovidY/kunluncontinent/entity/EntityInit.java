@@ -5,6 +5,7 @@ import com.TovidY.kunluncontinent.entity.Icecrysta.CustomModel;
 import com.TovidY.kunluncontinent.entity.Icecrysta.IceCrystalEntity;
 import com.TovidY.kunluncontinent.entity.Icecrysta.IceCrystalRenderer;
 import com.TovidY.kunluncontinent.entity.Icecrysta.IceShardEntity;
+import com.TovidY.kunluncontinent.entity.eyetrans.EyeTransformationEntity;
 import com.TovidY.kunluncontinent.entity.hunhe.HunheEntity;
 import com.TovidY.kunluncontinent.entity.hunhe.HunheRender;
 import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanEntity;
@@ -56,6 +57,12 @@ public class EntityInit {
                     .updateInterval(10)
                     .build("ice_shard"));
 
+    public static final RegistryObject<EntityType<EyeTransformationEntity>> EYE_TRANSFORMATION_ENTITY =
+            ENTITY_TYPES.register("eye_transformation_entity",
+                    () -> EntityType.Builder.<EyeTransformationEntity>of(EyeTransformationEntity::new, MobCategory.MISC)
+                            .sized(0.25F, 0.25F)
+                            .build("eye_transformation_entity"));
+
     public static final RegistryObject<EntityType<SnowDemonEntity>> SNOW_DEMON = ENTITY_TYPES.register("snow_demon",
             () -> EntityType.Builder.of(SnowDemonEntity::new, MobCategory.MONSTER)
                     .sized(1.0F, 1.2F)
@@ -77,6 +84,12 @@ public class EntityInit {
             EntityRenderers.register(EntityInit.ICE_CRYSTAL.get(), IceCrystalRenderer::new);
             EntityRenderers.register(EntityInit.ICE_SHARD.get(), ThrownItemRenderer::new);
             EntityRenderers.register(EntityInit.SNOW_DEMON.get(), SnowDemonRenderer::new);
+        }
+
+        @SubscribeEvent
+        public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+            event.registerEntityRenderer(EntityInit.EYE_TRANSFORMATION_ENTITY.get(),
+                    context -> new ThrownItemRenderer<>(context, 1.0F, true));
         }
     }
 
