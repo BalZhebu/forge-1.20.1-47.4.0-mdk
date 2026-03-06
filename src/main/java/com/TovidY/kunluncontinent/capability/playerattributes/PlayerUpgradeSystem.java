@@ -219,10 +219,19 @@ public class PlayerUpgradeSystem {
 
     private static void processUpgradeFailure(ServerPlayer player, PlayerAttributeCapability capability) {
         capability.setTupochenggonglv(capability.getTupochenggonglv() + 1.0f);
+        float realRate = getFinalSuccessRate(capability);
         float penalty = capability.getMaxjingyan() * 0.8f;
         capability.setJingyan(Math.max(0, capability.getJingyan() - penalty));
-        player.sendSystemMessage(Component.literal("§c突破失败！保底率提升至: " + capability.getTupochenggonglv() + "%"));
+        player.sendSystemMessage(Component.literal("§c突破失败！心境磨砺，突破成功率：+1%"));
         SynsAPI.synsPlayerAttribute(player);
+    }
+
+    public static float getFinalSuccessRate(PlayerAttributeCapability cap) {
+        int level = cap.getDengji();
+        float extraRate = cap.getTupochenggonglv();
+        float baseRate = 100.0f - (level * 0.5f);
+        float finalRate = baseRate + extraRate;
+        return Math.max(5.0f, Math.min(95.0f, finalRate));
     }
 
     private static void processSuccessfulUpgrade(ServerPlayer player,PlayerAttributeCapability capability, int newLevel) {

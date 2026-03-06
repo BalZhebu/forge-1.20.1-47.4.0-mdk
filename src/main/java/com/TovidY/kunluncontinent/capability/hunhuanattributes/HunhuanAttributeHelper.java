@@ -13,7 +13,6 @@ public class HunhuanAttributeHelper {
         return player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).map(cap -> {
             int activeIndex = cap.getHunhuankuaiguan();
             List<String> wuhunNames = cap.getWuhunListsname();
-            // 判断武魂是否开启（假设 -1 为关闭状态）
             if (activeIndex >= 0 && wuhunNames != null && activeIndex < wuhunNames.size()) {
                 String activeName = wuhunNames.get(activeIndex);
                 List<MobAttributeCapability> hunhuans = cap.getMonsterCapabilityLists().get(activeName);

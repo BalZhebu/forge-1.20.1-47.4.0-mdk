@@ -27,13 +27,17 @@ public class HunguScreen extends AbstractContainerScreen<HunguMenu> {
     @Override
     protected void init() {
         super.init();
+
         this.addRenderableWidget(Button.builder(Component.literal("属性"), b -> {
             NetworkHandler.INSTANCE.sendToServer(new PacketSyncPage(0));
         }).bounds(this.leftPos + 5, this.topPos - 20, 40, 20).build());
 
-        this.addRenderableWidget(Button.builder(Component.literal("魂骨"), b -> {})
-                .bounds(this.leftPos + 47, this.topPos - 20, 40, 20).build());
+        this.addRenderableWidget(Button.builder(Component.literal("魂骨"), b -> {
+        }).bounds(this.leftPos + 47, this.topPos - 20, 40, 20).build());
 
+        this.addRenderableWidget(Button.builder(Component.literal("魂环"), b -> {
+            NetworkHandler.INSTANCE.sendToServer(new PacketSyncPage(2));
+        }).bounds(this.leftPos + 89, this.topPos - 20, 40, 20).build());
 
         this.inventoryLabelY = 10000;
         this.titleLabelY = 10000;

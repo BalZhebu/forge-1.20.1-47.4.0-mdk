@@ -11,6 +11,7 @@ import com.TovidY.kunluncontinent.datagen.itemprovider.ModItemTagsProvider;
 import com.TovidY.kunluncontinent.datagen.itemprovider.ModRecipesProvider;
 import com.TovidY.kunluncontinent.datagen.lang.ModZhCnLangProvider;
 import com.TovidY.kunluncontinent.datagen.oredatagen.ModBiomeModifierProvider;
+import com.TovidY.kunluncontinent.datagen.oredatagen.ModStructureProvider;
 import com.TovidY.kunluncontinent.datagen.oredatagen.ModWorldGenOreProvider;
 import com.TovidY.kunluncontinent.datagen.worldgenprovider.ModBiomeModifiers;
 import net.minecraft.core.HolderLookup;
@@ -42,6 +43,9 @@ public class ModDataGenerator {
             .add(Registries.CONFIGURED_FEATURE, ModWorldGenOreProvider::bootstrap)
             .add(Registries.PLACED_FEATURE, ModWorldGenOreProvider::placement)
             .add(Registries.DAMAGE_TYPE, ModDamageTypes::bootstrap)
+            .add(Registries.STRUCTURE, ModStructureProvider::bootstrapStructure)
+            .add(Registries.STRUCTURE_SET, ModStructureProvider::bootstrapStructureSet)
+            .add(Registries.TEMPLATE_POOL, ModStructureProvider::bootstrapPools)
             .add(ForgeRegistries.Keys.BIOME_MODIFIERS, context -> {
                 ModBiomeModifierProvider.bootstrap(context);
                 ModBiomeModifiers.bootstrap(context);

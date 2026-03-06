@@ -5,6 +5,8 @@ import com.TovidY.kunluncontinent.screen.attribute.AttributeMenu;
 import com.TovidY.kunluncontinent.screen.attribute.AttributeScreen;
 import com.TovidY.kunluncontinent.screen.attribute.hungu.HunguMenu;
 import com.TovidY.kunluncontinent.screen.attribute.hungu.HunguScreen;
+import com.TovidY.kunluncontinent.screen.attribute.hunhuan.HunhuanMenu;
+import com.TovidY.kunluncontinent.screen.attribute.hunhuan.HunhuanScreen;
 import com.TovidY.kunluncontinent.screen.guide.GuidBookScreen;
 import com.TovidY.kunluncontinent.screen.guide.GuideBookMenu;
 import com.TovidY.kunluncontinent.screen.liandanlugui.LiandanluMenu;
@@ -39,6 +41,9 @@ public class ModMenuTypes {
     public static final RegistryObject<MenuType<HunguMenu>> HUNGU_MENU =
             registerMenuType("hungu_menu", HunguMenu::new);
 
+    public static final RegistryObject<MenuType<HunhuanMenu>> HUNHUAN_MENU =
+            registerMenuType("hunhuan_menu", HunhuanMenu::new);
+
     //引导书
     public static final RegistryObject<MenuType<GuideBookMenu>> GUIDE_BOOK_MENU =
             registerMenuType("guide_book_menu", GuideBookMenu::new);
@@ -51,8 +56,6 @@ public class ModMenuTypes {
         MENUS.register(eventBus);
     }
 
-    //用于自动注册Screens，相当于内置的ModScreens类
-    // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
     @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {
         @SubscribeEvent
@@ -61,6 +64,7 @@ public class ModMenuTypes {
             MenuScreens.register(ModMenuTypes.LIANDANLU_MENU.get(), LiandanluScreen::new);
             MenuScreens.register(ModMenuTypes.HUNGU_MENU.get(), HunguScreen::new);
             MenuScreens.register(ModMenuTypes.GUIDE_BOOK_MENU.get(), GuidBookScreen::new);
+            MenuScreens.register(ModMenuTypes.HUNHUAN_MENU.get(), HunhuanScreen::new);
 
         }
     }

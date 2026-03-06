@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.network.server;
 
 import com.TovidY.kunluncontinent.screen.attribute.AttributeMenu;
 import com.TovidY.kunluncontinent.screen.attribute.hungu.HunguMenu;
+import com.TovidY.kunluncontinent.screen.attribute.hunhuan.HunhuanMenu;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
@@ -28,11 +29,12 @@ public class PacketSyncPage {
         ctx.get().enqueueWork(() -> {
             ServerPlayer player = ctx.get().getSender();
             if (player != null) {
-                // 根据索引打开对应的 Menu
                 if (msg.pageIndex == 0) {
                     NetworkHooks.openScreen(player, new AttributeMenu.Provider());
                 } else if (msg.pageIndex == 1) {
                     NetworkHooks.openScreen(player, new HunguMenu.Provider());
+                }else if (msg.pageIndex == 2) {
+                    NetworkHooks.openScreen(player, new HunhuanMenu.Provider());
                 }
             }
         });

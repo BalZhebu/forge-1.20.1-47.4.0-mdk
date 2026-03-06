@@ -42,18 +42,21 @@ public class AttributeScreen extends AbstractContainerScreen<AttributeMenu> {
 
     @Override
     protected void init() {
-        // 1. 先设置尺寸
         this.imageWidth = 322;
         this.imageHeight = 178;
-
         super.init();
-        this.addRenderableWidget(Button.builder(Component.literal("魂骨"), b -> {
-            NetworkHandler.INSTANCE.sendToServer(new PacketSyncPage(1));
-        }).bounds(this.leftPos + 47, this.topPos - 20, 40, 20).build());
         this.addRenderableWidget(Button.builder(Component.literal("属性"), b -> {
         }).bounds(this.leftPos + 5, this.topPos - 20, 40, 20).build());
 
-        // 4. 其他 UI 调
+        this.addRenderableWidget(Button.builder(Component.literal("魂骨"), b -> {
+            NetworkHandler.INSTANCE.sendToServer(new PacketSyncPage(1));
+        }).bounds(this.leftPos + 47, this.topPos - 20, 40, 20).build());
+
+        // 魂环按钮 (新增)
+        this.addRenderableWidget(Button.builder(Component.literal("魂环"), b -> {
+            NetworkHandler.INSTANCE.sendToServer(new PacketSyncPage(2));
+        }).bounds(this.leftPos + 89, this.topPos - 20, 40, 20).build());
+
         this.inventoryLabelY = 10000;
         this.titleLabelY = 10000;
     }
@@ -131,11 +134,25 @@ public class AttributeScreen extends AbstractContainerScreen<AttributeMenu> {
             y += SPACING;
             guiGraphics.drawString(this.font, "等级: " + attributes.getDengji(), startX, y, textColor, false);
             int xiulianTime = attributes.getXiulianTime();
+
             String timeText = "可修炼时间: " + (xiulianTime / 60) + "分" + (xiulianTime % 60) + "秒";
             int timeTextWidth = this.font.width(timeText);
             int rightX = this.leftPos + this.imageWidth - timeTextWidth - 10;
             int topY = this.topPos + 8;
             guiGraphics.drawString(this.font, timeText, rightX, topY, 0xFFFF00, true);
+
+            int rightXOffset = 10;
+            int topYOffset = 8;
+
+            float baseRate = attributes.getTupochenggonglv();
+            int level = attributes.getDengji();
+            float levelPenalty = level * 0.5f;
+            float finalDisplayRate = Math.max(5.0f, baseRate - levelPenalty);
+            String rateText = "当前等级突破概率: " + NumberFormatter.formatPercentage(finalDisplayRate) + "%";
+            int rateTextWidth = this.font.width(rateText);
+            int rateX = this.leftPos + this.imageWidth - rateTextWidth - rightXOffset;
+            int rateColor = finalDisplayRate <= 5.0f ? 0xFF0000 : 0x00FF00;
+            guiGraphics.drawString(this.font, rateText, rateX, this.topPos + topYOffset + SPACING, rateColor, true);
         });
     }
 
