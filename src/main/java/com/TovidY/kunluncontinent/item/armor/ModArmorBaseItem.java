@@ -61,6 +61,9 @@ public class ModArmorBaseItem extends ArmorItem {
         if(material == ModArmorMaterials.COLD_HEARTED_STEEL){
             return 5;
         }
+        if(material == ModArmorMaterials.RINSEI){
+            return 6;
+        }
         return 0;
     }
 
@@ -99,6 +102,9 @@ public class ModArmorBaseItem extends ArmorItem {
         if(this.getMaterial() == ModArmorMaterials.COLD_HEARTED_STEEL){
             return value*0.5f;
         }
+        if(this.getMaterial() == ModArmorMaterials.RINSEI){
+            return value*0.6f;
+        }
         return 0;
     }
 
@@ -123,6 +129,9 @@ public class ModArmorBaseItem extends ArmorItem {
         if(this.getMaterial() == ModArmorMaterials.COLD_HEARTED_STEEL){
             return value*0.8f;
         }
+        if(this.getMaterial() == ModArmorMaterials.RINSEI){
+            return value*1.2f;
+        }
         return 0;
     }
 
@@ -141,6 +150,9 @@ public class ModArmorBaseItem extends ArmorItem {
         }
         if(this.getMaterial() == ModArmorMaterials.COLD_HEARTED_STEEL){
             return 22;
+        }
+        if(this.getMaterial() == ModArmorMaterials.RINSEI){
+            return 28;
         }
         return 0;
     }
@@ -188,6 +200,11 @@ public class ModArmorBaseItem extends ArmorItem {
             list.add(Component.translatable("最大生命","10%").withStyle(ChatFormatting.AQUA));
             list.add(Component.translatable("防御力","20%").withStyle(ChatFormatting.AQUA));
             list.add(Component.translatable("生命恢复","4").withStyle(ChatFormatting.AQUA));
+        }
+        if(this.getMaterial() == ModArmorMaterials.RINSEI){
+            list.add(Component.translatable("最大生命","60%").withStyle(ChatFormatting.AQUA));
+            list.add(Component.translatable("防御力","100%").withStyle(ChatFormatting.AQUA));
+            list.add(Component.translatable("生命恢复","28").withStyle(ChatFormatting.AQUA));
         }
         if(this.getMaterial() == ModArmorMaterials.COLD_HEARTED_STEEL){
             list.add(Component.translatable("最大生命","50%").withStyle(ChatFormatting.AQUA));

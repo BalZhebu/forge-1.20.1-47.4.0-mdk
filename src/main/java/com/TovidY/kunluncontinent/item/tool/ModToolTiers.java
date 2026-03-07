@@ -24,6 +24,9 @@ public enum ModToolTiers implements Tier {
     COLD_HEARTED_STEEL(7, 9200, 180.0F, 70.0F, 30,
             () -> Ingredient.of(ModItems.COLD_HEARTED_STEEL_INGOT.get())),
 
+    RINSEI(8, 15000, 220.0F, 90.0F, 30,
+            () -> Ingredient.of(ModItems.RINSEI_INGOT.get())),
+
     //测试物品
     TEST_ITEM(1,100,5.0F,3.0F,15,
             ()->Ingredient.of(ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get()));

@@ -135,6 +135,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.RED_FIRE_INGOT.get(), "§c赤火锭");
         add(ModItems.SUNKEN_SILVER_INGOT.get(), "§f沉银");
         add(ModItems.COLD_HEARTED_STEEL_INGOT.get(), "§7寒心钢锭");
+        add(ModItems.RINSEI_INGOT.get(), "§b凛晶");
 
         add(ModItems.RUBY.get(), "§c红宝石");
         add(ModItems.AMETHYST.get(), "§5紫瑛");
@@ -166,7 +167,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("tooltip.kunluncontinent.liandanlu","不同等阶的炼丹炉只不过是炼丹速度上的差异");
 
         //测试物品类
-        add(ModItems.DANYAO_TEST.get(),"测试物品---经验+9999999");
+        add(ModItems.DANYAO_TEST.get(),"测试物品---经验+999999999");
         add(ModItems.DANYAO_JINGSHENLI.get(),"测试物品---精神力+100%");
         add(ModItems.TEST_SWORD.get(),"测试物品---剑");
         add(ModItems.DANYAO_DENGJI_JIA.get(),"测试物品---等级+1");
@@ -246,6 +247,12 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.COLD_HEARTED_STEEL_SHOVEL.get(), "§7寒心钢铲");
         add(ModItems.COLD_HEARTED_STEEL_HOE.get(), "§7寒心钢锄");
 
+        add(ModItems.RINSEI_SWORD.get(), "§b凛晶剑");
+        add(ModItems.RINSEI_PICKAXE.get(), "§b凛晶镐");
+        add(ModItems.RINSEI_AXE.get(), "§b凛晶斧");
+        add(ModItems.RINSEI_SHOVEL.get(), "§b凛晶铲");
+        add(ModItems.RINSEI_HOE.get(), "§b凛晶锄");
+
         //生物蛋
         add(ModItems.ICE_CRYSTAL_SPAWN_EGG.get(), "冰晶刷怪蛋");
         add(ModItems.SNOW_DEMON_SPAWN_EGG.get(), "雪魔刷怪蛋");
@@ -282,6 +289,11 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.COLD_HEARTED_STEEL_CHESTPLATE.get(), "§7寒心钢胸甲");
         add(ModItems.COLD_HEARTED_STEEL_LEGGINGS.get(), "§7寒心钢护腿");
         add(ModItems.COLD_HEARTED_STEEL_BOOTS.get(), "§7寒心钢靴子");
+
+        add(ModItems.RINSEI_HELMET.get(), "§b凛晶头盔");
+        add(ModItems.RINSEI_CHESTPLATE.get(), "§b凛晶胸甲");
+        add(ModItems.RINSEI_LEGGINGS.get(), "§b凛晶护腿");
+        add(ModItems.RINSEI_BOOTS.get(), "§b凛晶靴子");
 
         //方块类
         add(ModBlocks.CULTIVATION_PLATFORM.get(),"重修台");

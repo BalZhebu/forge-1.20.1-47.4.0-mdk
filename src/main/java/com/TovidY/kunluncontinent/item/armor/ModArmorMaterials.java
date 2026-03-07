@@ -39,25 +39,26 @@ public enum ModArmorMaterials implements ArmorMaterial {
         map.put(ArmorItem.Type.BOOTS, 8);
     }), 30, SoundEvents.ARMOR_EQUIP_NETHERITE, 7.0F, 0.3F, () -> Ingredient.of(ModItems.RED_FIRE_INGOT.get())),
 
-    SUNKEN_SILVER("sunken_silver", 30, Util.make(new EnumMap<>(ArmorItem.Type.class), (map) -> {
+    SUNKEN_SILVER("sunken_silver", 70, Util.make(new EnumMap<>(ArmorItem.Type.class), (map) -> {
         map.put(ArmorItem.Type.HELMET, 13);
         map.put(ArmorItem.Type.CHESTPLATE, 20);
         map.put(ArmorItem.Type.LEGGINGS, 15);
         map.put(ArmorItem.Type.BOOTS, 10);
     }), 30, SoundEvents.ARMOR_EQUIP_NETHERITE, 10.0F, 0.5F, () -> Ingredient.of(ModItems.SUNKEN_SILVER_INGOT.get())),
 
-    COLD_HEARTED_STEEL("cold_hearted_steel", 45, Util.make(new EnumMap<>(ArmorItem.Type.class), (map) -> {
+    COLD_HEARTED_STEEL("cold_hearted_steel", 88, Util.make(new EnumMap<>(ArmorItem.Type.class), (map) -> {
         map.put(ArmorItem.Type.HELMET, 15);
         map.put(ArmorItem.Type.CHESTPLATE, 25);
         map.put(ArmorItem.Type.LEGGINGS, 20);
         map.put(ArmorItem.Type.BOOTS, 15);
     }), 30, SoundEvents.ARMOR_EQUIP_NETHERITE, 15.0F, 0.8F, () -> Ingredient.of(ModItems.COLD_HEARTED_STEEL_INGOT.get())),
 
-
-
-
-
-
+    RINSEI("rinsei", 100, Util.make(new EnumMap<>(ArmorItem.Type.class), (map) -> {
+        map.put(ArmorItem.Type.HELMET, 18);
+        map.put(ArmorItem.Type.CHESTPLATE, 27);
+        map.put(ArmorItem.Type.LEGGINGS, 22);
+        map.put(ArmorItem.Type.BOOTS, 17);
+    }), 30, SoundEvents.ARMOR_EQUIP_NETHERITE, 18.0F, 0.8F, () -> Ingredient.of(ModItems.COLD_HEARTED_STEEL_INGOT.get())),
 
 
     ;

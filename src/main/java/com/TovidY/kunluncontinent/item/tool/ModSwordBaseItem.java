@@ -26,6 +26,7 @@ public class ModSwordBaseItem extends SwordItem {
         if (this.getTier() == ModToolTiers.RED_FIRE) return 75.0f;
         if (this.getTier() == ModToolTiers.SUNKEN_SILVER) return 100.0f;
         if (this.getTier() == ModToolTiers.COLD_HEARTED_STEEL) return 220.0f;
+        if (this.getTier() == ModToolTiers.RINSEI) return 360.0f;
 
         if (this.getTier() == ModToolTiers.TEST_ITEM) return 999999.0f;
         return 0;
@@ -38,6 +39,7 @@ public class ModSwordBaseItem extends SwordItem {
         if (this.getTier() == ModToolTiers.RED_FIRE) return 0.5f;
         if (this.getTier() == ModToolTiers.SUNKEN_SILVER) return 0.75f;
         if (this.getTier() == ModToolTiers.COLD_HEARTED_STEEL) return 1.0f;
+        if (this.getTier() == ModToolTiers.RINSEI) return 1.5f;
 
         if (this.getTier() == ModToolTiers.TEST_ITEM) return 100.0f;
         return 0;
@@ -49,6 +51,7 @@ public class ModSwordBaseItem extends SwordItem {
         if (this.getTier() == ModToolTiers.RED_FIRE) return 0.2f;
         if (this.getTier() == ModToolTiers.SUNKEN_SILVER) return 0.40f;
         if (this.getTier() == ModToolTiers.COLD_HEARTED_STEEL) return 0.5f;
+        if (this.getTier() == ModToolTiers.RINSEI) return 1.0f;
 
         if (this.getTier() == ModToolTiers.TEST_ITEM) return 100f;
         return 0;
@@ -59,6 +62,8 @@ public class ModSwordBaseItem extends SwordItem {
     public float getBaoji(ItemStack stack) {
         if (this.getTier() == ModToolTiers.SUNKEN_SILVER) return 0.25f;
         if (this.getTier() == ModToolTiers.COLD_HEARTED_STEEL) return 0.5f;
+        if (this.getTier() == ModToolTiers.RINSEI) return 1.0f;
+
         if (this.getTier() == ModToolTiers.TEST_ITEM) return 100f;
         return 0;
     }
@@ -67,6 +72,8 @@ public class ModSwordBaseItem extends SwordItem {
     //1 = 100%
     public float getBaojiShanghai(ItemStack stack) {
         if (this.getTier() == ModToolTiers.COLD_HEARTED_STEEL) return 1.2f;
+        if (this.getTier() == ModToolTiers.RINSEI) return 1.5f;
+
         if (this.getTier() == ModToolTiers.TEST_ITEM) return 300f;
         return 0;
     }

@@ -126,6 +126,7 @@ public class ModItems {
     public static final RegistryObject<Item> RED_FIRE_INGOT = ITEMS.register("red_fire_ingot",()->new Item(new Item.Properties()));
     public static final RegistryObject<Item> SUNKEN_SILVER_INGOT = ITEMS.register("sunken_silver_ingot",()->new Item(new Item.Properties()));
     public static final RegistryObject<Item> COLD_HEARTED_STEEL_INGOT = ITEMS.register("cold_hearted_steel_ingot",()->new Item(new Item.Properties()));
+    public static final RegistryObject<Item> RINSEI_INGOT = ITEMS.register("rinsei_ingot",()->new Item(new Item.Properties()));
 
     public static final RegistryObject<Item> RUBY = ITEMS.register("ruby",()->new Item(new Item.Properties()));
     public static final RegistryObject<Item> AMETHYST = ITEMS.register("amethyst",()->new Item(new Item.Properties()));
@@ -158,6 +159,10 @@ public class ModItems {
     public static final RegistryObject<Item> COLD_HEARTED_STEEL_LEGGINGS = ITEMS.register("cold_hearted_steel_leggings",()->new ModArmorBaseItem(ModArmorMaterials.COLD_HEARTED_STEEL,ArmorItem.Type.LEGGINGS,new Item.Properties()));
     public static final RegistryObject<Item> COLD_HEARTED_STEEL_BOOTS = ITEMS.register("cold_hearted_steel_boots",()->new ModArmorBaseItem(ModArmorMaterials.COLD_HEARTED_STEEL,ArmorItem.Type.BOOTS,new Item.Properties()));
 
+    public static final RegistryObject<Item> RINSEI_HELMET = ITEMS.register("rinsei_helmet",()->new ModArmorBaseItem(ModArmorMaterials.RINSEI,ArmorItem.Type.HELMET,new Item.Properties()));
+    public static final RegistryObject<Item> RINSEI_CHESTPLATE = ITEMS.register("rinsei_chestplate",()->new ModArmorBaseItem(ModArmorMaterials.RINSEI,ArmorItem.Type.CHESTPLATE,new Item.Properties()));
+    public static final RegistryObject<Item> RINSEI_LEGGINGS = ITEMS.register("rinsei_leggings",()->new ModArmorBaseItem(ModArmorMaterials.RINSEI,ArmorItem.Type.LEGGINGS,new Item.Properties()));
+    public static final RegistryObject<Item> RINSEI_BOOTS = ITEMS.register("rinsei_boots",()->new ModArmorBaseItem(ModArmorMaterials.RINSEI,ArmorItem.Type.BOOTS,new Item.Properties()));
     //工具
     public static final RegistryObject<Item> GRAY_IRON_SWORD = ITEMS.register("gray_iron_sword",()->new ModSwordBaseItem(ModToolTiers.GRAY_IRON,3,-1.8F,new Item.Properties()));
     public static final RegistryObject<Item> GRAY_IRON_PICKAXE = ITEMS.register("gray_iron_pickaxe",()->new PickaxeItem(ModToolTiers.GRAY_IRON,1, -2.0F,new Item.Properties()));
@@ -189,6 +194,11 @@ public class ModItems {
     public static final RegistryObject<Item> COLD_HEARTED_STEEL_SHOVEL = ITEMS.register("cold_hearted_steel_shovel",()->new ShovelItem(ModToolTiers.COLD_HEARTED_STEEL,2.8F, -0.8F,new Item.Properties()));
     public static final RegistryObject<Item> COLD_HEARTED_STEEL_HOE = ITEMS.register("cold_hearted_steel_hoe",()->new HoeItem(ModToolTiers.COLD_HEARTED_STEEL,-1, 1.0F,new Item.Properties()));
 
+    public static final RegistryObject<Item> RINSEI_SWORD = ITEMS.register("rinsei_sword",()->new ModSwordBaseItem(ModToolTiers.RINSEI,8,-1.0F,new Item.Properties()));
+    public static final RegistryObject<Item> RINSEI_PICKAXE = ITEMS.register("rinsei_pickaxe",()->new PickaxeItem(ModToolTiers.RINSEI,4, -1.1F,new Item.Properties()));
+    public static final RegistryObject<Item> RINSEI_AXE = ITEMS.register("rinsei_axe",()->new AxeItem(ModToolTiers.RINSEI,12.0F, -3.0F,new Item.Properties()));
+    public static final RegistryObject<Item> RINSEI_SHOVEL = ITEMS.register("rinsei_shovel",()->new ShovelItem(ModToolTiers.RINSEI,2.6F, -2.0F,new Item.Properties()));
+    public static final RegistryObject<Item> RINSEI_HOE = ITEMS.register("rinsei_hoe",()->new HoeItem(ModToolTiers.RINSEI,-1, 1.0F,new Item.Properties()));
     //丹药类
     public static final RegistryObject<Item> CHUYUAN_DAN = ITEMS.register("chuyuan_dan",()->new DanYaoItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setJingyan(16).setMinLevel(1).setTier(1));
     public static final RegistryObject<Item> BAICAOLING_DAN = ITEMS.register("baicaoling_dan",()->new DanYaoItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setJingyan(56).setMinLevel(10).setTier(2));
@@ -357,6 +367,7 @@ public class ModItems {
         MODSTONE.add(RED_FIRE_INGOT);
         MODSTONE.add(SUNKEN_SILVER_INGOT);
         MODSTONE.add(COLD_HEARTED_STEEL_INGOT);
+        MODSTONE.add(RINSEI_INGOT);
 
         MODSTONE.add(RUBY);
         MODSTONE.add(AMETHYST);
@@ -401,6 +412,10 @@ public class ModItems {
         EQUIPMENT.add(COLD_HEARTED_STEEL_CHESTPLATE);
         EQUIPMENT.add(COLD_HEARTED_STEEL_LEGGINGS);
         EQUIPMENT.add(COLD_HEARTED_STEEL_BOOTS);
+        EQUIPMENT.add(RINSEI_HELMET);
+        EQUIPMENT.add(RINSEI_CHESTPLATE);
+        EQUIPMENT.add(RINSEI_LEGGINGS);
+        EQUIPMENT.add(RINSEI_BOOTS);
     }
 
     public static ArrayList<RegistryObject<Item>> TOOL = new ArrayList<>();
@@ -430,6 +445,11 @@ public class ModItems {
         TOOL.add(COLD_HEARTED_STEEL_AXE);
         TOOL.add(COLD_HEARTED_STEEL_SHOVEL);
         TOOL.add(COLD_HEARTED_STEEL_HOE);
+        TOOL.add(RINSEI_SWORD);
+        TOOL.add(RINSEI_PICKAXE);
+        TOOL.add(RINSEI_AXE);
+        TOOL.add(RINSEI_SHOVEL);
+        TOOL.add(RINSEI_HOE);
     }
 
 
