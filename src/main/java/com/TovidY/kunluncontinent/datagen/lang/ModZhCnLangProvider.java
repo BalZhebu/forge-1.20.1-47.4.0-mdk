@@ -7,6 +7,7 @@ import com.TovidY.kunluncontinent.entity.EntityInit;
 import com.TovidY.kunluncontinent.item.ModItems;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.LanguageProvider;
+import net.minecraftforge.fml.common.Mod;
 
 public class ModZhCnLangProvider extends LanguageProvider {
     public ModZhCnLangProvider(PackOutput output) {
@@ -25,7 +26,8 @@ public class ModZhCnLangProvider extends LanguageProvider {
                 "\n§l武魂系统：§r默认按K键可打开武魂，打开武魂时会消耗精神力，打开武魂时可以吸收魂环。" +
                 "\n§l魂环吸收:§r玩家每到10/20/30级等10的倍数的等级时，会锁定等级，必须吸收魂环才可突破下一阶段，吸收时需打开武魂后右键生物掉落的魂环坐上去后消耗精神力吸收魂环，精神力不足将停止吸收，吸收进度重置。" +
                 "\n§l重修&转世系统：§r玩家在主世界自然生成的地狱门遗迹可找到生成在地狱岩上的彼岸花，将彼岸花磨成粉可炼制忘川渡buff，喝下后找到重修遗迹，再自己身上有buff的情况下右键重修台就会遭受99道雷劫，但记住！雷劫不致命！请不要用任何手段恢复血量，因为重修需要玩家血量到达20以内才能成功转世，若99道天雷后你血量依旧健康，那么，你的转世重修就会失败。" +
-                "\n§l武魂果实：§r武魂果实将在玩家转生后会根据玩家拥有的武魂将果实反馈给玩家，吃下武魂果实即可觉醒对应的武魂，玩家最多觉醒3个武魂。" +
+                "\n§l重修遗迹：§r通过重修之眼可找到重修遗迹，重修之眼使用方法和末影之眼一致。" +
+                "\n§l武魂果实：§r武魂果实将在玩家转生后会根据玩家拥有的武魂将武魂果实给予给玩家，吃下武魂果实即可觉醒对应的武魂，玩家最多觉醒3个武魂。" +
                 "\n§l内丹系统：§r击杀不同年限的生物会掉落不同品质的内丹，内丹可以炼制经验丹药，不同等级的炼丹炉炼制速度不一样，例如1级炼丹炉炼制1级丹药需要10秒，而炼制9级丹药需要10秒的100倍的时间。" +
                 "\n§l丹药品级系统：§r不同品质的内丹炼制出的丹药品质不一样，使用时的倍率不一样，详情自己炼制查看。炼制时可能出现丹渣品质的丹药，放入合成台一个丹渣品质丹药可合成一个丹渣，丹渣9个合成一个丹渣块，可减少炼制丹药时丹渣的概率。" +
                 "\n§l年限生成系统：§r玩家距离世界坐标越远，生成高年限的生物概率越高，最远10000格以外，，到达一万格后，这个值将会到达极限。" +
@@ -41,7 +43,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
                 "\n§r3.占位符 + ");
 
         add(ModItems.RED_SPIDER_LILY_POTION.get(), "§c《忘川渡·彼岸花》");
-
+        add(ModItems.EYE_TRANSFORMATION.get(), "§5重修之眼");
 
         add("item.kunluncontinent.guide_book.tooltip","§7第一次进入游戏即可获得");
         add("item.kunluncontinent.guide_book.tooltip1","§7请务必认真仔细查看");
@@ -350,6 +352,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("tooltip.kunlun.instant_kill_sword.2","世间万物，皆为定数；唯我一剑，可断因果。");
         add("tooltip.kunluncontinent.extreme_cold_snowflake1","需右键最底下传送门框架");
         add("tooltip.kunluncontinent.extreme_cold_snowflake2","从左往右的第二个方块最上面的一面激活传送门");
+        add("tooltip.item.klitem.eyetf","§7可重复使用");
 
         //草药
         add(ModItems.RED_SPIDER_LILY_ITEM.get(), "§c彼岸花");

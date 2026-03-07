@@ -12,7 +12,6 @@ import net.minecraft.world.entity.projectile.ItemSupplier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-
 public class EyeTransformationEntity extends Entity implements ItemSupplier {
     private double targetX;
     private double targetZ;
@@ -20,7 +19,6 @@ public class EyeTransformationEntity extends Entity implements ItemSupplier {
 
     public EyeTransformationEntity(EntityType<? extends EyeTransformationEntity> type, Level level) {
         super(type, level);
-        this.blocksBuilding = false;
     }
 
     public EyeTransformationEntity(Level level, double x, double y, double z) {
@@ -29,48 +27,43 @@ public class EyeTransformationEntity extends Entity implements ItemSupplier {
     }
 
     public void signalTo(BlockPos pos) {
-        int range = 500;
-        this.targetX = pos.getX() + (this.random.nextInt(range * 2 + 1) - range);
-        this.targetZ = pos.getZ() + (this.random.nextInt(range * 2 + 1) - range);
+        this.targetX = (double)pos.getX();
+        this.targetZ = (double)pos.getZ();
         this.life = 0;
-
-        double dx = this.targetX - this.getX();
-        double dz = this.targetZ - this.getZ();
-        double dist = Math.sqrt(dx * dx + dz * dz);
-        this.setDeltaMovement(dx / dist * 0.4D, 0.2D, dz / dist * 0.4D);
-        this.hasImpulse = true;
     }
 
     @Override
     public void tick() {
         super.tick();
-
+        Vec3 movement = this.getDeltaMovement();
+        this.setPos(this.getX() + movement.x, this.getY() + movement.y, this.getZ() + movement.z);
         if (!this.level().isClientSide) {
             double dx = this.targetX - this.getX();
             double dz = this.targetZ - this.getZ();
-            double dist = Math.sqrt(dx * dx + dz * dz);
-
-            if (dist > 1.0D) {
-                Vec3 mov = this.getDeltaMovement();
-                this.setDeltaMovement(dx / dist * 0.4D, mov.y * 0.9D + 0.05D, dz / dist * 0.4D);
-            }
-
-            this.move(MoverType.SELF, this.getDeltaMovement());
-
+            double horizontalDist = Math.sqrt(dx * dx + dz * dz);
             this.life++;
-            if (this.life > 100) {
-                this.discard();
+            if (this.life < 60) {
+                double speed = horizontalDist < 5.0D ? 0.1D : 0.5D;
+                double ySpeed = (this.life < 20) ? 0.2D : 0.0D;
+                if (horizontalDist > 0.1D) {
+                    this.setDeltaMovement(dx / horizontalDist * speed, ySpeed, dz / horizontalDist * speed);
+                } else {
+                    this.setDeltaMovement(0, ySpeed, 0);
+                }
             }
-        } else {
-            this.setPos(this.getX() + this.getDeltaMovement().x,
-                    this.getY() + this.getDeltaMovement().y,
-                    this.getZ() + this.getDeltaMovement().z);
-
-            if (this.random.nextFloat() > 0.3f) {
-                this.level().addParticle(ParticleTypes.PORTAL, this.getX(), this.getY() + 0.5D, this.getZ(), 0, 0, 0);
+            else {
+                this.setDeltaMovement(0, 0, 0);
+                if (this.life > 100) {
+                    this.discard();
+                }
             }
         }
+        if (this.level().isClientSide) {
+            this.level().addParticle(ParticleTypes.PORTAL, this.getX(), this.getY() + 0.3D, this.getZ(), 0, -0.1, 0);
+        }
     }
+
+
 
     @Override
     public boolean shouldRenderAtSqrDistance(double distance) {
