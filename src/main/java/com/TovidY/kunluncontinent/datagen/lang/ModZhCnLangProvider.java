@@ -353,6 +353,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("tooltip.kunluncontinent.extreme_cold_snowflake1","需右键最底下传送门框架");
         add("tooltip.kunluncontinent.extreme_cold_snowflake2","从左往右的第二个方块最上面的一面激活传送门");
         add("tooltip.item.klitem.eyetf","§7可重复使用");
+        add("item.red_spider_seeds.tooltip","§7生成在废弃地狱门附近的地狱岩上");
 
         //草药
         add(ModItems.RED_SPIDER_LILY_ITEM.get(), "§c彼岸花");

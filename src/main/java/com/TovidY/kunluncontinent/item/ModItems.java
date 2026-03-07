@@ -47,7 +47,12 @@ public class ModItems {
 
     //药草种子
     public static final RegistryObject<Item> RED_SPIDER_SEEDS = ITEMS.register("red_spider_seeds",
-            () -> new ItemNameBlockItem(ModBlocks.RED_SPIDER_LILY_BLOCK.get(), new Item.Properties()));
+            () -> new ItemNameBlockItem(ModBlocks.RED_SPIDER_LILY_BLOCK.get(), new Item.Properties()){
+                @Override
+                public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
+                    pTooltip.add(Component.translatable("item.red_spider_seeds.tooltip"));
+                }
+            });
 
     //草药物品
     public static final RegistryObject<Item> RED_SPIDER_LILY_ITEM = ITEMS.register("red_spider_lily_item",

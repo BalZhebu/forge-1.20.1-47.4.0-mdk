@@ -1,17 +1,24 @@
 package com.TovidY.kunluncontinent.datagen.oredatagen;
 
+import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.block.ModBlocks;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
+import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
+import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 import net.minecraft.world.level.levelgen.placement.*;
 import net.minecraft.world.level.levelgen.structure.templatesystem.BlockMatchTest;
 import net.minecraft.world.level.levelgen.structure.templatesystem.TagMatchTest;
@@ -20,6 +27,12 @@ import net.minecraftforge.registries.ForgeRegistries;
 import java.util.List;
 
 public class ModWorldGenOreProvider {
+
+    public static final ResourceKey<ConfiguredFeature<?, ?>> RED_SPIDER_LILY_CONFIG =
+            ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "red_spider_lily"));
+
+    public static final ResourceKey<PlacedFeature> RED_SPIDER_LILY_PLACED =
+            ResourceKey.create(Registries.PLACED_FEATURE,ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "red_spider_lily"));
 
     /**
      * 第一步：配置特征 (ConfiguredFeature)
@@ -45,6 +58,10 @@ public class ModWorldGenOreProvider {
         registerOre(context, ModBlocks.SUNKEN_SILVER_ORE.get(), 5);
         //寒心钢
         registerOre(context, ModBlocks.COLD_HEARTED_STEEL_ORE.get(), 3);
+
+        //药草
+        context.register(RED_SPIDER_LILY_CONFIG, new ConfiguredFeature<>(Feature.SIMPLE_BLOCK,
+                new SimpleBlockConfiguration(BlockStateProvider.simple(ModBlocks.RED_SPIDER_LILY_BLOCK.get()))));
     }
 
     /**
@@ -76,6 +93,18 @@ public class ModWorldGenOreProvider {
         registerPlacement(context, configuredFeatures, ModBlocks.SAPPHIRE_ORE, 0, 110, 5);
         //星辰石
         registerPlacement(context, configuredFeatures, ModBlocks.STARLIGHT_STONE_ORE, -64, 0, 5);
+
+        // 注册彼岸花的放置：
+        context.register(RED_SPIDER_LILY_PLACED, new PlacedFeature(
+                configuredFeatures.getOrThrow(RED_SPIDER_LILY_CONFIG),
+                List.of(
+                        CountPlacement.of(20),
+                        InSquarePlacement.spread(),
+                        PlacementUtils.HEIGHTMAP_WORLD_SURFACE,
+                        BlockPredicateFilter.forPredicate(BlockPredicate.matchesBlocks(Direction.DOWN.getNormal(), Blocks.NETHERRACK)),
+                        BiomeFilter.biome()
+                )
+        ));
     }
 
     // 在 registerOre 中增加对不同维度的支持

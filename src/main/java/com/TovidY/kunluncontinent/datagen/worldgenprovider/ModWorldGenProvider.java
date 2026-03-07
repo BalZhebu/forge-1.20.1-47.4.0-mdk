@@ -1,5 +1,6 @@
 package com.TovidY.kunluncontinent.datagen.worldgenprovider;
 
+import com.TovidY.kunluncontinent.block.ModBlocks;
 import com.TovidY.kunluncontinent.worldgen.ModDimensions;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;

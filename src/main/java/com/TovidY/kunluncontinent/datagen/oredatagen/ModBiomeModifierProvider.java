@@ -14,6 +14,8 @@ import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.common.world.ForgeBiomeModifiers;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import static com.TovidY.kunluncontinent.datagen.oredatagen.ModWorldGenOreProvider.RED_SPIDER_LILY_PLACED;
+
 public class ModBiomeModifierProvider {
     // 定义 Key 的位置
     public static final ResourceKey<BiomeModifier> ADD_GRAY_IRON_ORE = createKey("add_gray_iron_ore");
@@ -94,6 +96,13 @@ public class ModBiomeModifierProvider {
                 GenerationStep.Decoration.UNDERGROUND_ORES
         ));
 
+        //彼岸花
+        context.register(ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "add_red_spider_lily")),
+                new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                        biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
+                        HolderSet.direct(placedFeatures.getOrThrow(RED_SPIDER_LILY_PLACED)),
+                        GenerationStep.Decoration.VEGETAL_DECORATION
+                ));
     }
 
     private static ResourceKey<BiomeModifier> createKey(String name) {
