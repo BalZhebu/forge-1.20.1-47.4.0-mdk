@@ -110,25 +110,27 @@ public class PlayerHunhuanAPI {
         });
     }
 
-   public static boolean isXishouHunhuan(ServerPlayer player, HunhuanEntity hunhuanEntity) {
+    public static boolean isXishouHunhuan(ServerPlayer player, HunhuanEntity hunhuanEntity) {
         LazyOptional<PlayerAttributeCapability> capability1 = player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY);
-        if(capability1.isPresent()){
+        if (capability1.isPresent()) {
             PlayerAttributeCapability capability = capability1.orElseThrow(RuntimeException::new);
             int playerLevel = capability.getDengji();
-            List<String> wuhunNames = capability.getWuhunListsname();
-            if(wuhunNames == null || wuhunNames.isEmpty()){
-                player.sendSystemMessage(Component.translatable("未开启或觉醒武魂"));
+            String currentWuhun = capability.getWuhunName();
+            List<MobAttributeCapability> currentRingsList = capability.getMonsterCapabilityLists().get(currentWuhun);
+            int currentRings = (currentRingsList != null) ? currentRingsList.size() : 0;
+            int maxRingsInHistory = getMaxRings(capability);
+            int allowedRingsByLevel = (playerLevel >= 199) ? 20 : (playerLevel / 10);
+            if (playerLevel < 10 && playerLevel >= 1) allowedRingsByLevel = 1;
+            if (currentRings >= allowedRingsByLevel) {
+                player.sendSystemMessage(Component.translatable("等级不足").withStyle(ChatFormatting.RED));
                 return false;
             }
-            if(!((playerLevel % 10 == 0 && playerLevel >= 10 && playerLevel <= 190) || playerLevel == 199)) {
-                player.sendSystemMessage(Component.translatable("阶段等级").withStyle(ChatFormatting.RED));
-                return false;
-            }
-            int currentRings = getMaxRings(capability);
-            int allowedRings = (playerLevel == 199) ? 20 : playerLevel / 10;
-            if (currentRings >= allowedRings) {
-                player.sendSystemMessage(Component.translatable("等级不够").withStyle(ChatFormatting.RED));
-                return false;
+            if (currentRings >= maxRingsInHistory) {
+                boolean isBreakthroughLevel = (playerLevel % 10 == 0 && playerLevel >= 10) || playerLevel == 199;
+                if (!isBreakthroughLevel) {
+                    player.sendSystemMessage(Component.translatable("阶段等级").withStyle(ChatFormatting.YELLOW));
+                    return false;
+                }
             }
             return true;
         }

@@ -2,11 +2,14 @@ package com.TovidY.kunluncontinent.entity.hunhuan;
 
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
+import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapability;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerHunhuanAPI;
 import com.TovidY.kunluncontinent.entity.hunhe.HunheEntity;
+import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
+import com.TovidY.kunluncontinent.item.baseskillist.SkillLibrary;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.client.SyncShenciAttributesPacket;
 import net.minecraft.ChatFormatting;
@@ -29,6 +32,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 import static com.TovidY.kunluncontinent.item.ModItems.hunhuanstorage;
 
@@ -106,19 +111,34 @@ import static com.TovidY.kunluncontinent.item.ModItems.hunhuanstorage;
             });
         }
 
-        private void handleAbsorbed(boolean isShenci, int nianxian) {
-            if (!isShenci) {
-                this.discard();
-                return;
+    private void handleAbsorbed(boolean isShenci, int nianxian) {
+        player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(playerAttr -> {
+            String currentWuhun = playerAttr.getWuhunName();
+            if (currentWuhun != null) {
+                List<MobAttributeCapability> currentWuhunRings = playerAttr.getMonsterCapabilityLists().get(currentWuhun);
+                if (currentWuhunRings != null) {
+                    int ringIndex = currentWuhunRings.size();
+                    if (ringIndex >= 1 && ringIndex <= 9) {
+                        BaseSkillItem rewardSkill = SkillLibrary.getRandomSkill(currentWuhun, ringIndex, player.getRandom());
+                        if (rewardSkill != null) {
+                            playerAttr.setWuhunSkill(currentWuhun, ringIndex - 1, rewardSkill);
+
+                            player.sendSystemMessage(Component.literal("§6§l[魂技] §e" + currentWuhun + " §f获得第 §c" + ringIndex + " §f魂技：")
+                                    .append(Component.translatable(rewardSkill.getDescriptionId()).withStyle(ChatFormatting.YELLOW)));
+                        }
+                    }
+                }
             }
-            player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(playerAttr -> {
+            if (isShenci) {
                 ShenciBonus bonus = ShenciBonus.getBonus(nianxian);
                 bonus.applyBonus(playerAttr, ModAttributeAPI.getDengji(player));
-                NetworkHandler.sendToClient(new SyncShenciAttributesPacket(playerAttr), (ServerPlayer) player);
                 player.sendSystemMessage(Component.literal(bonus.getCompletionMessage()).withStyle(bonus.getColor()));
-            });
-            this.discard();
-        }
+            }
+            NetworkHandler.sendToClient(new SyncShenciAttributesPacket(playerAttr), (ServerPlayer) player);
+        });
+
+        this.discard();
+    }
 
         private void handleAbsorptionProgress(boolean isShenci, int nianxian) {
             if (existenceTime == 1) {

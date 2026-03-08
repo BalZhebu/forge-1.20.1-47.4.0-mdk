@@ -6,8 +6,10 @@ import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCap
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerUpgradeSystem;
 import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanEntity;
+import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import com.TovidY.kunluncontinent.network.SynsAPI;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -35,6 +37,9 @@ public class PWPlayerTickEvent {
             long gameTime = player.level().getGameTime();
             player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(capability -> {
                 playerUpdateServere(player, capability);
+
+                handleSkillCasting(serverPlayer, capability, gameTime);
+                
                 if (gameTime % 20 == 0) {
                     float maxshengming = ModAttributeAPI.getMaxshengming(player);
                     if (Math.abs(maxshengming - player.getMaxHealth()) > 0.1f) {
@@ -56,9 +61,31 @@ public class PWPlayerTickEvent {
         }
     }
 
+    private static void handleSkillCasting(ServerPlayer player, PlayerAttributeCapability cap, long gameTime) {
+        BaseSkillItem castingSkill = cap.getCurrentCastingSkill();
+        if (castingSkill != null) {
+            int currentTick = cap.getCastingTick();
+            cap.setCastingTick(currentTick + 1);
+            if (gameTime % 5 == 0) {
+                player.serverLevel().sendParticles(
+                        ParticleTypes.ENCHANT,
+                        player.getX(), player.getY() + 2.2, player.getZ(),
+                        3, 0.2, 0.2, 0.2, 0.0
+                );
+            }
+            if (cap.getCastingTick() >= cap.getRequiredCastTick()) {
+                castingSkill.executeEffect(player.level(), player);
+                castingSkill.applyPenalty(player);
+                cap.setSkillLastUsedTime(cap.getWuhunName(), cap.getSelectedSkillSlot(), gameTime);
+                player.displayClientMessage(Component.literal("§a§l魂技释放成功！"), true);
+                cap.stopCasting();
+                SynsAPI.synsPlayerAttribute(player);
+            }
+        }
+    }
+
     private static void handleMeditationLogic(ServerPlayer player, PlayerAttributeCapability cap, long gameTime) {
         boolean isMeditating = player.getVehicle() != null && player.getVehicle().getTags().contains("putuan_seat");
-
         if (isMeditating) {
             if (gameTime % 20 == 0) {
                 float currentJs = cap.getJingshenli();
@@ -115,11 +142,17 @@ public class PWPlayerTickEvent {
     @SubscribeEvent
     public static void onPlayerHurt(LivingHurtEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            if (player.getVehicle() != null && player.getVehicle().getTags().contains("putuan_seat")) {
-                player.stopRiding(); // 强行踢下来
-                player.sendSystemMessage(Component.translatable("心神受损").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.RED));
-                player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 100, 0));
-            }
+            player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
+                if (player.getVehicle() != null && player.getVehicle().getTags().contains("putuan_seat")) {
+                    player.stopRiding();
+                    player.sendSystemMessage(Component.translatable("心神受损").withStyle(ChatFormatting.RED));
+                    player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 100, 0));
+                }
+                    if (cap.getCurrentCastingSkill() != null) {
+                    cap.stopCasting();
+                    player.displayClientMessage(Component.literal("§c魂力紊乱，吟唱中断！"), true);
+                }
+            });
         }
     }
 

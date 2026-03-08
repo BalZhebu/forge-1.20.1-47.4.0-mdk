@@ -5,10 +5,10 @@ import com.TovidY.kunluncontinent.network.client.CPacketOpenAttrubuteGUI;
 import com.TovidY.kunluncontinent.network.client.CPacketQiehuanWuhun;
 import com.TovidY.kunluncontinent.network.client.SyncShenciAttributesPacket;
 import com.TovidY.kunluncontinent.network.client.SyncWuhunDataPacket;
-import com.TovidY.kunluncontinent.network.server.PacketSyncPage;
-import com.TovidY.kunluncontinent.network.server.SPacketEntityAttribute;
-import com.TovidY.kunluncontinent.network.server.SPacketPlayerAttribute;
-import com.TovidY.kunluncontinent.network.server.SPacketSyncPlayerAttribute;
+import com.TovidY.kunluncontinent.network.server.*;
+import com.TovidY.kunluncontinent.screen.attribute.skill.CPacketCycleSkill;
+import com.TovidY.kunluncontinent.screen.attribute.skill.CPacketReleaseSkill;
+import com.TovidY.kunluncontinent.screen.attribute.skill.CPacketSelectSkill;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -42,6 +42,11 @@ public class NetworkHandler {
         register(CPacketQiehuanWuhun.class, CPacketQiehuanWuhun::encode, CPacketQiehuanWuhun::decode, CPacketQiehuanWuhun::handle);
         register(SyncWuhunDataPacket.class, SyncWuhunDataPacket::encode, SyncWuhunDataPacket::decode, SyncWuhunDataPacket::handle);
         register(SyncShenciAttributesPacket.class, SyncShenciAttributesPacket::encode, SyncShenciAttributesPacket::decode, SyncShenciAttributesPacket::handle);
+        register(CPacketSelectSkill.class, CPacketSelectSkill::encode, CPacketSelectSkill::decode, CPacketSelectSkill::handle);
+        register(CPacketReleaseSkill.class, CPacketReleaseSkill::encode, CPacketReleaseSkill::decode, CPacketReleaseSkill::handle);
+        register(CPacketCycleSkill.class, CPacketCycleSkill::encode, CPacketCycleSkill::decode, CPacketCycleSkill::handle);
+        register(S2CCastingSyncPacket.class, S2CCastingSyncPacket::encode, S2CCastingSyncPacket::decode, S2CCastingSyncPacket::handle);
+
         //服务端
         register(PacketSyncPage.class, PacketSyncPage::encode, PacketSyncPage::decode, PacketSyncPage::handle);
         register(SPacketEntityAttribute.class, SPacketEntityAttribute::encode, SPacketEntityAttribute::decode, SPacketEntityAttribute::handle);

@@ -6,6 +6,10 @@ import com.TovidY.kunluncontinent.capability.playerattributes.Wuhunname;
 import com.TovidY.kunluncontinent.entity.EntityInit;
 import com.TovidY.kunluncontinent.item.armor.ModArmorBaseItem;
 import com.TovidY.kunluncontinent.item.armor.ModArmorMaterials;
+import com.TovidY.kunluncontinent.item.baseskillist.bahuangji.one.SkillBahuang1;
+import com.TovidY.kunluncontinent.item.baseskillist.juyuan.one.SkillPanshijuyuan1;
+import com.TovidY.kunluncontinent.item.baseskillist.liejinhu.one.SkillLeijinhu1;
+import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.one.SkillPohun1;
 import com.TovidY.kunluncontinent.item.hungu.BoneItem;
 import com.TovidY.kunluncontinent.item.klitem.*;
 import com.TovidY.kunluncontinent.item.neidanitems.NeidanItem;
@@ -243,6 +247,18 @@ public class ModItems {
 
     public static final RegistryObject<Item> HUNHUAN_STORAGE_FIVE = ITEMS.register("hunhuan_storage_five",
             () -> new HunHuanStorageItem(new Item.Properties().stacksTo(1).fireResistant(), 1, 120000000));
+
+    //破魂枪
+    public static final RegistryObject<SkillPohun1> SKILL_POHUN_1 = ITEMS.register("skill_pohun_1", SkillPohun1::new);
+
+    //八荒戟
+    public static final RegistryObject<SkillBahuang1> SKILL_BAHUANG_1 = ITEMS.register("skill_bahuang_1", SkillBahuang1::new);
+
+    //裂金虎
+    public static final RegistryObject<SkillLeijinhu1> SKILL_LEIJINHU_1 = ITEMS.register("skill_leijinhu_1", SkillLeijinhu1::new);
+
+    //磐石巨猿
+    public static final RegistryObject<SkillPanshijuyuan1> SKILL_PANSHIJUYUAN_1 = ITEMS.register("skill_panshijuyuan_1", SkillPanshijuyuan1::new);
 
     public static ArrayList<RegistryObject<Item>> WUHUNGUOSHI = new ArrayList<>();
     static {

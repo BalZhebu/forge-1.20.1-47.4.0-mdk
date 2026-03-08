@@ -16,11 +16,29 @@ public class ModZhCnLangProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
+        //技能代码
+        add(ModItems.SKILL_POHUN_1.get(), "§c《破魂枪》第一魂技[破魂枪]");
+
+        add(ModItems.SKILL_BAHUANG_1.get(), "§c《八荒戟》第一魂技[八荒戟]");
+
+        add(ModItems.SKILL_LEIJINHU_1.get(), "§c《裂金虎》第一魂技[横爪]");
+
+        add(ModItems.SKILL_PANSHIJUYUAN_1.get(), "§c《磐石巨猿》第一魂技[重击]");
+
+        add("无技能","暂无技能描述");
+
+        add("skill.pohunqiang.one.description","消耗50点精神力，凝结武魂实体化。");
+        add("skill.bakuangji.one.description","消耗50点精神力，凝结武魂实体化。");
+        add("skill.leijinhu.one.description","消耗100点精神力，横爪，可击打范围4格内的敌人");
+        add("skill.panshijuyuan.one.description","消耗95点精神力，重击，可击打范围5格内的敌人并附加缓慢效果");
+
+
         //引导书
         add(ModItems.GUIDE_BOOK.get(), "§b《昆仑大陆 · 引导书》");
         add("guide.kunlun.chapter1.content","§1§l《欢迎来到昆仑大陆！祝您玩的愉快 ~ 》\n[本引导书更新于’1.0‘版本]§r\n§c§l请各位玩家务必认真仔细查看，基本收录了正常游玩时遇到的所有常见攻略" +
                 "\n§c以下为基础教程：§r" +
                 "\n§l属性面板系统：§r默认按O键打开属性面板，在属性面板下按住Shift键可查询具体数值，例如玩家的攻击力为10000时属性面板会自动缩进变为1万，按下Shift即可查看具体数值。" +
+                "\n§l技能系统：§r默认长按按R键可打开技能栏，按V键可释放选中的技能，技能栏会显示玩家当前拥有的技能，用鼠标滑动选择技能，鼠标移动到对应灰色滑块后松开R键即可选择技能，选择不松开R键的话技能栏中心会出现技能的相关介绍，点按R可快速按顺序切换技能。" +
                 "\n§l觉醒武魂：§r玩家击杀生物、炼制丹药、用蒲团修炼，都可以获得经验，经验值满了后自动突破下一个等级，当玩家第一次突破成功时，将会觉醒武魂并分配玩家的天赋。" +
                 "\n§l天赋系统：§r天赋在玩家觉醒武魂时出现，普通天赋最为常见，废物和天才天赋概率一致，是废物还是天才都在一念之间，不同的天赋会略微影响一点点数值，但后期均可通过努力提升。" +
                 "\n§l武魂系统：§r默认按K键可打开武魂，打开武魂时会消耗精神力，打开武魂时可以吸收魂环。" +
@@ -336,6 +354,8 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("attribute_mapping","玩家属性面板");
         add("kunluncontinent","昆仑大陆");
         add("kaiguan_mapping","武魂开关");
+        add("key.kunlun.skill_wheel","技能选择面板");
+        add("key.kunlun.release_skill","释放技能");
 
         //GUI
         add("gui.kunluncontinent.shift_hint","§e 提示：按住Shift键查看详细数值信息");
@@ -347,6 +367,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("武魂已关闭", "§a武魂已关闭");
         add("请开启武魂","§c请先开启武魂");
         add("阶段等级","§c请先升级到下一个等级阶段再吸收魂环（10的倍数）");
+        add("等级不足","等级不足！当前等级无法承载更多魂环。");
         add("需要吸收魂环","需要吸收魂环才能继续突破");
 
         //药水类

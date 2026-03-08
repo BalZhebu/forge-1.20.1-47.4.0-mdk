@@ -3,16 +3,22 @@ package com.TovidY.kunluncontinent.capability.playerattributes;
 import com.TovidY.kunluncontinent.capability.itemattribute.ItemAttributeCapability;
 import com.TovidY.kunluncontinent.capability.itemattribute.ItemAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapability;
+import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import com.TovidY.kunluncontinent.network.SynsAPI;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -20,8 +26,15 @@ import java.util.*;
 //玩家属性
 public class PlayerAttributeCapability implements ICapabilitySerializable<CompoundTag> {
 
+    private int castingTick = 0;
+    private int requiredCastTick = 0;
+    private BaseSkillItem currentCastingSkill = null;
+
     // 初始化标志，用于判断是否是第一次创建角色
     private boolean initialized = false;
+
+    private Map<String, BaseSkillItem[]> wuhunSkillsMap = new HashMap<>();
+    private Map<String, Integer> selectedSkillIndexMap = new HashMap<>();
 
     private int xiulianTime = 600;
     private boolean usingAll = false;
@@ -80,107 +93,131 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
-        tag.putBoolean("Initialized", initialized);  // 保存初始化标志
-        tag.putFloat("Shengming", shengming);  // 当前生命值
-        tag.putFloat("MaxShengming", maxshengming);  // 最大生命值
-        tag.putFloat("Jingshenli",jingshenli);
-        tag.putFloat("Maxjingshenli",maxjingshenli);
-        tag.putFloat("Mingzhong",mingzhong);
-        tag.putFloat("Fangyu", fangyu);  // 防御力
-        tag.putFloat("Gongji", gongji);  // 攻击力
-        tag.putFloat("Baojilv", baojilv);  // 暴击率
-        tag.putFloat("Baojishanghai", baojishanghai);  // 暴击伤害
-        tag.putFloat("Xixue", xixue);  // 吸血
-        tag.putFloat("Shanbi", shanbi);  // 闪避率
-        tag.putFloat("Kangbao", kangbao);  // 抗暴
-        tag.putFloat("Jingyan", jingyan);  // 当前经验值
+        tag.putBoolean("Initialized", initialized);
+        tag.putFloat("Shengming", shengming);
+        tag.putFloat("MaxShengming", maxshengming);
+        tag.putFloat("Jingshenli", jingshenli);
+        tag.putFloat("Maxjingshenli", maxjingshenli);
+        tag.putFloat("Mingzhong", mingzhong);
+        tag.putFloat("Fangyu", fangyu);
+        tag.putFloat("Gongji", gongji);
+        tag.putFloat("Baojilv", baojilv);
+        tag.putFloat("Baojishanghai", baojishanghai);
+        tag.putFloat("Xixue", xixue);
+        tag.putFloat("Shanbi", shanbi);
+        tag.putFloat("Kangbao", kangbao);
+        tag.putFloat("Jingyan", jingyan);
         tag.putFloat("Wuchuan", wuchuan);
-        tag.putInt("Dengji", dengji);  // 玩家等级
-        tag.putFloat("MaxJingyan", maxjingyan);  // 最大经验值
-        tag.putFloat("TupoChenggonglv", tupochenggonglv);  // 突破成功率
+        tag.putInt("Dengji", dengji);
+        tag.putFloat("MaxJingyan", maxjingyan);
+        tag.putFloat("TupoChenggonglv", tupochenggonglv);
         tag.putFloat("ShengmingHuifu", shengminghuifu);
-
         tag.putInt("xiulianTime", this.xiulianTime);
         tag.putBoolean("usingAll", this.usingAll);
-
         tag.put("HunguSlots", hunguInventory.serializeNBT());
-
         tag.putInt("Zhuanshengshu", zhuanshengshu);
-
         tag.putInt("Hunhuankuaiguan", hunhuankuaiguan);
 
-        for (Map.Entry<String, List<MobAttributeCapability>> stringListEntry : monsterCapabilityLists.entrySet()) {
-            tag.putBoolean("iswuhun"+stringListEntry.getKey(),true);
-            int nameindex = 0;
-            for (MobAttributeCapability monsterAttributeCapability : stringListEntry.getValue()) {
-                CompoundTag compoundTag = monsterAttributeCapability.serializeNBT();
-                tag.put(stringListEntry.getKey()+nameindex,compoundTag);
-                nameindex++;
+        // --- 核心修复：保存武魂名称的原始顺序 ---
+        ListTag wuhunOrderTag = new ListTag();
+        for (String name : wuhunListsname) {
+            wuhunOrderTag.add(StringTag.valueOf(name));
+        }
+        tag.put("WuhunOrderList", wuhunOrderTag);
+
+        // 保存每个武魂的具体魂环数据
+        for (Map.Entry<String, List<MobAttributeCapability>> entry : monsterCapabilityLists.entrySet()) {
+            String wuhunName = entry.getKey();
+            tag.putBoolean("iswuhun" + wuhunName, true);
+            int ringIndex = 0;
+            for (MobAttributeCapability ringCap : entry.getValue()) {
+                tag.put(wuhunName + ringIndex, ringCap.serializeNBT());
+                ringIndex++;
             }
         }
 
+        // 保存其他数据
         CompoundTag boneTag = new CompoundTag();
         for (Map.Entry<String, Float> entry : boneOnlyStats.entrySet()) {
             boneTag.putFloat(entry.getKey(), entry.getValue());
         }
         tag.put("BoneOnlyStats", boneTag);
 
+        CompoundTag allSkillsTag = new CompoundTag();
+        for (Map.Entry<String, BaseSkillItem[]> entry : wuhunSkillsMap.entrySet()) {
+            CompoundTag singleWuhunTag = new CompoundTag();
+            BaseSkillItem[] skills = entry.getValue();
+            for (int i = 0; i < 9; i++) {
+                if (skills[i] != null) {
+                    singleWuhunTag.putString("Skill_" + i, ForgeRegistries.ITEMS.getKey(skills[i]).toString());
+                }
+            }
+            allSkillsTag.put(entry.getKey(), singleWuhunTag);
+        }
+        tag.put("WuhunSkillsData", allSkillsTag);
+
         return tag;
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-
-        int dataVersion = nbt.contains(DATA_VERSION_TAG) ? nbt.getInt(DATA_VERSION_TAG) : 1;
-
-        this.initialized = nbt.getBoolean("Initialized");  // 读取初始化标志
-        this.shengming = nbt.getFloat("Shengming");  // 当前生命值
-        this.maxshengming = nbt.getFloat("MaxShengming");  // 最大生命值
+        this.initialized = nbt.getBoolean("Initialized");
+        this.shengming = nbt.getFloat("Shengming");
+        this.maxshengming = nbt.getFloat("MaxShengming");
         this.jingshenli = nbt.getFloat("Jingshenli");
-        this.maxjingshenli = nbt.getFloat("Maxjingshenli");  // 修复拼写错误：shenli
+        this.maxjingshenli = nbt.getFloat("Maxjingshenli");
         this.mingzhong = nbt.getFloat("Mingzhong");
-        this.fangyu = nbt.getFloat("Fangyu");  // 防御力
-        this.gongji = nbt.getFloat("Gongji");  // 攻击力
-        this.baojilv = nbt.getFloat("Baojilv");  // 暴击率
-        this.baojishanghai = nbt.getFloat("Baojishanghai");  // 暴击伤害
-        this.xixue = nbt.getFloat("Xixue");  // 吸血
-        this.shanbi = nbt.getFloat("Shanbi");  // 闪避率
+        this.fangyu = nbt.getFloat("Fangyu");
+        this.gongji = nbt.getFloat("Gongji");
+        this.baojilv = nbt.getFloat("Baojilv");
+        this.baojishanghai = nbt.getFloat("Baojishanghai");
+        this.xixue = nbt.getFloat("Xixue");
+        this.shanbi = nbt.getFloat("Shanbi");
         this.wuchuan = nbt.getFloat("Wuchuan");
-        this.kangbao = nbt.getFloat("Kangbao");  // 抗暴
-        this.jingyan = nbt.getFloat("Jingyan");  // 当前经验值
-        this.dengji = nbt.getInt("Dengji");  // 玩家等级
-        this.maxjingyan = nbt.getFloat("MaxJingyan");  // 最大经验值
-        this.tupochenggonglv = nbt.getFloat("TupoChenggonglv");  // 突破成功率
+        this.kangbao = nbt.getFloat("Kangbao");
+        this.jingyan = nbt.getFloat("Jingyan");
+        this.dengji = nbt.getInt("Dengji");
+        this.maxjingyan = nbt.getFloat("MaxJingyan");
+        this.tupochenggonglv = nbt.getFloat("TupoChenggonglv");
         this.shengminghuifu = nbt.getFloat("ShengmingHuifu");
-
         this.zhuanshengshu = nbt.getInt("Zhuanshengshu");
-
         this.xiulianTime = nbt.getInt("xiulianTime");
         this.usingAll = nbt.getBoolean("usingAll");
+        this.hunhuankuaiguan = nbt.getInt("Hunhuankuaiguan");
 
         if (nbt.contains("HunguSlots")) {
             hunguInventory.deserializeNBT(nbt.getCompound("HunguSlots"));
         }
-
-        this.hunhuankuaiguan = nbt.getInt("Hunhuankuaiguan");
-
+        if (nbt.contains("WuhunSkillsData")) {
+            CompoundTag allSkillsTag = nbt.getCompound("WuhunSkillsData");
+            this.wuhunSkillsMap.clear();
+            for (String wuhunName : allSkillsTag.getAllKeys()) {
+                CompoundTag singleWuhunTag = allSkillsTag.getCompound(wuhunName);
+                BaseSkillItem[] skills = new BaseSkillItem[9];
+                for (int i = 0; i < 9; i++) {
+                    if (singleWuhunTag.contains("Skill_" + i)) {
+                        String registryName = singleWuhunTag.getString("Skill_" + i);
+                        Item item = ForgeRegistries.ITEMS.getValue(ResourceLocation.tryParse(registryName));
+                        if (item instanceof BaseSkillItem baseSkill) {
+                            skills[i] = baseSkill;
+                        }
+                    }
+                }
+                this.wuhunSkillsMap.put(wuhunName, skills);
+            }
+        }
         this.monsterCapabilityLists.clear();
         this.wuhunListsname.clear();
-        for (String s : wuhunListsnameall) {
-            int nameindex = 0;
-            Tag tag = nbt.get(s + nameindex);
-            ArrayList<MobAttributeCapability> list = new ArrayList<>();
-            while (tag != null){
-                MobAttributeCapability monsterAttributeCapability = new MobAttributeCapability();
-                monsterAttributeCapability.deserializeNBT((CompoundTag) tag);
-                list.add(monsterAttributeCapability);
-                nameindex++;
-                tag = nbt.get(s + nameindex);
+        if (nbt.contains("WuhunOrderList")) {
+            ListTag orderList = nbt.getList("WuhunOrderList", 8);
+            for (int i = 0; i < orderList.size(); i++) {
+                String name = orderList.getString(i);
+                loadWuhunData(nbt, name);
             }
-            if(nbt.getBoolean("iswuhun"+s)){
-                this.monsterCapabilityLists.put(s, list);
-                if(!this.wuhunListsname.contains(s)) {
-                    this.wuhunListsname.add(s);
+        } else {
+            for (String name : wuhunListsnameall) {
+                if (nbt.getBoolean("iswuhun" + name)) {
+                    loadWuhunData(nbt, name);
                 }
             }
         }
@@ -191,6 +228,28 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
             for (String key : boneTag.getAllKeys()) {
                 this.boneOnlyStats.put(key, boneTag.getFloat(key));
             }
+        }
+    }
+
+    private void loadWuhunData(CompoundTag nbt, String name) {
+        ArrayList<MobAttributeCapability> list = new ArrayList<>();
+        int index = 0;
+        while (nbt.contains(name + index)) {
+            MobAttributeCapability ringCap = new MobAttributeCapability();
+            ringCap.deserializeNBT(nbt.getCompound(name + index));
+            list.add(ringCap);
+            index++;
+        }
+        this.monsterCapabilityLists.put(name, list);
+        if (!this.wuhunListsname.contains(name)) {
+            this.wuhunListsname.add(name);
+        }
+    }
+
+    public void setWuhunSkill(String wuhunName, int slot, BaseSkillItem skill) {
+        BaseSkillItem[] skills = wuhunSkillsMap.computeIfAbsent(wuhunName, k -> new BaseSkillItem[9]);
+        if (slot >= 0 && slot < 9) {
+            skills[slot] = skill;
         }
     }
 
@@ -337,12 +396,35 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
     public boolean isInitialized() { return initialized; }
     public void setInitialized(boolean initialized) { this.initialized = initialized; }
 
+    public void startCasting(BaseSkillItem skill, int time) {
+        this.currentCastingSkill = skill;
+        this.requiredCastTick = time;
+        this.castingTick = 0;
+    }
+
     @Override
     public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
         if (cap == PlayerAttributeCapabilityProvider.CAPABILITY) {
             return LazyOptional.of(() -> (T) this);
         }
         return LazyOptional.empty();
+    }
+
+    public Map<String, BaseSkillItem[]> getWuhunSkillsMap() {
+        return wuhunSkillsMap;
+    }
+
+    public int getSelectedSkillSlot() {
+        String currentWuhun = getWuhunName();
+        if (currentWuhun == null) return 0;
+        return selectedSkillIndexMap.getOrDefault(currentWuhun, 0);
+    }
+
+    public void setSelectedSkillSlot(int slot) {
+        String currentWuhun = getWuhunName();
+        if (currentWuhun != null && slot >= 0 && slot < 9) {
+            selectedSkillIndexMap.put(currentWuhun, slot);
+        }
     }
 
     public static ArrayList<String> wuhunListsnameall= new ArrayList<>();
@@ -359,6 +441,40 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         if(wuhunListsname.size()-1<hunhuankuaiguan||hunhuankuaiguan<0)return null;
         return wuhunListsname.get(hunhuankuaiguan);
     }
+
+    public BaseSkillItem getCurrentCastingSkill() {
+        return this.currentCastingSkill;
+    }
+
+    public int getCastingTick() {
+        return this.castingTick;
+    }
+
+    public void setCastingTick(int tick) {
+        this.castingTick = tick;
+    }
+
+    public int getRequiredCastTick() {
+        return this.requiredCastTick;
+    }
+
+    public void stopCasting() {
+        this.currentCastingSkill = null;
+        this.castingTick = 0;
+        this.requiredCastTick = 0;
+    }
+
+    private Map<String, Long> skillCooldowns = new HashMap<>();
+
+    public long getSkillLastUsedTime(String wuhun, int slot) {
+        return skillCooldowns.getOrDefault(wuhun + "_" + slot, 0L);
+    }
+
+    public void setSkillLastUsedTime(String wuhun, int slot, long time) {
+        skillCooldowns.put(wuhun + "_" + slot, time);
+    }
+
+
 
     public Map<String, List<MobAttributeCapability>> getMonsterCapabilityLists() {
         return monsterCapabilityLists;
