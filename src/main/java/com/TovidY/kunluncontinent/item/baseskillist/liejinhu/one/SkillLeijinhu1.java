@@ -33,32 +33,37 @@ public class SkillLeijinhu1 extends BaseSkillItem {
 
     @Override
     public float getDamageMultiplier() {
-        return 2.5f; // 考虑到有吟唱，伤害倍率给高一点
+        return 1.5f;
     }
 
     @Override
-    public Component getSkillDescription() {
-        // 记得在 lang 文件中添加该键值
-        return Component.translatable("skill.leijinhu.one.description").withStyle(ChatFormatting.GRAY);
+    public float getBaseCost() {
+        return 100;
     }
 
     @Override
-    public void applyPenalty(Player player) {
+    public String getDescriptionKey() {
+        return "skill.leijinhu.one.description";
+    }
+
+    @Override
+    public void applyPenalty(Player player, float costMultiplier) {
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
             float currentJs = cap.getJingshenli();
-            cap.setJingshenli(Math.max(0, currentJs - 100f));
+            float finalCost = 100f * costMultiplier;
+            cap.setJingshenli(Math.max(0, currentJs - finalCost));
         });
     }
 
     @Override
-    public void executeEffect(Level level, Player player) {
+    public void executeEffect(Level level, Player player, float powerMultiplier) {
         if (!level.isClientSide) {
             ServerLevel serverLevel = (ServerLevel) level;
-            double range = 4.0;
+            double range = 4.0 + Math.log10(powerMultiplier) * 2.0;
             List<Entity> targets = level.getEntities(player, player.getBoundingBox().inflate(range));
             for (Entity target : targets) {
                 if (target instanceof LivingEntity livingTarget && target != player) {
-                    float damage = 10.0f * getDamageMultiplier();
+                    float damage = 10.0f * getDamageMultiplier() * powerMultiplier;
                     livingTarget.hurt(level.damageSources().playerAttack(player), damage);
                     livingTarget.knockback(0.5, player.getX() - target.getX(), player.getZ() - target.getZ());
                 }

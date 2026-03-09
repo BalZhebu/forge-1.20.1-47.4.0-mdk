@@ -1,40 +1,64 @@
 package com.TovidY.kunluncontinent.item.baseskillist;
 
+import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
-
 public abstract class BaseSkillItem extends Item {
     public BaseSkillItem() {
         super(new Item.Properties().stacksTo(1).fireResistant());
     }
 
-    public Component getSkillDescription() {
-        return Component.translatable("无技能").withStyle(ChatFormatting.GRAY);
+    // --- 核心数值接口：子类必须实现 ---
+    public abstract float getBaseCost();         // 精神力基础消耗
+    public abstract float getDamageMultiplier(); // 技能本身的伤害倍率
+    public abstract int getCastTime();           // 吟唱时间
+    public abstract int getCooldownTicks();      // 冷却时间
+
+    public String getDescriptionKey() {
+        return this.getDescriptionId() + ".description";
     }
 
-    // 预留：吟唱时间 (Ticks)
-    public abstract int getCastTime();
+    public Component getDynamicDescription(float costMultiplier) {
+        float finalCost = getBaseCost() * costMultiplier;
+        return Component.translatable(getDescriptionKey(), String.format("%.1f", finalCost));
+    }
 
-    // 预留：冷却时间 (Ticks)
-    public abstract int getCooldownTicks();
+    public float getPowerMultiplier(long nianxian) {
+        if (nianxian >= 100000000) return 100.0f;
+        if (nianxian >= 10000000) return 50.0f;
+        if (nianxian >= 1000000) return 15.0f;
+        if (nianxian >= 100000) return 8.0f;
+        if (nianxian >= 10000) return 4.0f;
+        if (nianxian >= 1000) return 2.5f;
+        if (nianxian >= 100) return 1.5f;
+        return 1.0f;
+    }
 
-    public abstract float getDamageMultiplier();
+    public float getCostMultiplier(int nianxian) {
+        if (nianxian <= 100) return 1.0f;
+        float costFactor = (float) (1.0 + Math.log10(nianxian / 10.0) * 0.4);
+        return Math.min(3.5f, costFactor);
+    }
 
-    // 预留：魂力/惩罚消耗
-    public abstract void applyPenalty(Player player);
+    // --- 执行逻辑 ---
+    public void applyPenalty(Player player, float costMultiplier) {
+        player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
+            float finalCost = getBaseCost() * costMultiplier;
+            cap.setJingshenli(Math.max(0, cap.getJingshenli() - finalCost));
+        });
+    }
 
-    // 核心：具体技能效果
-    public abstract void executeEffect(Level level, Player player);
+    public abstract void executeEffect(Level level, Player player, float powerMultiplier);
 
-    // V键触发逻辑
-    public void handleRelease(Level level, Player player) {
+    public void handleRelease(Level level, Player player, int nianxian) {
         if (!player.getCooldowns().isOnCooldown(this)) {
-            // 这里可以扩展吟唱逻辑
-            executeEffect(level, player);
-            applyPenalty(player);
+            float powerMultiplier = getPowerMultiplier(nianxian);
+            float costMultiplier = getCostMultiplier(nianxian);
+            executeEffect(level, player, powerMultiplier);
+            applyPenalty(player, costMultiplier);
             player.getCooldowns().addCooldown(this, getCooldownTicks());
         }
     }

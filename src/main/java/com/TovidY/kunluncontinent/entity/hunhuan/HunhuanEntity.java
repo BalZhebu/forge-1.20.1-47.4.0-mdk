@@ -61,7 +61,6 @@ import static com.TovidY.kunluncontinent.item.ModItems.hunhuanstorage;
                 secondtick();
             }
             if (!this.level().isClientSide) {
-                // 服务端持续检查，如果 DataSync 里的年限跟 Cap 里的不一致，就同步一下
                 this.getCapability(MobAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
                     if (this.getNianxianSync() != cap.getNianxian()) {
                         this.setNianxian(cap.getNianxian());

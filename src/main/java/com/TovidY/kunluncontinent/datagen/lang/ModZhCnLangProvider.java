@@ -27,10 +27,10 @@ public class ModZhCnLangProvider extends LanguageProvider {
 
         add("无技能","暂无技能描述");
 
-        add("skill.pohunqiang.one.description","消耗50点精神力，凝结武魂实体化。");
-        add("skill.bakuangji.one.description","消耗50点精神力，凝结武魂实体化。");
-        add("skill.leijinhu.one.description","消耗100点精神力，横爪，可击打范围4格内的敌人");
-        add("skill.panshijuyuan.one.description","消耗95点精神力，重击，可击打范围5格内的敌人并附加缓慢效果");
+        add("skill.pohunqiang.one.description", "消耗%s点精神力，凝结武魂实体化。");
+        add("skill.bakuangji.one.description", "消耗%s点精神力，凝结武魂实体化。");
+        add("skill.leijinhu.one.description", "消耗%s点精神力，横爪，可击打范围4格内的敌人");
+        add("skill.panshijuyuan.one.description", "消耗%s点精神力，重击，可击打范围5格内的敌人并附加缓慢效果");
 
 
         //引导书

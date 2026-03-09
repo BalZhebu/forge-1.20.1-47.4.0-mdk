@@ -27,19 +27,27 @@ public class SkillPohun1 extends BaseSkillItem {
     public float getDamageMultiplier() {
         return 1.0f;
     }
+
     @Override
-    public Component getSkillDescription() {
-        return Component.translatable("skill.pohunqiang.one.description").withStyle(ChatFormatting.GRAY);
+    public float getBaseCost() {
+        return 50f;
     }
+
     @Override
-    public void applyPenalty(Player player) {
+    public String getDescriptionKey() {
+        return "skill.pohunqiang.one.description";
+    }
+
+    @Override
+    public void applyPenalty(Player player, float costMultiplier) {
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
             float currentJs = cap.getJingshenli();
-            cap.setJingshenli(Math.max(0, currentJs - 50f));
+            float finalCost = 50f * costMultiplier;
+            cap.setJingshenli(Math.max(0, currentJs - finalCost));
         });
     }
     @Override
-    public void executeEffect(Level level, Player player) {
+    public void executeEffect(Level level, Player player, float powerMultiplier) {
         if (!level.isClientSide) {
             ItemStack spear = new ItemStack(Items.DIAMOND_SWORD);
 

@@ -22,26 +22,38 @@ public class SkillBahuang1 extends BaseSkillItem {
         return 0; // 瞬发 10 = 0.5秒
     }
     @Override
+    public float getBaseCost() {
+        return 50f;//语言文件必须改的
+    }
+    @Override
     public int getCooldownTicks() {
         return 200; // 10秒冷却 (20 * 10)
     }
+
     @Override
     public float getDamageMultiplier() {
         return 1.0f;
     }
+
     @Override
-    public Component getSkillDescription() {
-        return Component.translatable("skill.bakuangji.one.description").withStyle(ChatFormatting.GRAY);
+    public String getDescriptionKey() {
+        return "skill.bakuangji.one.description";
     }
+
     @Override
-    public void applyPenalty(Player player) {
+    public void applyPenalty(Player player, float costMultiplier) {
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
             float currentJs = cap.getJingshenli();
-            cap.setJingshenli(Math.max(0, currentJs - 50f));
+            // 基础消耗 50
+            // 十年魂环 (1.0x) -> 消耗 50
+            // 千万年魂环 (约 3.0x) -> 消耗 150 (对比 50 倍威力，这个消耗非常划算)
+            float finalCost = 50f * costMultiplier;
+            cap.setJingshenli(Math.max(0, currentJs - finalCost));
         });
     }
+
     @Override
-    public void executeEffect(Level level, Player player) {
+    public void executeEffect(Level level, Player player,float multiplier) {
         if (!level.isClientSide) {
             ItemStack spear = new ItemStack(Items.DIAMOND_SWORD);
 

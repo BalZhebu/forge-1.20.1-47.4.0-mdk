@@ -1,6 +1,7 @@
 package com.TovidY.kunluncontinent.screen.attribute.skill;
 
 import com.TovidY.kunluncontinent.Init.KeyMappingInit;
+import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
@@ -13,6 +14,8 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
+
+import java.util.List;
 
 public class SkillWheelScreen extends Screen {
     private final PlayerAttributeCapability cap;
@@ -48,6 +51,7 @@ public class SkillWheelScreen extends Screen {
         BaseSkillItem[] skills = cap.getWuhunSkillsMap().get(currentWuhun);
         this.hoveredSlot = -1;
 
+        // 绘制魂技轮盘
         for (int i = 0; i < 9; i++) {
             float startAngle = i * 40.0f + 2.0f;
             float endAngle = (i + 1) * 40.0f - 2.0f;
@@ -69,27 +73,39 @@ public class SkillWheelScreen extends Screen {
         }
         if (hoveredSlot != -1 && skills != null && skills[hoveredSlot] != null) {
             BaseSkillItem s = skills[hoveredSlot];
-
             graphics.drawCenteredString(this.font, s.getName(ItemStack.EMPTY), centerX, centerY - 5, 0xFFAA00);
-
-            int panelWidth = 120;
-            int panelX = centerX + 120; // 放在轮盘右侧
-            int panelY = centerY - 60;  // 向上偏移一点对齐
-            graphics.fill(panelX - 5, panelY - 5, panelX + panelWidth + 5, panelY + 100, 0xAA000000);
-            graphics.renderOutline(panelX - 5, panelY - 5, panelWidth + 10, 105, 0xFFD4AF37);
+            int panelWidth = 145; // 稍微加宽以容纳更长的描述和年限
+            int panelX = centerX + 120;
+            int panelY = centerY - 60;
+            float costMultiplier = 1.0f;
+            List<MobAttributeCapability> rings = cap.getMonsterCapabilityLists().get(currentWuhun);
+            if (rings != null && hoveredSlot < rings.size()) {
+                int nx = (int) rings.get(hoveredSlot).getNianxian();
+                costMultiplier = s.getCostMultiplier(nx);
+            }
+            graphics.fill(panelX - 5, panelY - 5, panelX + panelWidth + 5, panelY + 120, 0xAA000000);
+            graphics.renderOutline(panelX - 5, panelY - 5, panelWidth + 10, 125, 0xFFD4AF37);
             int currentY = panelY;
             graphics.drawString(this.font, s.getName(ItemStack.EMPTY), panelX, currentY, 0xFFAA00);
             currentY += 15;
             String typeTag = s.getCastTime() <= 0 ? "§a[瞬发]" : "§e[吟唱: " + (s.getCastTime()/20.0f) + "s]";
             graphics.drawString(this.font, typeTag, panelX, currentY, 0xFFFFFF);
             currentY += 15;
-            var lines = this.font.split(s.getSkillDescription(), panelWidth);
+            Component dynamicDesc = s.getDynamicDescription(costMultiplier);
+            var lines = this.font.split(dynamicDesc, panelWidth);
             for (var line : lines) {
                 graphics.drawString(this.font, line, panelX, currentY, 0xAAAAAA);
                 currentY += 10;
             }
-            currentY += 5;
-            graphics.drawString(this.font, "§b冷却: " + (s.getCooldownTicks()/20) + "秒", panelX, currentY, 0x55FFFF);
+            if (rings != null && hoveredSlot < rings.size()) {
+                long nianxian = rings.get(hoveredSlot).getNianxian();
+                int nxColor = 0xFFFFFF;
+                currentY += 7;
+                graphics.drawString(this.font, "§7魂技年限: " + String.format("%,d", nianxian) + "年", panelX, currentY, nxColor);
+            }
+            currentY += 15;
+            graphics.drawString(this.font, "§b魂技冷却: " + (s.getCooldownTicks()/20) + "秒", panelX, currentY, 0x55FFFF);
+
         } else {
             graphics.drawCenteredString(this.font, "§7选择魂技", centerX, centerY - 5, 0xFFFFFF);
         }

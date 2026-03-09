@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.event.server;
 
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
+import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerUpgradeSystem;
@@ -24,6 +25,8 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 // 玩家每Tick触发
 
@@ -74,9 +77,18 @@ public class PWPlayerTickEvent {
                 );
             }
             if (cap.getCastingTick() >= cap.getRequiredCastTick()) {
-                castingSkill.executeEffect(player.level(), player);
-                castingSkill.applyPenalty(player);
-                cap.setSkillLastUsedTime(cap.getWuhunName(), cap.getSelectedSkillSlot(), gameTime);
+                String currentWuhun = cap.getWuhunName();
+                int selectedSlot = cap.getSelectedSkillSlot();
+                int nianxian = 10;
+                List<MobAttributeCapability> rings = cap.getMonsterCapabilityLists().get(currentWuhun);
+                if (rings != null && selectedSlot >= 0 && selectedSlot < rings.size()) {
+                    nianxian = (int) rings.get(selectedSlot).getNianxian();
+                }
+                float powerMultiplier = castingSkill.getPowerMultiplier(nianxian);
+                float costMultiplier = castingSkill.getCostMultiplier(nianxian);
+                castingSkill.executeEffect(player.level(), player, powerMultiplier);
+                castingSkill.applyPenalty(player, costMultiplier);
+                cap.setSkillLastUsedTime(currentWuhun, selectedSlot, gameTime);
                 player.displayClientMessage(Component.literal("§a§l魂技释放成功！"), true);
                 cap.stopCasting();
                 SynsAPI.synsPlayerAttribute(player);
