@@ -9,6 +9,7 @@ import com.TovidY.kunluncontinent.item.armor.ModArmorMaterials;
 import com.TovidY.kunluncontinent.item.baseskillist.bahuangji.one.SkillBahuang1;
 import com.TovidY.kunluncontinent.item.baseskillist.juyuan.one.SkillPanshijuyuan1;
 import com.TovidY.kunluncontinent.item.baseskillist.liejinhu.one.SkillLeijinhu1;
+import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.one.PohunqiangItem;
 import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.one.SkillPohun1;
 import com.TovidY.kunluncontinent.item.hungu.BoneItem;
 import com.TovidY.kunluncontinent.item.klitem.*;
@@ -94,6 +95,7 @@ public class ModItems {
 
     public static final RegistryObject<Item> EYE_TRANSFORMATION  = ITEMS.register("eye_transformation",()->new EyeTransformationItem(new Item.Properties().stacksTo(1)));
 
+
     //御寒魂导器
     public static final RegistryObject<Item> LOW_COLD_PROTECTION = ITEMS.register("low_cold_protection",()->new ThermalAmuletItem(new Item.Properties().stacksTo(1).durability(3000),false));
     public static final RegistryObject<Item> MID_COLD_PROTECTION = ITEMS.register("mid_cold_protection",()->new ThermalAmuletItem(new Item.Properties().stacksTo(1).durability(8999),false));
@@ -168,6 +170,9 @@ public class ModItems {
     public static final RegistryObject<Item> RINSEI_LEGGINGS = ITEMS.register("rinsei_leggings",()->new ModArmorBaseItem(ModArmorMaterials.RINSEI,ArmorItem.Type.LEGGINGS,new Item.Properties()));
     public static final RegistryObject<Item> RINSEI_BOOTS = ITEMS.register("rinsei_boots",()->new ModArmorBaseItem(ModArmorMaterials.RINSEI,ArmorItem.Type.BOOTS,new Item.Properties()));
     //工具
+    //武魂武器
+    public static final RegistryObject<Item> POHUNQIANG = ITEMS.register("pohunqiang", PohunqiangItem::new);
+
     public static final RegistryObject<Item> GRAY_IRON_SWORD = ITEMS.register("gray_iron_sword",()->new ModSwordBaseItem(ModToolTiers.GRAY_IRON,3,-1.8F,new Item.Properties()));
     public static final RegistryObject<Item> GRAY_IRON_PICKAXE = ITEMS.register("gray_iron_pickaxe",()->new PickaxeItem(ModToolTiers.GRAY_IRON,1, -2.0F,new Item.Properties()));
     public static final RegistryObject<Item> GRAY_IRON_AXE = ITEMS.register("gray_iron_axe",()->new AxeItem(ModToolTiers.GRAY_IRON,8.0F, -3.0F,new Item.Properties()));

@@ -69,7 +69,7 @@ public class PWRenderLivingEvent {
             RenderSystem.setShaderColor(1.0f, 0.0f, 0.0f, 0.7f);
             matrix4f.scale(1.2f, 1.0f, 1.2f);
         } else if (nianxian >= 10000) {
-            RenderSystem.setShaderColor(0.1f, 0.05f, 0.1f, 0.9f);
+            RenderSystem.setShaderColor(0.00f, 0.00f, 0.00f, 1.0f);
             matrix4f.scale(1.0f, 1.0f, 1.0f);
         } else if (nianxian >= 1000) {
             RenderSystem.setShaderColor(0.8f, 0.0f, 0.8f, 0.5f);

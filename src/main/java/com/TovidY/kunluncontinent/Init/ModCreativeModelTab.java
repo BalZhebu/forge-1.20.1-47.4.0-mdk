@@ -29,6 +29,8 @@ public class ModCreativeModelTab {
                         }
 
 
+                        //武魂武器
+                        pOutput.accept(ModItems.POHUNQIANG.get());
 
                         //武魂果实
                         for (RegistryObject<Item> itemRegistryObject : ModItems.WUHUNGUOSHI){

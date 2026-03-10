@@ -146,6 +146,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
 
         //普通物品
         add(ModItems.EXTREME_COLD_SNOWFLAKE_FRAGMENT.get(), "§b极寒雪晶碎片");
+        add(ModItems.POHUNQIANG.get(), "§c破魂枪");
 
         //矿石类
         add(ModItems.GRAY_IRON_INGOT.get(),"§8灰铁锭");
