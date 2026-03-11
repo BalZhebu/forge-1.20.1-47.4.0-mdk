@@ -72,7 +72,6 @@ public class SkillPohun1 extends BaseSkillItem {
 
             player.sendSystemMessage(Component.literal("§c§l破魂枪，现！"));
 
-            // 粒子效果
             ((ServerLevel) level).sendParticles(ParticleTypes.SOUL,
                     player.getX(), player.getY() + 1, player.getZ(),
                     15, 0.2, 0.5, 0.2, 0.05);

@@ -31,6 +31,7 @@ public class ModCreativeModelTab {
 
                         //武魂武器
                         pOutput.accept(ModItems.POHUNQIANG.get());
+                        pOutput.accept(ModItems.BAHUANGJI.get());
 
                         //武魂果实
                         for (RegistryObject<Item> itemRegistryObject : ModItems.WUHUNGUOSHI){
@@ -73,6 +74,11 @@ public class ModCreativeModelTab {
 
                         //魂骨
                         for (RegistryObject<Item> itemRegistryObject : ModItems.HUNGULIST){
+                            pOutput.accept(itemRegistryObject.get());
+                        }
+
+                        //锻造模版
+                        for (RegistryObject<Item> itemRegistryObject : ModItems.DUANZAOMOBAN){
                             pOutput.accept(itemRegistryObject.get());
                         }
 

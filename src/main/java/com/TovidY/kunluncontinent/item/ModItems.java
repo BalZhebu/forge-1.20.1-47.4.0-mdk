@@ -50,6 +50,10 @@ public class ModItems {
     public static final RegistryObject<Item> INSTANT_KILL_SWORD =
             ITEMS.register("instant_kill_sword", InstantKillSwordItem::new);
 
+    //升级模版
+    public static final RegistryObject<Item> RINSEI_FORGING_TEMPLATE = ITEMS.register("rinsei_forging_template",()->new Item(new Item.Properties().stacksTo(16)));
+
+
     //药草种子
     public static final RegistryObject<Item> RED_SPIDER_SEEDS = ITEMS.register("red_spider_seeds",
             () -> new ItemNameBlockItem(ModBlocks.RED_SPIDER_LILY_BLOCK.get(), new Item.Properties()){
@@ -169,9 +173,11 @@ public class ModItems {
     public static final RegistryObject<Item> RINSEI_CHESTPLATE = ITEMS.register("rinsei_chestplate",()->new ModArmorBaseItem(ModArmorMaterials.RINSEI,ArmorItem.Type.CHESTPLATE,new Item.Properties()));
     public static final RegistryObject<Item> RINSEI_LEGGINGS = ITEMS.register("rinsei_leggings",()->new ModArmorBaseItem(ModArmorMaterials.RINSEI,ArmorItem.Type.LEGGINGS,new Item.Properties()));
     public static final RegistryObject<Item> RINSEI_BOOTS = ITEMS.register("rinsei_boots",()->new ModArmorBaseItem(ModArmorMaterials.RINSEI,ArmorItem.Type.BOOTS,new Item.Properties()));
+
     //工具
     //武魂武器
     public static final RegistryObject<Item> POHUNQIANG = ITEMS.register("pohunqiang", PohunqiangItem::new);
+    public static final RegistryObject<Item> BAHUANGJI = ITEMS.register("bahuangji", PohunqiangItem::new);
 
     public static final RegistryObject<Item> GRAY_IRON_SWORD = ITEMS.register("gray_iron_sword",()->new ModSwordBaseItem(ModToolTiers.GRAY_IRON,3,-1.8F,new Item.Properties()));
     public static final RegistryObject<Item> GRAY_IRON_PICKAXE = ITEMS.register("gray_iron_pickaxe",()->new PickaxeItem(ModToolTiers.GRAY_IRON,1, -2.0F,new Item.Properties()));
@@ -264,6 +270,11 @@ public class ModItems {
 
     //磐石巨猿
     public static final RegistryObject<SkillPanshijuyuan1> SKILL_PANSHIJUYUAN_1 = ITEMS.register("skill_panshijuyuan_1", SkillPanshijuyuan1::new);
+
+    public static ArrayList<RegistryObject<Item>> DUANZAOMOBAN = new ArrayList<>();
+    static {
+        DUANZAOMOBAN.add(RINSEI_FORGING_TEMPLATE);
+    }
 
     public static ArrayList<RegistryObject<Item>> WUHUNGUOSHI = new ArrayList<>();
     static {

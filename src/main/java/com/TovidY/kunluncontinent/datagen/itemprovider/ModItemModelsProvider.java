@@ -58,6 +58,11 @@ public class ModItemModelsProvider extends ItemModelProvider {
             basicItem(itemRegistry.get());
         }
 
+        //锻造模版
+        for (RegistryObject<Item> itemRegistry : ModItems.DUANZAOMOBAN){
+            basicItem(itemRegistry.get());
+        }
+
         //刻刀类
         for (RegistryObject<Item> itemRegistry : ModItems.ENGRAVING_KNIFE){
             basicItem(itemRegistry.get());

@@ -1,11 +1,13 @@
 package com.TovidY.kunluncontinent.item.baseskillist;
 
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
+import com.TovidY.kunluncontinent.network.SynsAPI;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
+
 public abstract class BaseSkillItem extends Item {
     public BaseSkillItem() {
         super(new Item.Properties().stacksTo(1).fireResistant());
@@ -54,12 +56,16 @@ public abstract class BaseSkillItem extends Item {
     public abstract void executeEffect(Level level, Player player, float powerMultiplier);
 
     public void handleRelease(Level level, Player player, int nianxian) {
-        if (!player.getCooldowns().isOnCooldown(this)) {
-            float powerMultiplier = getPowerMultiplier(nianxian);
-            float costMultiplier = getCostMultiplier(nianxian);
-            executeEffect(level, player, powerMultiplier);
-            applyPenalty(player, costMultiplier);
-            player.getCooldowns().addCooldown(this, getCooldownTicks());
-        }
+        float costMultiplier = getCostMultiplier(nianxian);
+        float finalCost = getBaseCost() * costMultiplier;
+        player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
+            if (cap.getJingshenli() >= finalCost && !player.getCooldowns().isOnCooldown(this)) {
+                float powerMultiplier = getPowerMultiplier(nianxian);
+                executeEffect(level, player, powerMultiplier);
+                applyPenalty(player, costMultiplier); // 扣除消耗
+                player.getCooldowns().addCooldown(this, getCooldownTicks());
+                SynsAPI.synsPlayerAttribute(player); // 确保同步
+            }
+        });
     }
 }

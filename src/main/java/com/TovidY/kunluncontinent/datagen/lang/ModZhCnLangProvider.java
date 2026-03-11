@@ -32,6 +32,9 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("skill.leijinhu.one.description", "消耗%s点精神力，横爪，可击打范围4格内的敌人");
         add("skill.panshijuyuan.one.description", "消耗%s点精神力，重击，可击打范围5格内的敌人并附加缓慢效果");
 
+        //锻造模版
+        add(ModItems.RINSEI_FORGING_TEMPLATE.get(), "§b凛晶锻造模版");
+
 
         //引导书
         add(ModItems.GUIDE_BOOK.get(), "§b《昆仑大陆 · 引导书》");
@@ -147,6 +150,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         //普通物品
         add(ModItems.EXTREME_COLD_SNOWFLAKE_FRAGMENT.get(), "§b极寒雪晶碎片");
         add(ModItems.POHUNQIANG.get(), "§c破魂枪");
+        add(ModItems.BAHUANGJI.get(), "§c八荒戟");
 
         //矿石类
         add(ModItems.GRAY_IRON_INGOT.get(),"§8灰铁锭");

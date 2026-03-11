@@ -4,6 +4,7 @@ import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapabilit
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
+import com.TovidY.kunluncontinent.network.SynsAPI;
 import com.TovidY.kunluncontinent.network.server.S2CCastingSyncPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -13,6 +14,7 @@ import net.minecraftforge.network.PacketDistributor;
 
 import java.util.List;
 import java.util.function.Supplier;
+
 public class CPacketReleaseSkill {
     public CPacketReleaseSkill() {}
 
@@ -26,34 +28,37 @@ public class CPacketReleaseSkill {
         ctx.get().enqueueWork(() -> {
             ServerPlayer player = ctx.get().getSender();
             if (player == null) return;
-
             player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
                 String currentWuhun = cap.getWuhunName();
                 if (currentWuhun == null) {
                     player.displayClientMessage(Component.literal("§c请先开启武魂！"), true);
                     return;
                 }
-
                 BaseSkillItem[] skills = cap.getWuhunSkillsMap().get(currentWuhun);
                 int selectedSlot = cap.getSelectedSkillSlot();
-
                 if (skills != null && selectedSlot >= 0 && selectedSlot < 9) {
                     BaseSkillItem skill = skills[selectedSlot];
                     if (skill == null) {
                         player.displayClientMessage(Component.literal("§c当前槽位未装备魂技！"), true);
                         return;
                     }
-
                     int nianxian = 10;
                     List<MobAttributeCapability> rings = cap.getMonsterCapabilityLists().get(currentWuhun);
                     if (rings != null && selectedSlot < rings.size()) {
                         nianxian = (int) rings.get(selectedSlot).getNianxian();
                     }
-
+                    float costMultiplier = skill.getCostMultiplier(nianxian);
+                    float finalCost = skill.getBaseCost() * costMultiplier;
+                    if (cap.getJingshenli() < finalCost) {
+                        player.displayClientMessage(
+                                Component.literal("§c精神力不足！需要 §e" + String.format("%.1f", finalCost) + " §c当前 §e" + String.format("%.1f", cap.getJingshenli())),
+                                true
+                        );
+                        return;
+                    }
                     long lastUsed = cap.getSkillLastUsedTime(currentWuhun, selectedSlot);
                     long currentTime = player.level().getGameTime();
                     int cooldownTicks = skill.getCooldownTicks();
-
                     if (currentTime - lastUsed < cooldownTicks) {
                         float remainingSeconds = (cooldownTicks - (currentTime - lastUsed)) / 20.0f;
                         player.displayClientMessage(
@@ -70,6 +75,7 @@ public class CPacketReleaseSkill {
                     } else {
                         skill.handleRelease(player.level(), player, nianxian);
                         cap.setSkillLastUsedTime(currentWuhun, selectedSlot, currentTime);
+                        SynsAPI.synsPlayerAttribute(player);
                     }
                 }
             });

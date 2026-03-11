@@ -6,6 +6,7 @@ import com.TovidY.kunluncontinent.item.ModItems;
 import com.TovidY.kunluncontinent.item.ModTags;
 import com.TovidY.kunluncontinent.recipe.ModRecipes;
 import com.TovidY.kunluncontinent.recipe.liandanlurecipe.LiandanRecipeBuilder;
+import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
 import net.minecraft.resources.ResourceLocation;
@@ -719,6 +720,105 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .define('#',ModItems.COLD_HEARTED_STEEL_INGOT.get())
                 .unlockedBy("has_hearted_steel_ingot", has(ModItems.COLD_HEARTED_STEEL_INGOT.get()))
                 .save(pWriter);
+
+        //凛晶
+        SmithingTransformRecipeBuilder.smithing(
+                        Ingredient.of(ModItems.RINSEI_FORGING_TEMPLATE.get()), // 锻造模板
+                        Ingredient.of(ModItems.COLD_HEARTED_STEEL_SWORD.get()), // 基础武器（材料武器）
+                        Ingredient.of(ModItems.RINSEI_INGOT.get()), // 消耗的锭
+                        RecipeCategory.COMBAT, // 配方分类
+                        ModItems.RINSEI_SWORD.get() // 输出的结果武器
+                )
+                .unlocks("has_kunluncontinent_rinsei_duanzao", inventoryTrigger(ItemPredicate.Builder.item()
+                        .of(ModItems.RINSEI_INGOT.get()).build())) // 解锁条件：获得该锭时解锁配方册
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_weapon_smithing1")); // 保存路径
+
+        SmithingTransformRecipeBuilder.smithing(
+                        Ingredient.of(ModItems.RINSEI_FORGING_TEMPLATE.get()), // 锻造模板
+                        Ingredient.of(ModItems.COLD_HEARTED_STEEL_PICKAXE.get()), // 基础武器（材料武器）
+                        Ingredient.of(ModItems.RINSEI_INGOT.get()), // 消耗的锭
+                        RecipeCategory.COMBAT, // 配方分类
+                        ModItems.RINSEI_PICKAXE.get() // 输出的结果武器
+                )
+                .unlocks("has_kunluncontinent_rinsei_duanzao", inventoryTrigger(ItemPredicate.Builder.item()
+                        .of(ModItems.RINSEI_INGOT.get()).build())) // 解锁条件：获得该锭时解锁配方册
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_weapon_smithing2"));
+
+        SmithingTransformRecipeBuilder.smithing(
+                        Ingredient.of(ModItems.RINSEI_FORGING_TEMPLATE.get()), // 锻造模板
+                        Ingredient.of(ModItems.COLD_HEARTED_STEEL_AXE.get()), // 基础武器（材料武器）
+                        Ingredient.of(ModItems.RINSEI_INGOT.get()), // 消耗的锭
+                        RecipeCategory.TOOLS, // 配方分类
+                        ModItems.RINSEI_AXE.get() // 输出的结果武器
+                )
+                .unlocks("has_kunluncontinent_rinsei_duanzao", inventoryTrigger(ItemPredicate.Builder.item()
+                        .of(ModItems.RINSEI_INGOT.get()).build())) // 解锁条件：获得该锭时解锁配方册
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_weapon_smithing3"));
+
+        SmithingTransformRecipeBuilder.smithing(
+                        Ingredient.of(ModItems.RINSEI_FORGING_TEMPLATE.get()), // 锻造模板
+                        Ingredient.of(ModItems.COLD_HEARTED_STEEL_SHOVEL.get()), // 基础武器（材料武器）
+                        Ingredient.of(ModItems.RINSEI_INGOT.get()), // 消耗的锭
+                        RecipeCategory.TOOLS, // 配方分类
+                        ModItems.RINSEI_SHOVEL.get() // 输出的结果武器
+                )
+                .unlocks("has_kunluncontinent_rinsei_duanzao", inventoryTrigger(ItemPredicate.Builder.item()
+                        .of(ModItems.RINSEI_INGOT.get()).build())) // 解锁条件：获得该锭时解锁配方册
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_weapon_smithing4"));
+        SmithingTransformRecipeBuilder.smithing(
+                        Ingredient.of(ModItems.RINSEI_FORGING_TEMPLATE.get()), // 锻造模板
+                        Ingredient.of(ModItems.COLD_HEARTED_STEEL_HOE.get()), // 基础武器（材料武器）
+                        Ingredient.of(ModItems.RINSEI_INGOT.get()), // 消耗的锭
+                        RecipeCategory.TOOLS, // 配方分类
+                        ModItems.RINSEI_HOE.get() // 输出的结果武器
+                )
+                .unlocks("has_kunluncontinent_rinsei_duanzao", inventoryTrigger(ItemPredicate.Builder.item()
+                        .of(ModItems.RINSEI_INGOT.get()).build())) // 解锁条件：获得该锭时解锁配方册
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_weapon_smithing5"));
+
+        SmithingTransformRecipeBuilder.smithing(
+                        Ingredient.of(ModItems.RINSEI_FORGING_TEMPLATE.get()), // 锻造模板
+                        Ingredient.of(ModItems.COLD_HEARTED_STEEL_HELMET.get()), // 基础武器（材料武器）
+                        Ingredient.of(ModItems.RINSEI_INGOT.get()), // 消耗的锭
+                        RecipeCategory.TOOLS, // 配方分类
+                        ModItems.RINSEI_HELMET.get() // 输出的结果武器
+                )
+                .unlocks("has_kunluncontinent_rinsei_duanzao", inventoryTrigger(ItemPredicate.Builder.item()
+                        .of(ModItems.RINSEI_INGOT.get()).build())) // 解锁条件：获得该锭时解锁配方册
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_weapon_smithing6"));
+
+        SmithingTransformRecipeBuilder.smithing(
+                        Ingredient.of(ModItems.RINSEI_FORGING_TEMPLATE.get()), // 锻造模板
+                        Ingredient.of(ModItems.COLD_HEARTED_STEEL_CHESTPLATE.get()), // 基础武器（材料武器）
+                        Ingredient.of(ModItems.RINSEI_INGOT.get()), // 消耗的锭
+                        RecipeCategory.COMBAT, // 配方分类
+                        ModItems.RINSEI_CHESTPLATE.get() // 输出的结果武器
+                )
+                .unlocks("has_kunluncontinent_rinsei_duanzao", inventoryTrigger(ItemPredicate.Builder.item()
+                        .of(ModItems.RINSEI_INGOT.get()).build())) // 解锁条件：获得该锭时解锁配方册
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_weapon_smithing7"));
+
+        SmithingTransformRecipeBuilder.smithing(
+                        Ingredient.of(ModItems.RINSEI_FORGING_TEMPLATE.get()), // 锻造模板
+                        Ingredient.of(ModItems.COLD_HEARTED_STEEL_LEGGINGS.get()), // 基础武器（材料武器）
+                        Ingredient.of(ModItems.RINSEI_INGOT.get()), // 消耗的锭
+                        RecipeCategory.COMBAT, // 配方分类
+                        ModItems.RINSEI_LEGGINGS.get() // 输出的结果武器
+                )
+                .unlocks("has_kunluncontinent_rinsei_duanzao", inventoryTrigger(ItemPredicate.Builder.item()
+                        .of(ModItems.RINSEI_INGOT.get()).build())) // 解锁条件：获得该锭时解锁配方册
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_weapon_smithing8"));
+
+        SmithingTransformRecipeBuilder.smithing(
+                        Ingredient.of(ModItems.RINSEI_FORGING_TEMPLATE.get()), // 锻造模板
+                        Ingredient.of(ModItems.COLD_HEARTED_STEEL_BOOTS.get()), // 基础武器（材料武器）
+                        Ingredient.of(ModItems.RINSEI_INGOT.get()), // 消耗的锭
+                        RecipeCategory.COMBAT, // 配方分类
+                        ModItems.RINSEI_BOOTS.get() // 输出的结果武器
+                )
+                .unlocks("has_kunluncontinent_rinsei_duanzao", inventoryTrigger(ItemPredicate.Builder.item()
+                        .of(ModItems.RINSEI_INGOT.get()).build())) // 解锁条件：获得该锭时解锁配方册
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_weapon_smithing9"));
     }
 
     protected static void oreSmelting(Consumer<FinishedRecipe> pFinishedRecipeConsumer, List<ItemLike> pIngredients, RecipeCategory pCategory, ItemLike pResult, float pExperience, int pCookingTIme, String pGroup) {
