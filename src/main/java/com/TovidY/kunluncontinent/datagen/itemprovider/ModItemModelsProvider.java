@@ -5,6 +5,7 @@ import com.TovidY.kunluncontinent.item.ModItems;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -65,6 +66,11 @@ public class ModItemModelsProvider extends ItemModelProvider {
 
         //刻刀类
         for (RegistryObject<Item> itemRegistry : ModItems.ENGRAVING_KNIFE){
+            basicItem(itemRegistry.get());
+        }
+
+        //魂技类
+        for (RegistryObject<? extends Item> itemRegistry : ModItems.HUNJILIST) {
             basicItem(itemRegistry.get());
         }
 

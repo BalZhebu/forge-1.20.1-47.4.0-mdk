@@ -17,7 +17,7 @@ public class SkillLibrary {
                 ModItems.SKILL_POHUN_1
         ));
         register(Wuhunname.bahuangji, 1, List.of(
-                ModItems.SKILL_POHUN_1
+                ModItems.SKILL_BAHUANG_1
         ));
         register(Wuhunname.liejinhu, 1, List.of(
                 ModItems.SKILL_LEIJINHU_1

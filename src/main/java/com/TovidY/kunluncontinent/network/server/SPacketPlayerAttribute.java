@@ -39,9 +39,6 @@ public class SPacketPlayerAttribute {
                 if (entity != null) {
                     entity.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
                         cap.deserializeNBT(msg.nbt);
-                        if (cap.getWuhunListsname() != null) {
-                            Collections.sort(cap.getWuhunListsname());
-                        }
                     });
                 }
             }

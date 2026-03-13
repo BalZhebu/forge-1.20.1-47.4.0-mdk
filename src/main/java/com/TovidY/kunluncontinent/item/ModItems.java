@@ -6,6 +6,7 @@ import com.TovidY.kunluncontinent.capability.playerattributes.Wuhunname;
 import com.TovidY.kunluncontinent.entity.EntityInit;
 import com.TovidY.kunluncontinent.item.armor.ModArmorBaseItem;
 import com.TovidY.kunluncontinent.item.armor.ModArmorMaterials;
+import com.TovidY.kunluncontinent.item.baseskillist.bahuangji.one.BahuangjiItem;
 import com.TovidY.kunluncontinent.item.baseskillist.bahuangji.one.SkillBahuang1;
 import com.TovidY.kunluncontinent.item.baseskillist.juyuan.one.SkillPanshijuyuan1;
 import com.TovidY.kunluncontinent.item.baseskillist.liejinhu.one.SkillLeijinhu1;
@@ -177,7 +178,7 @@ public class ModItems {
     //工具
     //武魂武器
     public static final RegistryObject<Item> POHUNQIANG = ITEMS.register("pohunqiang", PohunqiangItem::new);
-    public static final RegistryObject<Item> BAHUANGJI = ITEMS.register("bahuangji", PohunqiangItem::new);
+    public static final RegistryObject<Item> BAHUANGJI = ITEMS.register("bahuangji", BahuangjiItem::new);
 
     public static final RegistryObject<Item> GRAY_IRON_SWORD = ITEMS.register("gray_iron_sword",()->new ModSwordBaseItem(ModToolTiers.GRAY_IRON,3,-1.8F,new Item.Properties()));
     public static final RegistryObject<Item> GRAY_IRON_PICKAXE = ITEMS.register("gray_iron_pickaxe",()->new PickaxeItem(ModToolTiers.GRAY_IRON,1, -2.0F,new Item.Properties()));
@@ -258,7 +259,7 @@ public class ModItems {
 
     public static final RegistryObject<Item> HUNHUAN_STORAGE_FIVE = ITEMS.register("hunhuan_storage_five",
             () -> new HunHuanStorageItem(new Item.Properties().stacksTo(1).fireResistant(), 1, 120000000));
-
+    //魂技
     //破魂枪
     public static final RegistryObject<SkillPohun1> SKILL_POHUN_1 = ITEMS.register("skill_pohun_1", SkillPohun1::new);
 
@@ -270,6 +271,15 @@ public class ModItems {
 
     //磐石巨猿
     public static final RegistryObject<SkillPanshijuyuan1> SKILL_PANSHIJUYUAN_1 = ITEMS.register("skill_panshijuyuan_1", SkillPanshijuyuan1::new);
+
+    // 使用 <? extends Item> 告诉 Java：这个列表可以存任何“RegistryObject，且它里面的类是 Item 的子类”
+    public static ArrayList<RegistryObject<? extends Item>> HUNJILIST = new ArrayList<>();
+    static {
+        HUNJILIST.add(SKILL_POHUN_1);
+        HUNJILIST.add(SKILL_BAHUANG_1);
+        HUNJILIST.add(SKILL_LEIJINHU_1);
+        HUNJILIST.add(SKILL_PANSHIJUYUAN_1);
+    }
 
     public static ArrayList<RegistryObject<Item>> DUANZAOMOBAN = new ArrayList<>();
     static {

@@ -30,7 +30,6 @@ public class CPacketSelectSkill {
             if (player != null) {
                 player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
                     cap.setSelectedSkillSlot(msg.slot);
-                    // 同步给客户端，确保快捷栏或轮盘高亮更新
                     NetworkHandler.sendToClient(new SyncShenciAttributesPacket(cap), player);
                 });
             }

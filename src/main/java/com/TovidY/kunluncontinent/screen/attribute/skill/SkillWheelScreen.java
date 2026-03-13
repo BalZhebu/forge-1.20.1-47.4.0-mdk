@@ -36,45 +36,49 @@ public class SkillWheelScreen extends Screen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-
         if (this.minecraft != null && this.minecraft.mouseHandler.isMouseGrabbed()) {
             this.minecraft.mouseHandler.releaseMouse();
         }
-
         int centerX = this.width / 2;
         int centerY = this.height / 2;
-
         if (cap == null) return;
         String currentWuhun = cap.getWuhunName();
         if (currentWuhun == null) return;
-
         BaseSkillItem[] skills = cap.getWuhunSkillsMap().get(currentWuhun);
+        if (skills == null) {
+            skills = new BaseSkillItem[0];
+        }
         this.hoveredSlot = -1;
 
-        // 绘制魂技轮盘
         for (int i = 0; i < 9; i++) {
             float startAngle = i * 40.0f + 2.0f;
             float endAngle = (i + 1) * 40.0f - 2.0f;
-
             boolean isHovered = isMouseInSector(mouseX, mouseY, centerX, centerY, i);
             if (isHovered) this.hoveredSlot = i;
-
             int color = isHovered ? 0xAAFFFFFF : 0x66333333;
-
             drawSector(graphics, centerX, centerY, 60, 100, startAngle, endAngle, color);
-
             double iconAngle = Math.toRadians(i * 40 - 70);
             int iconX = (int) (centerX + Math.cos(iconAngle) * 80) - 8;
             int iconY = (int) (centerY + Math.sin(iconAngle) * 80) - 8;
 
-            if (skills != null && i < skills.length && skills[i] != null) {
-                graphics.renderItem(new ItemStack(skills[i]), iconX, iconY);
+            //材质
+            if (i < skills.length && skills[i] != null) {
+                ItemStack stack = new ItemStack(skills[i]);
+                float scale = 2.5f;
+                RenderSystem.setShader(GameRenderer::getPositionTexShader);
+                graphics.pose().pushPose();
+                graphics.pose().translate(iconX + 8, iconY + 8, 100);
+                graphics.pose().scale(scale, scale, 1.0f);
+                graphics.pose().translate(-8, -8, 0);
+                graphics.renderItem(stack, 0, 0);
+                graphics.renderItemDecorations(this.font, stack, 0, 0);
+                graphics.pose().popPose();
             }
         }
-        if (hoveredSlot != -1 && skills != null && skills[hoveredSlot] != null) {
+        if (hoveredSlot != -1 && skills != null && hoveredSlot < skills.length && skills[hoveredSlot] != null) {
             BaseSkillItem s = skills[hoveredSlot];
             graphics.drawCenteredString(this.font, s.getName(ItemStack.EMPTY), centerX, centerY - 5, 0xFFAA00);
-            int panelWidth = 145; // 稍微加宽以容纳更长的描述和年限
+            int panelWidth = 145;
             int panelX = centerX + 120;
             int panelY = centerY - 60;
             float costMultiplier = 1.0f;

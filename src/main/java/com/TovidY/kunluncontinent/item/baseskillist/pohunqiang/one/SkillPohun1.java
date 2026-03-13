@@ -57,11 +57,11 @@ public class SkillPohun1 extends BaseSkillItem {
     public void executeEffect(Level level, Player player, float powerMultiplier) {
         if (!level.isClientSide) {
             ItemStack spear = new ItemStack(ModItems.POHUNQIANG.get());
-
             CompoundTag nbt = spear.getOrCreateTag();
             nbt.putUUID("OwnerUUID", player.getUUID());
-
-            spear.setHoverName(Component.literal("§6" + player.getName().getString() + "的破魂枪").withStyle(ChatFormatting.BOLD));
+            nbt.putString("OwnerName", player.getScoreboardName()); // 新增：用于描述显示
+            spear.setHoverName(Component.literal("§6" + player.getName().getString() + "的破魂枪")
+                    .withStyle(ChatFormatting.BOLD));
             if (player.getOffhandItem().isEmpty()) {
                 player.setItemInHand(InteractionHand.OFF_HAND, spear);
             } else {
@@ -69,7 +69,6 @@ public class SkillPohun1 extends BaseSkillItem {
                     player.drop(spear, false);
                 }
             }
-
             player.sendSystemMessage(Component.literal("§c§l破魂枪，现！"));
 
             ((ServerLevel) level).sendParticles(ParticleTypes.SOUL,

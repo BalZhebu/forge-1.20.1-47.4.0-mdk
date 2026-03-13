@@ -188,9 +188,21 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         if (nbt.contains("HunguSlots")) {
             hunguInventory.deserializeNBT(nbt.getCompound("HunguSlots"));
         }
+
+        if (nbt.contains("WuhunOrderList") || nbt.contains("iswuhun" + wuhunListsnameall.get(0))) {
+            List<String> tempNames = new ArrayList<>();
+            Map<String, List<MobAttributeCapability>> tempMonsters = new HashMap<>();
+            if (nbt.contains("WuhunOrderList")) {
+                ListTag orderList = nbt.getList("WuhunOrderList", 8);
+                for (int i = 0; i < orderList.size(); i++) {
+                    String name = orderList.getString(i);
+                    tempNames.add(name);
+                }
+            }
+        }
         if (nbt.contains("WuhunSkillsData")) {
             CompoundTag allSkillsTag = nbt.getCompound("WuhunSkillsData");
-            this.wuhunSkillsMap.clear();
+            Map<String, BaseSkillItem[]> tempSkillsMap = new HashMap<>(); // 临时 Map
             for (String wuhunName : allSkillsTag.getAllKeys()) {
                 CompoundTag singleWuhunTag = allSkillsTag.getCompound(wuhunName);
                 BaseSkillItem[] skills = new BaseSkillItem[9];
@@ -203,7 +215,10 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
                         }
                     }
                 }
-                this.wuhunSkillsMap.put(wuhunName, skills);
+                tempSkillsMap.put(wuhunName, skills);
+            }
+            if (!tempSkillsMap.isEmpty()) {
+                this.wuhunSkillsMap = tempSkillsMap;
             }
         }
         this.monsterCapabilityLists.clear();
@@ -211,14 +226,7 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         if (nbt.contains("WuhunOrderList")) {
             ListTag orderList = nbt.getList("WuhunOrderList", 8);
             for (int i = 0; i < orderList.size(); i++) {
-                String name = orderList.getString(i);
-                loadWuhunData(nbt, name);
-            }
-        } else {
-            for (String name : wuhunListsnameall) {
-                if (nbt.getBoolean("iswuhun" + name)) {
-                    loadWuhunData(nbt, name);
-                }
+                loadWuhunData(nbt, orderList.getString(i));
             }
         }
 
