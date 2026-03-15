@@ -65,34 +65,29 @@ public class IceCrystalEntity extends Monster implements RangedAttackMob {
 
     @Override
     public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
-        // 假设你有一个同步年限的 DataParameter，当它更新时刷新碰撞箱
         super.onSyncedDataUpdated(key);
         this.refreshDimensions();
     }
 
     @Override
     public EntityDimensions getDimensions(Pose pose) {
-        // 根据年限计算碰撞箱大小
         float scale = 1.0F;
-        // 这里需要获取年限来计算 scale，逻辑同 Renderer
         return super.getDimensions(pose).scale(scale);
     }
 
     public static boolean checkIceCrystalSpawnRules(EntityType<IceCrystalEntity> entityType, ServerLevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
-        // 1. 维度特有的概率过滤
         if (level.getBiome(pos).is(ModDimensions.POLAR_ICE_BIOME)) {
             if (random.nextFloat() > 0.05F) {
                 return false;
             }
         }
-        // 3. 必须看到天空（防止刷在地底）
         return level.canSeeSky(pos);
     }
 
     @Override
     protected void dropCustomDeathLoot(DamageSource source, int looting, boolean hitByPlayer) {
         super.dropCustomDeathLoot(source, looting, hitByPlayer);
-        if (this.random.nextFloat() < 0.05F) {
+        if (this.random.nextFloat() < 0.1F) {
             this.spawnAtLocation(ModItems.EXTREME_COLD_SNOWFLAKE_FRAGMENT.get());
         }
     }

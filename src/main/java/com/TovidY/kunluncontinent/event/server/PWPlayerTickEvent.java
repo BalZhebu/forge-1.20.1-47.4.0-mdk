@@ -29,7 +29,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 // 玩家每Tick触发
-
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class PWPlayerTickEvent {
 
@@ -40,9 +39,7 @@ public class PWPlayerTickEvent {
             long gameTime = player.level().getGameTime();
             player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(capability -> {
                 playerUpdateServere(player, capability);
-
                 handleSkillCasting(serverPlayer, capability, gameTime);
-                
                 if (gameTime % 20 == 0) {
                     float maxshengming = ModAttributeAPI.getMaxshengming(player);
                     if (Math.abs(maxshengming - player.getMaxHealth()) > 0.1f) {
@@ -56,9 +53,7 @@ public class PWPlayerTickEvent {
                 if (gameTime % 120 == 0) {
                     updateJingshenliRegen(player, capability);
                 }
-
                 updatePlayerFly(player, capability);
-
                 handleMeditationLogic(serverPlayer, capability, gameTime);
             });
         }
@@ -89,8 +84,8 @@ public class PWPlayerTickEvent {
                 castingSkill.executeEffect(player.level(), player, powerMultiplier);
                 castingSkill.applyPenalty(player, costMultiplier);
                 cap.setSkillLastUsedTime(currentWuhun, selectedSlot, gameTime);
-                player.displayClientMessage(Component.literal("§a§l魂技释放成功！"), true);
-                cap.stopCasting();
+                player.displayClientMessage(Component.translatable("gui.kunluncontinent.cast_shifa"), true);
+                cap.stopCasting(player);
                 SynsAPI.synsPlayerAttribute(player);
             }
         }
@@ -161,7 +156,7 @@ public class PWPlayerTickEvent {
                     player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 100, 0));
                 }
                     if (cap.getCurrentCastingSkill() != null) {
-                    cap.stopCasting();
+                    cap.stopCasting(player);
                     player.displayClientMessage(Component.literal("§c魂力紊乱，吟唱中断！"), true);
                 }
             });
@@ -172,11 +167,9 @@ public class PWPlayerTickEvent {
         float currentHealth = player.getHealth();
         float maxHealth = player.getMaxHealth();
         float regenAttr = ModAttributeAPI.getShengminghuifu(player);
-
         if (currentHealth < maxHealth && regenAttr > 0) {
-            float regenPercent = Math.min(regenAttr * 0.002f, 0.06f); // 上限 5%
+            float regenPercent = Math.min(regenAttr * 0.002f, 0.06f);
             float healAmount = maxHealth * regenPercent;
-
             if (healAmount > 0) {
                 player.heal(healAmount);
                 SynsAPI.synsPlayerAttribute(player);
@@ -187,7 +180,6 @@ public class PWPlayerTickEvent {
     private static void updateJingshenliRegen(Player player, PlayerAttributeCapability capability) {
         float currentJingshenli = capability.getJingshenli();
         float maxJingshenli = ModAttributeAPI.getMaxjingshenli(player);
-
         if (currentJingshenli < maxJingshenli) {
             float regenAmount = maxJingshenli * 0.01f;
             float nextJingshenli = Math.min(currentJingshenli + regenAmount, maxJingshenli);
@@ -207,11 +199,9 @@ public class PWPlayerTickEvent {
             } else {
                 player.getAbilities().mayfly = false;
             }
-
             if (player.getAbilities().flying && player.level().getGameTime() % 10 == 0) {
                 capability.setJingshenli(capability.getJingshenli() - 30 + (float) capability.getDengji() / 5);
             }
-
             if (capability.getWuhunName() != null && player.level().getGameTime() % 20 == 0) {
                 int level = capability.getDengji();
                 float cost;

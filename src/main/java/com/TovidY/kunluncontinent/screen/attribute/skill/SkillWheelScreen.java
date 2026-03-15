@@ -109,7 +109,6 @@ public class SkillWheelScreen extends Screen {
             }
             currentY += 15;
             graphics.drawString(this.font, "§b魂技冷却: " + (s.getCooldownTicks()/20) + "秒", panelX, currentY, 0x55FFFF);
-
         } else {
             graphics.drawCenteredString(this.font, "§7选择魂技", centerX, centerY - 5, 0xFFFFFF);
         }

@@ -18,19 +18,30 @@ public class ModZhCnLangProvider extends LanguageProvider {
     protected void addTranslations() {
         //技能代码
         add(ModItems.SKILL_POHUN_1.get(), "§c《破魂枪》第一魂技[破魂枪]");
+        add(ModItems.SKILL_POHUN_2.get(), "§c《破魂枪》第二魂技[枪芒]");
 
         add(ModItems.SKILL_BAHUANG_1.get(), "§c《八荒戟》第一魂技[八荒戟]");
+        add(ModItems.SKILL_BAHUANG_2.get(), "§c《八荒戟》第二魂技[横扫]");
 
         add(ModItems.SKILL_LEIJINHU_1.get(), "§c《裂金虎》第一魂技[横爪]");
+        add(ModItems.SKILL_LEIJINHU_2.get(), "§c《裂金虎》第二魂技[虎啸]");
 
         add(ModItems.SKILL_PANSHIJUYUAN_1.get(), "§c《磐石巨猿》第一魂技[重击]");
+        add(ModItems.SKILL_PANSHIJUYUAN_2.get(), "§c《磐石巨猿》第二魂技[石肤]");
 
         add("无技能","暂无技能描述");
 
         add("skill.pohunqiang.one.description", "消耗%s点精神力，凝结武魂实体化。");
+        add("skill.pohunqiang.two.description", "消耗%s点精神力，释放枪芒：向前冲刺，对路径上的敌人造成伤害");
+
         add("skill.bakuangji.one.description", "消耗%s点精神力，凝结武魂实体化。");
+        add("skill.bahuangji.two.description", "消耗%s点精神力，释放横扫：对面前扇形范围敌人造成伤害");
+
         add("skill.leijinhu.one.description", "消耗%s点精神力，横爪，可击打范围4格内的敌人");
+        add("skill.liejinhu.two.description","消耗%s点精神力，虎啸：释放技能时对离得越近的敌人造成虚弱和缓慢效果，对5格以外的敌人造成缓慢效果");
+
         add("skill.panshijuyuan.one.description", "消耗%s点精神力，重击，可击打范围5格内的敌人并附加缓慢效果");
+        add("skill.panshijuyuan.two.description","消耗%s点精神力，石肤：对自己附加30%的防御力");
 
         //锻造模版
         add(ModItems.RINSEI_FORGING_TEMPLATE.get(), "§b凛晶锻造模版");
@@ -65,6 +76,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
 
         add(ModItems.RED_SPIDER_LILY_POTION.get(), "§c《忘川渡·彼岸花》");
         add(ModItems.EYE_TRANSFORMATION.get(), "§5重修之眼");
+        add(ModItems.EXTREME_COLD.get(),"§b冰晶");
 
         add("item.kunluncontinent.guide_book.tooltip","§7第一次进入游戏即可获得");
         add("item.kunluncontinent.guide_book.tooltip1","§7请务必认真仔细查看");
@@ -145,10 +157,10 @@ public class ModZhCnLangProvider extends LanguageProvider {
         //传送门
         add(ModBlocks.POLAR_ICE_PORTAL.get(), "极寒冰域传送门");
         //打火石
-        add(ModItems.EXTREME_COLD_SNOWFLAKE.get(), "§b极寒雪晶");
+        add(ModItems.EXTREME_COLD_SNOWFLAKE.get(), "§b极寒冰域打火石");
 
         //普通物品
-        add(ModItems.EXTREME_COLD_SNOWFLAKE_FRAGMENT.get(), "§b极寒雪晶碎片");
+        add(ModItems.EXTREME_COLD_SNOWFLAKE_FRAGMENT.get(), "§b雪晶碎片");
         add(ModItems.POHUNQIANG.get(), "§c破魂枪");
         add(ModItems.BAHUANGJI.get(), "§c八荒戟");
 
@@ -334,7 +346,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModBlocks.PUTUAN_BLOCK.get(),"蒲团");
         add("putuan.xiulian.finish","§c你感到浑身清爽，但打坐时间太长你感到有被心魔入侵的风险，出去走走吧");
         add(ModBlocks.DROSS_BLOCK.get(), "丹渣块");
-        add("tooltip.kunluncontinent.dross_block","放入炼丹炉\n可明显减少破碎丹药概率");
+        add("tooltip.kunluncontinent.dross_block","放入炼丹炉可明显减少破碎丹药概率");
 
         //武魂果实
         add(ModItems.GUOSHI_POHUNQIANG.get(), "§c武魂果实 - 破魂枪");
@@ -392,6 +404,9 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("tooltip.kunluncontinent.extreme_cold_snowflake2","从左往右的第二个方块最上面的一面激活传送门");
         add("tooltip.item.klitem.eyetf","§7可重复使用");
         add("item.red_spider_seeds.tooltip","§7生成在废弃地狱门附近的地狱岩上");
+        add("gui.kunluncontinent.casting","§e正在施法中...");
+        add("gui.kunluncontinent.cast_shifa","§a§l魂技释放成功！");
+        add("item.rinsei_ingot.tooltip","击杀雪魔概率掉落");
 
         //草药
         add(ModItems.RED_SPIDER_LILY_ITEM.get(), "§c彼岸花");

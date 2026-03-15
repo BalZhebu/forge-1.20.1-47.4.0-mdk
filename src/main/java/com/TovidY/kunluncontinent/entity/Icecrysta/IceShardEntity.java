@@ -34,7 +34,6 @@ public class IceShardEntity extends ThrowableItemProjectile {
         if (!this.level().isClientSide && result.getEntity() instanceof LivingEntity target) {
             Entity owner = this.getOwner();
             if (owner instanceof LivingEntity attacker) {
-                // 使用你的属性 API 获取攻击力
                 float damage = ModAttributeAPI.getGongji(attacker);
                 if (target.hurt(this.damageSources().thrown(this, attacker), damage)) {
                     target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 1));

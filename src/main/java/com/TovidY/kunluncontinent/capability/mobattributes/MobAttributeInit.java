@@ -25,12 +25,9 @@ public class MobAttributeInit {
         Mob mob = event.getEntity();
 
         mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY).ifPresent(attr -> {
-            if (attr.getNianxian() == 0) {
-                long nianxian = MobAttributeLogic.calculateNianxian(
-                        mob.level().dimension(),
-                        mob.blockPosition()
-                );
-                attr.initNianxian(nianxian);
+                    if (attr.getNianxian() == 0) {
+                        long nianxian = MobAttributeLogic.calculateNianxian(mob);
+                        attr.initNianxian(nianxian);
             }
             applyAttributesToEntity(mob, attr);
         });

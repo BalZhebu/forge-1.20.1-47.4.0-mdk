@@ -1,6 +1,7 @@
 package com.TovidY.kunluncontinent.potion;
 
 import com.TovidY.kunluncontinent.KlMain;
+import com.TovidY.kunluncontinent.potion.skilleffect.StoneSkinEffect;
 import com.TovidY.kunluncontinent.potion.specialeffects.ArmorPiercingEffect;
 import com.TovidY.kunluncontinent.potion.specialeffects.DizzinessEffect;
 import com.TovidY.kunluncontinent.potion.specialeffects.RedSpiderEffect;
@@ -21,6 +22,8 @@ public class ModEffects {
     public static final RegistryObject<MobEffect> DIZZINESS = REGISTER.register("dizziness", DizzinessEffect::new);
     public static final RegistryObject<MobEffect> EXTREME_COLD = REGISTER.register("extreme_cold", ExtremeColdEffect::new);
     public static final RegistryObject<MobEffect> RED_SPIDER_LILY_POTION = REGISTER.register("red_spider_lily_potion", RedSpiderEffect::new);
+    public static final RegistryObject<MobEffect> STONE_SKIN = REGISTER.register("stone_skin", StoneSkinEffect::new);
+
 
     public static void register(IEventBus eventBus) {
         REGISTER.register(eventBus);

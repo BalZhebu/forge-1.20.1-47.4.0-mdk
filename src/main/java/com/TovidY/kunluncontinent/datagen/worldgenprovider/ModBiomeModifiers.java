@@ -38,29 +38,25 @@ public class ModBiomeModifiers {
 
     public static void bootstrap(BootstapContext<BiomeModifier> context) {
         var biomes = context.lookup(Registries.BIOME);
-
         // 1. 基础配置：覆盖所有雪狐出现的群系（权重 10）
         context.register(ADD_ICE_CRYSTAL_BASE, new ForgeBiomeModifiers.AddSpawnsBiomeModifier(
                 biomes.getOrThrow(BiomeTags.SPAWNS_SNOW_FOXES),
                 List.of(new MobSpawnSettings.SpawnerData(EntityInit.ICE_CRYSTAL.get(), 20, 1, 2))
         ));
-
         // 2. 增强配置：仅针对冰刺之地 (Ice Spikes)
-        // 我们通过 HolderSet.direct 直接指向特定群系，也可以自己写个 Tag
         context.register(ADD_ICE_CRYSTAL_SPIKES, new ForgeBiomeModifiers.AddSpawnsBiomeModifier(
                 HolderSet.direct(biomes.getOrThrow(Biomes.ICE_SPIKES)),
                 // 这里给一个很高的权重（比如 80），叠加基础的 10，总权重就是 90，几乎和僵尸一样多
                 List.of(new MobSpawnSettings.SpawnerData(EntityInit.ICE_CRYSTAL.get(), 30, 2, 4))
         ));
-
         //让这个生物生成在极寒冰域
         context.register(ADD_ICE_CRYSTAL_ICE, new ForgeBiomeModifiers.AddSpawnsBiomeModifier(
                 HolderSet.direct(biomes.getOrThrow(ModDimensions.POLAR_ICE_BIOME)),
                 List.of(
                         //冰晶
-                        new MobSpawnSettings.SpawnerData(EntityInit.ICE_CRYSTAL.get(), 5, 1, 1),
+                        new MobSpawnSettings.SpawnerData(EntityInit.ICE_CRYSTAL.get(), 15, 1, 1),
                         //雪魔
-                        new MobSpawnSettings.SpawnerData(EntityInit.SNOW_DEMON.get(), 2, 1, 1),
+                        new MobSpawnSettings.SpawnerData(EntityInit.SNOW_DEMON.get(), 10, 1, 1),
                         //流浪者
                         new MobSpawnSettings.SpawnerData(EntityType.STRAY, 20, 2, 4),
                         //苦力怕

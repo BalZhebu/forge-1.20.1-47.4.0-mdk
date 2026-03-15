@@ -8,10 +8,14 @@ import com.TovidY.kunluncontinent.item.armor.ModArmorBaseItem;
 import com.TovidY.kunluncontinent.item.armor.ModArmorMaterials;
 import com.TovidY.kunluncontinent.item.baseskillist.bahuangji.one.BahuangjiItem;
 import com.TovidY.kunluncontinent.item.baseskillist.bahuangji.one.SkillBahuang1;
+import com.TovidY.kunluncontinent.item.baseskillist.bahuangji.two.SkillBahuang2;
 import com.TovidY.kunluncontinent.item.baseskillist.juyuan.one.SkillPanshijuyuan1;
+import com.TovidY.kunluncontinent.item.baseskillist.juyuan.two.SkillPanshijuyuan2;
 import com.TovidY.kunluncontinent.item.baseskillist.liejinhu.one.SkillLeijinhu1;
+import com.TovidY.kunluncontinent.item.baseskillist.liejinhu.two.SkillLeijinhu2;
 import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.one.PohunqiangItem;
 import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.one.SkillPohun1;
+import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.two.SkillPohun2;
 import com.TovidY.kunluncontinent.item.hungu.BoneItem;
 import com.TovidY.kunluncontinent.item.klitem.*;
 import com.TovidY.kunluncontinent.item.neidanitems.NeidanItem;
@@ -97,6 +101,7 @@ public class ModItems {
     //材料物品（普通物品）
     public static final RegistryObject<Item> EXTREME_COLD_SNOWFLAKE_FRAGMENT = ITEMS.register("extreme_cold_snowflake_fragment",()->new Item(new Item.Properties()));
     public static final RegistryObject<Item> GUIDE_BOOK = ITEMS.register("guide_book",()->new GuideBookItem(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> EXTREME_COLD = ITEMS.register("extreme_cold",()->new Item(new Item.Properties()));
 
     public static final RegistryObject<Item> EYE_TRANSFORMATION  = ITEMS.register("eye_transformation",()->new EyeTransformationItem(new Item.Properties().stacksTo(1)));
 
@@ -137,7 +142,12 @@ public class ModItems {
     public static final RegistryObject<Item> RED_FIRE_INGOT = ITEMS.register("red_fire_ingot",()->new Item(new Item.Properties()));
     public static final RegistryObject<Item> SUNKEN_SILVER_INGOT = ITEMS.register("sunken_silver_ingot",()->new Item(new Item.Properties()));
     public static final RegistryObject<Item> COLD_HEARTED_STEEL_INGOT = ITEMS.register("cold_hearted_steel_ingot",()->new Item(new Item.Properties()));
-    public static final RegistryObject<Item> RINSEI_INGOT = ITEMS.register("rinsei_ingot",()->new Item(new Item.Properties()));
+    public static final RegistryObject<Item> RINSEI_INGOT = ITEMS.register("rinsei_ingot",()->new Item(new Item.Properties()){
+        @Override
+        public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
+            pTooltipComponents.add(Component.translatable("item.rinsei_ingot.tooltip").withStyle(ChatFormatting.GRAY));
+        }
+    });
 
     public static final RegistryObject<Item> RUBY = ITEMS.register("ruby",()->new Item(new Item.Properties()));
     public static final RegistryObject<Item> AMETHYST = ITEMS.register("amethyst",()->new Item(new Item.Properties()));
@@ -262,15 +272,19 @@ public class ModItems {
     //魂技
     //破魂枪
     public static final RegistryObject<SkillPohun1> SKILL_POHUN_1 = ITEMS.register("skill_pohun_1", SkillPohun1::new);
+    public static final RegistryObject<SkillPohun2> SKILL_POHUN_2 = ITEMS.register("skill_pohun_2", SkillPohun2::new);
 
     //八荒戟
     public static final RegistryObject<SkillBahuang1> SKILL_BAHUANG_1 = ITEMS.register("skill_bahuang_1", SkillBahuang1::new);
+    public static final RegistryObject<SkillBahuang2> SKILL_BAHUANG_2 = ITEMS.register("skill_bahuang_2", SkillBahuang2::new);
 
     //裂金虎
     public static final RegistryObject<SkillLeijinhu1> SKILL_LEIJINHU_1 = ITEMS.register("skill_leijinhu_1", SkillLeijinhu1::new);
+    public static final RegistryObject<SkillLeijinhu2> SKILL_LEIJINHU_2 = ITEMS.register("skill_leijinhu_2", SkillLeijinhu2::new);
 
     //磐石巨猿
     public static final RegistryObject<SkillPanshijuyuan1> SKILL_PANSHIJUYUAN_1 = ITEMS.register("skill_panshijuyuan_1", SkillPanshijuyuan1::new);
+    public static final RegistryObject<SkillPanshijuyuan2> SKILL_PANSHIJUYUAN_2 = ITEMS.register("skill_panshijuyuan_2", SkillPanshijuyuan2::new);
 
     // 使用 <? extends Item> 告诉 Java：这个列表可以存任何“RegistryObject，且它里面的类是 Item 的子类”
     public static ArrayList<RegistryObject<? extends Item>> HUNJILIST = new ArrayList<>();
@@ -279,6 +293,10 @@ public class ModItems {
         HUNJILIST.add(SKILL_BAHUANG_1);
         HUNJILIST.add(SKILL_LEIJINHU_1);
         HUNJILIST.add(SKILL_PANSHIJUYUAN_1);
+//        HUNJILIST.add(SKILL_POHUN_2);
+//        HUNJILIST.add(SKILL_BAHUANG_2);
+//        HUNJILIST.add(SKILL_LEIJINHU_2);
+//        HUNJILIST.add(SKILL_PANSHIJUYUAN_2);
     }
 
     public static ArrayList<RegistryObject<Item>> DUANZAOMOBAN = new ArrayList<>();
@@ -298,6 +316,7 @@ public class ModItems {
     static {
         NORMALITEMSLIST.add(EXTREME_COLD_SNOWFLAKE_FRAGMENT);
         NORMALITEMSLIST.add(GUIDE_BOOK);
+        NORMALITEMSLIST.add(EXTREME_COLD);
 
         NORMALITEMSLIST.add(EYE_TRANSFORMATION);
     }

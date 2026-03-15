@@ -11,6 +11,8 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -25,6 +27,8 @@ import java.util.*;
 
 //玩家属性
 public class PlayerAttributeCapability implements ICapabilitySerializable<CompoundTag> {
+
+    public static final UUID CASTING_SLOWDOWN_ID = UUID.fromString("7f369f4a-8e2b-4f9e-a0e4-522f1c305c6d");
 
     private int castingTick = 0;
     private int requiredCastTick = 0;
@@ -466,11 +470,23 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         return this.requiredCastTick;
     }
 
-    public void stopCasting() {
+    public void stopCasting(Player player) {
         this.currentCastingSkill = null;
         this.castingTick = 0;
         this.requiredCastTick = 0;
+
+        removeCastingSlowdown(player);
     }
+
+    public void removeCastingSlowdown(Player player) {
+        if (player != null) {
+            var speedAttr = player.getAttribute(Attributes.MOVEMENT_SPEED);
+            if (speedAttr != null && speedAttr.hasModifier(CASTING_SLOWDOWN_MODIFIER)) {
+                speedAttr.removeModifier(CASTING_SLOWDOWN_ID);
+            }
+        }
+    }
+
 
     private Map<String, Long> skillCooldowns = new HashMap<>();
 
@@ -482,7 +498,7 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         skillCooldowns.put(wuhun + "_" + slot, time);
     }
 
-
+    public static final AttributeModifier CASTING_SLOWDOWN_MODIFIER = new AttributeModifier(CASTING_SLOWDOWN_ID, "Casting skill slowdown", -0.7, AttributeModifier.Operation.MULTIPLY_TOTAL);
 
     public Map<String, List<MobAttributeCapability>> getMonsterCapabilityLists() {
         return monsterCapabilityLists;

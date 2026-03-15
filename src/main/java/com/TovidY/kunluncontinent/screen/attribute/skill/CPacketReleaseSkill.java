@@ -9,11 +9,15 @@ import com.TovidY.kunluncontinent.network.server.S2CCastingSyncPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.util.List;
 import java.util.function.Supplier;
+
+import static com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability.CASTING_SLOWDOWN_MODIFIER;
 
 public class CPacketReleaseSkill {
     public CPacketReleaseSkill() {}
@@ -70,8 +74,12 @@ public class CPacketReleaseSkill {
                     int castTime = skill.getCastTime();
                     if (castTime > 0) {
                         cap.startCasting(skill, castTime);
+                        AttributeInstance speedAttr = player.getAttribute(Attributes.MOVEMENT_SPEED);
+                        if (speedAttr != null && !speedAttr.hasModifier(CASTING_SLOWDOWN_MODIFIER)) {
+                            speedAttr.addTransientModifier(CASTING_SLOWDOWN_MODIFIER);
+                        }
                         NetworkHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new S2CCastingSyncPacket(castTime));
-                        player.displayClientMessage(Component.literal("§e正在引导魂技..."), true);
+                        player.displayClientMessage(Component.translatable("gui.kunluncontinent.casting"), true);
                     } else {
                         skill.handleRelease(player.level(), player, nianxian);
                         cap.setSkillLastUsedTime(currentWuhun, selectedSlot, currentTime);

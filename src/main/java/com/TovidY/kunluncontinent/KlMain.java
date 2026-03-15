@@ -44,8 +44,6 @@ public class KlMain {
     {
         IEventBus modEventBus = context.getModEventBus();
 
-        modEventBus.addListener(this::commonSetup);
-
         MinecraftForge.EVENT_BUS.register(this);
 
         ModItems.register(modEventBus);
@@ -71,15 +69,6 @@ public class KlMain {
 
         ModEffects.register(modEventBus);
 
-    }
-
-    @SubscribeEvent
-    public void commonSetup(FMLCommonSetupEvent event) {
-        event.enqueueWork(() -> {
-            // 设置冰晶的生成规则：怪物类型、高度(地表)、生成规则(怪物通用规则)
-            SpawnPlacements.register(EntityInit.ICE_CRYSTAL.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, IceCrystalEntity::checkIceCrystalSpawnRules);
-            SpawnPlacements.register(EntityInit.SNOW_DEMON.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SnowDemonEntity::checkSnowDemonSpawnRules);
-        });
     }
 
     @SubscribeEvent

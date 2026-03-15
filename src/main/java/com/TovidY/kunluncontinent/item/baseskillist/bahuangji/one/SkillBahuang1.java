@@ -32,7 +32,7 @@ public class SkillBahuang1 extends BaseSkillItem {
 
     @Override
     public int getCooldownTicks() {
-        return 200; // 10秒冷却
+        return 60; // 10秒冷却
     }
 
     @Override

@@ -2,11 +2,13 @@ package com.TovidY.kunluncontinent.entity.snowdemon;
 
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.entity.Icecrysta.IceCrystalEntity;
+import com.TovidY.kunluncontinent.item.ModItems;
 import com.TovidY.kunluncontinent.worldgen.ModDimensions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
@@ -23,6 +25,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.ForgeEventFactory;
 
@@ -52,15 +55,15 @@ public class SnowDemonEntity extends Monster {
     }
 
     public static boolean checkSnowDemonSpawnRules(EntityType<SnowDemonEntity> entityType, ServerLevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
-        if (level.getBiome(pos).is(ModDimensions.POLAR_ICE_BIOME)) {
-            if (random.nextFloat() > 0.05F) {
-                return false;
-            }
-        }
-        if (!Monster.checkMonsterSpawnRules(entityType, level, spawnType, pos, random)) {
+        if (!level.getBiome(pos).is(ModDimensions.POLAR_ICE_BIOME)) {
             return false;
         }
-        return level.canSeeSky(pos);
+        int surfaceHeight = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ());
+        if (pos.getY() < surfaceHeight - 2) {
+            return false;
+        }
+        return level.getBlockState(pos.below()).isValidSpawn(level, pos.below(), entityType)
+                && level.getRawBrightness(pos, 0) >= 0;
     }
 
     @Override
@@ -75,6 +78,14 @@ public class SnowDemonEntity extends Monster {
                     }
                 });
             }
+        }
+    }
+
+    @Override
+    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean hitByPlayer) {
+        super.dropCustomDeathLoot(source, looting, hitByPlayer);
+        if (this.random.nextFloat() < 0.1F) {
+            this.spawnAtLocation(ModItems.RINSEI_INGOT.get());
         }
     }
 

@@ -27,7 +27,7 @@ public class SkillPohun1 extends BaseSkillItem {
     }
     @Override
     public int getCooldownTicks() {
-        return 200;
+        return 60;
     }
     @Override
     public float getDamageMultiplier() {

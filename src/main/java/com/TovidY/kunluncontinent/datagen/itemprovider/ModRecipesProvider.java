@@ -67,6 +67,17 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
         LiandanRecipeBuilder.create(ModItems.NEIDAN9.get(), ModItems.YIZAICHUANGSHENG_DAN.get(), 400)
                 .save(pWriter,ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "yizhaichuangsheng_dan_from_neidan9"));
 
+        //锻造模版
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.RINSEI_FORGING_TEMPLATE.get())
+                .pattern("IAI")
+                .pattern("IBI")
+                .pattern("III")
+                .define('I', ModItems.RINSEI_INGOT.get())
+                .define('A', Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE)
+                .define('B', ModItems.EXTREME_COLD.get())
+                .unlockedBy("has_rinsei_forging)", has(ModItems.RINSEI_FORGING_TEMPLATE.get()))
+                .save(pWriter);
+
         //丹渣
         SpecialRecipeBuilder.special(ModRecipes.DROSS_CONVERSION_SERIALIZER.get())
                 .save(pWriter, KlMain.MOD_ID + ":dross_conversion");
@@ -79,12 +90,22 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .unlockedBy("has_guide_book", has(ModItems.GUIDE_BOOK.get()))
                 .save(pWriter);
 
-        //极寒冰晶
+        //极寒打火石
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.EXTREME_COLD_SNOWFLAKE.get())
+                .pattern("III")
+                .pattern("IAI")
+                .pattern("III")
+                .define('A', Items.FLINT_AND_STEEL)
+                .define('I', ModItems.EXTREME_COLD_SNOWFLAKE_FRAGMENT.get())
+                .unlockedBy("has_extreme_cold_snowflake_peif", has(ModItems.EXTREME_COLD_SNOWFLAKE_FRAGMENT.get()))
+                .save(pWriter);
+
+        //冰晶
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.EXTREME_COLD.get())
                 .pattern("II")
                 .pattern("II")
                 .define('I', ModItems.EXTREME_COLD_SNOWFLAKE_FRAGMENT.get())
-                .unlockedBy("has_extreme_cold_snowflake_peif", has(ModItems.EXTREME_COLD_SNOWFLAKE_FRAGMENT.get()))
+                .unlockedBy("has_extreme_cold_snowflak", has(ModItems.EXTREME_COLD.get()))
                 .save(pWriter);
 
         //极寒冰晶框架
@@ -92,9 +113,9 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .pattern("III")
                 .pattern("IWI")
                 .pattern("III")
-                .define('W', ModItems.EXTREME_COLD_SNOWFLAKE.get())
+                .define('W', ModItems.EXTREME_COLD.get())
                 .define('I', Items.SNOW_BLOCK)
-                .unlockedBy("has_polar_ice_portal_block_peifang)", has(ModItems.EXTREME_COLD_SNOWFLAKE.get()))
+                .unlockedBy("has_polar_ice_portal_block_peifang)", has(ModItems.EXTREME_COLD.get()))
                 .save(pWriter);
 
         //低阶魂环存储核心
