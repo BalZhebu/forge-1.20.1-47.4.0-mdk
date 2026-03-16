@@ -37,9 +37,11 @@ import net.minecraftforge.common.data.ExistingFileHelper;
             simpleBlockWithItem(ModBlocks.DROSS_BLOCK.get(), cubeAll(ModBlocks.DROSS_BLOCK.get()));
             //传送门方块
             simpleBlockWithItem(ModBlocks.POLAR_ICE_PORTAL_BLOCK.get(), cubeAll(ModBlocks.POLAR_ICE_PORTAL_BLOCK.get()));
-
+            //魂土
+            simpleBlockWithItem(ModBlocks.SOUL_SOIL.get(), cubeAll(ModBlocks.SOUL_SOIL.get()));
             //草药
             makeCrop((CropBlock) ModBlocks.RED_SPIDER_LILY_BLOCK.get(), "red_spider_lily");
+            makeCrop((CropBlock) ModBlocks.GUYUANCAO_BLOCK.get(), "guyuancao");
 
             //传送门
             Block portalBlock = ModBlocks.POLAR_ICE_PORTAL.get();

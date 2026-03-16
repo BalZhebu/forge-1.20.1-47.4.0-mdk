@@ -47,7 +47,7 @@ public class SkillPohun2 extends BaseSkillItem {
         if (!level.isClientSide) {
             ServerLevel serverLevel = (ServerLevel) level;
             Vec3 lookDirection = player.getLookAngle().normalize();
-            player.setDeltaMovement(lookDirection.x * 1.5, 0.1, lookDirection.z * 1.5);
+            player.setDeltaMovement(lookDirection.x * 2.5, 0.1, lookDirection.z * 2.5);
             player.hurtMarked = true;
             for (int i = 0; i < 8; i++) {
                 double px = player.getX() + lookDirection.x * i * 0.5;

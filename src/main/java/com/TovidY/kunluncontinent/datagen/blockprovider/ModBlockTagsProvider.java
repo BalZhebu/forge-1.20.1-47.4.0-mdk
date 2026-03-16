@@ -20,6 +20,10 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
     @Override
     protected void addTags(HolderLookup.Provider pProvider) {
 
+        //铲子
+        tag(BlockTags.MINEABLE_WITH_SHOVEL)
+                .add(ModBlocks.SOUL_SOIL.get());
+
         //锄子
         tag(BlockTags.MINEABLE_WITH_HOE)
                 .add(ModBlocks.PUTUAN_BLOCK.get())

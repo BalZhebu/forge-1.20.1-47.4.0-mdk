@@ -20,14 +20,18 @@ public class LiandanRecipe implements Recipe<SimpleContainer> {
     private final ItemStack result;      // 产出的丹药基础物品
     private final int cookTime;          // 炼制耗时
 
+    private final boolean isSpecial;
+
     private final int recipeLevel;
 
-    public LiandanRecipe(ResourceLocation id, Ingredient ingredient, ItemStack result, int cookTime,int recipeLevel) {
+    public LiandanRecipe(ResourceLocation id, Ingredient ingredient, ItemStack result, int cookTime,int recipeLevel,boolean isSpecial) {
         this.id = id;
         this.ingredient = ingredient;
         this.result = result;
         this.cookTime = cookTime;
         this.recipeLevel = recipeLevel;
+
+        this.isSpecial = isSpecial;
     }
 
     public int getRecipeLevel() {
@@ -35,6 +39,10 @@ public class LiandanRecipe implements Recipe<SimpleContainer> {
             return danyao.getTier();
         }
         return 1;
+    }
+
+    public boolean isSpecial() {
+        return isSpecial;
     }
 
     @Override

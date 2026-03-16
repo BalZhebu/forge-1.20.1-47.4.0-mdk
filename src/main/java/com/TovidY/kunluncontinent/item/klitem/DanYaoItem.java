@@ -203,6 +203,8 @@ public class DanYaoItem extends Item {
         if (this.jingshenli > 0) list.add(Component.literal("精神力: +" + String.format("%.1f", this.jingshenli * m)).withStyle(ChatFormatting.AQUA));
         if (this.baojilv > 0) list.add(Component.literal("暴击率: +" + String.format("%.1f", this.baojilv * m) + "%").withStyle(ChatFormatting.RED));
 
+        if (this.maxjingshenli > 0) list.add(Component.literal("最大精神力: +" + String.format("%.1f", this.maxjingshenli * m)).withStyle(ChatFormatting.DARK_AQUA));
+
         // 分隔线
         if (this.minLevel > 0) {
             list.add(Component.literal(" "));

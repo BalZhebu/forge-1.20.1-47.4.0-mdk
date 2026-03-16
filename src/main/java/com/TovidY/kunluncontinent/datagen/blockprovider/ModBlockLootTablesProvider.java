@@ -43,10 +43,16 @@ public class ModBlockLootTablesProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.SAPPHIRE_ORE.get());
         dropSelf(ModBlocks.STARLIGHT_STONE_ORE.get());
 
+        //蒲团
         dropSelf(ModBlocks.PUTUAN_BLOCK.get());
 
+        //魂土
+        dropSelf(ModBlocks.SOUL_SOIL.get());
+
+        //丹渣
         dropSelf(ModBlocks.DROSS_BLOCK.get());
 
+        //炼丹炉
         dropSelf(ModBlocks.LIANDANLU1.get());
         dropSelf(ModBlocks.LIANDANLU2.get());
         dropSelf(ModBlocks.LIANDANLU3.get());
@@ -70,6 +76,9 @@ public class ModBlockLootTablesProvider extends BlockLootSubProvider {
         // 参数：方块对象, 成熟掉落物, 种子, 最大等级
         this.add(ModBlocks.RED_SPIDER_LILY_BLOCK.get(),
                 block -> createFortuneCropDrops(block, ModItems.RED_SPIDER_LILY_ITEM.get(), ModItems.RED_SPIDER_SEEDS.get(), 3));
+
+        this.add(ModBlocks.GUYUANCAO_BLOCK.get(), block -> createFortuneCropDrops(block, ModItems.GUYUANCAO_ITEM.get(), ModItems.GUYUANCAO_SEEDS.get(), 4));
+
 
         // 如果你有其他草药，直接复制这一行即可
         // this.add(ModBlocks.OTHER_HERB.get(), block -> createFortuneCropDrops(block, ModItems.OTHER_HERB_ITEM.get(), ModItems.OTHER_SEEDS.get(), 3));

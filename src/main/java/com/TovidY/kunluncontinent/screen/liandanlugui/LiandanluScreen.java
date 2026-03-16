@@ -23,7 +23,6 @@ public class LiandanluScreen extends AbstractContainerScreen<LiandanluMenu> {
         super(menu, inventory, title);
         this.imageWidth = 211;
         this.imageHeight = 170;
-        // 将标题和背包标签移出屏幕（如果你不想显示它们）
         this.inventoryLabelY = 10000;
         this.titleLabelY = 10000;
     }
@@ -42,14 +41,11 @@ public class LiandanluScreen extends AbstractContainerScreen<LiandanluMenu> {
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(guiGraphics);
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
-
         renderAlchmenyInfo(guiGraphics);
-
         this.renderTooltip(guiGraphics, mouseX, mouseY);
     }
 
     private void renderAlchmenyInfo(GuiGraphics guiGraphics) {
-        // 匹配配方名
         SimpleContainer container = new SimpleContainer(5);
         for (int i = 0; i < 5; i++) {
             container.setItem(i, this.menu.getSlot(i).getItem());
@@ -64,7 +60,7 @@ public class LiandanluScreen extends AbstractContainerScreen<LiandanluMenu> {
                 Component resultName = Component.literal("预测产出：").append(resultStack.getHoverName());
                 guiGraphics.drawString(this.font, resultName, this.leftPos + 8, this.topPos + 28, 0xFFD700, true);
 
-                // 只有匹配到配方才显示概率
+                // 统一渲染概率
                 renderProbabilities(guiGraphics);
             } else {
                 guiGraphics.drawString(this.font, "等待投放材料...", this.leftPos + 8, this.topPos + 28, 0xAAAAAA, true);
@@ -73,31 +69,60 @@ public class LiandanluScreen extends AbstractContainerScreen<LiandanluMenu> {
     }
 
     private void renderProbabilities(GuiGraphics guiGraphics) {
-        double[] weights = calculateWeightsForDisplay();
-        double totalWeight = 0;
-        for (double w : weights) totalWeight += w;
-
         String[] labels = {"碎", "散", "丹", "灵", "宝", "仙"};
         int[] colors = {0x777777, 0x55FF55, 0x5555FF, 0xAA00AA, 0xFFAA00, 0xFF5555};
 
-        // 绘制起始位置：玩家背包上方空位
+        double[] weights = calculateWeightsForDisplay();
+
+        SimpleContainer container = new SimpleContainer(5);
+        for (int i = 0; i < 5; i++) {
+            container.setItem(i, this.menu.getSlot(i).getItem());
+        }
+
+        if (this.minecraft.level != null) {
+            var recipeManager = this.minecraft.level.getRecipeManager();
+            Optional<LiandanRecipe> match = recipeManager.getRecipeFor(ModRecipes.LIANDAN_TYPE.get(), container, this.minecraft.level);
+            if (match.isPresent() && match.get().isSpecial()) {
+                double brokenWeight = weights[0];
+                if (brokenWeight > 0) {
+                    weights[0] = 0;
+                    double remainingTotal = 0;
+                    for (double w : weights) remainingTotal += w;
+                    if (remainingTotal > 0) {
+                        for (int i = 1; i < weights.length; i++) {
+                            double ratio = weights[i] / remainingTotal;
+                            weights[i] += brokenWeight * ratio;
+                        }
+                    } else {
+                        weights[1] = 100.0;
+                    }
+                }
+            }
+        }
+
+        drawWeights(guiGraphics, labels, colors, weights);
+    }
+
+    private void drawWeights(GuiGraphics guiGraphics, String[] labels, int[] colors, double[] weights) {
+        double totalWeight = 0;
+        for (double w : weights) totalWeight += w;
         int startX = this.leftPos + 10;
         int yPos = this.topPos + 75;
         int horizontalSpacing = 33;
-
         for (int i = 0; i < labels.length; i++) {
             double chance = (weights[i] / totalWeight) * 100;
             int currentX = startX + (i * horizontalSpacing);
-
-            // 如果概率为0，调暗颜色显示
-            int color = (chance > 0) ? colors[i] : 0x444444;
-            String percentText = String.format("%.0f%%", chance); // 取整显示更整洁
-
+            int color = (chance > 0.01) ? colors[i] : 0x444444;
+            String percentText;
+            if (chance > 0 && chance < 1) {
+                percentText = "<1%";
+            } else {
+                percentText = String.format("%.0f%%", chance);
+            }
             guiGraphics.drawString(this.font, labels[i], currentX, yPos, color, true);
             guiGraphics.drawString(this.font, percentText, currentX + 10, yPos, 0xFFFFFF, true);
         }
 
-        // 药渣加持标志
         if (!this.menu.getSlot(17).getItem().isEmpty()) {
             guiGraphics.drawString(this.font, "✔药渣加持", this.leftPos + 145, yPos - 12, 0x55FF55, true);
         }
@@ -105,18 +130,16 @@ public class LiandanluScreen extends AbstractContainerScreen<LiandanluMenu> {
 
     private double[] calculateWeightsForDisplay() {
         double[] weights = {40.0, 30.0, 15.0, 10.0, 4.0, 1.0};
-
         if (this.menu.hasDrossBlock()) {
             double currentBrokenWeight = weights[0];
             double reduction = currentBrokenWeight * 0.88;
             weights[0] -= reduction;
             weights[1] += reduction;
         }
-
         double pressure = 0;
-
         boolean hasXian = false;
         boolean hasJue = false;
+
         for (int i = 0; i < 5; i++) {
             ItemStack stack = this.menu.getSlot(i).getItem();
             if (stack.getItem() instanceof NeidanItem) {
@@ -130,6 +153,7 @@ public class LiandanluScreen extends AbstractContainerScreen<LiandanluMenu> {
                 };
             }
         }
+
         for (int i = 0; i < 5; i++) {
             double shift = Math.min(weights[i], pressure);
             weights[i] -= shift;
@@ -139,6 +163,7 @@ public class LiandanluScreen extends AbstractContainerScreen<LiandanluMenu> {
             pressure -= shift;
             if (pressure <= 0) break;
         }
+
         if (hasXian) {
             weights[0]=0; weights[1]=0; weights[2]=0;
             weights[3]=35.0; weights[4]=60.0; weights[5]=5.0;

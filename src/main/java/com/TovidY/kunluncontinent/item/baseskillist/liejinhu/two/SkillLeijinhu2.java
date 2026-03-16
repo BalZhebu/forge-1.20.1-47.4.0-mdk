@@ -32,7 +32,7 @@ public class SkillLeijinhu2 extends BaseSkillItem {
 
     @Override
     public float getDamageMultiplier() {
-        return 1.0f; // 虎啸主要提供控制，伤害较低
+        return 0.2f; // 虎啸主要提供控制，伤害较低
     }
 
     @Override

@@ -73,9 +73,12 @@ public class ModBlocks {
             registerBlock("starlight_stone_ore",()->
                     new Block(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)));
 
-    //草药
-    public static final RegistryObject<Block> RED_SPIDER_LILY_BLOCK = BLOCKS.register("red_spider_lily_block", () -> new KLCropBlock(BlockBehaviour.Properties.copy(Blocks.WHEAT).noOcclusion(), () -> Blocks.NETHERRACK, () -> ModItems.RED_SPIDER_SEEDS.get(),10));
+    //魂土
+    public static final RegistryObject<Block> SOUL_SOIL = registerBlock("soul_soil", () -> new Block(BlockBehaviour.Properties.copy(Blocks.DIRT)));
 
+    //草药
+    public static final RegistryObject<Block> RED_SPIDER_LILY_BLOCK = BLOCKS.register("red_spider_lily_block", () -> new KLCropBlock(BlockBehaviour.Properties.copy(Blocks.WHEAT).noOcclusion(), () -> Blocks.NETHERRACK, ModItems.RED_SPIDER_SEEDS,10));
+    public static final RegistryObject<Block> GUYUANCAO_BLOCK = BLOCKS.register("guyuancao_block", () -> new KLCropBlock(BlockBehaviour.Properties.copy(Blocks.WHEAT).noOcclusion(), ModBlocks.SOUL_SOIL, ModItems.GUYUANCAO_SEEDS,10));
 
     public static final RegistryObject<Block> DROSS_BLOCK =
             registerBlock("dross_block",()->
@@ -170,6 +173,7 @@ public class ModBlocks {
         MODBLOCKS.add(CULTIVATION_PLATFORM);
         MODBLOCKS.add(PUTUAN_BLOCK);
         MODBLOCKS.add(DROSS_BLOCK);
+        MODBLOCKS.add(SOUL_SOIL);
     }
 
     private static <T extends Block> void registerBlockItems(String name,RegistryObject<T> block){

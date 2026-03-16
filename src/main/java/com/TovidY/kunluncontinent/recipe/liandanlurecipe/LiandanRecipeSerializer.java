@@ -16,9 +16,11 @@ public class LiandanRecipeSerializer implements RecipeSerializer<LiandanRecipe> 
         JsonObject resultObj = GsonHelper.getAsJsonObject(pSerializedRecipe, "result");
         ResourceLocation itemId = ResourceLocation.tryParse(GsonHelper.getAsString(resultObj, "item"));
         ItemStack result = new ItemStack(ForgeRegistries.ITEMS.getValue(itemId));
+
         int cookTime = GsonHelper.getAsInt(pSerializedRecipe, "cookTime", 200);
         int recipeLevel = GsonHelper.getAsInt(pSerializedRecipe, "recipeLevel", 1);
-        return new LiandanRecipe(pRecipeId, ingredient, result, cookTime, recipeLevel);
+        boolean isSpecial = GsonHelper.getAsBoolean(pSerializedRecipe, "isSpecial", false);
+        return new LiandanRecipe(pRecipeId, ingredient, result, cookTime, recipeLevel, isSpecial);
     }
 
     @Nullable
@@ -28,8 +30,9 @@ public class LiandanRecipeSerializer implements RecipeSerializer<LiandanRecipe> 
         ItemStack result = pBuffer.readItem();
         int cookTime = pBuffer.readInt();
         int recipeLevel = pBuffer.readInt();
+        boolean isSpecial = pBuffer.readBoolean();
 
-        return new LiandanRecipe(pRecipeId, ingredient, result, cookTime, recipeLevel);
+        return new LiandanRecipe(pRecipeId, ingredient, result, cookTime, recipeLevel, isSpecial);
     }
 
     @Override
@@ -38,5 +41,6 @@ public class LiandanRecipeSerializer implements RecipeSerializer<LiandanRecipe> 
         pBuffer.writeItem(pRecipe.getResultItem(null));
         pBuffer.writeInt(pRecipe.getCookTime());
         pBuffer.writeInt(pRecipe.getRecipeLevel());
+        pBuffer.writeBoolean(pRecipe.isSpecial());
     }
 }

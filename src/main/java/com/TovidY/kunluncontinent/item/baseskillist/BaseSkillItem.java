@@ -1,9 +1,11 @@
 package com.TovidY.kunluncontinent.item.baseskillist;
 
+import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.network.SynsAPI;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
@@ -13,11 +15,16 @@ public abstract class BaseSkillItem extends Item {
         super(new Item.Properties().stacksTo(1).fireResistant());
     }
 
-    // --- 核心数值接口：子类必须实现 ---
-    public abstract float getBaseCost();         // 精神力基础消耗
-    public abstract float getDamageMultiplier(); // 技能本身的伤害倍率
-    public abstract int getCastTime();           // 吟唱时间
-    public abstract int getCooldownTicks();      // 冷却时间
+    public abstract float getBaseCost();
+    public abstract float getDamageMultiplier();
+    public abstract int getCastTime();
+    public abstract int getCooldownTicks();
+    public void executeEffect(Level level, Player player, float powerMultiplier) {
+    }
+
+    public void executeEffect(Level level, Player player, float powerMultiplier, float finalDamage) {
+        executeEffect(level, player, powerMultiplier);
+    }
 
     public String getDescriptionKey() {
         return this.getDescriptionId() + ".description";
@@ -39,13 +46,19 @@ public abstract class BaseSkillItem extends Item {
         return 1.0f;
     }
 
+    public float calculateActualDamage(LivingEntity target, float incomingDamage) {
+        float customFangyu = ModAttributeAPI.getFangyu(target);
+        float reductionFactor = 100f / (100f + customFangyu);
+        float actualDamage = incomingDamage * reductionFactor;
+        return Math.max(1.0f, actualDamage);
+    }
+
     public float getCostMultiplier(int nianxian) {
         if (nianxian <= 100) return 1.0f;
         float costFactor = (float) (1.0 + Math.log10(nianxian / 10.0) * 0.4);
         return Math.min(3.5f, costFactor);
     }
 
-    // --- 执行逻辑 ---
     public void applyPenalty(Player player, float costMultiplier) {
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
             float finalCost = getBaseCost() * costMultiplier;
@@ -53,18 +66,18 @@ public abstract class BaseSkillItem extends Item {
         });
     }
 
-    public abstract void executeEffect(Level level, Player player, float powerMultiplier);
-
     public void handleRelease(Level level, Player player, int nianxian) {
         float costMultiplier = getCostMultiplier(nianxian);
         float finalCost = getBaseCost() * costMultiplier;
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
             if (cap.getJingshenli() >= finalCost && !player.getCooldowns().isOnCooldown(this)) {
                 float powerMultiplier = getPowerMultiplier(nianxian);
-                executeEffect(level, player, powerMultiplier);
-                applyPenalty(player, costMultiplier); // 扣除消耗
+                float playerGongji = ModAttributeAPI.getGongji(player);
+                float finalDamage = playerGongji * getDamageMultiplier() * powerMultiplier;
+                executeEffect(level, player, powerMultiplier, finalDamage);
+                applyPenalty(player, costMultiplier);
                 player.getCooldowns().addCooldown(this, getCooldownTicks());
-                SynsAPI.synsPlayerAttribute(player); // 确保同步
+                SynsAPI.synsPlayerAttribute(player);
             }
         });
     }

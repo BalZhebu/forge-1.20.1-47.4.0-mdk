@@ -67,8 +67,24 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
         LiandanRecipeBuilder.create(ModItems.NEIDAN9.get(), ModItems.YIZAICHUANGSHENG_DAN.get(), 400)
                 .save(pWriter,ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "yizhaichuangsheng_dan_from_neidan9"));
 
+        LiandanRecipeBuilder.create(ModItems.GUYUANCAO_ITEM.get(), ModItems.GUYUAN_DAN.get(), 200)
+                .special()
+                .save(pWriter,ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "guyuan_dan_from"));
+
+        //重修之眼的配方
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.EYE_TRANSFORMATION.get())
+                .pattern("ZXZ")
+                .pattern("XOX")
+                .pattern("ZXZ")
+                .define('X', ModItems.RED_FIRE_INGOT.get())
+                .define('Z', ModItems.SUNKEN_SILVER_INGOT.get())
+                .define('O', Items.ENDER_EYE)
+                .unlockedBy("has_eye", has(ModItems.EYE_TRANSFORMATION.get()))
+                .save(pWriter);
+
+
         //锻造模版
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.RINSEI_FORGING_TEMPLATE.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.RINSEI_FORGING_TEMPLATE.get(),3)
                 .pattern("IAI")
                 .pattern("IBI")
                 .pattern("III")
@@ -366,6 +382,17 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .define('Y', ModBlocks.LIANDANLU4.get())
                 .unlockedBy("has_liandanlu5", has(ModBlocks.LIANDANLU5.get()))
                 .save(pWriter);
+
+        //六级炼丹炉（锻造配方）
+        SmithingTransformRecipeBuilder.smithing(
+                        Ingredient.of(ModItems.MIDDLE_LEVEL_HEXIN.get()),
+                        Ingredient.of(ModBlocks.LIANDANLU5.get()),
+                        Ingredient.of(ModItems.RINSEI_INGOT.get()),
+                        RecipeCategory.MISC,
+                        ModBlocks.LIANDANLU6.get().asItem())
+                .unlocks("has_liandanlu6", inventoryTrigger(ItemPredicate.Builder.item()
+                        .of(ModItems.RINSEI_INGOT.get()).build()))
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "liandanlu6_smithing"));
 
         //丹渣块
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.DROSS_BLOCK.get())
@@ -831,14 +858,14 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_weapon_smithing8"));
 
         SmithingTransformRecipeBuilder.smithing(
-                        Ingredient.of(ModItems.RINSEI_FORGING_TEMPLATE.get()), // 锻造模板
-                        Ingredient.of(ModItems.COLD_HEARTED_STEEL_BOOTS.get()), // 基础武器（材料武器）
-                        Ingredient.of(ModItems.RINSEI_INGOT.get()), // 消耗的锭
-                        RecipeCategory.COMBAT, // 配方分类
-                        ModItems.RINSEI_BOOTS.get() // 输出的结果武器
+                        Ingredient.of(ModItems.RINSEI_FORGING_TEMPLATE.get()),
+                        Ingredient.of(ModItems.COLD_HEARTED_STEEL_BOOTS.get()),
+                        Ingredient.of(ModItems.RINSEI_INGOT.get()),
+                        RecipeCategory.COMBAT,
+                        ModItems.RINSEI_BOOTS.get()
                 )
                 .unlocks("has_kunluncontinent_rinsei_duanzao", inventoryTrigger(ItemPredicate.Builder.item()
-                        .of(ModItems.RINSEI_INGOT.get()).build())) // 解锁条件：获得该锭时解锁配方册
+                        .of(ModItems.RINSEI_INGOT.get()).build()))
                 .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_weapon_smithing9"));
     }
 

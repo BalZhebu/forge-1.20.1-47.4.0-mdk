@@ -20,7 +20,7 @@ public class LiandanRecipeBuilder implements RecipeBuilder {
     private final Item result;
     private final Ingredient ingredient;
     private final int cookTime;
-    private final Advancement.Builder advancement = Advancement.Builder.recipeAdvancement();
+    private boolean isSpecial = false; // 新增字段
 
     public LiandanRecipeBuilder(ItemLike ingredient, ItemLike result, int cookTime) {
         this.ingredient = Ingredient.of(ingredient);
@@ -30,6 +30,11 @@ public class LiandanRecipeBuilder implements RecipeBuilder {
 
     public static LiandanRecipeBuilder create(ItemLike ingredient, ItemLike result, int cookTime) {
         return new LiandanRecipeBuilder(ingredient, result, cookTime);
+    }
+
+    public LiandanRecipeBuilder special() {
+        this.isSpecial = true;
+        return this;
     }
 
     @Override
@@ -42,6 +47,7 @@ public class LiandanRecipeBuilder implements RecipeBuilder {
                 resultObj.addProperty("item", ForgeRegistries.ITEMS.getKey(result).toString());
                 json.add("result", resultObj);
                 json.addProperty("cookTime", cookTime);
+                json.addProperty("isSpecial", isSpecial); // 写入JSON
             }
             @Override public ResourceLocation getId() { return id; }
             @Override public RecipeSerializer<?> getType() { return ModRecipes.LIANDAN_SERIALIZER.get(); }

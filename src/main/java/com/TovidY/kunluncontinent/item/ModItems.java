@@ -8,13 +8,17 @@ import com.TovidY.kunluncontinent.item.armor.ModArmorBaseItem;
 import com.TovidY.kunluncontinent.item.armor.ModArmorMaterials;
 import com.TovidY.kunluncontinent.item.baseskillist.bahuangji.one.BahuangjiItem;
 import com.TovidY.kunluncontinent.item.baseskillist.bahuangji.one.SkillBahuang1;
+import com.TovidY.kunluncontinent.item.baseskillist.bahuangji.treen.SkillBahuang3;
 import com.TovidY.kunluncontinent.item.baseskillist.bahuangji.two.SkillBahuang2;
 import com.TovidY.kunluncontinent.item.baseskillist.juyuan.one.SkillPanshijuyuan1;
+import com.TovidY.kunluncontinent.item.baseskillist.juyuan.treen.SkillPanshijuyuan3;
 import com.TovidY.kunluncontinent.item.baseskillist.juyuan.two.SkillPanshijuyuan2;
 import com.TovidY.kunluncontinent.item.baseskillist.liejinhu.one.SkillLeijinhu1;
+import com.TovidY.kunluncontinent.item.baseskillist.liejinhu.treen.SkillLeijinhu3;
 import com.TovidY.kunluncontinent.item.baseskillist.liejinhu.two.SkillLeijinhu2;
 import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.one.PohunqiangItem;
 import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.one.SkillPohun1;
+import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.treen.SkillPohun3;
 import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.two.SkillPohun2;
 import com.TovidY.kunluncontinent.item.hungu.BoneItem;
 import com.TovidY.kunluncontinent.item.klitem.*;
@@ -68,8 +72,16 @@ public class ModItems {
                 }
             });
 
+    //固元草种子
+    public static final RegistryObject<Item> GUYUANCAO_SEEDS = ITEMS.register("guyuancao_seeds",
+            () -> new ItemNameBlockItem(ModBlocks.GUYUANCAO_BLOCK.get(), new Item.Properties()));
+
     //草药物品
     public static final RegistryObject<Item> RED_SPIDER_LILY_ITEM = ITEMS.register("red_spider_lily_item",
+            () -> new Item(new Item.Properties()));
+
+    //固元草
+    public static final RegistryObject<Item> GUYUANCAO_ITEM = ITEMS.register("guyuancao_item",
             () -> new Item(new Item.Properties()));
 
     //药水
@@ -225,6 +237,7 @@ public class ModItems {
     public static final RegistryObject<Item> RINSEI_AXE = ITEMS.register("rinsei_axe",()->new AxeItem(ModToolTiers.RINSEI,12.0F, -3.0F,new Item.Properties()));
     public static final RegistryObject<Item> RINSEI_SHOVEL = ITEMS.register("rinsei_shovel",()->new ShovelItem(ModToolTiers.RINSEI,2.6F, -2.0F,new Item.Properties()));
     public static final RegistryObject<Item> RINSEI_HOE = ITEMS.register("rinsei_hoe",()->new HoeItem(ModToolTiers.RINSEI,-1, 1.0F,new Item.Properties()));
+
     //丹药类
     public static final RegistryObject<Item> CHUYUAN_DAN = ITEMS.register("chuyuan_dan",()->new DanYaoItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setJingyan(16).setMinLevel(1).setTier(1));
     public static final RegistryObject<Item> BAICAOLING_DAN = ITEMS.register("baicaoling_dan",()->new DanYaoItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setJingyan(56).setMinLevel(10).setTier(2));
@@ -235,6 +248,7 @@ public class ModItems {
     public static final RegistryObject<Item> TAIXUPOWANG_DAN = ITEMS.register("taixupowang_dan",()->new DanYaoItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setJingyan(4096).setMinLevel(60).setTier(7));
     public static final RegistryObject<Item> QIANWANXINGCHEN_DAN = ITEMS.register("qianwanxingchen_dan",()->new DanYaoItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setJingyan(8192).setMinLevel(70).setTier(8));
     public static final RegistryObject<Item> YIZAICHUANGSHENG_DAN = ITEMS.register("yizhaichuangsheng_dan",()->new DanYaoItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setJingyan(16384).setMinLevel(80).setTier(9));
+    public static final RegistryObject<Item> GUYUAN_DAN = ITEMS.register("guyuan_dan",()->new DanYaoItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setMaxjingshenli(100));
 
     public static final RegistryObject<Item> DROSS = ITEMS.register("dross",()->new Item(new Item.Properties()));
 
@@ -269,34 +283,38 @@ public class ModItems {
 
     public static final RegistryObject<Item> HUNHUAN_STORAGE_FIVE = ITEMS.register("hunhuan_storage_five",
             () -> new HunHuanStorageItem(new Item.Properties().stacksTo(1).fireResistant(), 1, 120000000));
+
     //魂技
     //破魂枪
     public static final RegistryObject<SkillPohun1> SKILL_POHUN_1 = ITEMS.register("skill_pohun_1", SkillPohun1::new);
     public static final RegistryObject<SkillPohun2> SKILL_POHUN_2 = ITEMS.register("skill_pohun_2", SkillPohun2::new);
+    public static final RegistryObject<SkillPohun3> SKILL_POHUN_3 = ITEMS.register("skill_pohun_3", SkillPohun3::new);
 
     //八荒戟
     public static final RegistryObject<SkillBahuang1> SKILL_BAHUANG_1 = ITEMS.register("skill_bahuang_1", SkillBahuang1::new);
     public static final RegistryObject<SkillBahuang2> SKILL_BAHUANG_2 = ITEMS.register("skill_bahuang_2", SkillBahuang2::new);
+    public static final RegistryObject<SkillBahuang3> SKILL_BAHUANG_3 = ITEMS.register("skill_bahuang_3", SkillBahuang3::new);
 
     //裂金虎
     public static final RegistryObject<SkillLeijinhu1> SKILL_LEIJINHU_1 = ITEMS.register("skill_leijinhu_1", SkillLeijinhu1::new);
     public static final RegistryObject<SkillLeijinhu2> SKILL_LEIJINHU_2 = ITEMS.register("skill_leijinhu_2", SkillLeijinhu2::new);
+    public static final RegistryObject<SkillLeijinhu3> SKILL_LEIJINHU_3 = ITEMS.register("skill_leijinhu_3", SkillLeijinhu3::new);
 
     //磐石巨猿
     public static final RegistryObject<SkillPanshijuyuan1> SKILL_PANSHIJUYUAN_1 = ITEMS.register("skill_panshijuyuan_1", SkillPanshijuyuan1::new);
     public static final RegistryObject<SkillPanshijuyuan2> SKILL_PANSHIJUYUAN_2 = ITEMS.register("skill_panshijuyuan_2", SkillPanshijuyuan2::new);
+    public static final RegistryObject<SkillPanshijuyuan3> SKILL_PANSHIJUYUAN_3 = ITEMS.register("skill_panshijuyuan_3", SkillPanshijuyuan3::new);
 
-    // 使用 <? extends Item> 告诉 Java：这个列表可以存任何“RegistryObject，且它里面的类是 Item 的子类”
     public static ArrayList<RegistryObject<? extends Item>> HUNJILIST = new ArrayList<>();
     static {
         HUNJILIST.add(SKILL_POHUN_1);
         HUNJILIST.add(SKILL_BAHUANG_1);
         HUNJILIST.add(SKILL_LEIJINHU_1);
         HUNJILIST.add(SKILL_PANSHIJUYUAN_1);
-//        HUNJILIST.add(SKILL_POHUN_2);
-//        HUNJILIST.add(SKILL_BAHUANG_2);
-//        HUNJILIST.add(SKILL_LEIJINHU_2);
-//        HUNJILIST.add(SKILL_PANSHIJUYUAN_2);
+        HUNJILIST.add(SKILL_POHUN_2);
+        HUNJILIST.add(SKILL_BAHUANG_2);
+        HUNJILIST.add(SKILL_LEIJINHU_2);
+        HUNJILIST.add(SKILL_PANSHIJUYUAN_2);
     }
 
     public static ArrayList<RegistryObject<Item>> DUANZAOMOBAN = new ArrayList<>();
@@ -357,11 +375,13 @@ public class ModItems {
     public static ArrayList<RegistryObject<Item>> CAOYAOLIST = new ArrayList<>();
     static {
         CAOYAOLIST.add(RED_SPIDER_LILY_ITEM);
+        CAOYAOLIST.add(GUYUANCAO_ITEM);
     }
 
     public static ArrayList<RegistryObject<Item>> SEEDSLIST = new ArrayList<>();
     static {
         SEEDSLIST.add(RED_SPIDER_SEEDS);
+        SEEDSLIST.add(GUYUANCAO_SEEDS);
     }
 
     public static ArrayList<RegistryObject<Item>> PUTONGITEM = new ArrayList<>();
@@ -447,6 +467,7 @@ public class ModItems {
         DANYAOITEM.add(TAIXUPOWANG_DAN);
         DANYAOITEM.add(QIANWANXINGCHEN_DAN);
         DANYAOITEM.add(YIZAICHUANGSHENG_DAN);
+        DANYAOITEM.add(GUYUAN_DAN);
 
         DANYAOITEM.add(DROSS);
     }

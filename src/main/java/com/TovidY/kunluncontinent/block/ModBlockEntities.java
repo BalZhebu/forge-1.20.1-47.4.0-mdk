@@ -17,14 +17,21 @@ public class ModBlockEntities {
     public static final RegistryObject<BlockEntityType<LiandanluBlockEntity>> LIANDANLU_BE =
             BLOCK_ENTITIES.register("liandanlu_be", () ->
                     BlockEntityType.Builder.of((pos, state) -> {
-                                // 自动根据 Block 的 tier 来创建对应的 Entity
                                 int tier = 1;
                                 if (state.getBlock() instanceof LiandanluBlock ldb) {
                                     tier = ldb.getTier();
                                 }
                                 return new LiandanluBlockEntity(pos, state, tier);
                             },
-                            ModBlocks.LIANDANLU1.get(),ModBlocks.LIANDANLU2.get(), ModBlocks.LIANDANLU3.get() // 绑定所有炉子方块
+                            ModBlocks.LIANDANLU1.get(),
+                            ModBlocks.LIANDANLU2.get(),
+                            ModBlocks.LIANDANLU3.get(),
+                            ModBlocks.LIANDANLU4.get(), // 补上 4 阶
+                            ModBlocks.LIANDANLU5.get(), // 补上 5 阶
+                            ModBlocks.LIANDANLU6.get(), // 补上 6 阶
+                            ModBlocks.LIANDANLU7.get(), // 补上 7 阶
+                            ModBlocks.LIANDANLU8.get(), // 补上 8 阶
+                            ModBlocks.LIANDANLU9.get()  // 补上 9 阶
                     ).build(null));
 
     public static void register(IEventBus eventBus) {

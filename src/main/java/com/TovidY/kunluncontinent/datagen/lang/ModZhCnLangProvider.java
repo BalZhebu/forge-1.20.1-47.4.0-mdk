@@ -19,29 +19,37 @@ public class ModZhCnLangProvider extends LanguageProvider {
         //技能代码
         add(ModItems.SKILL_POHUN_1.get(), "§c《破魂枪》第一魂技[破魂枪]");
         add(ModItems.SKILL_POHUN_2.get(), "§c《破魂枪》第二魂技[枪芒]");
+        add(ModItems.SKILL_POHUN_3.get(), "§c《破魂枪》第三魂技[破甲]");
 
         add(ModItems.SKILL_BAHUANG_1.get(), "§c《八荒戟》第一魂技[八荒戟]");
         add(ModItems.SKILL_BAHUANG_2.get(), "§c《八荒戟》第二魂技[横扫]");
+        add(ModItems.SKILL_BAHUANG_3.get(), "§c《八荒戟》第三魂技[劈山]");
 
         add(ModItems.SKILL_LEIJINHU_1.get(), "§c《裂金虎》第一魂技[横爪]");
         add(ModItems.SKILL_LEIJINHU_2.get(), "§c《裂金虎》第二魂技[虎啸]");
+        add(ModItems.SKILL_LEIJINHU_3.get(), "§c《裂金虎》第三魂技[裂石]");
 
         add(ModItems.SKILL_PANSHIJUYUAN_1.get(), "§c《磐石巨猿》第一魂技[重击]");
         add(ModItems.SKILL_PANSHIJUYUAN_2.get(), "§c《磐石巨猿》第二魂技[石肤]");
+        add(ModItems.SKILL_PANSHIJUYUAN_3.get(), "§c《磐石巨猿》第三魂技[震地]");
 
         add("无技能","暂无技能描述");
 
         add("skill.pohunqiang.one.description", "消耗%s点精神力，凝结武魂实体化。");
         add("skill.pohunqiang.two.description", "消耗%s点精神力，释放枪芒：向前冲刺，对路径上的敌人造成伤害");
+        add("skill.pohunqiang.treen.description", "消耗%s点精神力，释放破甲：对单独一个敌人造成30%%的真实伤害");
 
         add("skill.bakuangji.one.description", "消耗%s点精神力，凝结武魂实体化。");
         add("skill.bahuangji.two.description", "消耗%s点精神力，释放横扫：对面前扇形范围敌人造成伤害");
+        add("skill.bahuangji.three.description", "消耗%s点精神力，释放劈山：跳劈对范围敌人造成巨额伤害");
 
         add("skill.leijinhu.one.description", "消耗%s点精神力，横爪，可击打范围4格内的敌人");
         add("skill.liejinhu.two.description","消耗%s点精神力，虎啸：释放技能时对离得越近的敌人造成虚弱和缓慢效果，对5格以外的敌人造成缓慢效果");
+        add("skill.leijinhu.three.description","消耗%s点精神力，释放裂石：对范围敌人造成巨额伤害");
 
-        add("skill.panshijuyuan.one.description", "消耗%s点精神力，重击，可击打范围5格内的敌人并附加缓慢效果");
-        add("skill.panshijuyuan.two.description","消耗%s点精神力，石肤：对自己附加30%的防御力");
+        add("skill.panshijuyuan.one.description", "消耗%s点精神力，重击：可击打范围5格内的敌人并附加缓慢效果");
+        add("skill.panshijuyuan.two.description","消耗%s点精神力，石肤：对自身附加30%%的防御力");
+        add("skill.panshijuyuan.three.description","消耗%s点精神力，释放震地：对10格内敌人造成巨额伤害");
 
         //锻造模版
         add(ModItems.RINSEI_FORGING_TEMPLATE.get(), "§b凛晶锻造模版");
@@ -227,6 +235,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.TAIXUPOWANG_DAN.get(), "太虚破妄丹");
         add(ModItems.QIANWANXINGCHEN_DAN.get(), "千万星辰丹");
         add(ModItems.YIZAICHUANGSHENG_DAN.get(), "亿载长生丹");
+        add(ModItems.GUYUAN_DAN.get(), "§e归元丹");
         add(ModItems.DROSS.get(),"丹渣");
         add("吸收经验成功","§2吸收成功,经验：§e+%s");
         add("生命", "生命：%s/%s");
@@ -347,6 +356,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("putuan.xiulian.finish","§c你感到浑身清爽，但打坐时间太长你感到有被心魔入侵的风险，出去走走吧");
         add(ModBlocks.DROSS_BLOCK.get(), "丹渣块");
         add("tooltip.kunluncontinent.dross_block","放入炼丹炉可明显减少破碎丹药概率");
+        add(ModBlocks.SOUL_SOIL.get(),"魂土");
 
         //武魂果实
         add(ModItems.GUOSHI_POHUNQIANG.get(), "§c武魂果实 - 破魂枪");
@@ -408,10 +418,16 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("gui.kunluncontinent.cast_shifa","§a§l魂技释放成功！");
         add("item.rinsei_ingot.tooltip","击杀雪魔概率掉落");
 
+        //适配你在看什么
+        add(ModBlocks.RED_SPIDER_LILY_BLOCK.get(), "§c彼岸花");
+        add(ModBlocks.GUYUANCAO_BLOCK.get(), "§c归元草");
+
         //草药
         add(ModItems.RED_SPIDER_LILY_ITEM.get(), "§c彼岸花");
+        add(ModItems.GUYUANCAO_ITEM.get(), "§c归元草");
 
         //种子
         add(ModItems.RED_SPIDER_SEEDS.get(), "§c彼岸花种子");
+        add(ModItems.GUYUANCAO_SEEDS.get(), "§c归元草种子");
     }
 }

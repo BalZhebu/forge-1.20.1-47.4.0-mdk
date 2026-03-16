@@ -489,13 +489,9 @@ public class ModAttributeAPI {
      */
     public static float getEffectiveFangyu(LivingEntity entity) {
         float baseFangyu = getFangyu(entity);
-        
-        // 检查是否有破甲效果
         if (entity.hasEffect(ModEffects.ARMOR_PIERCING.get())) {
-            // 有破甲效果，减少30%防御力
             return baseFangyu * 0.7f;
         }
-        
         return baseFangyu;
     }
 }

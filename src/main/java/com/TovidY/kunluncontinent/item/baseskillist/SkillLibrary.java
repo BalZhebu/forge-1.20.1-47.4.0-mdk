@@ -13,31 +13,46 @@ import java.util.Map;
 public class SkillLibrary {
     private static final Map<String, Map<Integer, List<RegistryObject<? extends BaseSkillItem>>>> REGISTRY = new HashMap<>();
     static {
+        //破魂枪
         register(Wuhunname.pohunqiang, 1, List.of(
                 ModItems.SKILL_POHUN_1
         ));
         register(Wuhunname.pohunqiang, 2, List.of(
                 ModItems.SKILL_POHUN_2
         ));
+        register(Wuhunname.pohunqiang, 3, List.of(
+                ModItems.SKILL_POHUN_3
+        ));
 
+        //八荒戟
         register(Wuhunname.bahuangji, 1, List.of(
                 ModItems.SKILL_BAHUANG_1
         ));
         register(Wuhunname.bahuangji, 2, List.of(
                 ModItems.SKILL_BAHUANG_2
         ));
+        register(Wuhunname.bahuangji, 3, List.of(
+                ModItems.SKILL_BAHUANG_3
+        ));
 
+        //裂金虎
         register(Wuhunname.liejinhu, 1, List.of(
                 ModItems.SKILL_LEIJINHU_1
         ));
         register(Wuhunname.liejinhu, 2, List.of(
                 ModItems.SKILL_LEIJINHU_2
         ));
+        register(Wuhunname.liejinhu, 3, List.of(
+                ModItems.SKILL_LEIJINHU_3
+        ));
 
+        //磐石巨猿
         register(Wuhunname.panshijuyuan, 1, List.of(
                 ModItems.SKILL_PANSHIJUYUAN_1));
         register(Wuhunname.panshijuyuan, 2, List.of(
                 ModItems.SKILL_PANSHIJUYUAN_2));
+        register(Wuhunname.panshijuyuan, 3, List.of(
+                ModItems.SKILL_PANSHIJUYUAN_3));
     }
     private static void register(String wuhun, int ringIndex, List<RegistryObject<? extends BaseSkillItem>> skills) {
         REGISTRY.computeIfAbsent(wuhun, k -> new HashMap<>()).put(ringIndex, skills);
