@@ -27,17 +27,17 @@ public class SkillBahuang1 extends BaseSkillItem {
 
     @Override
     public float getBaseCost() {
-        return 50f;
+        return 60f;
     }
 
     @Override
     public int getCooldownTicks() {
-        return 60; // 10秒冷却
+        return 60; // 3秒冷却
     }
 
     @Override
     public float getDamageMultiplier() {
-        return 1.0f;
+        return 0f;
     }
 
     @Override

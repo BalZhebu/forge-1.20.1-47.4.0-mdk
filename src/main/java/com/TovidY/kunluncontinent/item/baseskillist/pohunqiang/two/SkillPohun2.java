@@ -29,12 +29,12 @@ public class SkillPohun2 extends BaseSkillItem {
 
     @Override
     public float getDamageMultiplier() {
-        return 1.2f; // 基础伤害倍率
+        return 1.6f; // 基础伤害倍率
     }
 
     @Override
     public float getBaseCost() {
-        return 100f; // 基础精神力消耗
+        return 120f; // 基础精神力消耗
     }
 
     @Override

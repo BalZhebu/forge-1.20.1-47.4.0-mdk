@@ -27,17 +27,17 @@ public class SkillLeijinhu2 extends BaseSkillItem {
 
     @Override
     public int getCooldownTicks() {
-        return 200;
+        return 100;
     }
 
     @Override
     public float getDamageMultiplier() {
-        return 0.2f; // 虎啸主要提供控制，伤害较低
+        return 0.4f; // 虎啸主要提供控制，伤害较低
     }
 
     @Override
     public float getBaseCost() {
-        return 130f; // 精神力消耗略高
+        return 95f; // 精神力消耗略高
     }
 
     @Override

@@ -19,11 +19,18 @@ public abstract class BaseSkillItem extends Item {
     public abstract float getDamageMultiplier();
     public abstract int getCastTime();
     public abstract int getCooldownTicks();
+
     public void executeEffect(Level level, Player player, float powerMultiplier) {
+        if (!level.isClientSide) {
+            float playerGongji = ModAttributeAPI.getGongji(player);
+            float finalDamage = playerGongji * getDamageMultiplier() * powerMultiplier;
+
+            this.executeEffect(level, player, powerMultiplier, finalDamage);
+        }
     }
 
     public void executeEffect(Level level, Player player, float powerMultiplier, float finalDamage) {
-        executeEffect(level, player, powerMultiplier);
+
     }
 
     public String getDescriptionKey() {
@@ -35,6 +42,7 @@ public abstract class BaseSkillItem extends Item {
         return Component.translatable(getDescriptionKey(), String.format("%.1f", finalCost));
     }
 
+    // --- 数值计算逻辑 ---
     public float getPowerMultiplier(long nianxian) {
         if (nianxian >= 100000000) return 100.0f;
         if (nianxian >= 10000000) return 50.0f;
@@ -46,19 +54,13 @@ public abstract class BaseSkillItem extends Item {
         return 1.0f;
     }
 
-    public float calculateActualDamage(LivingEntity target, float incomingDamage) {
-        float customFangyu = ModAttributeAPI.getFangyu(target);
-        float reductionFactor = 100f / (100f + customFangyu);
-        float actualDamage = incomingDamage * reductionFactor;
-        return Math.max(1.0f, actualDamage);
-    }
-
     public float getCostMultiplier(int nianxian) {
         if (nianxian <= 100) return 1.0f;
         float costFactor = (float) (1.0 + Math.log10(nianxian / 10.0) * 0.4);
         return Math.min(3.5f, costFactor);
     }
 
+    // --- 消耗与惩罚 ---
     public void applyPenalty(Player player, float costMultiplier) {
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
             float finalCost = getBaseCost() * costMultiplier;
@@ -69,12 +71,14 @@ public abstract class BaseSkillItem extends Item {
     public void handleRelease(Level level, Player player, int nianxian) {
         float costMultiplier = getCostMultiplier(nianxian);
         float finalCost = getBaseCost() * costMultiplier;
+
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
             if (cap.getJingshenli() >= finalCost && !player.getCooldowns().isOnCooldown(this)) {
                 float powerMultiplier = getPowerMultiplier(nianxian);
                 float playerGongji = ModAttributeAPI.getGongji(player);
                 float finalDamage = playerGongji * getDamageMultiplier() * powerMultiplier;
                 executeEffect(level, player, powerMultiplier, finalDamage);
+
                 applyPenalty(player, costMultiplier);
                 player.getCooldowns().addCooldown(this, getCooldownTicks());
                 SynsAPI.synsPlayerAttribute(player);

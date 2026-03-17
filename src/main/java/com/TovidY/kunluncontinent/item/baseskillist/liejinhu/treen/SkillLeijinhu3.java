@@ -19,15 +19,15 @@ public class SkillLeijinhu3 extends BaseSkillItem {
     @Override
     public float getBaseCost() { return 140f; }
     @Override
-    public float getDamageMultiplier() { return 2.8f; } // 裂石巨额伤害
+    public float getDamageMultiplier() { return 1.82f; } // 裂石巨额伤害
     @Override
-    public int getCastTime() { return 8; }
+    public int getCastTime() { return 10; }
     @Override
     public int getCooldownTicks() { return 300; } // 15s
 
     @Override
     public String getDescriptionKey() {
-        return "skill.liejinhu.treen.description";
+        return "skill.liejinhu.three.description";
     }
 
     @Override
@@ -41,14 +41,11 @@ public class SkillLeijinhu3 extends BaseSkillItem {
                 Vec3 toTarget = target.position().subtract(player.position()).normalize();
                 return toTarget.dot(view) > 0.6; // 扇形判定
             });
-
             for (LivingEntity target : targets) {
                 target.hurt(player.damageSources().mobAttack(player), finalDamage);
                 target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 1));
                 target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 60, 1));
             }
-
-            // 金色爪痕粒子
             for (int i = 0; i < 5; i++) {
                 serverLevel.sendParticles(ParticleTypes.ENCHANTED_HIT,
                         player.getX() + view.x * 1.5, player.getY() + 1.2, player.getZ() + view.z * 1.5,

@@ -31,12 +31,12 @@ public class SkillPohun1 extends BaseSkillItem {
     }
     @Override
     public float getDamageMultiplier() {
-        return 1.0f;
+        return 0f;
     }
 
     @Override
     public float getBaseCost() {
-        return 50f;
+        return 60f;
     }
 
     @Override

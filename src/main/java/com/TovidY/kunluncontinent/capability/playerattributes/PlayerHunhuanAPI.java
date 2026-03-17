@@ -349,6 +349,12 @@ public class PlayerHunhuanAPI {
             newplayerCapability.setZhuanshengshu(newplayerCapability.getZhuanshengshu()+oldItemCapability.getZhuanshengshu()+1);
 //            魂骨蓸
             newplayerCapability.getHunguInventory().deserializeNBT(oldItemCapability.getHunguInventory().serializeNBT());
+
+            //技能转生重置
+            newplayerCapability.getWuhunSkillsMap().clear();
+            newplayerCapability.getWuhunListsname().clear();
+            newplayerCapability.getMonsterCapabilityLists().clear();
+
             player.setHealth(newplayerCapability.getMaxshengming());
         }
     }

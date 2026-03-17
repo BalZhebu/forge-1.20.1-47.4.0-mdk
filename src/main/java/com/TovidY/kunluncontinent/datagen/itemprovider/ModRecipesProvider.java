@@ -82,6 +82,14 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .unlockedBy("has_eye", has(ModItems.EYE_TRANSFORMATION.get()))
                 .save(pWriter);
 
+        //魂土
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.SOUL_SOIL.get())
+                .pattern("XXX")
+                .pattern("XXX")
+                .pattern("XXX")
+                .define('X', Blocks.DIRT)
+                .unlockedBy("has_soul_soil", has(Blocks.DIRT))
+                .save(pWriter);
 
         //锻造模版
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.RINSEI_FORGING_TEMPLATE.get(),3)

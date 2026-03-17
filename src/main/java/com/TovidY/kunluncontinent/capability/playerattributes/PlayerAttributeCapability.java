@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 //玩家属性
+
 public class PlayerAttributeCapability implements ICapabilitySerializable<CompoundTag> {
 
     public static final UUID CASTING_SLOWDOWN_ID = UUID.fromString("7f369f4a-8e2b-4f9e-a0e4-522f1c305c6d");

@@ -1,6 +1,7 @@
 package com.TovidY.kunluncontinent;
 
 import com.TovidY.kunluncontinent.Init.KLConfig;
+import com.TovidY.kunluncontinent.Init.ModLootModifiers;
 import com.TovidY.kunluncontinent.advancement.ModTriggers;
 import com.TovidY.kunluncontinent.block.ModBlockEntities;
 import com.TovidY.kunluncontinent.block.ModBlocks;
@@ -50,6 +51,8 @@ public class KlMain {
         ModBlocks.register(modEventBus);
 
         ModTriggers.register();
+
+        ModLootModifiers.register(modEventBus);
 
         context.registerConfig(ModConfig.Type.COMMON, KLConfig.CONFIG);
 

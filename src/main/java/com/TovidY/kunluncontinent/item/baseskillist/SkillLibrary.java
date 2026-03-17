@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 //技能随机分配
+
 public class SkillLibrary {
     private static final Map<String, Map<Integer, List<RegistryObject<? extends BaseSkillItem>>>> REGISTRY = new HashMap<>();
     static {

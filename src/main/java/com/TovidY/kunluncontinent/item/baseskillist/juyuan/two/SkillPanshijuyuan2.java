@@ -16,7 +16,7 @@ public class SkillPanshijuyuan2 extends BaseSkillItem {
 
     @Override
     public int getCastTime() {
-        return 10; // 瞬发技能，强化自身
+        return 0; // 瞬发技能，强化自身
     }
 
     @Override

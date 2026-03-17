@@ -6,6 +6,7 @@ import com.TovidY.kunluncontinent.render.KLRenderApi;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -15,15 +16,19 @@ import org.joml.Matrix4f;
 import static com.TovidY.kunluncontinent.entity.hunhuan.HunhuanEntity.HUNHUAN;
 
 //怪物身上的魂环渲染
+
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class PWRenderLivingEvent {
 
     @SubscribeEvent
     public static void renderLivingEventPost(RenderLivingEvent.Post event){
-        if(event.getEntity() == null)return;
-
-        event.getEntity().getCapability(MobAttributeCapabilityProvider.CAPABILITY).ifPresent(capability -> {
-                renderHunhuan(event.getEntity(),event.getPartialTick(),event.getPoseStack(), (int) capability.getNianxian(), 0);
+        LivingEntity entity = event.getEntity();
+        if(entity == null) return;
+        if (entity.tickCount < 1 || !entity.isAlive()) return;
+        entity.getCapability(MobAttributeCapabilityProvider.CAPABILITY).ifPresent(capability -> {
+            if (capability.getNianxian() > 0) {
+                renderHunhuan(entity, event.getPartialTick(), event.getPoseStack(), (int) capability.getNianxian(), 0);
+            }
         });
     }
 

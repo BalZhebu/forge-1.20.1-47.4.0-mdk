@@ -14,6 +14,7 @@ import com.TovidY.kunluncontinent.datagen.oredatagen.ModBiomeModifierProvider;
 import com.TovidY.kunluncontinent.datagen.oredatagen.ModStructureProvider;
 import com.TovidY.kunluncontinent.datagen.oredatagen.ModWorldGenOreProvider;
 import com.TovidY.kunluncontinent.datagen.worldgenprovider.ModBiomeModifiers;
+import com.TovidY.kunluncontinent.datagen.worldgenprovider.ModGlobalLootModifierProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
@@ -57,6 +58,8 @@ public class ModDataGenerator {
         PackOutput packOutput = generator.getPackOutput();
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
+
+        generator.addProvider(event.includeServer(), new ModGlobalLootModifierProvider(packOutput, KlMain.MOD_ID));
 
         // 基础 Provider
         generator.addProvider(event.includeServer(), new ModRecipesProvider(packOutput));

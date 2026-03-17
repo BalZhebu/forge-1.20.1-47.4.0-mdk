@@ -33,12 +33,12 @@ public class SkillLeijinhu1 extends BaseSkillItem {
 
     @Override
     public float getDamageMultiplier() {
-        return 1.5f;
+        return 1.3f;//倍率
     }
 
     @Override
     public float getBaseCost() {
-        return 100;
+        return 100;//精神力消耗
     }
 
     @Override

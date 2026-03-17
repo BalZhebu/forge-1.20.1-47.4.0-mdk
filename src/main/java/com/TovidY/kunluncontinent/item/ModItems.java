@@ -74,7 +74,12 @@ public class ModItems {
 
     //固元草种子
     public static final RegistryObject<Item> GUYUANCAO_SEEDS = ITEMS.register("guyuancao_seeds",
-            () -> new ItemNameBlockItem(ModBlocks.GUYUANCAO_BLOCK.get(), new Item.Properties()));
+            () -> new ItemNameBlockItem(ModBlocks.GUYUANCAO_BLOCK.get(), new Item.Properties()){
+                @Override
+                public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
+                    pTooltip.add(Component.translatable("item.guyuancao_seeds.tooltip").withStyle(ChatFormatting.GRAY));
+                }
+            });
 
     //草药物品
     public static final RegistryObject<Item> RED_SPIDER_LILY_ITEM = ITEMS.register("red_spider_lily_item",
@@ -315,6 +320,10 @@ public class ModItems {
         HUNJILIST.add(SKILL_BAHUANG_2);
         HUNJILIST.add(SKILL_LEIJINHU_2);
         HUNJILIST.add(SKILL_PANSHIJUYUAN_2);
+        HUNJILIST.add(SKILL_POHUN_3);
+        HUNJILIST.add(SKILL_BAHUANG_3);
+        HUNJILIST.add(SKILL_LEIJINHU_3);
+        HUNJILIST.add(SKILL_PANSHIJUYUAN_3);
     }
 
     public static ArrayList<RegistryObject<Item>> DUANZAOMOBAN = new ArrayList<>();

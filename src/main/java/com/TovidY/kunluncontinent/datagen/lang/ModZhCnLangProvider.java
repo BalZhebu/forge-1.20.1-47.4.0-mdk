@@ -37,7 +37,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
 
         add("skill.pohunqiang.one.description", "消耗%s点精神力，凝结武魂实体化。");
         add("skill.pohunqiang.two.description", "消耗%s点精神力，释放枪芒：向前冲刺，对路径上的敌人造成伤害");
-        add("skill.pohunqiang.treen.description", "消耗%s点精神力，释放破甲：对单独一个敌人造成30%%的真实伤害");
+        add("skill.pohunqiang.three.description", "消耗%s点精神力，释放破甲：对单独一个敌人造成30%%的真实伤害");
 
         add("skill.bakuangji.one.description", "消耗%s点精神力，凝结武魂实体化。");
         add("skill.bahuangji.two.description", "消耗%s点精神力，释放横扫：对面前扇形范围敌人造成伤害");
@@ -45,7 +45,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
 
         add("skill.leijinhu.one.description", "消耗%s点精神力，横爪，可击打范围4格内的敌人");
         add("skill.liejinhu.two.description","消耗%s点精神力，虎啸：释放技能时对离得越近的敌人造成虚弱和缓慢效果，对5格以外的敌人造成缓慢效果");
-        add("skill.leijinhu.three.description","消耗%s点精神力，释放裂石：对范围敌人造成巨额伤害");
+        add("skill.liejinhu.three.description","消耗%s点精神力，释放裂石：对范围敌人造成巨额伤害");
 
         add("skill.panshijuyuan.one.description", "消耗%s点精神力，重击：可击打范围5格内的敌人并附加缓慢效果");
         add("skill.panshijuyuan.two.description","消耗%s点精神力，石肤：对自身附加30%%的防御力");
@@ -60,7 +60,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("guide.kunlun.chapter1.content","§1§l《欢迎来到昆仑大陆！祝您玩的愉快 ~ 》\n[本引导书更新于’1.0‘版本]§r\n§c§l请各位玩家务必认真仔细查看，基本收录了正常游玩时遇到的所有常见攻略" +
                 "\n§c以下为基础教程：§r" +
                 "\n§l属性面板系统：§r默认按O键打开属性面板，在属性面板下按住Shift键可查询具体数值，例如玩家的攻击力为10000时属性面板会自动缩进变为1万，按下Shift即可查看具体数值。" +
-                "\n§l技能系统：§r默认长按按R键可打开技能栏，按V键可释放选中的技能，技能栏会显示玩家当前拥有的技能，用鼠标滑动选择技能，鼠标移动到对应灰色滑块后松开R键即可选择技能，选择不松开R键的话技能栏中心会出现技能的相关介绍，点按R可快速按顺序切换技能。" +
+                "\n§l技能系统：§r默认长按按R键可打开技能栏，按V键可释放选中的技能，技能栏会显示玩家当前拥有的技能，用鼠标滑动选择技能，鼠标移动到对应灰色滑块后松开R键即可选择技能，选择不松开R键的话技能栏中心会出现技能的相关介绍，点按R可快速按顺序切换技能。魂技的威力关乎于吸收魂环的年限，年限越大魂技越强，消耗精神力越强。" +
                 "\n§l觉醒武魂：§r玩家击杀生物、炼制丹药、用蒲团修炼，都可以获得经验，经验值满了后自动突破下一个等级，当玩家第一次突破成功时，将会觉醒武魂并分配玩家的天赋。" +
                 "\n§l天赋系统：§r天赋在玩家觉醒武魂时出现，普通天赋最为常见，废物和天才天赋概率一致，是废物还是天才都在一念之间，不同的天赋会略微影响一点点数值，但后期均可通过努力提升。" +
                 "\n§l武魂系统：§r默认按K键可打开武魂，打开武魂时会消耗精神力，打开武魂时可以吸收魂环。" +
@@ -89,6 +89,8 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("item.kunluncontinent.guide_book.tooltip","§7第一次进入游戏即可获得");
         add("item.kunluncontinent.guide_book.tooltip1","§7请务必认真仔细查看");
         add("item.kunluncontinent.guide_book.tooltip2","§7建议不要弄丢");
+
+        add("item.guyuancao_seeds.tooltip","会生成在大部分奖励箱中");
 
         //成就类
         add("advancements.kunluncontinent.root.title", "初入世界");
@@ -403,6 +405,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModEffects.DIZZINESS.get(),"§6眩晕");
         add(ModEffects.EXTREME_COLD.get(),"§d极寒");
         add(ModEffects.RED_SPIDER_LILY_POTION.get(),"§c忘川渡");
+        add(ModEffects.STONE_SKIN.get(),"§6石肤");
 
         //普通文字
         add("心神受损","你受到攻击，心神受损，被迫停止了修炼！");

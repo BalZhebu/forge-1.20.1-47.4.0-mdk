@@ -32,10 +32,10 @@ public class SkillPanshijuyuan1 extends BaseSkillItem {
     }
 
     @Override
-    public int getCooldownTicks() { return 300; }
+    public int getCooldownTicks() { return 200; }
 
     @Override
-    public float getDamageMultiplier() { return 1.8f; }
+    public float getDamageMultiplier() { return 1.45f; }
 
     @Override
     public String getDescriptionKey() {
