@@ -1,6 +1,5 @@
 package com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.one;
 
-import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.item.ModItems;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import net.minecraft.ChatFormatting;
@@ -13,31 +12,17 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 
 public class SkillPohun1 extends BaseSkillItem {
-    public SkillPohun1() {
-        super();
-    }
-    @Override
-    public int getCastTime() {
-        return 0;
-    }
-    @Override
-    public int getCooldownTicks() {
-        return 60;
-    }
-    @Override
-    public float getDamageMultiplier() {
-        return 0f;
-    }
 
-    @Override
-    public float getBaseCost() {
-        return 60f;
-    }
+    @Override public float getBaseCost() { return 60f; }
+
+    @Override public float getDamageMultiplier() { return 0f; }
+
+    @Override public int getCastTime() { return 0; }
+
+    @Override public int getCooldownTicks() { return 60; }
 
     @Override
     public String getDescriptionKey() {
@@ -45,21 +30,13 @@ public class SkillPohun1 extends BaseSkillItem {
     }
 
     @Override
-    public void applyPenalty(Player player, float costMultiplier) {
-        player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
-            float currentJs = cap.getJingshenli();
-            float finalCost = 50f * costMultiplier;
-            cap.setJingshenli(Math.max(0, currentJs - finalCost));
-        });
-    }
-
-    @Override
-    public void executeEffect(Level level, Player player, float powerMultiplier) {
+    public void executeEffect(Level level, Player player, float powerMultiplier, float finalDamage) {
         if (!level.isClientSide) {
+            ServerLevel serverLevel = (ServerLevel) level;
             ItemStack spear = new ItemStack(ModItems.POHUNQIANG.get());
             CompoundTag nbt = spear.getOrCreateTag();
             nbt.putUUID("OwnerUUID", player.getUUID());
-            nbt.putString("OwnerName", player.getScoreboardName()); // 新增：用于描述显示
+            nbt.putString("OwnerName", player.getScoreboardName());
             spear.setHoverName(Component.literal("§6" + player.getName().getString() + "的破魂枪")
                     .withStyle(ChatFormatting.BOLD));
             if (player.getOffhandItem().isEmpty()) {
@@ -69,11 +46,13 @@ public class SkillPohun1 extends BaseSkillItem {
                     player.drop(spear, false);
                 }
             }
-            player.sendSystemMessage(Component.literal("§c§l破魂枪，现！"));
+            player.displayClientMessage(Component.literal("§c§l破魂枪，现！"), true);
 
-            ((ServerLevel) level).sendParticles(ParticleTypes.SOUL,
+            serverLevel.sendParticles(ParticleTypes.SOUL,
                     player.getX(), player.getY() + 1, player.getZ(),
                     15, 0.2, 0.5, 0.2, 0.05);
+            level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                    SoundEvents.TRIDENT_THROW, SoundSource.PLAYERS, 1.0f, 0.8f);
         }
     }
 }

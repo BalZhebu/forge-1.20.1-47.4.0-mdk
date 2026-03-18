@@ -27,17 +27,11 @@ public class PlayerAttributeInit {
         if (event.getEntity() instanceof Player player && !player.level().isClientSide) {
             if (player instanceof ServerPlayer serverPlayer) {
                 serverPlayer.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(attributes -> {
-
-                    // 判断是否是真正意义上的“新角色”
                     boolean isNotInitialized = !attributes.isInitialized();
-
-                    // 额外保险：如果属性全是初始值，说明是彻头彻尾的新人
                     boolean isBrandNew = attributes.getGongji() == 1.0f &&
                             attributes.getMaxshengming() == 20.0f &&
                             attributes.getDengji() == 0;
-
                     if (isNotInitialized && isBrandNew) {
-                        // 1. 设置基础属性
                         attributes.setShengming(20.0f);
                         attributes.setMaxshengming(20.0f);
                         attributes.setJingshenli(20.0f);
@@ -56,7 +50,6 @@ public class PlayerAttributeInit {
                         attributes.setShengmingHuifu(1.0f);
                         attributes.setWuchuan(1.0f);
                         attributes.setXiulianTime(600);
-
                         ItemStack book = new ItemStack(ModItems.GUIDE_BOOK.get());
                         if (!serverPlayer.getInventory().add(book)) {
                             serverPlayer.drop(book, false);

@@ -6,16 +6,20 @@ import com.TovidY.kunluncontinent.capability.playerattributes.Wuhunname;
 import com.TovidY.kunluncontinent.entity.EntityInit;
 import com.TovidY.kunluncontinent.item.armor.ModArmorBaseItem;
 import com.TovidY.kunluncontinent.item.armor.ModArmorMaterials;
+import com.TovidY.kunluncontinent.item.baseskillist.bahuangji.four.SkillBahuang4;
 import com.TovidY.kunluncontinent.item.baseskillist.bahuangji.one.BahuangjiItem;
 import com.TovidY.kunluncontinent.item.baseskillist.bahuangji.one.SkillBahuang1;
 import com.TovidY.kunluncontinent.item.baseskillist.bahuangji.treen.SkillBahuang3;
 import com.TovidY.kunluncontinent.item.baseskillist.bahuangji.two.SkillBahuang2;
+import com.TovidY.kunluncontinent.item.baseskillist.juyuan.four.SkillPanshijuyuan4;
 import com.TovidY.kunluncontinent.item.baseskillist.juyuan.one.SkillPanshijuyuan1;
 import com.TovidY.kunluncontinent.item.baseskillist.juyuan.treen.SkillPanshijuyuan3;
 import com.TovidY.kunluncontinent.item.baseskillist.juyuan.two.SkillPanshijuyuan2;
+import com.TovidY.kunluncontinent.item.baseskillist.liejinhu.four.SkillLeijinhu4;
 import com.TovidY.kunluncontinent.item.baseskillist.liejinhu.one.SkillLeijinhu1;
 import com.TovidY.kunluncontinent.item.baseskillist.liejinhu.treen.SkillLeijinhu3;
 import com.TovidY.kunluncontinent.item.baseskillist.liejinhu.two.SkillLeijinhu2;
+import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.four.SkillPohun4;
 import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.one.PohunqiangItem;
 import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.one.SkillPohun1;
 import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.treen.SkillPohun3;
@@ -78,6 +82,7 @@ public class ModItems {
                 @Override
                 public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
                     pTooltip.add(Component.translatable("item.guyuancao_seeds.tooltip").withStyle(ChatFormatting.GRAY));
+                    pTooltip.add(Component.translatable("item.guyuancao_seeds.tooltip2").withStyle(ChatFormatting.GRAY));
                 }
             });
 
@@ -294,21 +299,25 @@ public class ModItems {
     public static final RegistryObject<SkillPohun1> SKILL_POHUN_1 = ITEMS.register("skill_pohun_1", SkillPohun1::new);
     public static final RegistryObject<SkillPohun2> SKILL_POHUN_2 = ITEMS.register("skill_pohun_2", SkillPohun2::new);
     public static final RegistryObject<SkillPohun3> SKILL_POHUN_3 = ITEMS.register("skill_pohun_3", SkillPohun3::new);
+    public static final RegistryObject<SkillPohun4> SKILL_POHUN_4 = ITEMS.register("skill_pohun_4", SkillPohun4::new);
 
     //八荒戟
     public static final RegistryObject<SkillBahuang1> SKILL_BAHUANG_1 = ITEMS.register("skill_bahuang_1", SkillBahuang1::new);
     public static final RegistryObject<SkillBahuang2> SKILL_BAHUANG_2 = ITEMS.register("skill_bahuang_2", SkillBahuang2::new);
     public static final RegistryObject<SkillBahuang3> SKILL_BAHUANG_3 = ITEMS.register("skill_bahuang_3", SkillBahuang3::new);
+    public static final RegistryObject<SkillBahuang4> SKILL_BAHUANG_4 = ITEMS.register("skill_bahuang_4", SkillBahuang4::new);
 
     //裂金虎
     public static final RegistryObject<SkillLeijinhu1> SKILL_LEIJINHU_1 = ITEMS.register("skill_leijinhu_1", SkillLeijinhu1::new);
     public static final RegistryObject<SkillLeijinhu2> SKILL_LEIJINHU_2 = ITEMS.register("skill_leijinhu_2", SkillLeijinhu2::new);
     public static final RegistryObject<SkillLeijinhu3> SKILL_LEIJINHU_3 = ITEMS.register("skill_leijinhu_3", SkillLeijinhu3::new);
+    public static final RegistryObject<SkillLeijinhu4> SKILL_LEIJINHU_4 = ITEMS.register("skill_leijinhu_4", SkillLeijinhu4::new);
 
     //磐石巨猿
     public static final RegistryObject<SkillPanshijuyuan1> SKILL_PANSHIJUYUAN_1 = ITEMS.register("skill_panshijuyuan_1", SkillPanshijuyuan1::new);
     public static final RegistryObject<SkillPanshijuyuan2> SKILL_PANSHIJUYUAN_2 = ITEMS.register("skill_panshijuyuan_2", SkillPanshijuyuan2::new);
     public static final RegistryObject<SkillPanshijuyuan3> SKILL_PANSHIJUYUAN_3 = ITEMS.register("skill_panshijuyuan_3", SkillPanshijuyuan3::new);
+    public static final RegistryObject<SkillPanshijuyuan4> SKILL_PANSHIJUYUAN_4 = ITEMS.register("skill_panshijuyuan_4", SkillPanshijuyuan4::new);
 
     public static ArrayList<RegistryObject<? extends Item>> HUNJILIST = new ArrayList<>();
     static {
@@ -324,6 +333,10 @@ public class ModItems {
         HUNJILIST.add(SKILL_BAHUANG_3);
         HUNJILIST.add(SKILL_LEIJINHU_3);
         HUNJILIST.add(SKILL_PANSHIJUYUAN_3);
+        HUNJILIST.add(SKILL_POHUN_4);
+        HUNJILIST.add(SKILL_BAHUANG_4);
+        HUNJILIST.add(SKILL_LEIJINHU_4);
+        HUNJILIST.add(SKILL_PANSHIJUYUAN_4);
     }
 
     public static ArrayList<RegistryObject<Item>> DUANZAOMOBAN = new ArrayList<>();

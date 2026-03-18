@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 // 玩家每Tick触发
+
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class PWPlayerTickEvent {
 
@@ -212,7 +213,7 @@ public class PWPlayerTickEvent {
                 } else if (level <= 89) {
                     cost = 10.0f + (level * 0.2f);
                 } else {
-                    cost = 20.0f + (level * 0.3f);
+                    cost = 15.0f + (level * 0.25f);
                 }
                 capability.setJingshenli(capability.getJingshenli() - cost);
             }

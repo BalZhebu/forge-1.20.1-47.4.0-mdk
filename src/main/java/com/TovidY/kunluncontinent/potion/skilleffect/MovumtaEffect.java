@@ -8,21 +8,20 @@ import net.minecraft.world.entity.LivingEntity;
 
 import java.util.Map;
 
-public class StoneSkinEffect extends MobEffect implements PotionAttribute {
-    public StoneSkinEffect() {
-        super(MobEffectCategory.BENEFICIAL, 0x8B4513); // 棕色
+public class MovumtaEffect extends MobEffect implements PotionAttribute {
+    public MovumtaEffect() {
+        super(MobEffectCategory.BENEFICIAL, 0x1A4513);
     }
 
     @Override
-    public float getWufang(LivingEntity entity, Map.Entry<MobEffect, MobEffectInstance> effectEntry, float baseFangyu) {
-        return baseFangyu * 0.3f;
+    public float getWugong(LivingEntity entity, Map.Entry<MobEffect, MobEffectInstance> effectEntry, float baseGongji) {
+        return baseGongji * 0.8F;
     }
 
     @Override
-    public float getWugong(LivingEntity livingEntity, Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry, float value) {
+    public float getWufang(LivingEntity livingEntity, Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry, float value) {
         return 0;
     }
-
 
     @Override
     public float getBaojishanghai(LivingEntity livingEntity, Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry, float value) {
@@ -73,5 +72,4 @@ public class StoneSkinEffect extends MobEffect implements PotionAttribute {
     public float getMaxshengming(LivingEntity livingEntity, Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry, float value) {
         return 0;
     }
-
 }

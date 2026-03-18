@@ -16,44 +16,53 @@ public class ModZhCnLangProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
+
+        //别忘了写分配技能的类
         //技能代码
         add(ModItems.SKILL_POHUN_1.get(), "§c《破魂枪》第一魂技[破魂枪]");
         add(ModItems.SKILL_POHUN_2.get(), "§c《破魂枪》第二魂技[枪芒]");
         add(ModItems.SKILL_POHUN_3.get(), "§c《破魂枪》第三魂技[破甲]");
+        add(ModItems.SKILL_POHUN_4.get(), "§c《破魂枪》第四魂技[贯日]");
 
         add(ModItems.SKILL_BAHUANG_1.get(), "§c《八荒戟》第一魂技[八荒戟]");
         add(ModItems.SKILL_BAHUANG_2.get(), "§c《八荒戟》第二魂技[横扫]");
         add(ModItems.SKILL_BAHUANG_3.get(), "§c《八荒戟》第三魂技[劈山]");
+        add(ModItems.SKILL_BAHUANG_4.get(), "§c《八荒戟》第四魂技[断江]");
 
         add(ModItems.SKILL_LEIJINHU_1.get(), "§c《裂金虎》第一魂技[横爪]");
         add(ModItems.SKILL_LEIJINHU_2.get(), "§c《裂金虎》第二魂技[虎啸]");
         add(ModItems.SKILL_LEIJINHU_3.get(), "§c《裂金虎》第三魂技[裂石]");
+        add(ModItems.SKILL_LEIJINHU_4.get(), "§c《裂金虎》第四魂技[碎金]");
 
         add(ModItems.SKILL_PANSHIJUYUAN_1.get(), "§c《磐石巨猿》第一魂技[重击]");
         add(ModItems.SKILL_PANSHIJUYUAN_2.get(), "§c《磐石巨猿》第二魂技[石肤]");
         add(ModItems.SKILL_PANSHIJUYUAN_3.get(), "§c《磐石巨猿》第三魂技[震地]");
+        add(ModItems.SKILL_PANSHIJUYUAN_4.get(), "§c《磐石巨猿》第四魂技[搬山]");
 
         add("无技能","暂无技能描述");
 
         add("skill.pohunqiang.one.description", "消耗%s点精神力，凝结武魂实体化。");
         add("skill.pohunqiang.two.description", "消耗%s点精神力，释放枪芒：向前冲刺，对路径上的敌人造成伤害");
-        add("skill.pohunqiang.three.description", "消耗%s点精神力，释放破甲：对单独一个敌人造成30%%的真实伤害");
+        add("skill.pohunqiang.three.description", "消耗%s点精神力，释放破甲：先前冲刺，对最近的单独一个敌人造成无视30%%防御力的真实伤害");
+        add("skill.pohunqiang.four.description", "消耗%s点精神力，释放贯日：掷出长枪，化作一道流光贯穿直线上的所有敌人，最远可达20格以外。");
 
         add("skill.bakuangji.one.description", "消耗%s点精神力，凝结武魂实体化。");
         add("skill.bahuangji.two.description", "消耗%s点精神力，释放横扫：对面前扇形范围敌人造成伤害");
         add("skill.bahuangji.three.description", "消耗%s点精神力，释放劈山：跳劈对范围敌人造成巨额伤害");
+        add("skill.bahuangji.four.description", "消耗%s点精神力，释放断江：横向挥出，化作一道半月形光刃，宽4格可向前飞行10格。");
 
-        add("skill.leijinhu.one.description", "消耗%s点精神力，横爪，可击打范围4格内的敌人");
-        add("skill.liejinhu.two.description","消耗%s点精神力，虎啸：释放技能时对离得越近的敌人造成虚弱和缓慢效果，对5格以外的敌人造成缓慢效果");
-        add("skill.liejinhu.three.description","消耗%s点精神力，释放裂石：对范围敌人造成巨额伤害");
+        add("skill.leijinhu.one.description", "消耗%s点精神力，释放横爪，可击打范围4格内的敌人");
+        add("skill.liejinhu.two.description","消耗%s点精神力，释放虎啸：释放技能时对距离玩家越近的敌人造成虚弱和缓慢效果，对5格以外的敌人造成缓慢效果");
+        add("skill.liejinhu.three.description","消耗%s点精神力，释放裂石：对范围敌人造成巨额伤害并附加缓慢");
+        add("skill.leijinhu.four.description", "消耗%s点精神力，释放碎金：对面前3*3*3范围内的敌人造成大量伤害，可以破坏硬度较低的方块");
 
-        add("skill.panshijuyuan.one.description", "消耗%s点精神力，重击：可击打范围5格内的敌人并附加缓慢效果");
-        add("skill.panshijuyuan.two.description","消耗%s点精神力，石肤：对自身附加30%%的防御力");
+        add("skill.panshijuyuan.one.description", "消耗%s点精神力，释放重击：可击打范围5格内的敌人并附加缓慢效果");
+        add("skill.panshijuyuan.two.description","消耗%s点精神力，释放石肤：对自身附加30%%的防御力");
         add("skill.panshijuyuan.three.description","消耗%s点精神力，释放震地：对10格内敌人造成巨额伤害");
+        add("skill.panshijuyuan.four.description", "消耗%s点精神力，释放搬山：给自身附加80%%的攻击力");
 
         //锻造模版
         add(ModItems.RINSEI_FORGING_TEMPLATE.get(), "§b凛晶锻造模版");
-
 
         //引导书
         add(ModItems.GUIDE_BOOK.get(), "§b《昆仑大陆 · 引导书》");
@@ -65,14 +74,14 @@ public class ModZhCnLangProvider extends LanguageProvider {
                 "\n§l天赋系统：§r天赋在玩家觉醒武魂时出现，普通天赋最为常见，废物和天才天赋概率一致，是废物还是天才都在一念之间，不同的天赋会略微影响一点点数值，但后期均可通过努力提升。" +
                 "\n§l武魂系统：§r默认按K键可打开武魂，打开武魂时会消耗精神力，打开武魂时可以吸收魂环。" +
                 "\n§l魂环吸收:§r玩家每到10/20/30级等10的倍数的等级时，会锁定等级，必须吸收魂环才可突破下一阶段，吸收时需打开武魂后右键生物掉落的魂环坐上去后消耗精神力吸收魂环，精神力不足将停止吸收，吸收进度重置。" +
-                "\n§l重修&转世系统：§r玩家在主世界自然生成的地狱门遗迹可找到生成在地狱岩上的彼岸花，将彼岸花磨成粉可炼制忘川渡buff，喝下后找到重修遗迹，再自己身上有buff的情况下右键重修台就会遭受99道雷劫，但记住！雷劫不致命！请不要用任何手段恢复血量，因为重修需要玩家血量到达20以内才能成功转世，若99道天雷后你血量依旧健康，那么，你的转世重修就会失败。" +
+                "\n§l重修&转世系统：§r玩家在主世界自然生成的地狱门遗迹可找到生成在地狱岩上的彼岸花，将彼岸花磨成粉可炼制忘川渡buff，喝下后找到重修遗迹，再自己身上有buff的情况下右键重修台就会遭受99道雷劫，但记住！雷劫不致命！请不要用任何手段恢复血量，因为重修需要玩家血量到达20以内才能成功转世，若99道天雷后你血量依旧健康，那么，你的转世重修就会失败。重修会使玩家的武魂、魂环、属性、技能配置全部重置，玩家拥有什么武魂就会给与对应的武魂果实。" +
                 "\n§l重修遗迹：§r通过重修之眼可找到重修遗迹，重修之眼使用方法和末影之眼一致。" +
                 "\n§l武魂果实：§r武魂果实将在玩家转生后会根据玩家拥有的武魂将武魂果实给予给玩家，吃下武魂果实即可觉醒对应的武魂，玩家最多觉醒3个武魂。" +
                 "\n§l内丹系统：§r击杀不同年限的生物会掉落不同品质的内丹，内丹可以炼制经验丹药，不同等级的炼丹炉炼制速度不一样，例如1级炼丹炉炼制1级丹药需要10秒，而炼制9级丹药需要10秒的100倍的时间。" +
                 "\n§l丹药品级系统：§r不同品质的内丹炼制出的丹药品质不一样，使用时的倍率不一样，详情自己炼制查看。炼制时可能出现丹渣品质的丹药，放入合成台一个丹渣品质丹药可合成一个丹渣，丹渣9个合成一个丹渣块，可减少炼制丹药时丹渣的概率。" +
                 "\n§l年限生成系统：§r玩家距离世界坐标越远，生成高年限的生物概率越高，最远10000格以外，，到达一万格后，这个值将会到达极限。" +
                 "\n§l魂骨系统：§r玩家在击杀生物时有极低概率掉落魂骨，魂骨是词条制，最低为1词条，最高为10词条。词条越多，概率越低。" +
-                "\n§l蒲团修炼系统：§r玩家在前期难以修炼时可以用蒲团修炼，玩家在前期时修满一个周期（10分钟）可直升两级，修炼时玩家有10分钟周期限制，10分钟后不准修炼，可通过除不修炼的任何情况下都可以恢复这个修炼时间，提示：若玩家修炼时间已满，但仍然可以修炼，但这次修炼只会恢复精神力，而不会增加修为。" +
+                "\n§l蒲团修炼系统：§r玩家在前期难以修炼时可以用蒲团修炼，玩家在前期时修满一个周期（10分钟）可直升两级，修炼时玩家有10分钟修炼时间，时间结束后就会被强制停止修炼，可通过除不修炼的任何情况下都可以恢复这个修炼时间，提示：若玩家修炼时间已经结束，但仍然可以修炼，但这次修炼只会恢复精神力，而不会增加修为。" +
                 "\n§l飞行系统：§r当玩家的最大精神力到达5000并等级大于25级时，玩家将解锁飞行能力，飞行时精神力消耗加快，等级越高消耗越慢。" +
                 "\n§l进阶维度系统：§r根据某些特殊生物掉落的物品可合成传送门框架，请查看传送门框架描述来搭建传送门结构，可前往生成高年限生物的维度。" +
                 "\n§l特殊攻击系统：§r玩家攻击生物时有低概率触发特殊效果，例如撕裂、燃烧、震撼、湮灭、等特殊效果，特殊效果可增加玩家对生物造成的那次伤害并附加debuff，注意：怪物也可以对你造成这些特殊效果。" +
@@ -364,7 +373,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.GUOSHI_POHUNQIANG.get(), "§c武魂果实 - 破魂枪");
         add(ModItems.GUOSHI_BAHUANGJI.get(), "§c武魂果实 - 八荒戟");
         add(ModItems.GUOSHI_LEIJINHU.get(), "§c武魂果实 - 裂金虎");
-        add(ModItems.GUOSHI_PANSHIJUYUAN.get(), "§c武魂果实 - 磐石巨像");
+        add(ModItems.GUOSHI_PANSHIJUYUAN.get(), "§c武魂果实 - 磐石巨猿");
         add("服用后觉醒武魂", "§2服用后觉醒%s武魂");
 
         //JEI类
@@ -420,6 +429,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("gui.kunluncontinent.casting","§e正在施法中...");
         add("gui.kunluncontinent.cast_shifa","§a§l魂技释放成功！");
         add("item.rinsei_ingot.tooltip","击杀雪魔概率掉落");
+        add("item.guyuancao_seeds.tooltip2","可以种在魂土上");
 
         //适配你在看什么
         add(ModBlocks.RED_SPIDER_LILY_BLOCK.get(), "§c彼岸花");

@@ -119,7 +119,11 @@ public class ModAttributeAPI {
                 }
             }
             Map<MobEffect, MobEffectInstance> activeEffectsMap = livingEntity.getActiveEffectsMap();
-            for (Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry : activeEffectsMap.entrySet()) {
+            for (Map.Entry<MobEffect, MobEffectInstance> entry : activeEffectsMap.entrySet()) {
+                MobEffect effect = entry.getKey();
+                if (effect instanceof PotionAttribute potionAttr) {
+                    value += potionAttr.getWugong(livingEntity, entry, value);
+                }
             }
         }
         return value;
@@ -143,9 +147,8 @@ public class ModAttributeAPI {
                     .map(MobAttributeCapability::getFangyu).orElse(0f);
         }
 
-        // 假设你的药水实例名为 ModEffects.ARMOR_PIERCING
         if (living.hasEffect(ModEffects.ARMOR_PIERCING.get())) {
-            baseFangyu *= 0.7f; // 扣除 30%，即保留 70%
+            baseFangyu *= 0.7f;
         }
 
         if(entity instanceof LivingEntity livingEntity){

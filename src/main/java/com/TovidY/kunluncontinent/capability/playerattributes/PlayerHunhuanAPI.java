@@ -21,6 +21,7 @@ import static com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttri
 import static com.TovidY.kunluncontinent.capability.playerattributes.PlayerUpgradeSystem.performUpgrade;
 
 //各个方法的调用与使用
+
 public class PlayerHunhuanAPI {
 
     static void addWuHun(Player player) {
@@ -34,6 +35,7 @@ public class PlayerHunhuanAPI {
                 List<MobAttributeCapability> monsterAttributeCapabilities = capability.getMonsterCapabilityLists().get(s);
                 if(monsterAttributeCapabilities ==null) {
                     capability.getMonsterCapabilityLists().put(s,new ArrayList<>());
+                    capability.getWuhunSkillsMap().remove(s);
                     capability.getWuhunListsname().add(s);
                     capability.setHunhuankuaiguan(capability.getMonsterCapabilityLists().size()-1);
                     player.sendSystemMessage(Component.translatable("成功觉醒武魂",s));
@@ -69,6 +71,7 @@ public class PlayerHunhuanAPI {
             if(monsterAttributeCapabilities ==null) {
                 capability.getMonsterCapabilityLists().put(name,new ArrayList<>());
                 capability.getWuhunListsname().add(name);
+                capability.getWuhunSkillsMap().remove(name);
                 capability.setHunhuankuaiguan(capability.getMonsterCapabilityLists().size()-1);
                 player.sendSystemMessage(Component.translatable("成功觉醒武魂",name));
                 ((ServerPlayer)player).connection.send(new ClientboundSetTitleTextPacket(Component.translatable("成功觉醒武魂",name)));
@@ -328,8 +331,7 @@ public class PlayerHunhuanAPI {
     public static void addMaxJingshenli(ServerPlayer player, float value) {
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(capability -> {
             capability.setMaxjingshenli(capability.getMaxjingshenli()+value);
-            
-            // 同步属性到客户端
+
             syncPlayerAttributeToClient(player, capability);
 
         });
@@ -354,6 +356,10 @@ public class PlayerHunhuanAPI {
             newplayerCapability.getWuhunSkillsMap().clear();
             newplayerCapability.getWuhunListsname().clear();
             newplayerCapability.getMonsterCapabilityLists().clear();
+            newplayerCapability.setInitialized(false);
+            newplayerCapability.setHunhuankuaiguan(-1);
+
+            SynsAPI.synsPlayerAttribute(player);
 
             player.setHealth(newplayerCapability.getMaxshengming());
         }

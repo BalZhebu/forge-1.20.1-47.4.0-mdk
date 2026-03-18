@@ -51,15 +51,11 @@ public class CPacketQiehuanWuhun {
           capability.setHunhuankuaiguan(++hunhuankuaiguan);
           sender.connection.send(new ClientboundSetActionBarTextPacket(
                   Component.translatable("武魂已开启", capability.getWuhunListsname().get(hunhuankuaiguan))));
-
-          // 开启时发送动画包
           PWRenderPlayerEvent.startOpenAnimation(sender);
         } else {
           capability.setHunhuankuaiguan(-1);
           sender.connection.send(new ClientboundSetActionBarTextPacket(
                   Component.translatable("武魂已关闭")));
-
-          // 关闭时发送关闭通知包
           PWRenderPlayerEvent.sendCloseNotification(sender);
         }
         SynsAPI.synsPlayerAttribute(sender);
