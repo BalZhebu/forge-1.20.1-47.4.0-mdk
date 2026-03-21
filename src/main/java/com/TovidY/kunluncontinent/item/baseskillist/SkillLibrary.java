@@ -27,6 +27,9 @@ public class SkillLibrary {
         register(Wuhunname.pohunqiang, 4, List.of(
                 ModItems.SKILL_POHUN_4
         ));
+        register(Wuhunname.pohunqiang, 5, List.of(
+                ModItems.SKILL_POHUN_5
+        ));
 
         //八荒戟
         register(Wuhunname.bahuangji, 1, List.of(
@@ -40,6 +43,9 @@ public class SkillLibrary {
         ));
         register(Wuhunname.bahuangji, 4, List.of(
                 ModItems.SKILL_BAHUANG_4
+        ));
+        register(Wuhunname.bahuangji, 5, List.of(
+                ModItems.SKILL_BAHUANG_5
         ));
 
         //裂金虎
@@ -55,6 +61,9 @@ public class SkillLibrary {
         register(Wuhunname.liejinhu, 4, List.of(
                 ModItems.SKILL_LEIJINHU_4
         ));
+        register(Wuhunname.liejinhu, 5, List.of(
+                ModItems.SKILL_LEIJINHU_5
+        ));
 
         //磐石巨猿
         register(Wuhunname.panshijuyuan, 1, List.of(
@@ -65,6 +74,8 @@ public class SkillLibrary {
                 ModItems.SKILL_PANSHIJUYUAN_3));
         register(Wuhunname.panshijuyuan, 4, List.of(
                 ModItems.SKILL_PANSHIJUYUAN_4));
+        register(Wuhunname.panshijuyuan, 5, List.of(
+                ModItems.SKILL_PANSHIJUYUAN_5));
     }
     private static void register(String wuhun, int ringIndex, List<RegistryObject<? extends BaseSkillItem>> skills) {
         REGISTRY.computeIfAbsent(wuhun, k -> new HashMap<>()).put(ringIndex, skills);
