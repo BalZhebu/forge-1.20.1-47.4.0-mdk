@@ -24,24 +24,28 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.SKILL_POHUN_3.get(), "§c《破魂枪》第三魂技[破甲]");
         add(ModItems.SKILL_POHUN_4.get(), "§c《破魂枪》第四魂技[贯日]");
         add(ModItems.SKILL_POHUN_5.get(), "§c《破魂枪》第五魂技[碎星]");
+        add(ModItems.SKILL_POHUN_6.get(), "§c《破魂枪》第六魂技[巨枪]");
 
         add(ModItems.SKILL_BAHUANG_1.get(), "§c《八荒戟》第一魂技[八荒戟]");
         add(ModItems.SKILL_BAHUANG_2.get(), "§c《八荒戟》第二魂技[横扫]");
         add(ModItems.SKILL_BAHUANG_3.get(), "§c《八荒戟》第三魂技[劈山]");
         add(ModItems.SKILL_BAHUANG_4.get(), "§c《八荒戟》第四魂技[断江]");
         add(ModItems.SKILL_BAHUANG_5.get(), "§c《八荒戟》第五魂技[镇岳]");
+        add(ModItems.SKILL_BAHUANG_6.get(), "§c《八荒戟》第六魂技[破军]");
 
         add(ModItems.SKILL_LEIJINHU_1.get(), "§c《裂金虎》第一魂技[横爪]");
         add(ModItems.SKILL_LEIJINHU_2.get(), "§c《裂金虎》第二魂技[虎啸]");
         add(ModItems.SKILL_LEIJINHU_3.get(), "§c《裂金虎》第三魂技[裂石]");
         add(ModItems.SKILL_LEIJINHU_4.get(), "§c《裂金虎》第四魂技[碎金]");
         add(ModItems.SKILL_LEIJINHU_5.get(), "§c《裂金虎》第五魂技[扑杀]");
+        add(ModItems.SKILL_LEIJINHU_6.get(), "§c《裂金虎》第六魂技[啸月]");
 
         add(ModItems.SKILL_PANSHIJUYUAN_1.get(), "§c《磐石巨猿》第一魂技[重击]");
         add(ModItems.SKILL_PANSHIJUYUAN_2.get(), "§c《磐石巨猿》第二魂技[石肤]");
         add(ModItems.SKILL_PANSHIJUYUAN_3.get(), "§c《磐石巨猿》第三魂技[震地]");
         add(ModItems.SKILL_PANSHIJUYUAN_4.get(), "§c《磐石巨猿》第四魂技[搬山]");
         add(ModItems.SKILL_PANSHIJUYUAN_5.get(), "§c《磐石巨猿》第五魂技[撼地]");
+        add(ModItems.SKILL_PANSHIJUYUAN_6.get(), "§c《磐石巨猿》第六魂技[裂地]");
 
         add("无技能","暂无技能描述");
 
@@ -50,24 +54,28 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("skill.pohunqiang.three.description", "消耗%s点精神力，释放破甲：先前冲刺，对最近的单独一个敌人造成无视30%%防御力的真实伤害");
         add("skill.pohunqiang.four.description", "消耗%s点精神力，释放贯日：掷出长枪，化作一道流光贯穿直线上的所有敌人，最远可达20格以外。");
         add("skill.pohunqiang.five.description", "消耗%s点精神力，释放碎星：对玩家自身15格范围内的所有实体造成持续性高额伤害，持续5秒");
+        add("skill.pohunqiang.six.description", "消耗%s点精神力，释放巨枪：对距离玩家1格面前召唤巨枪落下来像陨石一样砸下来，造成巨额伤害");
 
         add("skill.bakuangji.one.description", "消耗%s点精神力，凝结武魂实体化。");
         add("skill.bahuangji.two.description", "消耗%s点精神力，释放横扫：对面前扇形范围敌人造成伤害");
         add("skill.bahuangji.three.description", "消耗%s点精神力，释放劈山：跳劈对范围敌人造成巨额伤害");
         add("skill.bahuangji.four.description", "消耗%s点精神力，释放断江：横向挥出，化作一道半月形光刃，宽4格可向前飞行10格。");
         add("skill.bahuangji.five.description", "消耗%s点精神力，释放镇岳：对玩家自身30格范围内的所有生物获得缓慢2的buff，并造成高额伤害");
+        add("skill.bahuangji.six.description", "消耗%s点精神力，释放破军：强制玩家向前猛冲30格，对路径上敌人造成巨额伤害");
 
         add("skill.leijinhu.one.description", "消耗%s点精神力，释放横爪，可击打范围4格内的敌人");
         add("skill.liejinhu.two.description","消耗%s点精神力，释放虎啸：释放技能时对距离玩家越近的敌人造成虚弱和缓慢效果，对5格以外的敌人造成缓慢效果");
         add("skill.liejinhu.three.description","消耗%s点精神力，释放裂石：对范围敌人造成巨额伤害并附加缓慢");
         add("skill.leijinhu.four.description", "消耗%s点精神力，释放碎金：对面前3*3*3范围内的敌人造成大量伤害，可以破坏硬度较低的方块");
-        add("skill.leijinhu.five.description", "消耗%s点精神力，释放扑杀：单体技能，对一个实体造成高额伤害，并且有5%的概率直接斩杀");
+        add("skill.leijinhu.five.description", "消耗%s点精神力，释放扑杀：单体技能，对一个实体造成高额伤害的同时，有极低概率直接斩杀对方，斩杀特效不论对方实力强弱，触发后顷刻斩杀");
+        add("skill.leijinhu.six.description", "消耗%s点精神力，释放啸月：在白天使用获得大日之威效果20秒，在夜晚使用获得邀月之华效果25秒。buff提供全属性加成。");
 
         add("skill.panshijuyuan.one.description", "消耗%s点精神力，释放重击：可击打范围5格内的敌人并附加缓慢效果");
         add("skill.panshijuyuan.two.description","消耗%s点精神力，释放石肤：对自身附加30%%的防御力");
         add("skill.panshijuyuan.three.description","消耗%s点精神力，释放震地：对10格内敌人造成巨额伤害");
         add("skill.panshijuyuan.four.description", "消耗%s点精神力，释放搬山：给自身附加80%%的攻击力");
         add("skill.panshijuyuan.five.description", "消耗%s点精神力，释放撼地：给自身附加85%%的攻击力，70%%的防御力");
+        add("skill.panshijuyuan.six.description", "消耗%s点精神力，释放裂地：强制跳起来5格以上高度，狠狠砸向地面，对范围20格内敌人造成高额伤害");
 
         //锻造模版
         add(ModItems.RINSEI_FORGING_TEMPLATE.get(), "§b凛晶锻造模版");
@@ -425,6 +433,8 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModEffects.STONE_SKIN.get(),"§6石肤");
         add(ModEffects.MOVING_MOUNTAINS.get(),"§d搬山");
         add(ModEffects.STONE_ARMOR.get(),"§c石铠");
+        add(ModEffects.SUN_POWER.get(),"§e大日之威");
+        add(ModEffects.POWER_OF_THE_MOON.get(),"§d邀月之华");
 
         //普通文字
         add("心神受损","你受到攻击，心神受损，被迫停止了修炼！");

@@ -15,7 +15,7 @@ public class NeidanDropHandler {
     public static void tryDropNeidan(LivingEntity entity, MobAttributeCapability cap, Player player) {
         CompoundTag playerData = player.getPersistentData();
         boolean forceDrop = playerData.getBoolean("KL_Neidan_Prob_Cheat");
-        if (!forceDrop && RANDOM.nextDouble() > 0.10) return;
+        if (!forceDrop && RANDOM.nextDouble() > 0.20) return;
         long nianxian = cap.getNianxian();
         int tier = getTier(nianxian);
         if (tier == 0) return;

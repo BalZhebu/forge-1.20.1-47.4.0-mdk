@@ -24,14 +24,11 @@ import org.joml.Matrix4f;
 import static net.minecraftforge.client.gui.overlay.VanillaGuiOverlay.*;
 
 //屏幕图标图片渲染代码
+
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class PWRenderGuiOverlayEventEvent {
-
-    public static final ResourceLocation jingshenlibeijing =ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/gui/jingshenlibeijing.png");
     public static final ResourceLocation jingshenli = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/gui/jingshenli.png");
     public static final ResourceLocation health = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/gui/health.png");
-    public static final ResourceLocation health_kong = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/gui/health_kong.png");
-    public static final ResourceLocation food_kong = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/gui/fill_food_kong.png");
     public static final ResourceLocation food = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/gui/fill_food.png");
     public static final ResourceLocation exp_kong = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/gui/fill_exp_kong.png");
     public static final ResourceLocation exp = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/gui/fill_exp.png");
@@ -70,13 +67,30 @@ public class PWRenderGuiOverlayEventEvent {
 
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
+
             double healthRatio = player.getMaxHealth() > 0 ? (double) player.getHealth() / player.getMaxHealth() : 0;
-            guiGraphics.blit(health_kong, 43, 23, 0, 0, 49, 6, 49, 6);
-            guiGraphics.blit(health, 43, 23, 0, 0, (int) (49 * Math.min(1.0, healthRatio)), 6, 49, 6);
+            int targetWidthH = 82;
+            int targetHeightH = 5;
+            int currentWidthH = (int) (targetWidthH * Math.min(1.0, healthRatio));
+            int uWidthH = (int) (134 * Math.min(1.0, healthRatio));
+            guiGraphics.blit(health, 61, 12, currentWidthH, targetHeightH, 0, 0, uWidthH, 8, 134, 8);
+
+            double foodRatio = player.getFoodData().getFoodLevel() / 20.0;
+            int targetWidthF = 72;
+            int targetHeightF = 5;
+            int currentWidthF = (int) (targetWidthF * Math.min(1.0, foodRatio));
+            int uWidthF = (int) (117 * Math.min(1.0, foodRatio));
+
+            guiGraphics.blit(food, 61, 25, currentWidthF, targetHeightF, 0, 0, uWidthF, 7, 117, 7);
 
             double jsRatio = capability.getMaxjingshenli() > 0 ? (double) capability.getJingshenli() / capability.getMaxjingshenli() : 0;
-            guiGraphics.blit(jingshenlibeijing, 44, 31, 0, 0, 91, 7, 91, 7);
-            guiGraphics.blit(jingshenli, 44, 31, 0, 0, (int) (91 * Math.min(1.0, jsRatio)), 7, 91, 7);
+            int targetWidthJ = 62;
+            int targetHeightJ = 5;
+            int currentWidthJ = (int) (targetWidthJ * Math.min(1.0, jsRatio));
+            int uWidthJ = (int) (232 * Math.min(1.0, jsRatio));
+            guiGraphics.blit(jingshenli, 61, 38, currentWidthJ, targetHeightJ, 0, 0, uWidthJ, 21, 232, 21);
+
+
 
             int expX = screenWidth / 2 - 64;
             int expY = screenHeight - 26;
@@ -84,21 +98,17 @@ public class PWRenderGuiOverlayEventEvent {
             guiGraphics.blit(exp_kong, expX, expY, 0, 0, 130, 3, 130, 3);
             guiGraphics.blit(exp, expX, expY, 0, 0, (int) (130 * Math.min(1.0, expRatio)), 3, 130, 3);
 
-            double foodRatio = player.getFoodData().getFoodLevel() / 20.0;
-            guiGraphics.blit(food_kong, 102, 23, 0, 0, 39, 6, 39, 6);
-            guiGraphics.blit(food, 102, 23, 0, 0, (int) (39 * Math.min(1.0, foodRatio)), 6, 39, 6);
-
             pose.pushPose();
             pose.scale(0.5f, 0.5f, 1.0f);
 
-            String healthInfo = formatBigNum(player.getHealth()) + "/" + formatBigNum(player.getMaxHealth());
-            guiGraphics.drawString(Minecraft.getInstance().font, healthInfo, 86, 48, 0xFFFFFF, true);
+            String healthInfo ="生命："+ formatBigNum(player.getHealth()) + "/" + formatBigNum(player.getMaxHealth());
+            guiGraphics.drawString(Minecraft.getInstance().font, healthInfo, 150, 25, 0xFFFFFF, true);
 
             String jsInfo = "精神力: " + formatBigNum(capability.getJingshenli()) + "/" + formatBigNum(capability.getMaxjingshenli());
-            guiGraphics.drawString(Minecraft.getInstance().font, jsInfo, 88, 65, 0x55FFFF, true);
+            guiGraphics.drawString(Minecraft.getInstance().font, jsInfo, 128, 77, 0x55FFFF, true);
 
             String foodInfo = "体力: " + player.getFoodData().getFoodLevel() + "/20";
-            guiGraphics.drawString(Minecraft.getInstance().font, foodInfo, 204, 48, 0xFFCC00, true);
+            guiGraphics.drawString(Minecraft.getInstance().font, foodInfo, 140, 51, 0xFFCC00, true);
 
             String expInfo = "经验: " + formatBigNum(capability.getJingyan()) + "/" + formatBigNum(capability.getMaxjingyan());
             int expTextX = (screenWidth / 2) * 2 - (Minecraft.getInstance().font.width(expInfo) / 2);
@@ -127,18 +137,12 @@ public class PWRenderGuiOverlayEventEvent {
     private static void renderCustomExperienceBar(GuiGraphics guiGraphics, Player player, int width, int height) {
         PoseStack poseStack = guiGraphics.pose();
         int barX = 26;
-        int barY = 47;
+        int barY = 60;
         int barWidth = 91;
         int barHeight = 5;
         int playerLevel = player.experienceLevel;
         float experienceProgress = player.experienceProgress;
-        guiGraphics.blit(
-                exp_bar_kong,
-                barX, barY,
-                0, 0,
-                barWidth, barHeight,
-                barWidth, barHeight
-        );
+        guiGraphics.blit(exp_bar_kong, barX, barY, 0, 0, barWidth, barHeight, barWidth, barHeight);
         int filledWidth = (int)(barWidth * experienceProgress);
         guiGraphics.blit(exp_bar, barX, barY, 0, 0, filledWidth, barHeight, barWidth, barHeight);
         poseStack.pushPose();

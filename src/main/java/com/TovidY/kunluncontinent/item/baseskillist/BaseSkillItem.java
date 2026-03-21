@@ -3,9 +3,7 @@ package com.TovidY.kunluncontinent.item.baseskillist;
 import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.network.SynsAPI;
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
@@ -42,10 +40,9 @@ public abstract class BaseSkillItem extends Item {
         return Component.translatable(getDescriptionKey(), String.format("%.1f", finalCost));
     }
 
-    // --- 数值计算逻辑 ---
     public float getPowerMultiplier(long nianxian) {
-        if (nianxian >= 100000000) return 100.0f;
-        if (nianxian >= 10000000) return 50.0f;
+        if (nianxian >= 100000000) return 50.0f;
+        if (nianxian >= 10000000) return 25.0f;
         if (nianxian >= 1000000) return 15.0f;
         if (nianxian >= 100000) return 8.0f;
         if (nianxian >= 10000) return 4.0f;
@@ -60,7 +57,6 @@ public abstract class BaseSkillItem extends Item {
         return Math.min(3.5f, costFactor);
     }
 
-    // --- 消耗与惩罚 ---
     public void applyPenalty(Player player, float costMultiplier) {
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
             float finalCost = getBaseCost() * costMultiplier;

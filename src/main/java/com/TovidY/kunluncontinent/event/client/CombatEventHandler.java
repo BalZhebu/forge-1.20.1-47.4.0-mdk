@@ -23,19 +23,15 @@ public class CombatEventHandler {
     public static void onLivingHurt(LivingHurtEvent event) {
         if (!(event.getSource().getEntity() instanceof LivingEntity attacker)) return;
         LivingEntity target = event.getEntity();
-
+        if (target == null || !target.isAlive()) return;
         float shanbi = ModAttributeAPI.getShanbi(target);
         float mingzhong = ModAttributeAPI.getMingzhong(attacker);
-        float dodgeChance = Math.max(0, shanbi - mingzhong) / (Math.max(0, shanbi - mingzhong) + 100f);
-        //闪避处理
-        if (RANDOM.nextFloat() <= dodgeChance) {
+        float diff = Math.max(0, shanbi - mingzhong);
+        float dodgeChance = diff / (diff + 100f);
+        if (RANDOM.nextFloat() < dodgeChance) {
             event.setCanceled(true);
             if (attacker instanceof Player player) {
-                String targetName = target.getDisplayName().getString();
-                player.displayClientMessage(
-                        Component.literal("§e" + targetName + " §7§l闪避了这次攻击！"),
-                        true
-                );
+                player.displayClientMessage(Component.literal("§e" + target.getDisplayName().getString() + " §7§l闪避了这次攻击！"), true);
             }
             return;
         }
@@ -46,34 +42,32 @@ public class CombatEventHandler {
         float effectiveFangyu = Math.max(0, fangyu - wuchuan);
         float reductionFactor = 100f / (100f + effectiveFangyu);
         float baseDamage = (gongji + event.getAmount()) * reductionFactor;
-
-        float baojilv = ModAttributeAPI.getBaojilv(attacker);
-        float kangbao = ModAttributeAPI.getKangbao(target);
-        float finalCritRate = Math.max(0, baojilv - kangbao);
-        boolean isCrit = (RANDOM.nextFloat() * 100) < finalCritRate;
-
         float finalDamage = baseDamage;
+        boolean isCrit = false;
         boolean effectTriggered = false;
-
-        if (RANDOM.nextFloat() < 0.1f) { // 10% 概率触发特殊效果
-            effectTriggered = handleSpecialEffects(attacker, target, baseDamage);
-            if (effectTriggered) {
+        if (RANDOM.nextFloat() < 0.1f) {
+            if (handleSpecialEffects(attacker, target, baseDamage)) {
                 finalDamage = calculateSpecialDamage(attacker, target, baseDamage);
+                effectTriggered = true;
             }
         }
-
-        if (!effectTriggered && isCrit) {
-            float baojishanghai = ModAttributeAPI.getBaojishanghai(attacker);
-            finalDamage = baseDamage * (baojishanghai / 100f);
+        if (!effectTriggered) {
+            float baojilv = ModAttributeAPI.getBaojilv(attacker);
+            float kangbao = ModAttributeAPI.getKangbao(target);
+            float finalCritRate = Math.max(0, baojilv - kangbao);
+            if ((RANDOM.nextFloat() * 100) < finalCritRate) {
+                isCrit = true;
+                float baojishanghai = ModAttributeAPI.getBaojishanghai(attacker);
+                finalDamage = baseDamage * (baojishanghai / 100f);
+            }
         }
-
         finalDamage = Math.max(0.1f, finalDamage);
         event.setAmount(finalDamage);
-
         handleLifesteal(attacker, finalDamage);
-
-        if (attacker instanceof Player player && !effectTriggered) {
-            sendDamageMessage(player, target, finalDamage, isCrit);
+        if (attacker instanceof Player player) {
+            if (!effectTriggered) {
+                sendDamageMessage(player, target, finalDamage, isCrit);
+            }
         }
     }
 

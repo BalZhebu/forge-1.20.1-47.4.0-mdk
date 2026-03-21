@@ -137,20 +137,15 @@ public class ModAttributeAPI {
         if (living instanceof Player player) {
             baseFangyu = player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
                     .map(PlayerAttributeCapability::getFangyu).orElse(0f);
-
             baseFangyu += getWuhunBonus(player, MobAttributeCapability::getFangyu);
-
             baseFangyu += getBoneBonus(player, "fangyu");
-
         } else if (living instanceof Mob mob) {
             baseFangyu = mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY)
                     .map(MobAttributeCapability::getFangyu).orElse(0f);
         }
-
         if (living.hasEffect(ModEffects.ARMOR_PIERCING.get())) {
             baseFangyu *= 0.7f;
         }
-
         if(entity instanceof LivingEntity livingEntity){
             Map<MobEffect, MobEffectInstance> activeEffectsMap = livingEntity.getActiveEffectsMap();
             for (Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry : activeEffectsMap.entrySet()) {
@@ -267,7 +262,10 @@ public class ModAttributeAPI {
             // 考虑药水效果
             Map<MobEffect, MobEffectInstance> activeEffectsMap = livingEntity.getActiveEffectsMap();
             for (Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry : activeEffectsMap.entrySet()) {
-                // 在这里可以添加对自定义药水效果的处理
+                MobEffect effect = mobEffectMobEffectInstanceEntry.getKey();
+                if (effect instanceof PotionAttribute potionAttr) {
+                    value += potionAttr.getWugong(livingEntity, mobEffectMobEffectInstanceEntry, value);
+                }
             }
         }
         return value;
@@ -326,10 +324,12 @@ public class ModAttributeAPI {
         }
         
         if (entity instanceof LivingEntity livingEntity) {
-            // 考虑药水效果
             Map<MobEffect, MobEffectInstance> activeEffectsMap = livingEntity.getActiveEffectsMap();
             for (Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry : activeEffectsMap.entrySet()) {
-                // 在这里可以添加对自定义药水效果的处理
+                MobEffect effect = mobEffectMobEffectInstanceEntry.getKey();
+                if (effect instanceof PotionAttribute potionAttr) {
+                    value += potionAttr.getWugong(livingEntity, mobEffectMobEffectInstanceEntry, value);
+                }
             }
         }
         return value;
@@ -360,7 +360,10 @@ public class ModAttributeAPI {
             // 考虑药水效果
             Map<MobEffect, MobEffectInstance> activeEffectsMap = livingEntity.getActiveEffectsMap();
             for (Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry : activeEffectsMap.entrySet()) {
-                // 在这里可以添加对自定义药水效果的处理
+                MobEffect effect = mobEffectMobEffectInstanceEntry.getKey();
+                if (effect instanceof PotionAttribute potionAttr) {
+                    value += potionAttr.getWugong(livingEntity, mobEffectMobEffectInstanceEntry, value);
+                }
             }
         }
         return value;

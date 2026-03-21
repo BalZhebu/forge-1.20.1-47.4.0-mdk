@@ -22,7 +22,7 @@ public class SkillPanshijuyuan5 extends BaseSkillItem {
     public void executeEffect(Level level, Player player, float powerMultiplier, float finalDamage) {
         if (!level.isClientSide) {
             player.displayClientMessage(Component.literal("§8§l第五魂技：石铠！"), true);
-            player.addEffect(new MobEffectInstance(ModEffects.STONE_ARMOR.get(), 400, 4));
+            player.addEffect(new MobEffectInstance(ModEffects.STONE_ARMOR.get(), 400, 1));
             level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ARMOR_EQUIP_GENERIC, SoundSource.PLAYERS, 1.2f, 0.6f);
         }
     }

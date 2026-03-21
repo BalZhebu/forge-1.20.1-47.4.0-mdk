@@ -7,8 +7,11 @@ import com.TovidY.kunluncontinent.entity.EntityInit;
 import com.TovidY.kunluncontinent.item.armor.ModArmorBaseItem;
 import com.TovidY.kunluncontinent.item.armor.ModArmorMaterials;
 import com.TovidY.kunluncontinent.item.baseskillist.bahuangji.five.SkillBahuang5;
+import com.TovidY.kunluncontinent.item.baseskillist.bahuangji.six.SkillBahuang6;
 import com.TovidY.kunluncontinent.item.baseskillist.juyuan.five.SkillPanshijuyuan5;
+import com.TovidY.kunluncontinent.item.baseskillist.juyuan.six.SkillPanshijuyuan6;
 import com.TovidY.kunluncontinent.item.baseskillist.liejinhu.five.SkillLeijinhu5;
+import com.TovidY.kunluncontinent.item.baseskillist.liejinhu.six.SkillLeijinhu6;
 import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.five.SkillPohun5;
 import com.TovidY.kunluncontinent.item.baseskillist.bahuangji.four.SkillBahuang4;
 import com.TovidY.kunluncontinent.item.baseskillist.bahuangji.one.BahuangjiItem;
@@ -26,6 +29,7 @@ import com.TovidY.kunluncontinent.item.baseskillist.liejinhu.two.SkillLeijinhu2;
 import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.four.SkillPohun4;
 import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.one.PohunqiangItem;
 import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.one.SkillPohun1;
+import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.six.SkillPohun6;
 import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.treen.SkillPohun3;
 import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.two.SkillPohun2;
 import com.TovidY.kunluncontinent.item.hungu.BoneItem;
@@ -305,6 +309,7 @@ public class ModItems {
     public static final RegistryObject<SkillPohun3> SKILL_POHUN_3 = ITEMS.register("skill_pohun_3", SkillPohun3::new);
     public static final RegistryObject<SkillPohun4> SKILL_POHUN_4 = ITEMS.register("skill_pohun_4", SkillPohun4::new);
     public static final RegistryObject<SkillPohun5> SKILL_POHUN_5 = ITEMS.register("skill_pohun_5", SkillPohun5::new);
+    public static final RegistryObject<SkillPohun6> SKILL_POHUN_6 = ITEMS.register("skill_pohun_6", SkillPohun6::new);
 
     //八荒戟
     public static final RegistryObject<SkillBahuang1> SKILL_BAHUANG_1 = ITEMS.register("skill_bahuang_1", SkillBahuang1::new);
@@ -312,6 +317,7 @@ public class ModItems {
     public static final RegistryObject<SkillBahuang3> SKILL_BAHUANG_3 = ITEMS.register("skill_bahuang_3", SkillBahuang3::new);
     public static final RegistryObject<SkillBahuang4> SKILL_BAHUANG_4 = ITEMS.register("skill_bahuang_4", SkillBahuang4::new);
     public static final RegistryObject<SkillBahuang5> SKILL_BAHUANG_5 = ITEMS.register("skill_bahuang_5", SkillBahuang5::new);
+    public static final RegistryObject<SkillBahuang6> SKILL_BAHUANG_6 = ITEMS.register("skill_bahuang_6", SkillBahuang6::new);
 
     //裂金虎
     public static final RegistryObject<SkillLeijinhu1> SKILL_LEIJINHU_1 = ITEMS.register("skill_leijinhu_1", SkillLeijinhu1::new);
@@ -319,6 +325,7 @@ public class ModItems {
     public static final RegistryObject<SkillLeijinhu3> SKILL_LEIJINHU_3 = ITEMS.register("skill_leijinhu_3", SkillLeijinhu3::new);
     public static final RegistryObject<SkillLeijinhu4> SKILL_LEIJINHU_4 = ITEMS.register("skill_leijinhu_4", SkillLeijinhu4::new);
     public static final RegistryObject<SkillLeijinhu5> SKILL_LEIJINHU_5 = ITEMS.register("skill_leijinhu_5", SkillLeijinhu5::new);
+    public static final RegistryObject<SkillLeijinhu6> SKILL_LEIJINHU_6 = ITEMS.register("skill_leijinhu_6", SkillLeijinhu6::new);
 
     //磐石巨猿
     public static final RegistryObject<SkillPanshijuyuan1> SKILL_PANSHIJUYUAN_1 = ITEMS.register("skill_panshijuyuan_1", SkillPanshijuyuan1::new);
@@ -326,6 +333,7 @@ public class ModItems {
     public static final RegistryObject<SkillPanshijuyuan3> SKILL_PANSHIJUYUAN_3 = ITEMS.register("skill_panshijuyuan_3", SkillPanshijuyuan3::new);
     public static final RegistryObject<SkillPanshijuyuan4> SKILL_PANSHIJUYUAN_4 = ITEMS.register("skill_panshijuyuan_4", SkillPanshijuyuan4::new);
     public static final RegistryObject<SkillPanshijuyuan5> SKILL_PANSHIJUYUAN_5 = ITEMS.register("skill_panshijuyuan_5", SkillPanshijuyuan5::new);
+    public static final RegistryObject<SkillPanshijuyuan6> SKILL_PANSHIJUYUAN_6 = ITEMS.register("skill_panshijuyuan_6", SkillPanshijuyuan6::new);
 
     public static ArrayList<RegistryObject<? extends Item>> HUNJILIST = new ArrayList<>();
     static {

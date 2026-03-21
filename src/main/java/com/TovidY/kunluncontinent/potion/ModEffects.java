@@ -1,9 +1,7 @@
 package com.TovidY.kunluncontinent.potion;
 
 import com.TovidY.kunluncontinent.KlMain;
-import com.TovidY.kunluncontinent.potion.skilleffect.MovumtaEffect;
-import com.TovidY.kunluncontinent.potion.skilleffect.StoneArmorEffect;
-import com.TovidY.kunluncontinent.potion.skilleffect.StoneSkinEffect;
+import com.TovidY.kunluncontinent.potion.skilleffect.*;
 import com.TovidY.kunluncontinent.potion.specialeffects.ArmorPiercingEffect;
 import com.TovidY.kunluncontinent.potion.specialeffects.DizzinessEffect;
 import com.TovidY.kunluncontinent.potion.specialeffects.RedSpiderEffect;
@@ -27,7 +25,8 @@ public class ModEffects {
     public static final RegistryObject<MobEffect> STONE_SKIN = REGISTER.register("stone_skin", StoneSkinEffect::new);
     public static final RegistryObject<MobEffect> MOVING_MOUNTAINS = REGISTER.register("moving_mountains", MovumtaEffect::new);
     public static final RegistryObject<MobEffect> STONE_ARMOR = REGISTER.register("stone_armor", StoneArmorEffect::new);
-
+    public static final RegistryObject<MobEffect> SUN_POWER = REGISTER.register("sun_power", SunPowerEffect::new);
+    public static final RegistryObject<MobEffect> POWER_OF_THE_MOON = REGISTER.register("power_of_the_moon", PowerOfTheMoonEffect::new);
 
     public static void register(IEventBus eventBus) {
         REGISTER.register(eventBus);

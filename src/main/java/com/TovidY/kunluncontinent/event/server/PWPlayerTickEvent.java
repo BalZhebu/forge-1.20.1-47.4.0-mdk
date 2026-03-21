@@ -11,14 +11,20 @@ import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import com.TovidY.kunluncontinent.network.SynsAPI;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -40,7 +46,11 @@ public class PWPlayerTickEvent {
             long gameTime = player.level().getGameTime();
             player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(capability -> {
                 playerUpdateServere(player, capability);
+
                 handleSkillCasting(serverPlayer, capability, gameTime);
+                handleLieDiLanding(serverPlayer);
+
+                handleSuiXingField(serverPlayer, gameTime);
                 if (gameTime % 20 == 0) {
                     float maxshengming = ModAttributeAPI.getMaxshengming(player);
                     if (Math.abs(maxshengming - player.getMaxHealth()) > 0.1f) {
@@ -55,8 +65,90 @@ public class PWPlayerTickEvent {
                     updateJingshenliRegen(player, capability);
                 }
                 updatePlayerFly(player, capability);
+                
                 handleMeditationLogic(serverPlayer, capability, gameTime);
             });
+        }
+    }
+
+    private static void handleSuiXingField(ServerPlayer player, long gameTime) {
+        CompoundTag nbt = player.getPersistentData();
+        if (!nbt.contains("SuiXingTimer")) return;
+        int timeLeft = nbt.getInt("SuiXingTimer");
+        float damage = nbt.getFloat("SuiXingDamage");
+        ServerLevel level = player.serverLevel();
+        if (timeLeft % 20 == 0) {
+            AABB area = player.getBoundingBox().inflate(15.0);
+            List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class, area,
+                    e -> e != player && e.isAlive());
+            for (LivingEntity target : targets) {
+                target.hurt(level.damageSources().indirectMagic(player, player), damage);
+                level.sendParticles(ParticleTypes.END_ROD,
+                        target.getX(), target.getY() + 4.0, target.getZ(),
+                        20, 0.5, 0.5, 0.5, 0.2); // 0.2 的速度让粒子向下“喷射”
+                level.sendParticles(ParticleTypes.EXPLOSION,
+                        target.getX(), target.getY(), target.getZ(),
+                        2, 0.1, 0.1, 0.1, 0.0);
+                level.sendParticles(ParticleTypes.FLASH,
+                        target.getX(), target.getY() + 1.0, target.getZ(),
+                        1, 0, 0, 0, 0);
+            }
+            level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                    SoundEvents.END_PORTAL_SPAWN, SoundSource.PLAYERS, 1.0f, 0.5f);
+        }
+        if (gameTime % 2 == 0) {
+            double angle = (gameTime * 0.2);
+            for (int i = 0; i < 4; i++) {
+                double rad = angle + (i * Math.PI / 2);
+                double px = player.getX() + Math.cos(rad) * 15;
+                double pz = player.getZ() + Math.sin(rad) * 15;
+                level.sendParticles(ParticleTypes.SOUL, px, player.getY(), pz, 1, 0, 0.1, 0, 0.02);
+                level.sendParticles(ParticleTypes.WITCH, px, player.getY() + 0.5, pz, 1, 0.1, 0.5, 0.1, 0.01);
+            }
+            level.sendParticles(ParticleTypes.ENCHANTED_HIT,
+                    player.getX(), player.getY() + 0.1, player.getZ(),
+                    5, 0.5, 0, 0.5, 0.02);
+        }
+        timeLeft--;
+        if (timeLeft <= 0) {
+            nbt.remove("SuiXingTimer");
+            nbt.remove("SuiXingDamage");
+            level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                    SoundEvents.BEACON_DEACTIVATE, SoundSource.PLAYERS, 1.0f, 0.8f);
+        } else {
+            nbt.putInt("SuiXingTimer", timeLeft);
+        }
+    }
+
+    private static void handleLieDiLanding(ServerPlayer player) {
+        CompoundTag nbt = player.getPersistentData();
+        if (!nbt.contains("LieDiActive")) return;
+        if (player.onGround() && player.getDeltaMovement().y <= 0) {
+            float finalDamage = nbt.getFloat("LieDiDamage");
+            ServerLevel level = player.serverLevel();
+            AABB area = player.getBoundingBox().inflate(20.0);
+            List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class, area,
+                    e -> e != player && e.isAlive());
+            for (LivingEntity target : targets) {
+                target.hurt(player.damageSources().playerAttack(player), finalDamage);
+                target.push(0, 0.8, 0); // 震飞效果
+            }
+            for (int i = 0; i < 60; i++) {
+                double rx = (level.random.nextDouble() - 0.5) * 30;
+                double rz = (level.random.nextDouble() - 0.5) * 30;
+                level.sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE,
+                        player.getX() + rx, player.getY(), player.getZ() + rz, 1, 0, 0.1, 0, 0.02);
+                if (i % 6 == 0) {
+                    level.sendParticles(ParticleTypes.SONIC_BOOM,
+                            player.getX() + rx/2, player.getY(), player.getZ() + rz/2, 1, 0, 0, 0, 0);
+                }
+            }
+            level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                    SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 2.0f, 0.5f);
+            level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                    SoundEvents.WARDEN_ROAR, SoundSource.PLAYERS, 1.0f, 0.5f);
+            nbt.remove("LieDiActive");
+            nbt.remove("LieDiDamage");
         }
     }
 
