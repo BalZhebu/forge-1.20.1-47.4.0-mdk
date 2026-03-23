@@ -6,12 +6,19 @@ import com.TovidY.kunluncontinent.capability.playerattributes.Wuhunname;
 import com.TovidY.kunluncontinent.entity.EntityInit;
 import com.TovidY.kunluncontinent.item.armor.ModArmorBaseItem;
 import com.TovidY.kunluncontinent.item.armor.ModArmorMaterials;
+import com.TovidY.kunluncontinent.item.baseskillist.bahuangji.nine.SkillBahuang9;
+import com.TovidY.kunluncontinent.item.baseskillist.juyuan.nine.SkillPanshijuyuan9;
+import com.TovidY.kunluncontinent.item.baseskillist.liejinhu.nine.SkillLeijinhu9;
+import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.eight.SkillPohun8;
 import com.TovidY.kunluncontinent.item.baseskillist.bahuangji.five.SkillBahuang5;
 import com.TovidY.kunluncontinent.item.baseskillist.bahuangji.six.SkillBahuang6;
+import com.TovidY.kunluncontinent.item.baseskillist.bahuangji.eight.SkillBahuang8;
 import com.TovidY.kunluncontinent.item.baseskillist.juyuan.five.SkillPanshijuyuan5;
 import com.TovidY.kunluncontinent.item.baseskillist.juyuan.six.SkillPanshijuyuan6;
+import com.TovidY.kunluncontinent.item.baseskillist.liejinhu.eight.SkillLeijinhu8;
 import com.TovidY.kunluncontinent.item.baseskillist.liejinhu.five.SkillLeijinhu5;
 import com.TovidY.kunluncontinent.item.baseskillist.liejinhu.six.SkillLeijinhu6;
+import com.TovidY.kunluncontinent.item.baseskillist.juyuan.eight.SkillPanshijuyuan8;
 import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.five.SkillPohun5;
 import com.TovidY.kunluncontinent.item.baseskillist.bahuangji.four.SkillBahuang4;
 import com.TovidY.kunluncontinent.item.baseskillist.bahuangji.one.BahuangjiItem;
@@ -27,11 +34,16 @@ import com.TovidY.kunluncontinent.item.baseskillist.liejinhu.one.SkillLeijinhu1;
 import com.TovidY.kunluncontinent.item.baseskillist.liejinhu.treen.SkillLeijinhu3;
 import com.TovidY.kunluncontinent.item.baseskillist.liejinhu.two.SkillLeijinhu2;
 import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.four.SkillPohun4;
+import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.nine.SkillPohun9;
 import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.one.PohunqiangItem;
 import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.one.SkillPohun1;
 import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.six.SkillPohun6;
 import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.treen.SkillPohun3;
 import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.two.SkillPohun2;
+import com.TovidY.kunluncontinent.item.baseskillist.zhenshen.SkillBahuang7;
+import com.TovidY.kunluncontinent.item.baseskillist.zhenshen.SkillLeijinhu7;
+import com.TovidY.kunluncontinent.item.baseskillist.zhenshen.SkillPanshijuyuan7;
+import com.TovidY.kunluncontinent.item.baseskillist.zhenshen.SkillPohun7;
 import com.TovidY.kunluncontinent.item.hungu.BoneItem;
 import com.TovidY.kunluncontinent.item.klitem.*;
 import com.TovidY.kunluncontinent.item.neidanitems.NeidanItem;
@@ -94,12 +106,26 @@ public class ModItems {
                 }
             });
 
+    //返气草
+    public static final RegistryObject<Item> FANQICAO_SEEDS = ITEMS.register("fanqicao_seeds",
+            () -> new ItemNameBlockItem(ModBlocks.FANQICAO_BLOCK.get(), new Item.Properties()){
+                @Override
+                public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
+                    pTooltip.add(Component.translatable("item.guyuancao_seeds.tooltip").withStyle(ChatFormatting.GRAY));
+                    pTooltip.add(Component.translatable("item.guyuancao_seeds.tooltip2").withStyle(ChatFormatting.GRAY));
+                }
+            });
+
     //草药物品
     public static final RegistryObject<Item> RED_SPIDER_LILY_ITEM = ITEMS.register("red_spider_lily_item",
             () -> new Item(new Item.Properties()));
 
     //固元草
     public static final RegistryObject<Item> GUYUANCAO_ITEM = ITEMS.register("guyuancao_item",
+            () -> new Item(new Item.Properties()));
+
+    //返气草
+    public static final RegistryObject<Item> FANQICAO_ITEM = ITEMS.register("fanqicao_item",
             () -> new Item(new Item.Properties()));
 
     //药水
@@ -267,6 +293,7 @@ public class ModItems {
     public static final RegistryObject<Item> QIANWANXINGCHEN_DAN = ITEMS.register("qianwanxingchen_dan",()->new DanYaoItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setJingyan(8192).setMinLevel(70).setTier(8));
     public static final RegistryObject<Item> YIZAICHUANGSHENG_DAN = ITEMS.register("yizhaichuangsheng_dan",()->new DanYaoItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setJingyan(16384).setMinLevel(80).setTier(9));
     public static final RegistryObject<Item> GUYUAN_DAN = ITEMS.register("guyuan_dan",()->new DanYaoItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setMaxjingshenli(100));
+    public static final RegistryObject<Item> FANQI_DAN = ITEMS.register("fanqi_dan",()->new DanYaoItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setJingshenlibaifenbi(5));
 
     public static final RegistryObject<Item> DROSS = ITEMS.register("dross",()->new Item(new Item.Properties()));
 
@@ -310,6 +337,9 @@ public class ModItems {
     public static final RegistryObject<SkillPohun4> SKILL_POHUN_4 = ITEMS.register("skill_pohun_4", SkillPohun4::new);
     public static final RegistryObject<SkillPohun5> SKILL_POHUN_5 = ITEMS.register("skill_pohun_5", SkillPohun5::new);
     public static final RegistryObject<SkillPohun6> SKILL_POHUN_6 = ITEMS.register("skill_pohun_6", SkillPohun6::new);
+    public static final RegistryObject<SkillPohun7> SKILL_POHUN_7 = ITEMS.register("skill_pohun_7", SkillPohun7::new);
+    public static final RegistryObject<SkillPohun8> SKILL_POHUN_8 = ITEMS.register("skill_pohun_8", SkillPohun8::new);
+    public static final RegistryObject<SkillPohun9> SKILL_POHUN_9 = ITEMS.register("skill_pohun_9", SkillPohun9::new);
 
     //八荒戟
     public static final RegistryObject<SkillBahuang1> SKILL_BAHUANG_1 = ITEMS.register("skill_bahuang_1", SkillBahuang1::new);
@@ -318,6 +348,9 @@ public class ModItems {
     public static final RegistryObject<SkillBahuang4> SKILL_BAHUANG_4 = ITEMS.register("skill_bahuang_4", SkillBahuang4::new);
     public static final RegistryObject<SkillBahuang5> SKILL_BAHUANG_5 = ITEMS.register("skill_bahuang_5", SkillBahuang5::new);
     public static final RegistryObject<SkillBahuang6> SKILL_BAHUANG_6 = ITEMS.register("skill_bahuang_6", SkillBahuang6::new);
+    public static final RegistryObject<SkillBahuang7> SKILL_BAHUANG_7 = ITEMS.register("skill_bahuang_7", SkillBahuang7::new);
+    public static final RegistryObject<SkillBahuang8> SKILL_BAHUANG_8 = ITEMS.register("skill_bahuang_8", SkillBahuang8::new);
+    public static final RegistryObject<SkillBahuang9> SKILL_BAHUANG_9 = ITEMS.register("skill_bahuang_9", SkillBahuang9::new);
 
     //裂金虎
     public static final RegistryObject<SkillLeijinhu1> SKILL_LEIJINHU_1 = ITEMS.register("skill_leijinhu_1", SkillLeijinhu1::new);
@@ -326,6 +359,9 @@ public class ModItems {
     public static final RegistryObject<SkillLeijinhu4> SKILL_LEIJINHU_4 = ITEMS.register("skill_leijinhu_4", SkillLeijinhu4::new);
     public static final RegistryObject<SkillLeijinhu5> SKILL_LEIJINHU_5 = ITEMS.register("skill_leijinhu_5", SkillLeijinhu5::new);
     public static final RegistryObject<SkillLeijinhu6> SKILL_LEIJINHU_6 = ITEMS.register("skill_leijinhu_6", SkillLeijinhu6::new);
+    public static final RegistryObject<SkillLeijinhu7> SKILL_LEIJINHU_7 = ITEMS.register("skill_leijinhu_7", SkillLeijinhu7::new);
+    public static final RegistryObject<SkillLeijinhu8> SKILL_LEIJINHU_8 = ITEMS.register("skill_leijinhu_8", SkillLeijinhu8::new);
+    public static final RegistryObject<SkillLeijinhu9> SKILL_LEIJINHU_9 = ITEMS.register("skill_leijinhu_9", SkillLeijinhu9::new);
 
     //磐石巨猿
     public static final RegistryObject<SkillPanshijuyuan1> SKILL_PANSHIJUYUAN_1 = ITEMS.register("skill_panshijuyuan_1", SkillPanshijuyuan1::new);
@@ -334,6 +370,9 @@ public class ModItems {
     public static final RegistryObject<SkillPanshijuyuan4> SKILL_PANSHIJUYUAN_4 = ITEMS.register("skill_panshijuyuan_4", SkillPanshijuyuan4::new);
     public static final RegistryObject<SkillPanshijuyuan5> SKILL_PANSHIJUYUAN_5 = ITEMS.register("skill_panshijuyuan_5", SkillPanshijuyuan5::new);
     public static final RegistryObject<SkillPanshijuyuan6> SKILL_PANSHIJUYUAN_6 = ITEMS.register("skill_panshijuyuan_6", SkillPanshijuyuan6::new);
+    public static final RegistryObject<SkillPanshijuyuan7> SKILL_PANSHIJUYUAN_7 = ITEMS.register("skill_panshijuyuan_7", SkillPanshijuyuan7::new);
+    public static final RegistryObject<SkillPanshijuyuan8> SKILL_PANSHIJUYUAN_8 = ITEMS.register("skill_panshijuyuan_8", SkillPanshijuyuan8::new);
+    public static final RegistryObject<SkillPanshijuyuan9> SKILL_PANSHIJUYUAN_9 = ITEMS.register("skill_panshijuyuan_9", SkillPanshijuyuan9::new);
 
     public static ArrayList<RegistryObject<? extends Item>> HUNJILIST = new ArrayList<>();
     static {
@@ -353,6 +392,27 @@ public class ModItems {
         HUNJILIST.add(SKILL_BAHUANG_4);
         HUNJILIST.add(SKILL_LEIJINHU_4);
         HUNJILIST.add(SKILL_PANSHIJUYUAN_4);
+
+        HUNJILIST.add(SKILL_POHUN_5);
+        HUNJILIST.add(SKILL_BAHUANG_5);
+//        HUNJILIST.add(SKILL_LEIJINHU_5);
+//        HUNJILIST.add(SKILL_PANSHIJUYUAN_5);
+        HUNJILIST.add(SKILL_POHUN_6);
+//        HUNJILIST.add(SKILL_BAHUANG_6);
+//        HUNJILIST.add(SKILL_LEIJINHU_6);
+//        HUNJILIST.add(SKILL_PANSHIJUYUAN_6);
+        HUNJILIST.add(SKILL_POHUN_7);
+        HUNJILIST.add(SKILL_BAHUANG_7);
+//        HUNJILIST.add(SKILL_LEIJINHU_7);
+//        HUNJILIST.add(SKILL_PANSHIJUYUAN_7);
+        HUNJILIST.add(SKILL_POHUN_8);
+        HUNJILIST.add(SKILL_BAHUANG_8);
+//        HUNJILIST.add(SKILL_LEIJINHU_8);
+//        HUNJILIST.add(SKILL_PANSHIJUYUAN_8);
+        HUNJILIST.add(SKILL_POHUN_9);
+//        HUNJILIST.add(SKILL_BAHUANG_9);
+//        HUNJILIST.add(SKILL_LEIJINHU_9);
+//        HUNJILIST.add(SKILL_PANSHIJUYUAN_9);
     }
 
     public static ArrayList<RegistryObject<Item>> DUANZAOMOBAN = new ArrayList<>();
@@ -414,12 +474,14 @@ public class ModItems {
     static {
         CAOYAOLIST.add(RED_SPIDER_LILY_ITEM);
         CAOYAOLIST.add(GUYUANCAO_ITEM);
+        CAOYAOLIST.add(FANQICAO_ITEM);
     }
 
     public static ArrayList<RegistryObject<Item>> SEEDSLIST = new ArrayList<>();
     static {
         SEEDSLIST.add(RED_SPIDER_SEEDS);
         SEEDSLIST.add(GUYUANCAO_SEEDS);
+        SEEDSLIST.add(FANQICAO_SEEDS);
     }
 
     public static ArrayList<RegistryObject<Item>> PUTONGITEM = new ArrayList<>();
@@ -506,6 +568,7 @@ public class ModItems {
         DANYAOITEM.add(QIANWANXINGCHEN_DAN);
         DANYAOITEM.add(YIZAICHUANGSHENG_DAN);
         DANYAOITEM.add(GUYUAN_DAN);
+        DANYAOITEM.add(FANQI_DAN);
 
         DANYAOITEM.add(DROSS);
     }

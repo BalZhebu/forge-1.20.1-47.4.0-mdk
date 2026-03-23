@@ -42,6 +42,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
             //草药
             makeCrop((CropBlock) ModBlocks.RED_SPIDER_LILY_BLOCK.get(), "red_spider_lily");
             makeCrop((CropBlock) ModBlocks.GUYUANCAO_BLOCK.get(), "guyuancao");
+            makeCrop((CropBlock) ModBlocks.FANQICAO_BLOCK.get(), "fanqicao");
 
             //传送门
             Block portalBlock = ModBlocks.POLAR_ICE_PORTAL.get();

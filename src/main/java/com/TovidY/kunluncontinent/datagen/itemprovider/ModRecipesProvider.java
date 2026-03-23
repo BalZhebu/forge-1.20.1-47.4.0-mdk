@@ -71,6 +71,10 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .special()
                 .save(pWriter,ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "guyuan_dan_from"));
 
+        LiandanRecipeBuilder.create(ModItems.FANQICAO_ITEM.get(), ModItems.FANQI_DAN.get(), 150)
+                .special()
+                .save(pWriter,ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "fanqi_dan_from"));
+
         //重修之眼的配方
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.EYE_TRANSFORMATION.get())
                 .pattern("ZXZ")

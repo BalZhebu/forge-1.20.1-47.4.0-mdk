@@ -16,9 +16,9 @@ import java.util.List;
 
 public class SkillPohun6 extends BaseSkillItem {
     @Override public float getBaseCost() { return 500f; }
-    @Override public float getDamageMultiplier() { return 3.2f; } // 巨额伤害
+    @Override public float getDamageMultiplier() { return 3.2f; }
     @Override public int getCastTime() { return 25; }
-    @Override public int getCooldownTicks() { return 1000; } // 50秒
+    @Override public int getCooldownTicks() { return 960; }
 
     @Override
     public String getDescriptionKey() { return "skill.pohunqiang.six.description"; }

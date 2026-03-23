@@ -61,13 +61,10 @@ public class PlayerUpgradeSystem {
 
     static boolean isTupoDengji(ServerPlayer player, @NotNull PlayerAttributeCapability cap) {
         int level = cap.getDengji();
-
-        // 达到最终满级 (199级)
         if (level >= 199) {
             player.connection.send(new ClientboundSetTitleTextPacket(Component.translatable("已经满级")));
             return false;
         }
-
         if (level == 99) {
             if (cap.getJingyan() >= cap.getMaxjingyan()) {
                 sendDeityAnnouncement(player);
@@ -77,7 +74,6 @@ public class PlayerUpgradeSystem {
             ));
             return false;
         }
-
         if (level >= 100 && level < 199) {
             int rings = getMaxRings(cap);
             int required = level / 10;
@@ -87,14 +83,11 @@ public class PlayerUpgradeSystem {
             }
             return true;
         }
-
-        // 凡人阶段的魂环限制 (每10级需要一个魂环才能继续升级)
         int rings = getMaxRings(cap);
         if (level >= rings * 10 + 10) {
             player.connection.send(new ClientboundSetTitleTextPacket(Component.translatable("需要吸收魂环").withStyle(ChatFormatting.RED)));
             return false;
         }
-
         return true;
     }
 
@@ -234,7 +227,7 @@ public class PlayerUpgradeSystem {
         return Math.max(5.0f, Math.min(95.0f, finalRate));
     }
 
-    private static void processSuccessfulUpgrade(ServerPlayer player,PlayerAttributeCapability capability, int newLevel) {
+    public static void processSuccessfulUpgrade(ServerPlayer player, PlayerAttributeCapability capability, int newLevel) {
         capability.setDengji(newLevel);
         capability.setJingyan(0.0f);
 

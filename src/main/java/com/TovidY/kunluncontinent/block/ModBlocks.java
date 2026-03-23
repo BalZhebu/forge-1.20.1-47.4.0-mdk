@@ -80,6 +80,8 @@ public class ModBlocks {
     public static final RegistryObject<Block> RED_SPIDER_LILY_BLOCK = BLOCKS.register("red_spider_lily_block", () -> new KLCropBlock(BlockBehaviour.Properties.copy(Blocks.WHEAT).noOcclusion(), () -> Blocks.NETHERRACK, ModItems.RED_SPIDER_SEEDS,10));
     public static final RegistryObject<Block> GUYUANCAO_BLOCK = BLOCKS.register("guyuancao_block", () -> new KLCropBlock(BlockBehaviour.Properties.copy(Blocks.WHEAT).noOcclusion(), ModBlocks.SOUL_SOIL, ModItems.GUYUANCAO_SEEDS,10));
 
+    public static final RegistryObject<Block> FANQICAO_BLOCK = BLOCKS.register("fanqicao_block", () -> new KLCropBlock(BlockBehaviour.Properties.copy(Blocks.WHEAT).noOcclusion(), ModBlocks.SOUL_SOIL, ModItems.FANQICAO_SEEDS,10));
+
     public static final RegistryObject<Block> DROSS_BLOCK =
             registerBlock("dross_block",()->
                     new Block(BlockBehaviour.Properties.copy(Blocks.HAY_BLOCK)){

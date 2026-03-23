@@ -33,6 +33,15 @@ public class SkillLibrary {
         register(Wuhunname.pohunqiang, 6, List.of(
                 ModItems.SKILL_POHUN_6
         ));
+        register(Wuhunname.pohunqiang, 7, List.of(
+                ModItems.SKILL_POHUN_7
+        ));
+        register(Wuhunname.pohunqiang, 8, List.of(
+                ModItems.SKILL_POHUN_8
+        ));
+        register(Wuhunname.pohunqiang, 9, List.of(
+                ModItems.SKILL_POHUN_9
+        ));
 
         //八荒戟
         register(Wuhunname.bahuangji, 1, List.of(
@@ -52,6 +61,15 @@ public class SkillLibrary {
         ));
         register(Wuhunname.bahuangji, 6, List.of(
                 ModItems.SKILL_BAHUANG_6
+        ));
+        register(Wuhunname.bahuangji, 7, List.of(
+                ModItems.SKILL_BAHUANG_7
+        ));
+        register(Wuhunname.bahuangji, 8, List.of(
+                ModItems.SKILL_BAHUANG_8
+        ));
+        register(Wuhunname.bahuangji, 9, List.of(
+                ModItems.SKILL_BAHUANG_9
         ));
 
         //裂金虎
@@ -73,6 +91,15 @@ public class SkillLibrary {
         register(Wuhunname.liejinhu, 6, List.of(
                 ModItems.SKILL_LEIJINHU_6
         ));
+        register(Wuhunname.liejinhu, 7, List.of(
+                ModItems.SKILL_LEIJINHU_7
+        ));
+        register(Wuhunname.liejinhu, 8, List.of(
+                ModItems.SKILL_LEIJINHU_8
+        ));
+        register(Wuhunname.liejinhu, 9, List.of(
+                ModItems.SKILL_LEIJINHU_9
+        ));
 
         //磐石巨猿
         register(Wuhunname.panshijuyuan, 1, List.of(
@@ -87,6 +114,13 @@ public class SkillLibrary {
                 ModItems.SKILL_PANSHIJUYUAN_5));
         register(Wuhunname.panshijuyuan, 6, List.of(
                 ModItems.SKILL_PANSHIJUYUAN_6));
+        register(Wuhunname.panshijuyuan, 7, List.of(
+                ModItems.SKILL_PANSHIJUYUAN_7));
+        register(Wuhunname.panshijuyuan, 8, List.of(
+                ModItems.SKILL_PANSHIJUYUAN_8));
+        register(Wuhunname.panshijuyuan, 9, List.of(
+                ModItems.SKILL_PANSHIJUYUAN_9
+        ));
     }
     private static void register(String wuhun, int ringIndex, List<RegistryObject<? extends BaseSkillItem>> skills) {
         REGISTRY.computeIfAbsent(wuhun, k -> new HashMap<>()).put(ringIndex, skills);

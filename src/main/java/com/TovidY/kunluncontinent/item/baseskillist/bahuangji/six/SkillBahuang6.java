@@ -15,7 +15,7 @@ import net.minecraft.world.phys.Vec3;
 public class SkillBahuang6 extends BaseSkillItem {
     @Override public float getBaseCost() { return 500f; }
     @Override public float getDamageMultiplier() { return 3.3f; }
-    @Override public int getCastTime() { return 10; }
+    @Override public int getCastTime() { return 5; }
     @Override public int getCooldownTicks() { return 1000; }
 
     @Override
@@ -26,20 +26,34 @@ public class SkillBahuang6 extends BaseSkillItem {
         if (!level.isClientSide) {
             ServerLevel serverLevel = (ServerLevel) level;
             Vec3 look = player.getLookAngle().normalize();
-            player.setDeltaMovement(look.x * 4.0, 0.1, look.z * 4.0);
+            player.displayClientMessage(Component.literal("§4§l第六魂技：破军·影杀！"), true);
+            player.setDeltaMovement(look.x * 5.0, 0.2, look.z * 5.0);
             player.hurtMarked = true;
-            player.displayClientMessage(Component.literal("§4§l第六魂技：破军！"), true);
             for (int i = 0; i < 30; i++) {
-                double px = player.getX() + look.x * i;
-                double py = player.getY() + 0.5;
-                double pz = player.getZ() + look.z * i;
-                serverLevel.sendParticles(ParticleTypes.SWEEP_ATTACK, px, py, pz, 5, 0.5, 0.5, 0.5, 0.1);
-                serverLevel.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, px, py, pz, 2, 0.2, 0.2, 0.2, 0.05);
-                AABB hitBox = new AABB(px - 2, py - 1, pz - 2, px + 2, py + 2, pz + 2);
+                double dist = i;
+                double px = player.getX() + look.x * dist;
+                double py = player.getY() + 1.0 + look.y * dist;
+                double pz = player.getZ() + look.z * dist;
+                if (i % 5 == 0) {
+                    serverLevel.sendParticles(ParticleTypes.SONIC_BOOM, px, py, pz, 1, 0, 0, 0, 0);
+                    level.playSound(null, px, py, pz, SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 0.5f, 1.5f);
+                }
+                serverLevel.sendParticles(ParticleTypes.SOUL, px, py, pz, 3, 0.2, 0.2, 0.2, 0.02);
+                serverLevel.sendParticles(ParticleTypes.SWEEP_ATTACK, px, py, pz, 1, 0.1, 0.1, 0.1, 0.05);
+                AABB hitBox = new AABB(px - 2.5, py - 2.0, pz - 2.5, px + 2.5, py + 2.0, pz + 2.5);
                 level.getEntitiesOfClass(LivingEntity.class, hitBox, e -> e != player && e.isAlive())
-                        .forEach(t -> t.hurt(player.damageSources().playerAttack(player), finalDamage));
+                        .forEach(target -> {
+                            target.hurt(player.damageSources().playerAttack(player), finalDamage);
+                            Vec3 push = target.position().subtract(player.position()).normalize().scale(0.8);
+                            target.push(push.x, 0.3, push.z);
+                        });
             }
-            level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.TRIDENT_RIPTIDE_3, SoundSource.PLAYERS, 1.5f, 1.2f);
+            Vec3 endPos = player.position().add(look.scale(30));
+            serverLevel.sendParticles(ParticleTypes.DRAGON_BREATH, endPos.x, endPos.y + 1, endPos.z, 50, 1.0, 1.0, 1.0, 0.1);
+            level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                    SoundEvents.TRIDENT_RIPTIDE_3, SoundSource.PLAYERS, 1.5f, 0.8f);
+            level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                    SoundEvents.END_PORTAL_SPAWN, SoundSource.PLAYERS, 1.0f, 1.2f);
         }
     }
 }

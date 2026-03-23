@@ -70,11 +70,12 @@ public class ModAttributeAPI {
         }
         
         if (entity instanceof LivingEntity livingEntity) {
-            // 考虑药水效果
             Map<MobEffect, MobEffectInstance> activeEffectsMap = livingEntity.getActiveEffectsMap();
-            for (Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry : activeEffectsMap.entrySet()) {
+            for (Map.Entry<MobEffect, MobEffectInstance> entry : activeEffectsMap.entrySet()) {
+                if (entry.getKey() instanceof PotionAttribute potionAttr) {
+                    value += potionAttr.getMaxshengming(livingEntity, entry, value);
+                }
             }
-
             Iterable<ItemStack> armorSlots = livingEntity.getArmorSlots();
             if(armorSlots!=null) {
                 Boolean istaozhuang = true;
@@ -257,14 +258,12 @@ public class ModAttributeAPI {
             value += mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY)
                     .map(MobAttributeCapability::getMingzhong).orElse(0f);
         }
-        
+
         if (entity instanceof LivingEntity livingEntity) {
-            // 考虑药水效果
             Map<MobEffect, MobEffectInstance> activeEffectsMap = livingEntity.getActiveEffectsMap();
-            for (Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry : activeEffectsMap.entrySet()) {
-                MobEffect effect = mobEffectMobEffectInstanceEntry.getKey();
-                if (effect instanceof PotionAttribute potionAttr) {
-                    value += potionAttr.getWugong(livingEntity, mobEffectMobEffectInstanceEntry, value);
+            for (Map.Entry<MobEffect, MobEffectInstance> entry : activeEffectsMap.entrySet()) {
+                if (entry.getKey() instanceof PotionAttribute potionAttr) {
+                    value += potionAttr.getMinghzong(livingEntity, entry, value);
                 }
             }
         }
@@ -325,10 +324,9 @@ public class ModAttributeAPI {
         
         if (entity instanceof LivingEntity livingEntity) {
             Map<MobEffect, MobEffectInstance> activeEffectsMap = livingEntity.getActiveEffectsMap();
-            for (Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry : activeEffectsMap.entrySet()) {
-                MobEffect effect = mobEffectMobEffectInstanceEntry.getKey();
-                if (effect instanceof PotionAttribute potionAttr) {
-                    value += potionAttr.getWugong(livingEntity, mobEffectMobEffectInstanceEntry, value);
+            for (Map.Entry<MobEffect, MobEffectInstance> entry : activeEffectsMap.entrySet()) {
+                if (entry.getKey() instanceof PotionAttribute potionAttr) {
+                    value += potionAttr.getBaojishanghai(livingEntity, entry, value);
                 }
             }
         }

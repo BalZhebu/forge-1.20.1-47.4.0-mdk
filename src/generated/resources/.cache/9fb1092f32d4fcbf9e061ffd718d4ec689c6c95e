@@ -1,4 +1,4 @@
-// 1.20.1	2026-03-17T23:28:10.5353713	Recipes
+// 1.20.1	2026-03-23T20:56:21.8492076	Recipes
 02d3818a9afddbb3f60c51e2b143f20dcb222b5a data/kunluncontinent/advancements/recipes/combat/cloud_patterned_bronze_boots.json
 72929926456f0725762eafe4e20e09bdb89c9613 data/kunluncontinent/advancements/recipes/combat/cloud_patterned_bronze_chestplate.json
 47a987ebd5e90408769d6cc2148608f9bfea25fd data/kunluncontinent/advancements/recipes/combat/cloud_patterned_bronze_helmet.json
@@ -127,6 +127,7 @@ ae572354c56840d1c7bc5a189ecf8843a0ca9f65 data/kunluncontinent/recipes/cold_heart
 ca2ea777127dd23109f83eff83b095bc0b36f25c data/kunluncontinent/recipes/extreme_cold.json
 938cbb339772a312c8d96cfa86595b8dbafe8137 data/kunluncontinent/recipes/extreme_cold_snowflake.json
 d59920d7cbc20bb995519c70200d7488a78d06b3 data/kunluncontinent/recipes/eye_transformation.json
+804a0eddf6d3efce0f682ec716367f224887dcb0 data/kunluncontinent/recipes/fanqi_dan_from.json
 395564b4ef076552586405a5d0c8dbe4c8badd82 data/kunluncontinent/recipes/gray_iron_axe.json
 0fc48000cae65b025bd13a8cbb45a1c486808a0f data/kunluncontinent/recipes/gray_iron_boots.json
 2ac46415ef64950d41fed7a3f991a24e49fa6671 data/kunluncontinent/recipes/gray_iron_chestplate.json

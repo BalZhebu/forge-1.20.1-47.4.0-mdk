@@ -8,7 +8,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
@@ -26,7 +25,6 @@ public class SkillLeijinhu6 extends BaseSkillItem {
         if (!level.isClientSide) {
             ServerLevel serverLevel = (ServerLevel) level;
             boolean isDay = level.isDay();
-
             if (isDay) {
                 player.addEffect(new MobEffectInstance(ModEffects.SUN_POWER.get(), 400, 1)); // 20秒
                 player.displayClientMessage(Component.literal("§e§l第六魂技：啸月（大日之威）！"), true);

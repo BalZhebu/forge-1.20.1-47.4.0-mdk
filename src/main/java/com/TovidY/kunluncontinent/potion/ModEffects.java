@@ -2,6 +2,10 @@ package com.TovidY.kunluncontinent.potion;
 
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.potion.skilleffect.*;
+import com.TovidY.kunluncontinent.potion.skilleffect.wuhun.BhuanjiEffect;
+import com.TovidY.kunluncontinent.potion.skilleffect.wuhun.LiejinhuEffect;
+import com.TovidY.kunluncontinent.potion.skilleffect.wuhun.PanshijuYuanEffect;
+import com.TovidY.kunluncontinent.potion.skilleffect.wuhun.PohunEffect;
 import com.TovidY.kunluncontinent.potion.specialeffects.ArmorPiercingEffect;
 import com.TovidY.kunluncontinent.potion.specialeffects.DizzinessEffect;
 import com.TovidY.kunluncontinent.potion.specialeffects.RedSpiderEffect;
@@ -27,6 +31,12 @@ public class ModEffects {
     public static final RegistryObject<MobEffect> STONE_ARMOR = REGISTER.register("stone_armor", StoneArmorEffect::new);
     public static final RegistryObject<MobEffect> SUN_POWER = REGISTER.register("sun_power", SunPowerEffect::new);
     public static final RegistryObject<MobEffect> POWER_OF_THE_MOON = REGISTER.register("power_of_the_moon", PowerOfTheMoonEffect::new);
+
+    //武魂真身
+    public static final RegistryObject<MobEffect> POHUNQIANG = REGISTER.register("pohunqiang", PohunEffect::new);
+    public static final RegistryObject<MobEffect> BHUANGJI = REGISTER.register("bhuangji", BhuanjiEffect::new);
+    public static final RegistryObject<MobEffect> LIEJINHU = REGISTER.register("liejinhu", LiejinhuEffect::new);
+    public static final RegistryObject<MobEffect> PANSHIJUYUAN = REGISTER.register("panshijuyuan", PanshijuYuanEffect::new);
 
     public static void register(IEventBus eventBus) {
         REGISTER.register(eventBus);

@@ -19,11 +19,13 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -49,6 +51,8 @@ public class PWPlayerTickEvent {
 
                 handleSkillCasting(serverPlayer, capability, gameTime);
                 handleLieDiLanding(serverPlayer);
+                handleLiejinhuEight(serverPlayer);
+                handleBahuangNine(serverPlayer);
 
                 handleSuiXingField(serverPlayer, gameTime);
                 if (gameTime % 20 == 0) {
@@ -68,6 +72,96 @@ public class PWPlayerTickEvent {
                 
                 handleMeditationLogic(serverPlayer, capability, gameTime);
             });
+        }
+    }
+
+    private static void handleBahuangNine(ServerPlayer player) {
+        CompoundTag nbt = player.getPersistentData();
+        if (!nbt.contains("Bahuang9_Active")) return;
+        int timer = nbt.getInt("Bahuang9_Timer");
+        int remaining = nbt.getInt("Bahuang9_Remaining");
+        timer++;
+        if (timer >= 30) {
+            ServerLevel level = player.serverLevel();
+            float damage = nbt.getFloat("Bahuang9_Damage");
+            for (int deg = 0; deg < 360; deg += 5) {
+                double rad = Math.toRadians(deg);
+                for (double r = 1; r < 20; r += 4) { // 扩散感
+                    level.sendParticles(ParticleTypes.END_ROD, player.getX() + Math.cos(rad) * r, player.getY() + 0.1, player.getZ() + Math.sin(rad) * r, 1, 0, 0.1, 0, 0);
+                }
+            }
+            level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(20.0), e -> e != player && e.isAlive()).forEach(t -> {
+                t.hurt(player.damageSources().playerAttack(player), damage);
+                t.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 1)); // 缓慢2
+            });
+            level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 2.0f, 0.5f);
+            remaining--;
+            if (remaining <= 0) nbt.remove("Bahuang9_Active");
+            else { nbt.putInt("Bahuang9_Remaining", remaining); nbt.putInt("Bahuang9_Timer", 0); }
+        } else nbt.putInt("Bahuang9_Timer", timer);
+    }
+
+    @SubscribeEvent
+    public static void onLivingTick(LivingEvent.LivingTickEvent event) {
+        LivingEntity entity = event.getEntity();
+        Level level = entity.level();
+        if (!level.isClientSide && entity.tickCount % 10 == 0 && entity.isAlive()) {
+            List<AreaEffectCloud> clouds = level.getEntitiesOfClass(AreaEffectCloud.class,
+                    entity.getBoundingBox().inflate(0.5),
+                    cloud -> cloud.getTags().contains("PohunVoidZone"));
+            if (!clouds.isEmpty()) {
+                AreaEffectCloud voidCloud = clouds.get(0);
+                float damage = voidCloud.getPersistentData().getFloat("VoidDamage");
+                entity.invulnerableTime = 0;
+                if (voidCloud.getOwner() instanceof Player attacker) {
+                    entity.hurt(level.damageSources().playerAttack(attacker), damage);
+                } else {
+                    entity.hurt(level.damageSources().magic(), damage);
+                }
+                if (level instanceof ServerLevel serverLevel) {
+                    serverLevel.sendParticles(ParticleTypes.REVERSE_PORTAL,
+                            entity.getX(), entity.getY() + 1, entity.getZ(), 5, 0.2, 0.2, 0.2, 0.01);
+                }
+            }
+        }
+    }
+
+    private static void handleLiejinhuEight(ServerPlayer player) {
+        CompoundTag nbt = player.getPersistentData();
+        if (!nbt.contains("Liejinhu8_Active")) return;
+        int timer = nbt.getInt("Liejinhu8_Timer");
+        int remaining = nbt.getInt("Liejinhu8_Remaining");
+        float damage = nbt.getFloat("Liejinhu8_Damage");
+        ServerLevel level = player.serverLevel();
+        timer++;
+        if (timer >= 10) {
+            List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class,
+                    player.getBoundingBox().inflate(20.0), e -> e != player && e.isAlive());
+            for (LivingEntity target : targets) {
+                target.invulnerableTime = 0;
+                target.hurt(player.damageSources().playerAttack(player), damage);
+                level.sendParticles(ParticleTypes.SWEEP_ATTACK, target.getX(), target.getY() + 1, target.getZ(), 5, 0.3, 0.3, 0.3, 0.1);
+                level.sendParticles(ParticleTypes.CRIT, target.getX(), target.getY() + 1, target.getZ(), 10, 0.5, 0.5, 0.5, 0.2);
+            }
+            level.sendParticles(ParticleTypes.FLASH, player.getX(), player.getY() + 1, player.getZ(), 1, 0, 0, 0, 0);
+            level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                    SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.PLAYERS, 1.5f, 0.5f + (remaining * 0.1f));
+            remaining--;
+            if (remaining <= 0) {
+                nbt.remove("Liejinhu8_Active");
+                nbt.remove("Liejinhu8_Remaining");
+                nbt.remove("Liejinhu8_Timer");
+                nbt.remove("Liejinhu8_Damage");
+                player.displayClientMessage(Component.literal("§7裂天效果结束"), true);
+            } else {
+                nbt.putInt("Liejinhu8_Remaining", remaining);
+                nbt.putInt("Liejinhu8_Timer", 0);
+            }
+        } else {
+            nbt.putInt("Liejinhu8_Timer", timer);
+            if (timer % 2 == 0) {
+                level.sendParticles(ParticleTypes.END_ROD, player.getX(), player.getY() + 1, player.getZ(), 2, 0.5, 0.5, 0.5, 0.01);
+            }
         }
     }
 
@@ -123,6 +217,20 @@ public class PWPlayerTickEvent {
     private static void handleLieDiLanding(ServerPlayer player) {
         CompoundTag nbt = player.getPersistentData();
         if (!nbt.contains("LieDiActive")) return;
+        if (nbt.contains("BuZhouQing_Active") && player.onGround()) {
+            float dmg = nbt.getFloat("BuZhouQing_Damage");
+            ServerLevel level = player.serverLevel();
+            level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(100.0), e -> e != player && e.isAlive()).forEach(t -> {
+                t.hurt(player.damageSources().playerAttack(player), dmg);
+                t.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 300, 2)); // 缓慢3
+                t.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 300, 2)); // 虚弱3
+                t.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 300, 1));
+                t.addEffect(new MobEffectInstance(MobEffects.HUNGER, 300, 1));
+            });
+            level.sendParticles(ParticleTypes.SONIC_BOOM, player.getX(), player.getY(), player.getZ(), 10, 5, 0, 5, 0);
+            level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, player.getX(), player.getY(), player.getZ(), 5, 2, 2, 2, 0);
+            nbt.remove("BuZhouQing_Active");
+        }
         if (player.onGround() && player.getDeltaMovement().y <= 0) {
             float finalDamage = nbt.getFloat("LieDiDamage");
             ServerLevel level = player.serverLevel();

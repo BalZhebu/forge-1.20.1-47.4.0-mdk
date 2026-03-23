@@ -78,11 +78,7 @@ public class ModBlockLootTablesProvider extends BlockLootSubProvider {
                 block -> createFortuneCropDrops(block, ModItems.RED_SPIDER_LILY_ITEM.get(), ModItems.RED_SPIDER_SEEDS.get(), 3));
 
         this.add(ModBlocks.GUYUANCAO_BLOCK.get(), block -> createFortuneCropDrops(block, ModItems.GUYUANCAO_ITEM.get(), ModItems.GUYUANCAO_SEEDS.get(), 4));
-
-
-        // 如果你有其他草药，直接复制这一行即可
-        // this.add(ModBlocks.OTHER_HERB.get(), block -> createFortuneCropDrops(block, ModItems.OTHER_HERB_ITEM.get(), ModItems.OTHER_SEEDS.get(), 3));
-
+        this.add(ModBlocks.FANQICAO_BLOCK.get(), block -> createFortuneCropDrops(block, ModItems.FANQICAO_ITEM.get(), ModItems.FANQICAO_SEEDS.get(), 4));
     }
 
     protected LootTable.Builder createFortuneCropDrops(Block block, Item product, Item seed, int maxAge) {
