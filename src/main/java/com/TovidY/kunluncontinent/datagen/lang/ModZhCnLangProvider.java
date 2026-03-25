@@ -481,6 +481,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("gui.kunluncontinent.cast_shifa","§a§l魂技释放成功！");
         add("item.rinsei_ingot.tooltip","击杀雪魔概率掉落");
         add("item.guyuancao_seeds.tooltip2","可以种在魂土上");
+        add("tooltip.kunluncontinent.soul_soil","可通过聚魂瓶右键耕地转化");
 
         //适配你在看什么
         add(ModBlocks.RED_SPIDER_LILY_BLOCK.get(), "§c彼岸花");
@@ -496,5 +497,17 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.RED_SPIDER_SEEDS.get(), "§c彼岸花种子");
         add(ModItems.GUYUANCAO_SEEDS.get(), "§c归元草种子");
         add(ModItems.FANQICAO_SEEDS.get(), "§b返气草种子");
+
+        add(ModItems.SOUL_GATHERING_BOTTLE_0.get(), "§a一阶聚魂瓶");
+        add(ModItems.SOUL_GATHERING_BOTTLE_1.get(), "§e二阶聚魂瓶");
+        add(ModItems.SOUL_GATHERING_BOTTLE_2.get(), "§5三阶聚魂瓶");
+        add(ModItems.SOUL_GATHERING_BOTTLE_3.get(), "§7四阶聚魂瓶");
+        add(ModItems.SOUL_GATHERING_BOTTLE_4.get(), "§c五§b阶§5聚§a魂§e瓶");
+
+        add(ModItems.FIRST_DECOMPOSITION_GOSSIP.get(), "§a一阶魂环分解器");
+        add(ModItems.TWO_DECOMPOSITION_GOSSIP.get(), "§e二阶魂环分解器");
+        add(ModItems.THREE_DECOMPOSITION_GOSSIP.get(), "§5三阶魂环分解器");
+        add(ModItems.FOUR_DECOMPOSITION_GOSSIP.get(), "§7四阶魂环分解器");
+        add(ModItems.FIVE_DECOMPOSITION_GOSSIP.get(), "§c五§b阶§5魂§a环§e分§4解§a器");
     }
 }

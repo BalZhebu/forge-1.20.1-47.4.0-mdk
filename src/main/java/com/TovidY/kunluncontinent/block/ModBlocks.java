@@ -74,7 +74,12 @@ public class ModBlocks {
                     new Block(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)));
 
     //魂土
-    public static final RegistryObject<Block> SOUL_SOIL = registerBlock("soul_soil", () -> new Block(BlockBehaviour.Properties.copy(Blocks.DIRT)));
+    public static final RegistryObject<Block> SOUL_SOIL = registerBlock("soul_soil", () -> new Block(BlockBehaviour.Properties.copy(Blocks.DIRT)){
+        @Override
+        public void appendHoverText(ItemStack pStack, @Nullable BlockGetter pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
+            pTooltip.add(Component.translatable("tooltip.kunluncontinent.soul_soil").withStyle(ChatFormatting.DARK_GRAY));
+        }
+    });
 
     //草药
     public static final RegistryObject<Block> RED_SPIDER_LILY_BLOCK = BLOCKS.register("red_spider_lily_block", () -> new KLCropBlock(BlockBehaviour.Properties.copy(Blocks.WHEAT).noOcclusion(), () -> Blocks.NETHERRACK, ModItems.RED_SPIDER_SEEDS,10));

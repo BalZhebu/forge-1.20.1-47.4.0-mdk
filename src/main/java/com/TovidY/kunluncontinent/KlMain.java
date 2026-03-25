@@ -7,6 +7,7 @@ import com.TovidY.kunluncontinent.block.ModBlockEntities;
 import com.TovidY.kunluncontinent.block.ModBlocks;
 import com.TovidY.kunluncontinent.entity.Icecrysta.IceCrystalEntity;
 import com.TovidY.kunluncontinent.entity.snowdemon.SnowDemonEntity;
+import com.TovidY.kunluncontinent.item.tool.DecompositionItem;
 import com.TovidY.kunluncontinent.potion.ModEffects;
 import com.TovidY.kunluncontinent.entity.EntityInit;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
@@ -24,6 +25,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -82,6 +84,14 @@ public class KlMain {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
+        }
+    }
+
+    @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+    public class EventHandler {
+        @SubscribeEvent
+        public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+            DecompositionItem.onPlayerTick(event);
         }
     }
 

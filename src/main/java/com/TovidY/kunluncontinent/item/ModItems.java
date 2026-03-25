@@ -48,8 +48,10 @@ import com.TovidY.kunluncontinent.item.hungu.BoneItem;
 import com.TovidY.kunluncontinent.item.klitem.*;
 import com.TovidY.kunluncontinent.item.neidanitems.NeidanItem;
 import com.TovidY.kunluncontinent.item.testitemblock.TestLevelUp;
+import com.TovidY.kunluncontinent.item.tool.DecompositionItem;
 import com.TovidY.kunluncontinent.item.tool.ModSwordBaseItem;
 import com.TovidY.kunluncontinent.item.tool.ModToolTiers;
+import com.TovidY.kunluncontinent.item.tool.SoulGatheringBottleItem;
 import com.TovidY.kunluncontinent.potion.ModEffects;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -329,6 +331,28 @@ public class ModItems {
     public static final RegistryObject<Item> HUNHUAN_STORAGE_FIVE = ITEMS.register("hunhuan_storage_five",
             () -> new HunHuanStorageItem(new Item.Properties().stacksTo(1).fireResistant(), 1, 120000000));
 
+    //聚魂瓶
+    public static final RegistryObject<Item> SOUL_GATHERING_BOTTLE_0 = ITEMS.register("soul_gathering_bottle_0",
+            () -> new SoulGatheringBottleItem(new Item.Properties().stacksTo(1),1).setMaxnengliang(1024));
+
+    public static final RegistryObject<Item> SOUL_GATHERING_BOTTLE_1 = ITEMS.register("soul_gathering_bottle_1",
+            () -> new SoulGatheringBottleItem(new Item.Properties().stacksTo(1),2).setMaxnengliang(2048));
+
+    public static final RegistryObject<Item> SOUL_GATHERING_BOTTLE_2 = ITEMS.register("soul_gathering_bottle_2",
+            () -> new SoulGatheringBottleItem(new Item.Properties().stacksTo(1),3).setMaxnengliang(4096));
+
+    public static final RegistryObject<Item> SOUL_GATHERING_BOTTLE_3 = ITEMS.register("soul_gathering_bottle_3",
+            () -> new SoulGatheringBottleItem(new Item.Properties().stacksTo(1),4).setMaxnengliang(8192));
+
+    public static final RegistryObject<Item> SOUL_GATHERING_BOTTLE_4 = ITEMS.register("soul_gathering_bottle_4",
+            () -> new SoulGatheringBottleItem(new Item.Properties().stacksTo(1),5).setMaxnengliang(16384));
+
+    public static final RegistryObject<Item> FIRST_DECOMPOSITION_GOSSIP      = ITEMS.register("first_decomposition_gossip", () -> new DecompositionItem(new Item.Properties().fireResistant().stacksTo(1),1));
+    public static final RegistryObject<Item> TWO_DECOMPOSITION_GOSSIP      = ITEMS.register("two_decomposition_gossip", () -> new DecompositionItem(new Item.Properties().fireResistant().stacksTo(1),2));
+    public static final RegistryObject<Item> THREE_DECOMPOSITION_GOSSIP      = ITEMS.register("three_decomposition_gossip", () -> new DecompositionItem(new Item.Properties().fireResistant().stacksTo(1),3));
+    public static final RegistryObject<Item> FOUR_DECOMPOSITION_GOSSIP      = ITEMS.register("four_decomposition_gossip", () -> new DecompositionItem(new Item.Properties().fireResistant().stacksTo(1),4));
+    public static final RegistryObject<Item> FIVE_DECOMPOSITION_GOSSIP      = ITEMS.register("five_decomposition_gossip", () -> new DecompositionItem(new Item.Properties().fireResistant().stacksTo(1),5));
+
     //魂技
     //破魂枪
     public static final RegistryObject<SkillPohun1> SKILL_POHUN_1 = ITEMS.register("skill_pohun_1", SkillPohun1::new);
@@ -374,6 +398,16 @@ public class ModItems {
     public static final RegistryObject<SkillPanshijuyuan8> SKILL_PANSHIJUYUAN_8 = ITEMS.register("skill_panshijuyuan_8", SkillPanshijuyuan8::new);
     public static final RegistryObject<SkillPanshijuyuan9> SKILL_PANSHIJUYUAN_9 = ITEMS.register("skill_panshijuyuan_9", SkillPanshijuyuan9::new);
 
+    public static ArrayList<RegistryObject<Item>> JUHUNPING = new ArrayList<>();
+    static {
+        JUHUNPING.add(SOUL_GATHERING_BOTTLE_0);
+        JUHUNPING.add(SOUL_GATHERING_BOTTLE_1);
+        JUHUNPING.add(SOUL_GATHERING_BOTTLE_2);
+        JUHUNPING.add(SOUL_GATHERING_BOTTLE_3);
+        JUHUNPING.add(SOUL_GATHERING_BOTTLE_4);
+
+    }
+
     public static ArrayList<RegistryObject<? extends Item>> HUNJILIST = new ArrayList<>();
     static {
         HUNJILIST.add(SKILL_POHUN_1);
@@ -392,27 +426,26 @@ public class ModItems {
         HUNJILIST.add(SKILL_BAHUANG_4);
         HUNJILIST.add(SKILL_LEIJINHU_4);
         HUNJILIST.add(SKILL_PANSHIJUYUAN_4);
-
         HUNJILIST.add(SKILL_POHUN_5);
         HUNJILIST.add(SKILL_BAHUANG_5);
         HUNJILIST.add(SKILL_LEIJINHU_5);
-//        HUNJILIST.add(SKILL_PANSHIJUYUAN_5);
+        HUNJILIST.add(SKILL_PANSHIJUYUAN_5);
         HUNJILIST.add(SKILL_POHUN_6);
         HUNJILIST.add(SKILL_BAHUANG_6);
         HUNJILIST.add(SKILL_LEIJINHU_6);
-//        HUNJILIST.add(SKILL_PANSHIJUYUAN_6);
+        HUNJILIST.add(SKILL_PANSHIJUYUAN_6);
         HUNJILIST.add(SKILL_POHUN_7);
         HUNJILIST.add(SKILL_BAHUANG_7);
         HUNJILIST.add(SKILL_LEIJINHU_7);
-//        HUNJILIST.add(SKILL_PANSHIJUYUAN_7);
+        HUNJILIST.add(SKILL_PANSHIJUYUAN_7);
         HUNJILIST.add(SKILL_POHUN_8);
         HUNJILIST.add(SKILL_BAHUANG_8);
         HUNJILIST.add(SKILL_LEIJINHU_8);
-//        HUNJILIST.add(SKILL_PANSHIJUYUAN_8);
+        HUNJILIST.add(SKILL_PANSHIJUYUAN_8);
         HUNJILIST.add(SKILL_POHUN_9);
         HUNJILIST.add(SKILL_BAHUANG_9);
         HUNJILIST.add(SKILL_LEIJINHU_9);
-//        HUNJILIST.add(SKILL_PANSHIJUYUAN_9);
+        HUNJILIST.add(SKILL_PANSHIJUYUAN_9);
     }
 
     public static ArrayList<RegistryObject<Item>> DUANZAOMOBAN = new ArrayList<>();
@@ -452,6 +485,12 @@ public class ModItems {
         HUNGULIST.add(SOUL_BEAST_LEFT_LEG_BONE);
         HUNGULIST.add(SOUL_BEAST_RIGHT_LEG_BONE);
         HUNGULIST.add(SOUL_BEAST_EXTERNAL_APPENDAGES);
+
+        HUNGULIST.add(FIRST_DECOMPOSITION_GOSSIP);
+        HUNGULIST.add(TWO_DECOMPOSITION_GOSSIP);
+        HUNGULIST.add(THREE_DECOMPOSITION_GOSSIP);
+        HUNGULIST.add(FOUR_DECOMPOSITION_GOSSIP);
+        HUNGULIST.add(FIVE_DECOMPOSITION_GOSSIP);
     }
 
     public static ArrayList<RegistryObject<Item>> COLDPROTECTIONLIST = new ArrayList<>();

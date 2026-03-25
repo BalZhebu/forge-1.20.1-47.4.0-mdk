@@ -86,13 +86,15 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .unlockedBy("has_eye", has(ModItems.EYE_TRANSFORMATION.get()))
                 .save(pWriter);
 
-        //魂土
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.SOUL_SOIL.get())
-                .pattern("XXX")
-                .pattern("XXX")
-                .pattern("XXX")
-                .define('X', Blocks.DIRT)
-                .unlockedBy("has_soul_soil", has(Blocks.DIRT))
+        //一阶聚魂瓶
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.SOUL_GATHERING_BOTTLE_0.get())
+                .pattern("ZXZ")
+                .pattern("XOX")
+                .pattern("ZXZ")
+                .define('X', ModItems.GRAY_IRON_INGOT.get())
+                .define('Z', ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get())
+                .define('O', Items.GLASS_BOTTLE)
+                .unlockedBy("has_soul_gathering_bottle_0", has(ModItems.SOUL_GATHERING_BOTTLE_0.get()))
                 .save(pWriter);
 
         //锻造模版
@@ -114,7 +116,7 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.GUIDE_BOOK.get())
                 .pattern("IX")
                 .define('I', Items.BOOK)
-                .define('X', Items.IRON_INGOT)
+                .define('X', ModItems.GRAY_IRON_INGOT.get())
                 .unlockedBy("has_guide_book", has(ModItems.GUIDE_BOOK.get()))
                 .save(pWriter);
 

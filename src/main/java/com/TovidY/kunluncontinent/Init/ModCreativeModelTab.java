@@ -77,6 +77,11 @@ public class ModCreativeModelTab {
                             pOutput.accept(itemRegistryObject.get());
                         }
 
+                        //聚魂瓶
+                        for (RegistryObject<Item> itemRegistryObject : ModItems.JUHUNPING){
+                            pOutput.accept(itemRegistryObject.get());
+                        }
+
                         //锻造模版
                         for (RegistryObject<Item> itemRegistryObject : ModItems.DUANZAOMOBAN){
                             pOutput.accept(itemRegistryObject.get());
