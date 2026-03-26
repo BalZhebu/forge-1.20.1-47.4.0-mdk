@@ -213,33 +213,39 @@ public class PWPlayerTickEvent {
             nbt.putInt("SuiXingTimer", timeLeft);
         }
     }
-
     private static void handleLieDiLanding(ServerPlayer player) {
         CompoundTag nbt = player.getPersistentData();
-        if (!nbt.contains("LieDiActive")) return;
-        if (nbt.contains("BuZhouQing_Active") && player.onGround()) {
+        ServerLevel level = player.serverLevel();
+        double verticalMomentum = player.getDeltaMovement().y;
+        if (nbt.contains("BuZhouQing_Active") && player.onGround() && verticalMomentum <= 0) {
             float dmg = nbt.getFloat("BuZhouQing_Damage");
-            ServerLevel level = player.serverLevel();
-            level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(100.0), e -> e != player && e.isAlive()).forEach(t -> {
-                t.hurt(player.damageSources().playerAttack(player), dmg);
-                t.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 300, 2)); // 缓慢3
-                t.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 300, 2)); // 虚弱3
-                t.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 300, 1));
-                t.addEffect(new MobEffectInstance(MobEffects.HUNGER, 300, 1));
-            });
-            level.sendParticles(ParticleTypes.SONIC_BOOM, player.getX(), player.getY(), player.getZ(), 10, 5, 0, 5, 0);
-            level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, player.getX(), player.getY(), player.getZ(), 5, 2, 2, 2, 0);
-            nbt.remove("BuZhouQing_Active");
-        }
-        if (player.onGround() && player.getDeltaMovement().y <= 0) {
-            float finalDamage = nbt.getFloat("LieDiDamage");
-            ServerLevel level = player.serverLevel();
-            AABB area = player.getBoundingBox().inflate(20.0);
-            List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class, area,
+            AABB bzArea = player.getBoundingBox().inflate(80.0);
+            List<LivingEntity> bzTargets = level.getEntitiesOfClass(LivingEntity.class, bzArea,
                     e -> e != player && e.isAlive());
-            for (LivingEntity target : targets) {
+            for (LivingEntity target : bzTargets) {
+                target.hurt(player.damageSources().playerAttack(player), dmg);
+                target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 300, 2)); // 缓慢3
+                target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 300, 2));          // 虚弱3
+                target.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 300, 1));         // 反胃
+                target.addEffect(new MobEffectInstance(MobEffects.HUNGER, 300, 1));            // 饥饿
+            }
+            level.sendParticles(ParticleTypes.SONIC_BOOM, player.getX(), player.getY(), player.getZ(), 15, 3, 0.5, 3, 0.2);
+            level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, player.getX(), player.getY(), player.getZ(), 8, 2, 2, 2, 0);
+            level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                    SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 4.0f, 0.5f);
+            level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                    SoundEvents.WARDEN_ROAR, SoundSource.PLAYERS, 2.0f, 0.5f);
+            nbt.remove("BuZhouQing_Active");
+            nbt.remove("BuZhouQing_Damage");
+        }
+        if (nbt.contains("LieDiActive") && player.onGround() && verticalMomentum <= 0) {
+            float finalDamage = nbt.getFloat("LieDiDamage");
+            AABB ldArea = player.getBoundingBox().inflate(20.0);
+            List<LivingEntity> ldTargets = level.getEntitiesOfClass(LivingEntity.class, ldArea,
+                    e -> e != player && e.isAlive());
+            for (LivingEntity target : ldTargets) {
                 target.hurt(player.damageSources().playerAttack(player), finalDamage);
-                target.push(0, 0.8, 0); // 震飞效果
+                target.push(0, 0.8, 0); // 裂地特有的震飞效果
             }
             for (int i = 0; i < 60; i++) {
                 double rx = (level.random.nextDouble() - 0.5) * 30;
