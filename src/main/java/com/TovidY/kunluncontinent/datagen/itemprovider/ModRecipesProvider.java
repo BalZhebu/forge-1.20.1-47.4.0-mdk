@@ -86,6 +86,65 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .unlockedBy("has_eye", has(ModItems.EYE_TRANSFORMATION.get()))
                 .save(pWriter);
 
+        //一阶魂环分解器
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.FIRST_DECOMPOSITION_GOSSIP.get())
+                .pattern("ZXZ")
+                .pattern("XOX")
+                .pattern("ZXZ")
+                .define('X', ModItems.GRAY_IRON_INGOT.get())
+                .define('Z', ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get())
+                .define('O', ModItems.SOUL_GATHERING_BOTTLE_0.get())
+                .unlockedBy("has_decomposer_0", has(ModItems.FIRST_DECOMPOSITION_GOSSIP.get()))
+                .save(pWriter);
+
+        //二阶魂环分解器
+        SmithingTransformRecipeBuilder.smithing(
+                        Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
+                        Ingredient.of(ModItems.FIRST_DECOMPOSITION_GOSSIP.get()),
+                        Ingredient.of(ModItems.LOW_HUNHUAN_STORAGE_CORE.get()),
+                        RecipeCategory.MISC,
+                        ModItems.TWO_DECOMPOSITION_GOSSIP.get()
+                )
+                .unlocks("has_kunluncontinent_ecomposition_gossip_1", inventoryTrigger(ItemPredicate.Builder.item()
+                        .of(ModItems.RUBY.get()).build()))
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_ecomposition_gossip_1"));
+
+        //三阶魂环分解器
+        SmithingTransformRecipeBuilder.smithing(
+                        Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
+                        Ingredient.of(ModItems.TWO_DECOMPOSITION_GOSSIP.get()),
+                        Ingredient.of(ModItems.MIDDLE_HUNHUAN_STORAGE_CORE.get()),
+                        RecipeCategory.MISC,
+                        ModItems.THREE_DECOMPOSITION_GOSSIP.get()
+                )
+                .unlocks("has_kunluncontinent_ecomposition_gossip_2", inventoryTrigger(ItemPredicate.Builder.item()
+                        .of(ModItems.SAPPHIRE.get()).build()))
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_ecomposition_gossip_2"));
+
+        //四阶魂环分解器
+        SmithingTransformRecipeBuilder.smithing(
+                        Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
+                        Ingredient.of(ModItems.THREE_DECOMPOSITION_GOSSIP.get()),
+                        Ingredient.of(ModItems.HIGH_HUNHUAN_STORAGE_CORE.get()),
+                        RecipeCategory.MISC,
+                        ModItems.FOUR_DECOMPOSITION_GOSSIP.get()
+                )
+                .unlocks("has_kunluncontinent_ecomposition_gossip_3", inventoryTrigger(ItemPredicate.Builder.item()
+                        .of(ModItems.AMETHYST.get()).build()))
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_ecomposition_gossip_3"));
+
+        //五阶魂环分解
+        SmithingTransformRecipeBuilder.smithing(
+                        Ingredient.of(ModItems.RINSEI_FORGING_TEMPLATE.get()),
+                        Ingredient.of(ModItems.FOUR_DECOMPOSITION_GOSSIP.get()),
+                        Ingredient.of(ModItems.TOP_HUNHUAN_STORAGE_CORE.get()),
+                        RecipeCategory.MISC,
+                        ModItems.FIVE_DECOMPOSITION_GOSSIP.get()
+                )
+                .unlocks("has_kunluncontinent_ecomposition_gossip_4", inventoryTrigger(ItemPredicate.Builder.item()
+                        .of(ModItems.STARLIGHT_STONE.get()).build()))
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_ecomposition_gossip_4"));
+
         //一阶聚魂瓶
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.SOUL_GATHERING_BOTTLE_0.get())
                 .pattern("ZXZ")
@@ -96,6 +155,55 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .define('O', Items.GLASS_BOTTLE)
                 .unlockedBy("has_soul_gathering_bottle_0", has(ModItems.SOUL_GATHERING_BOTTLE_0.get()))
                 .save(pWriter);
+
+        //二级聚魂瓶
+        SmithingTransformRecipeBuilder.smithing(
+                        Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
+                        Ingredient.of(ModItems.SOUL_GATHERING_BOTTLE_0.get()),
+                        Ingredient.of(ModItems.LOW_HUNHUAN_STORAGE_CORE.get()),
+                        RecipeCategory.MISC,
+                        ModItems.SOUL_GATHERING_BOTTLE_1.get()
+                )
+                .unlocks("has_kunluncontinent_soul_gathering_bottle_1", inventoryTrigger(ItemPredicate.Builder.item()
+                        .of(ModItems.RUBY.get()).build()))
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_soul_gathering_bottle_1"));
+
+        //三阶聚魂瓶
+        SmithingTransformRecipeBuilder.smithing(
+                        Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
+                        Ingredient.of(ModItems.SOUL_GATHERING_BOTTLE_1.get()),
+                        Ingredient.of(ModItems.MIDDLE_HUNHUAN_STORAGE_CORE.get()),
+                        RecipeCategory.MISC,
+                        ModItems.SOUL_GATHERING_BOTTLE_2.get()
+                )
+                .unlocks("has_kunluncontinent_soul_gathering_bottle_2", inventoryTrigger(ItemPredicate.Builder.item()
+                        .of(ModItems.SAPPHIRE.get()).build()))
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_soul_gathering_bottle_2"));
+
+        //四阶聚魂瓶
+        SmithingTransformRecipeBuilder.smithing(
+                        Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
+                        Ingredient.of(ModItems.SOUL_GATHERING_BOTTLE_2.get()),
+                        Ingredient.of(ModItems.HIGH_HUNHUAN_STORAGE_CORE.get()),
+                        RecipeCategory.MISC,
+                        ModItems.SOUL_GATHERING_BOTTLE_3.get()
+                )
+                .unlocks("has_kunluncontinent_soul_gathering_bottle_3", inventoryTrigger(ItemPredicate.Builder.item()
+                        .of(ModItems.AMETHYST.get()).build()))
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_soul_gathering_bottle_3"));
+
+        //五阶聚魂瓶
+        SmithingTransformRecipeBuilder.smithing(
+                        Ingredient.of(ModItems.RINSEI_FORGING_TEMPLATE.get()),
+                        Ingredient.of(ModItems.SOUL_GATHERING_BOTTLE_3.get()),
+                        Ingredient.of(ModItems.TOP_HUNHUAN_STORAGE_CORE.get()),
+                        RecipeCategory.MISC,
+                        ModItems.SOUL_GATHERING_BOTTLE_4.get()
+                )
+                .unlocks("has_kunluncontinent_soul_gathering_bottle_4", inventoryTrigger(ItemPredicate.Builder.item()
+                        .of(ModItems.STARLIGHT_STONE.get()).build()))
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_soul_gathering_bottle_4"));
+
 
         //锻造模版
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.RINSEI_FORGING_TEMPLATE.get(),3)
