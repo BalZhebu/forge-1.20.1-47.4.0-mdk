@@ -47,7 +47,6 @@ public class DanYaoItem extends Item {
         return this.tier;
     }
 
-    // --- 品级枚举定义 ---
     public enum Quality {
         damaged("丹渣", 0.0f, ChatFormatting.DARK_GRAY),
         green("药散", 0.3f, ChatFormatting.GREEN),
@@ -55,17 +54,14 @@ public class DanYaoItem extends Item {
         purple("灵丹", 1.0f, ChatFormatting.DARK_PURPLE),
         gold("宝丹", 1.5f, ChatFormatting.GOLD),
         red("仙丹", 2.0f, ChatFormatting.RED);
-
         public final String label;
         public final float multiplier;
         public final ChatFormatting color;
-
         Quality(String label, float multiplier, ChatFormatting color) {
             this.label = label;
             this.multiplier = multiplier;
             this.color = color;
         }
-
         public static Quality get(ItemStack stack) {
             if (stack.hasTag() && stack.getTag().contains("DanYaoQuality")) {
                 int index = stack.getTag().getInt("DanYaoQuality");
@@ -74,21 +70,14 @@ public class DanYaoItem extends Item {
             return purple; // 默认紫色 100%
         }
     }
-
-    // --- 逻辑重写 ---
-
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
         Quality q = Quality.get(itemstack);
-
-        // 1. 破碎丹药拦截
         if (q == Quality.damaged) {
             if (!level.isClientSide) player.sendSystemMessage(Component.literal("这颗丹药已经碎成渣了，无法服用...").withStyle(ChatFormatting.GRAY));
             return InteractionResultHolder.fail(itemstack);
         }
-
-        // 2. 等级限制检查
         if (!player.getAbilities().instabuild) {
             int playerLevel = player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).map(cap -> (int)cap.getDengji()).orElse(0);
             if (playerLevel < this.minLevel) {
@@ -120,7 +109,6 @@ public class DanYaoItem extends Item {
     }
 
     private void applyDanyaoAttribute(ItemStack stack, ServerPlayer player) {
-        // 使用你最新的枚举类和统一后的键名获取方法
         DanYaoQuality q = DanYaoQuality.getFromStack(stack);
         float m = q.multiplier;
 
@@ -176,6 +164,7 @@ public class DanYaoItem extends Item {
     public DanYaoItem setMaxjingshenli(int v) { this.maxjingshenli = v; return this; }
     public DanYaoItem setTupochenggonggailv(float v) { this.tupochenggonggailv = v; return this; }
     public DanYaoItem setShengmingbaifenbi(float v) { this.shengmingbaifenbi = v; return this; }
+
     public DanYaoItem setJingshenlibaifenbi(float v) { this.jingshenlibaifenbi = v; return this; }
 
     // --- Tooltip 渲染 ---

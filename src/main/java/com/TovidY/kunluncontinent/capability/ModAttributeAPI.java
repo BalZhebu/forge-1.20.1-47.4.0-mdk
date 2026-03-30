@@ -15,6 +15,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.util.LazyOptional;
 
 import java.util.Map;
 
@@ -230,19 +231,12 @@ public class ModAttributeAPI {
         return value;
     }
 
-    public static float getMaxjingshenli(Entity entity) {
+    public static float getMaxjingshenli(Player player) {
         float value = 0;
-        if (entity instanceof Player player) {
-            value += player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
-                    .map(PlayerAttributeCapability::getMaxjingshenli).orElse(0f);
-        }
-        
-        if (entity instanceof LivingEntity livingEntity) {
-            // 考虑药水效果
-            Map<MobEffect, MobEffectInstance> activeEffectsMap = livingEntity.getActiveEffectsMap();
-            for (Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry : activeEffectsMap.entrySet()) {
-                // 在这里可以添加对自定义药水效果的处理
-            }
+        LazyOptional<PlayerAttributeCapability> capability = player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY);
+        if (capability.isPresent()) {
+            PlayerAttributeCapability playerAttributeCapability = capability.orElseThrow(RuntimeException::new);
+            value += playerAttributeCapability.getMaxjingshenli();
         }
         return value;
     }
