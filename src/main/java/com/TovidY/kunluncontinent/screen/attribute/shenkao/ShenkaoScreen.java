@@ -1,0 +1,93 @@
+package com.TovidY.kunluncontinent.screen.attribute.shenkao;
+
+import com.TovidY.kunluncontinent.KlMain;
+import com.TovidY.kunluncontinent.godclass.interfac.GodClientData;
+import com.TovidY.kunluncontinent.network.NetworkHandler;
+import com.TovidY.kunluncontinent.network.client.C2SCheckTaskPacket;
+import com.TovidY.kunluncontinent.network.server.PacketSyncPage;
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
+
+public class ShenkaoScreen extends AbstractContainerScreen<ShenkaoMenu> {
+    private static final ResourceLocation TEXTURE =
+            ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/screens/shenkaogui.png");
+
+    public ShenkaoScreen(ShenkaoMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
+        super(pMenu, pPlayerInventory, pTitle);
+        this.imageWidth = 322;
+        this.imageHeight = 178;
+
+        this.inventoryLabelY = 10000;
+        this.titleLabelY = 10000;
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        this.addRenderableWidget(Button.builder(Component.literal("进度检查"), b -> {
+            NetworkHandler.INSTANCE.sendToServer(new C2SCheckTaskPacket());
+        }).bounds(this.leftPos + 210, this.topPos + 10, 76, 20).build());
+    }
+
+    @Override
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+
+        this.addRenderableWidget(Button.builder(Component.literal("属性"), b -> {
+            NetworkHandler.INSTANCE.sendToServer(new PacketSyncPage(0));
+        }).bounds(this.leftPos + 5, this.topPos - 20, 40, 20).build());
+
+        this.addRenderableWidget(Button.builder(Component.literal("魂骨"), b -> {
+        }).bounds(this.leftPos + 47, this.topPos - 20, 40, 20).build());
+
+        this.addRenderableWidget(Button.builder(Component.literal("魂环"), b -> {
+            NetworkHandler.INSTANCE.sendToServer(new PacketSyncPage(2));
+        }).bounds(this.leftPos + 89, this.topPos - 20, 40, 20).build());
+
+        this.addRenderableWidget(Button.builder(Component.literal("神考"), b -> {
+            NetworkHandler.INSTANCE.sendToServer(new PacketSyncPage(3));
+        }).bounds(this.leftPos + 131, this.topPos - 20, 40, 20).build());
+
+        this.renderBackground(guiGraphics);
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
+        this.renderTooltip(guiGraphics, mouseX, mouseY);
+        String titleStr = "当前神位: §c" + (GodClientData.godName.isEmpty() ? "无" : GodClientData.godName);
+        String stageStr = "考核阶段: 第 " + GodClientData.currentStage + " 考";
+        guiGraphics.drawString(this.font, titleStr, this.leftPos + 10, this.topPos + 10, 0xFFFFFF, false);
+        guiGraphics.drawString(this.font, stageStr, this.leftPos + 10, this.topPos + 25, 0x00FF00, false);
+
+        String desc = "考核目标: " + GodClientData.currentDesc;
+        String progress = "当前进度: " + GodClientData.taskProgress + " / " + GodClientData.requiredCount;
+        guiGraphics.drawString(this.font, desc, this.leftPos + 10, this.topPos + 40, 0xFFAA00, false);
+        guiGraphics.drawString(this.font, progress, this.leftPos + 10, this.topPos + 55, 0xAAAAAA, false);
+
+        if (!GodClientData.isGod) {
+            guiGraphics.fill(this.leftPos + 10, this.topPos + 72, this.leftPos + 170, this.topPos + 73, 0xFF555555);
+            guiGraphics.drawString(this.font, "§6考核奖励:", this.leftPos + 10, this.topPos + 78, 0xFFFFFF, false);
+            String rText = GodClientData.rewardDesc;
+            guiGraphics.drawString(this.font, rText, this.leftPos + 10, this.topPos + 92, 0xFFFFFF, false);
+        }
+
+        if (GodClientData.isGod) {
+            guiGraphics.drawString(this.font, "§6★ 已成就神位 ★", this.leftPos + 40, this.topPos + 85, 0xFFD700, true);
+        }
+    }
+
+    @Override
+    protected void renderLabels(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY) {
+
+    }
+
+    @Override
+    protected void renderBg(GuiGraphics pGuiGraphics, float pPartialTick, int pMouseX, int pMouseY) {
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        pGuiGraphics.blit(TEXTURE, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
+    }
+}

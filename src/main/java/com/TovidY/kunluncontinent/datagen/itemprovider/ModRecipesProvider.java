@@ -47,6 +47,10 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
         oreSmelting(pWriter,COLD_HEARTED_STEEL,RecipeCategory.MISC,ModItems.COLD_HEARTED_STEEL_INGOT.get(),0.45F,1000,"cold_hearterd_steel");
         oreBlasting(pWriter,COLD_HEARTED_STEEL,RecipeCategory.MISC,ModItems.COLD_HEARTED_STEEL_INGOT.get(),0.45F,800,"cold_hearterd_steel");
 
+        //聚魂瓶合成
+        SpecialRecipeBuilder.special(ModRecipes.BOTTLE_REFILL_SERIALIZER.get())
+                .save(pWriter, KlMain.MOD_ID + ":bottle_refill");
+
         //丹药炼制代码
         LiandanRecipeBuilder.create(ModItems.NEIDAN1.get(), ModItems.CHUYUAN_DAN.get(), 400)
                 .save(pWriter,ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "chuyuan_dan_from_neidan1"));

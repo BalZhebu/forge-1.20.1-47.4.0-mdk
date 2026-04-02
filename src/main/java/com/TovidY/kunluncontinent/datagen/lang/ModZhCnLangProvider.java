@@ -509,5 +509,11 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.THREE_DECOMPOSITION_GOSSIP.get(), "§5三阶魂环分解器");
         add(ModItems.FOUR_DECOMPOSITION_GOSSIP.get(), "§7四阶魂环分解器");
         add(ModItems.FIVE_DECOMPOSITION_GOSSIP.get(), "§c五§b阶§5魂§a环§e分§4解§a器");
+
+        add(ModItems.FANGSHANHUNDAOQI_1.get(),"§a一阶电流防御魂器");
+        add(ModItems.FANGSHANHUNDAOQI_2.get(),"§e二阶电流防御魂器");
+        add(ModItems.FANGSHANHUNDAOQI_3.get(),"§5三阶电流防御魂器");
+        add(ModItems.FANGSHANHUNDAOQI_4.get(),"§7四阶电流防御魂器");
+        add(ModItems.FANGSHANHUNDAOQI_5.get(),"§c五§b阶§5电流防御魂器");
     }
 }

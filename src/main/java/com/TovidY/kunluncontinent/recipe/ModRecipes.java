@@ -1,5 +1,6 @@
 package com.TovidY.kunluncontinent.recipe;
 
+import com.TovidY.kunluncontinent.recipe.klcont.BottleRefillRecipe;
 import com.TovidY.kunluncontinent.recipe.liandanlurecipe.DrossConversionRecipe;
 import com.TovidY.kunluncontinent.recipe.liandanlurecipe.LiandanRecipe;
 import com.TovidY.kunluncontinent.recipe.liandanlurecipe.LiandanRecipeSerializer;
@@ -28,8 +29,12 @@ public class ModRecipes {
                 @Override public String toString() { return "liandan"; }
             });
 
+    public static final RegistryObject<SimpleCraftingRecipeSerializer<?>> BOTTLE_REFILL_SERIALIZER =
+            SERIALIZERS.register("bottle_refill", () -> new SimpleCraftingRecipeSerializer<>(BottleRefillRecipe::new));
+
     public static void register(IEventBus eventBus) {
         SERIALIZERS.register(eventBus);
         TYPES.register(eventBus);
+
     }
 }

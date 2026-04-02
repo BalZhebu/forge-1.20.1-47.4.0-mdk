@@ -7,6 +7,7 @@ import com.TovidY.kunluncontinent.block.ModBlockEntities;
 import com.TovidY.kunluncontinent.block.ModBlocks;
 import com.TovidY.kunluncontinent.entity.Icecrysta.IceCrystalEntity;
 import com.TovidY.kunluncontinent.entity.snowdemon.SnowDemonEntity;
+import com.TovidY.kunluncontinent.godclass.GodRegistry;
 import com.TovidY.kunluncontinent.item.tool.DecompositionItem;
 import com.TovidY.kunluncontinent.potion.ModEffects;
 import com.TovidY.kunluncontinent.entity.EntityInit;
@@ -15,8 +16,10 @@ import com.TovidY.kunluncontinent.recipe.ModRecipes;
 import com.TovidY.kunluncontinent.screen.ModMenuTypes;
 import com.TovidY.kunluncontinent.Init.ModCreativeModelTab;
 import com.TovidY.kunluncontinent.item.ModItems;
+import com.TovidY.kunluncontinent.worldgen.ModDimensions;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
@@ -26,6 +29,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -51,6 +55,8 @@ public class KlMain {
 
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
+
+        GodRegistry.init();
 
         ModTriggers.register();
 

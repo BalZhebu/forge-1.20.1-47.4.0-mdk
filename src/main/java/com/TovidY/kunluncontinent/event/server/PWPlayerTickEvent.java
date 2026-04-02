@@ -9,7 +9,9 @@ import com.TovidY.kunluncontinent.capability.playerattributes.PlayerUpgradeSyste
 import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanEntity;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import com.TovidY.kunluncontinent.network.SynsAPI;
+import com.TovidY.kunluncontinent.worldgen.ModDimensions;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -19,14 +21,15 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.AreaEffectCloud;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -54,6 +57,8 @@ public class PWPlayerTickEvent {
                 handleLiejinhuEight(serverPlayer);
                 handleBahuangNine(serverPlayer);
 
+                handleThunderRealmLightning(serverPlayer,capability,gameTime);
+
                 handleSuiXingField(serverPlayer, gameTime);
                 if (gameTime % 20 == 0) {
                     float maxshengming = ModAttributeAPI.getMaxshengming(player);
@@ -72,6 +77,43 @@ public class PWPlayerTickEvent {
                 
                 handleMeditationLogic(serverPlayer, capability, gameTime);
             });
+        }
+    }
+
+    private static void handleThunderRealmLightning(ServerPlayer player, PlayerAttributeCapability capability, long gameTime) {
+        int playerOffset = Math.abs(player.getUUID().hashCode() % 20);
+        if (gameTime % 20 != playerOffset) return;
+        ServerLevel level = player.serverLevel();
+        if (!level.dimension().equals(ModDimensions.THUNDER_REALM_LEVEL_KEY)) return;
+        if (level.random.nextInt(3) == 0) {
+            int count = level.random.nextInt(5) + 1;
+            boolean hasProtection = player.getInventory().contains(Items.TOTEM_OF_UNDYING.getDefaultInstance());
+            for (int i = 0; i < count; i++) {
+                boolean isTargetingPlayer = !hasProtection && level.random.nextFloat() < 0.12f;
+                BlockPos strikePos;
+                if (isTargetingPlayer) {
+                    strikePos = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, player.blockPosition());
+                    LightningBolt lightning = EntityType.LIGHTNING_BOLT.create(level);
+                    if (lightning != null) {
+                        lightning.moveTo(Vec3.atBottomCenterOf(strikePos));
+                        float damage = capability.getMaxshengming() * 0.05f;
+                        player.hurt(level.damageSources().lightningBolt(), damage);
+                        level.addFreshEntity(lightning);
+                    }
+                } else {
+                    double radius = 40.0;
+                    double offsetX = (level.random.nextDouble() * 2 - 1) * radius;
+                    double offsetZ = (level.random.nextDouble() * 2 - 1) * radius;
+                    strikePos = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING,
+                            player.blockPosition().offset((int)offsetX, 0, (int)offsetZ));
+                    LightningBolt dummyLightning = EntityType.LIGHTNING_BOLT.create(level);
+                    if (dummyLightning != null) {
+                        dummyLightning.setVisualOnly(true); // 不点火，不伤害，不计入实体碰撞
+                        dummyLightning.moveTo(Vec3.atBottomCenterOf(strikePos));
+                        level.addFreshEntity(dummyLightning);
+                    }
+                }
+            }
         }
     }
 

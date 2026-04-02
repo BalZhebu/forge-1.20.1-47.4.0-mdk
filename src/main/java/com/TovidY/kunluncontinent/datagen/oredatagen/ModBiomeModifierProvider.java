@@ -16,6 +16,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import static com.TovidY.kunluncontinent.datagen.oredatagen.ModWorldGenOreProvider.RED_SPIDER_LILY_PLACED;
 
+//矿物的生成
 public class ModBiomeModifierProvider {
     // 定义 Key 的位置
     public static final ResourceKey<BiomeModifier> ADD_GRAY_IRON_ORE = createKey("add_gray_iron_ore");

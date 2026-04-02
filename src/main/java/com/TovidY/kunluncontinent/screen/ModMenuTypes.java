@@ -7,6 +7,8 @@ import com.TovidY.kunluncontinent.screen.attribute.hungu.HunguMenu;
 import com.TovidY.kunluncontinent.screen.attribute.hungu.HunguScreen;
 import com.TovidY.kunluncontinent.screen.attribute.hunhuan.HunhuanMenu;
 import com.TovidY.kunluncontinent.screen.attribute.hunhuan.HunhuanScreen;
+import com.TovidY.kunluncontinent.screen.attribute.shenkao.ShenkaoMenu;
+import com.TovidY.kunluncontinent.screen.attribute.shenkao.ShenkaoScreen;
 import com.TovidY.kunluncontinent.screen.guide.GuidBookScreen;
 import com.TovidY.kunluncontinent.screen.guide.GuideBookMenu;
 import com.TovidY.kunluncontinent.screen.liandanlugui.LiandanluMenu;
@@ -44,6 +46,9 @@ public class ModMenuTypes {
     public static final RegistryObject<MenuType<HunhuanMenu>> HUNHUAN_MENU =
             registerMenuType("hunhuan_menu", HunhuanMenu::new);
 
+    public static final RegistryObject<MenuType<ShenkaoMenu>> SHENKAO_MENU =
+            registerMenuType("shenkao_menu", ShenkaoMenu::new);
+
     //引导书
     public static final RegistryObject<MenuType<GuideBookMenu>> GUIDE_BOOK_MENU =
             registerMenuType("guide_book_menu", GuideBookMenu::new);
@@ -65,6 +70,7 @@ public class ModMenuTypes {
             MenuScreens.register(ModMenuTypes.HUNGU_MENU.get(), HunguScreen::new);
             MenuScreens.register(ModMenuTypes.GUIDE_BOOK_MENU.get(), GuidBookScreen::new);
             MenuScreens.register(ModMenuTypes.HUNHUAN_MENU.get(), HunhuanScreen::new);
+            MenuScreens.register(ModMenuTypes.SHENKAO_MENU.get(), ShenkaoScreen::new);
 
         }
     }

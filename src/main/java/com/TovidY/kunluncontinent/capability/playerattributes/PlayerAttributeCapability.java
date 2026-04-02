@@ -3,6 +3,9 @@ package com.TovidY.kunluncontinent.capability.playerattributes;
 import com.TovidY.kunluncontinent.capability.itemattribute.ItemAttributeCapability;
 import com.TovidY.kunluncontinent.capability.itemattribute.ItemAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapability;
+import com.TovidY.kunluncontinent.godclass.GodRegistry;
+import com.TovidY.kunluncontinent.godclass.interfac.GodInfo;
+import com.TovidY.kunluncontinent.godclass.interfac.GodTask;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import com.TovidY.kunluncontinent.network.SynsAPI;
 import net.minecraft.core.Direction;
@@ -10,7 +13,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -35,7 +40,16 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
     private int requiredCastTick = 0;
     private BaseSkillItem currentCastingSkill = null;
 
-    // 初始化标志，用于判断是否是第一次创建角色
+    private String godName = "";        // 当前进行的神位ID (如 "sea_god")，为空代表无神考
+    private int currentStage = 1;       // 当前神考阶段 (1-9)
+    private int taskProgress = 0;       // 当前任务的数值进度 (如杀怪数、提交数)
+    private boolean isGod = false;      // 是否已完成封神
+
+    private String[] assignedExams = new String[10]; // 存储1-9考抽中的任务描述
+    private String[] assignedTargets = new String[10]; // 存储任务目标ID
+    private int[] assignedCounts = new int[10]; // 存储需求数量
+    private String[] assignedTypes = new String[10]; // 存储任务类型
+
     private boolean initialized = false;
 
     private Map<String, BaseSkillItem[]> wuhunSkillsMap = new HashMap<>();
@@ -43,9 +57,6 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
 
     private int xiulianTime = 600;
     private boolean usingAll = false;
-
-    private static final String DATA_VERSION_TAG = "DataVersion";
-    private static final int CURRENT_DATA_VERSION = 2;
 
     private Map<String, List<MobAttributeCapability>> monsterCapabilityLists = new HashMap<>();
     private List<String> wuhunListsname = new ArrayList<>();
@@ -88,6 +99,12 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
     public PlayerAttributeCapability(){
         super();
         this.hunhuankuaiguan = 0;
+
+        this.assignedExams = new String[10];
+        this.assignedTargets = new String[10];
+        this.assignedCounts = new int[10];
+        this.assignedTypes = new String[10];
+        this.godName = ""; // 默认为空
     }
 
     public PlayerAttributeCapability(int hunhuankuaiguan) {
@@ -122,6 +139,24 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         tag.put("HunguSlots", hunguInventory.serializeNBT());
         tag.putInt("Zhuanshengshu", zhuanshengshu);
         tag.putInt("Hunhuankuaiguan", hunhuankuaiguan);
+
+        // 保存神祇系统数据
+        tag.putString("GodName", godName);
+        tag.putInt("CurrentGodStage", currentStage);
+        tag.putInt("GodTaskProgress", taskProgress);
+        tag.putBoolean("IsGod", isGod);
+
+        // 在 serializeNBT 中增加：
+        ListTag taskTag = new ListTag();
+        for (int i = 1; i <= 9; i++) {
+            CompoundTag entry = new CompoundTag();
+            entry.putString("desc", assignedExams[i] != null ? assignedExams[i] : "");
+            entry.putString("target", assignedTargets[i] != null ? assignedTargets[i] : "");
+            entry.putInt("count", assignedCounts[i]);
+            entry.putString("type", assignedTypes[i] != null ? assignedTypes[i] : "");
+            taskTag.add(entry);
+        }
+        tag.put("GodTasks", taskTag);
 
         // --- 核心修复：保存武魂名称的原始顺序 ---
         ListTag wuhunOrderTag = new ListTag();
@@ -189,6 +224,24 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         this.xiulianTime = nbt.getInt("xiulianTime");
         this.usingAll = nbt.getBoolean("usingAll");
         this.hunhuankuaiguan = nbt.getInt("Hunhuankuaiguan");
+
+        // 读取神祇系统数据
+        this.godName = nbt.getString("GodName");
+        this.currentStage = nbt.getInt("CurrentGodStage");
+        this.taskProgress = nbt.getInt("GodTaskProgress");
+        this.isGod = nbt.getBoolean("IsGod");
+
+        // 在 deserializeNBT 中增加：
+        if (nbt.contains("GodTasks")) {
+            ListTag taskTag = nbt.getList("GodTasks", 10);
+            for (int i = 0; i < taskTag.size() && i < 9; i++) {
+                CompoundTag entry = taskTag.getCompound(i);
+                assignedExams[i+1] = entry.getString("desc");
+                assignedTargets[i+1] = entry.getString("target");
+                assignedCounts[i+1] = entry.getInt("count");
+                assignedTypes[i+1] = entry.getString("type");
+            }
+        }
 
         if (nbt.contains("HunguSlots")) {
             hunguInventory.deserializeNBT(nbt.getCompound("HunguSlots"));
@@ -266,16 +319,51 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         }
     }
 
-    public void refreshBoneAttributes(Player player) {
-        // 仅仅刷新 Map 缓存，不碰任何 this.gongji 等主字段！
-        this.boneOnlyStats.clear();
+    public String getGodName() { return godName; }
 
+    public void startGodExam(String godId) {
+        this.godName = godId;
+        this.currentStage = 1;
+        this.taskProgress = 0;
+        this.isGod = false;
+    }
+
+    public int getCurrentStage() { return currentStage; }
+
+    public void nextGodStage() {
+        if (this.currentStage < 9) {
+            this.currentStage++;
+            this.taskProgress = 0;
+        } else {
+            this.isGod = true;
+        }
+    }
+
+    public int getGodTaskProgress() { return taskProgress; }
+    public void setGodTaskProgress(int progress) { this.taskProgress = progress; }
+    public void addGodTaskProgress(int amount) { this.taskProgress += amount; }
+
+    public boolean isGod() { return isGod; }
+
+    public float getGodAttributeValue(String attrKey) {
+        return switch (attrKey) {
+            case "gongji" -> this.gongji;
+            case "fangyu" -> this.fangyu;
+            case "maxshengming" -> this.maxshengming;
+            case "jingshenli" -> this.jingshenli;
+            case "baojilv" -> this.baojilv;
+            case "shanbi" -> this.shanbi;
+            default -> 0f;
+        };
+    }
+
+    public void refreshBoneAttributes(Player player) {
+        this.boneOnlyStats.clear();
         for (int i = 0; i < 7; i++) {
             ItemStack stack = hunguInventory.getStackInSlot(i);
             if (!stack.isEmpty()) {
                 stack.getCapability(ItemAttributeCapabilityProvider.CAPABILITY).ifPresent(attr -> {
                     List<String> active = attr.getActiveAttributes();
-                    // 仅把魂骨属性累加进 Map
                     for (String key : active) {
                         float val = getAttrValueByKey(attr, key);
                         if (val > 0) {
@@ -288,7 +376,58 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         SynsAPI.synsPlayerAttribute(player);
     }
 
-    // 辅助工具：根据字符串获取属性值
+
+    // 当玩家开启神考时调用（比如右键祭坛或神的瞥视）
+    public void initializeGodExam(Player player, String godId) {
+        GodInfo info = GodRegistry.GODS.get(godId);
+        if (info == null) return;
+        this.godName = godId;
+        this.currentStage = 1;
+        this.taskProgress = 0;
+        RandomSource random = player.level().random;
+        for (int i = 1; i <= 9; i++) {
+            GodTask task = info.getRandomTask(i, random);
+            if (task != null) {
+                this.assignedExams[i] = task.description;
+                this.assignedTargets[i] = task.targetId;
+                this.assignedCounts[i] = task.requiredCount;
+                this.assignedTypes[i] = task.type.name();
+            }
+        }
+    }
+
+    // 检查并完成任务的方法
+    public void checkTaskCompletion(Player player) {
+        GodInfo info = GodRegistry.GODS.get(this.godName);
+        if (info == null) return;
+        info.executeRewards(this.currentStage, player); // 发放奖励
+        this.nextGodStage(); // 进入下一阶段（该方法已在之前写好）
+
+        if (this.isGod()) {
+            player.sendSystemMessage(Component.literal("§6恭喜你，成就" + info.name + "之位！"));
+        }
+    }
+
+    public String[] getAssignedExams() {
+        return this.assignedExams;
+    }
+
+    public String[] getAssignedTargets() {
+        return this.assignedTargets;
+    }
+
+    public int[] getAssignedCounts() {
+        return this.assignedCounts;
+    }
+
+    public String[] getAssignedTypes() {
+        return this.assignedTypes;
+    }
+
+    public boolean hasActiveTask() {
+        return !godName.isEmpty() && currentStage >= 1 && currentStage <= 9;
+    }
+
     private float getAttrValueByKey(ItemAttributeCapability attr, String key) {
         return switch (key) {
             case "gongji" -> attr.getGongji();
@@ -448,6 +587,17 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         wuhunListsnameall.add(Wuhunname.liejinhu);
 
         Collections.sort(wuhunListsnameall);
+    }
+
+    public void resetGodSystem() {
+        this.godName = "";           // 移除神位ID
+        this.currentStage = 1;       // 回到第一考
+        this.taskProgress = 0;       // 进度清零
+        this.isGod = false;          // 剥夺神位状态
+        this.assignedExams = new String[10];
+        this.assignedTargets = new String[10];
+        this.assignedCounts = new int[10];
+        this.assignedTypes = new String[10];
     }
 
     public String getWuhunName() {

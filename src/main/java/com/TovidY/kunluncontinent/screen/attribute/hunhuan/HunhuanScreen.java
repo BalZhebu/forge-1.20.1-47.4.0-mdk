@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.screen.attribute.hunhuan;
 
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
+import com.TovidY.kunluncontinent.godclass.interfac.GodClientData;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.server.PacketSyncPage;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -48,6 +49,14 @@ public class HunhuanScreen extends AbstractContainerScreen<HunhuanMenu> {
         this.prevPageButton = this.addRenderableWidget(Button.builder(Component.literal("<"), b -> {
             if (currentPage > 0) currentPage--;
         }).bounds(centerX - 30, buttonY, 20, 20).build());
+
+        if (GodClientData.godName != null &&
+                !GodClientData.godName.isEmpty() &&
+                !GodClientData.godName.equals("无")) {
+            this.addRenderableWidget(Button.builder(Component.literal("神考"), b -> {
+                NetworkHandler.INSTANCE.sendToServer(new PacketSyncPage(3));
+            }).bounds(this.leftPos + 131, this.topPos - 20, 40, 20).build());
+        }
 
         this.nextPageButton = this.addRenderableWidget(Button.builder(Component.literal(">"), b -> {
             int maxPage = (int) Math.ceil((double) totalHunhuanCount / HUNHUAN_PER_PAGE) - 1;

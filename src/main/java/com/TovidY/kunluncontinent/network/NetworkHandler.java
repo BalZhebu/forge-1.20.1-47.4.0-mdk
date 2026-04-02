@@ -1,10 +1,7 @@
 package com.TovidY.kunluncontinent.network;
 
 import com.TovidY.kunluncontinent.KlMain;
-import com.TovidY.kunluncontinent.network.client.CPacketOpenAttrubuteGUI;
-import com.TovidY.kunluncontinent.network.client.CPacketQiehuanWuhun;
-import com.TovidY.kunluncontinent.network.client.SyncShenciAttributesPacket;
-import com.TovidY.kunluncontinent.network.client.SyncWuhunDataPacket;
+import com.TovidY.kunluncontinent.network.client.*;
 import com.TovidY.kunluncontinent.network.server.*;
 import com.TovidY.kunluncontinent.screen.attribute.skill.CPacketCycleSkill;
 import com.TovidY.kunluncontinent.screen.attribute.skill.CPacketReleaseSkill;
@@ -22,6 +19,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 //网络包注册器
+
 public class NetworkHandler {
 
     private static final String PTC_VERSION = "1";
@@ -52,6 +50,17 @@ public class NetworkHandler {
         register(SPacketEntityAttribute.class, SPacketEntityAttribute::encode, SPacketEntityAttribute::decode, SPacketEntityAttribute::handle);
         register(SPacketSyncPlayerAttribute.class, SPacketSyncPlayerAttribute::encode, SPacketSyncPlayerAttribute::decode, SPacketSyncPlayerAttribute::handle);
         register(SPacketPlayerAttribute.class, SPacketPlayerAttribute::encode, SPacketPlayerAttribute::decode, SPacketPlayerAttribute::handle);
+
+
+        // 服务端发给客户端（同步数据）
+        register(PacketSyncGodData.class, PacketSyncGodData::encode, PacketSyncGodData::decode, PacketSyncGodData::handle);
+
+        // 客户端发给服务端（点击检测按钮）
+        register(C2SCheckTaskPacket.class, C2SCheckTaskPacket::encode, C2SCheckTaskPacket::decode, C2SCheckTaskPacket::handle);
+
+
+
+
     }
 
     private static <M> void register(Class<M> messageType, BiConsumer<M, FriendlyByteBuf> encoder,

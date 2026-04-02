@@ -3,6 +3,7 @@ package com.TovidY.kunluncontinent.network.server;
 import com.TovidY.kunluncontinent.screen.attribute.AttributeMenu;
 import com.TovidY.kunluncontinent.screen.attribute.hungu.HunguMenu;
 import com.TovidY.kunluncontinent.screen.attribute.hunhuan.HunhuanMenu;
+import com.TovidY.kunluncontinent.screen.attribute.shenkao.ShenkaoMenu;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
@@ -35,6 +36,8 @@ public class PacketSyncPage {
                     NetworkHooks.openScreen(player, new HunguMenu.Provider());
                 }else if (msg.pageIndex == 2) {
                     NetworkHooks.openScreen(player, new HunhuanMenu.Provider());
+                }else if (msg.pageIndex == 3) {
+                    NetworkHooks.openScreen(player, new ShenkaoMenu.Provider());
                 }
             }
         });

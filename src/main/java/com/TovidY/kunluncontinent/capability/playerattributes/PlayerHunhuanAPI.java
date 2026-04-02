@@ -4,7 +4,9 @@ import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapability;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanEntity;
+import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.SynsAPI;
+import com.TovidY.kunluncontinent.network.client.PacketSyncGodData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
@@ -352,12 +354,16 @@ public class PlayerHunhuanAPI {
 //            魂骨蓸
             newplayerCapability.getHunguInventory().deserializeNBT(oldItemCapability.getHunguInventory().serializeNBT());
 
+            newplayerCapability.resetGodSystem();
+
             //技能转生重置
             newplayerCapability.getWuhunSkillsMap().clear();
             newplayerCapability.getWuhunListsname().clear();
             newplayerCapability.getMonsterCapabilityLists().clear();
             newplayerCapability.setInitialized(false);
             newplayerCapability.setHunhuankuaiguan(-1);
+
+            NetworkHandler.sendToClient(new PacketSyncGodData(newplayerCapability), player);
 
             SynsAPI.synsPlayerAttribute(player);
 

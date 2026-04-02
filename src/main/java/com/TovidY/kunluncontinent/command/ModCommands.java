@@ -16,5 +16,6 @@ public class ModCommands {
         NeidanCommand.register(event.getDispatcher());
         MonsterCommand.register(event.getDispatcher());
         HunguCommand.register(event.getDispatcher());
+        ShenweiCommand.register(event.getDispatcher());
     }
 }

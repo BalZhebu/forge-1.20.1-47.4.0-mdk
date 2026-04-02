@@ -353,6 +353,12 @@ public class ModItems {
     public static final RegistryObject<Item> FOUR_DECOMPOSITION_GOSSIP      = ITEMS.register("four_decomposition_gossip", () -> new DecompositionItem(new Item.Properties().fireResistant().stacksTo(1),4));
     public static final RegistryObject<Item> FIVE_DECOMPOSITION_GOSSIP      = ITEMS.register("five_decomposition_gossip", () -> new DecompositionItem(new Item.Properties().fireResistant().stacksTo(1),5));
 
+    public static final RegistryObject<Item> FANGSHANHUNDAOQI_1      = ITEMS.register("fangshanhundaoqi_1", () -> new Item(new Item.Properties().fireResistant().stacksTo(1)));
+    public static final RegistryObject<Item> FANGSHANHUNDAOQI_2      = ITEMS.register("fangshanhundaoqi_2", () -> new Item(new Item.Properties().fireResistant().stacksTo(1)));
+    public static final RegistryObject<Item> FANGSHANHUNDAOQI_3      = ITEMS.register("fangshanhundaoqi_3", () -> new Item(new Item.Properties().fireResistant().stacksTo(1)));
+    public static final RegistryObject<Item> FANGSHANHUNDAOQI_4      = ITEMS.register("fangshanhundaoqi_4", () -> new Item(new Item.Properties().fireResistant().stacksTo(1)));
+    public static final RegistryObject<Item> FANGSHANHUNDAOQI_5      = ITEMS.register("fangshanhundaoqi_5", () -> new Item(new Item.Properties().fireResistant().stacksTo(1)));
+
     //魂技
     //破魂枪
     public static final RegistryObject<SkillPohun1> SKILL_POHUN_1 = ITEMS.register("skill_pohun_1", SkillPohun1::new);
@@ -491,6 +497,12 @@ public class ModItems {
         HUNGULIST.add(THREE_DECOMPOSITION_GOSSIP);
         HUNGULIST.add(FOUR_DECOMPOSITION_GOSSIP);
         HUNGULIST.add(FIVE_DECOMPOSITION_GOSSIP);
+
+        HUNGULIST.add(FANGSHANHUNDAOQI_1);
+        HUNGULIST.add(FANGSHANHUNDAOQI_2);
+        HUNGULIST.add(FANGSHANHUNDAOQI_3);
+        HUNGULIST.add(FANGSHANHUNDAOQI_4);
+        HUNGULIST.add(FANGSHANHUNDAOQI_5);
     }
 
     public static ArrayList<RegistryObject<Item>> COLDPROTECTIONLIST = new ArrayList<>();

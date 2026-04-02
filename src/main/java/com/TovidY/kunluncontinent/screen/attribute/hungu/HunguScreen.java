@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.screen.attribute.hungu;
 
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
+import com.TovidY.kunluncontinent.godclass.interfac.GodClientData;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.server.PacketSyncPage;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -38,6 +39,14 @@ public class HunguScreen extends AbstractContainerScreen<HunguMenu> {
         this.addRenderableWidget(Button.builder(Component.literal("魂环"), b -> {
             NetworkHandler.INSTANCE.sendToServer(new PacketSyncPage(2));
         }).bounds(this.leftPos + 89, this.topPos - 20, 40, 20).build());
+
+        if (GodClientData.godName != null &&
+                !GodClientData.godName.isEmpty() &&
+                !GodClientData.godName.equals("无")) {
+            this.addRenderableWidget(Button.builder(Component.literal("神考"), b -> {
+                NetworkHandler.INSTANCE.sendToServer(new PacketSyncPage(3));
+            }).bounds(this.leftPos + 131, this.topPos - 20, 40, 20).build());
+        }
 
         this.inventoryLabelY = 10000;
         this.titleLabelY = 10000;
