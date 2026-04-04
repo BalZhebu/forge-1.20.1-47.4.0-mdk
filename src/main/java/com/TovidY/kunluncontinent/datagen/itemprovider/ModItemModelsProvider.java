@@ -74,6 +74,11 @@ public class ModItemModelsProvider extends ItemModelProvider {
             basicItem(itemRegistry.get());
         }
 
+        //按钮
+        for (RegistryObject<Item> itemRegistry : ModItems.KLBUTTON) {
+            basicItem(itemRegistry.get());
+        }
+
         //魂骨类
         for (RegistryObject<Item> itemRegistry : ModItems.HUNGULIST){
             basicItem(itemRegistry.get());

@@ -25,6 +25,7 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -38,6 +39,8 @@ import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+
+import static com.TovidY.kunluncontinent.item.ModItems.THUNDER_PROTECTION_LIST;
 
 // 玩家每Tick触发
 
@@ -85,9 +88,20 @@ public class PWPlayerTickEvent {
         if (gameTime % 20 != playerOffset) return;
         ServerLevel level = player.serverLevel();
         if (!level.dimension().equals(ModDimensions.THUNDER_REALM_LEVEL_KEY)) return;
+        ItemStack protectionItem = ItemStack.EMPTY;
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            ItemStack stack = player.getInventory().getItem(i);
+            if (THUNDER_PROTECTION_LIST.stream().anyMatch(reg -> stack.is(reg.get()))) {
+                protectionItem = stack;
+                break;
+            }
+        }
+        boolean hasProtection = !protectionItem.isEmpty();
+        if (hasProtection && gameTime % 100 == playerOffset) {
+            protectionItem.hurtAndBreak(1, player, (p) -> p.broadcastBreakEvent(EquipmentSlot.MAINHAND));
+        }
         if (level.random.nextInt(3) == 0) {
             int count = level.random.nextInt(5) + 1;
-            boolean hasProtection = player.getInventory().contains(Items.TOTEM_OF_UNDYING.getDefaultInstance());
             for (int i = 0; i < count; i++) {
                 boolean isTargetingPlayer = !hasProtection && level.random.nextFloat() < 0.12f;
                 BlockPos strikePos;
@@ -108,7 +122,7 @@ public class PWPlayerTickEvent {
                             player.blockPosition().offset((int)offsetX, 0, (int)offsetZ));
                     LightningBolt dummyLightning = EntityType.LIGHTNING_BOLT.create(level);
                     if (dummyLightning != null) {
-                        dummyLightning.setVisualOnly(true); // 不点火，不伤害，不计入实体碰撞
+                        dummyLightning.setVisualOnly(true);
                         dummyLightning.moveTo(Vec3.atBottomCenterOf(strikePos));
                         level.addFreshEntity(dummyLightning);
                     }

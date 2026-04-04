@@ -40,7 +40,7 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(ModBlocks.SAPPHIRE_ORE.get())
                 .add(ModBlocks.STARLIGHT_STONE_ORE.get())
                 .add(ModBlocks.COLD_HEARTED_STEEL_ORE.get())
-
+                .add(ModBlocks.THUNDER_REALM_PORTAL_BLOCK.get())
                 .add(ModBlocks.POLAR_ICE_PORTAL_BLOCK.get())
                 .add(ModBlocks.LIANDANLU1.get())
                 .add(ModBlocks.LIANDANLU2.get())
@@ -72,6 +72,7 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(ModBlocks.POLAR_ICE_PORTAL_BLOCK.get())
         ;
         tag(Tags.Blocks.NEEDS_NETHERITE_TOOL)
+                .add(ModBlocks.THUNDER_REALM_PORTAL_BLOCK.get())
                 .add(ModBlocks.AMETHYST_ORE.get())
                 .add(ModBlocks.STARLIGHT_STONE_ORE.get())
                 .add(ModBlocks.SUNKEN_SILVER_ORE.get())

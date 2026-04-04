@@ -3,8 +3,10 @@ package com.TovidY.kunluncontinent.screen.attribute.hungu;
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.godclass.interfac.GodClientData;
+import com.TovidY.kunluncontinent.item.ModItems;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.server.PacketSyncPage;
+import com.TovidY.kunluncontinent.screen.KluxTabButton;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -13,6 +15,7 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.Map;
 
@@ -24,34 +27,41 @@ public class HunguScreen extends AbstractContainerScreen<HunguMenu> {
         this.imageWidth = 322;
         this.imageHeight = 178;
     }
-
     @Override
     protected void init() {
+        this.imageWidth = 322;
+        this.imageHeight = 178;
         super.init();
 
-        this.addRenderableWidget(Button.builder(Component.literal("属性"), b -> {
+        int normalSize = 28;
+        int selectedSize = 33;
+        int spacing = 6;
+        int startX = this.leftPos + 8;
+        int startY = this.topPos - 28;
+        this.addRenderableWidget(new KluxTabButton(startX, startY - 2, normalSize, normalSize,
+                new ItemStack(ModItems.ATTRIBUTE_BUTTON.get()), Component.literal("属性面板"), false, b -> {
             NetworkHandler.INSTANCE.sendToServer(new PacketSyncPage(0));
-        }).bounds(this.leftPos + 5, this.topPos - 20, 40, 20).build());
-
-        this.addRenderableWidget(Button.builder(Component.literal("魂骨"), b -> {
-        }).bounds(this.leftPos + 47, this.topPos - 20, 40, 20).build());
-
-        this.addRenderableWidget(Button.builder(Component.literal("魂环"), b -> {
+        }));
+        int currentX = startX + normalSize + spacing;
+        this.addRenderableWidget(new KluxTabButton(currentX, startY - 5, selectedSize, selectedSize,
+                new ItemStack(ModItems.SOUL_BONE_BUTTON.get()), Component.literal("魂骨面板"), true, b -> {
+        }));
+        currentX += (selectedSize + spacing);
+        this.addRenderableWidget(new KluxTabButton(currentX, startY - 2, normalSize, normalSize,
+                new ItemStack(ModItems.HUNHUAN_BUTTON.get()), Component.literal("魂环配置"), false, b -> {
             NetworkHandler.INSTANCE.sendToServer(new PacketSyncPage(2));
-        }).bounds(this.leftPos + 89, this.topPos - 20, 40, 20).build());
-
-        if (GodClientData.godName != null &&
-                !GodClientData.godName.isEmpty() &&
-                !GodClientData.godName.equals("无")) {
-            this.addRenderableWidget(Button.builder(Component.literal("神考"), b -> {
+        }));
+        currentX += (normalSize + spacing);
+        if (GodClientData.godName != null && !GodClientData.godName.equals("无")) {
+            this.addRenderableWidget(new KluxTabButton(currentX, startY - 2, normalSize, normalSize,
+                    new ItemStack(ModItems.SHENKAO_BUTTON.get()), Component.literal("神考面板"), false, b -> {
                 NetworkHandler.INSTANCE.sendToServer(new PacketSyncPage(3));
-            }).bounds(this.leftPos + 131, this.topPos - 20, 40, 20).build());
+            }));
         }
 
         this.inventoryLabelY = 10000;
         this.titleLabelY = 10000;
     }
-
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(guiGraphics);

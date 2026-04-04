@@ -150,6 +150,14 @@ public class ModItems {
         }
     });
 
+    public static final RegistryObject<Item> THUNDERREALM_SNOWFLAKE = ITEMS.register("thunderrealm_snowflake",()->new EngravingKnifeItem(new Item.Properties()){
+        @Override
+        public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
+            pTooltipComponents.add(Component.translatable("tooltip.kunluncontinent.extreme_cold_snowflake1").withStyle(ChatFormatting.DARK_GRAY));
+            pTooltipComponents.add(Component.translatable("tooltip.kunluncontinent.extreme_cold_snowflake2").withStyle(ChatFormatting.DARK_GRAY));
+        }
+    });
+
     //武魂果实
     public static final RegistryObject<Item> GUOSHI_POHUNQIANG = ITEMS.register("guoshi_pohunqiang",()->new WuhunguoshiItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setWuhunname(Wuhunname.pohunqiang));
     public static final RegistryObject<Item> GUOSHI_BAHUANGJI = ITEMS.register("guoshi_bahuangji",()->new WuhunguoshiItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setWuhunname(Wuhunname.bahuangji));
@@ -167,8 +175,8 @@ public class ModItems {
     //御寒魂导器
     public static final RegistryObject<Item> LOW_COLD_PROTECTION = ITEMS.register("low_cold_protection",()->new ThermalAmuletItem(new Item.Properties().stacksTo(1).durability(3000),false));
     public static final RegistryObject<Item> MID_COLD_PROTECTION = ITEMS.register("mid_cold_protection",()->new ThermalAmuletItem(new Item.Properties().stacksTo(1).durability(8999),false));
-    public static final RegistryObject<Item> HIGH_COLD_PROTECTION = ITEMS.register("high_cold_protection",()->new ThermalAmuletItem(new Item.Properties().stacksTo(1).durability(35888),false));
-    public static final RegistryObject<Item> TOP_COLD_PROTECTION = ITEMS.register("top_cold_protection",()->new ThermalAmuletItem(new Item.Properties().stacksTo(1),true));
+    public static final RegistryObject<Item> HIGH_COLD_PROTECTION = ITEMS.register("high_cold_protection",()->new ThermalAmuletItem(new Item.Properties().stacksTo(1).durability(35888).fireResistant(),false));
+    public static final RegistryObject<Item> TOP_COLD_PROTECTION = ITEMS.register("top_cold_protection",()->new ThermalAmuletItem(new Item.Properties().stacksTo(1).fireResistant(),true));
 
     //魂骨
     public static final RegistryObject<Item> SOUL_BEAST_SKULL = ITEMS.register("soul_beast_skull",()->new BoneItem(new Item.Properties()));
@@ -353,11 +361,20 @@ public class ModItems {
     public static final RegistryObject<Item> FOUR_DECOMPOSITION_GOSSIP      = ITEMS.register("four_decomposition_gossip", () -> new DecompositionItem(new Item.Properties().fireResistant().stacksTo(1),4));
     public static final RegistryObject<Item> FIVE_DECOMPOSITION_GOSSIP      = ITEMS.register("five_decomposition_gossip", () -> new DecompositionItem(new Item.Properties().fireResistant().stacksTo(1),5));
 
-    public static final RegistryObject<Item> FANGSHANHUNDAOQI_1      = ITEMS.register("fangshanhundaoqi_1", () -> new Item(new Item.Properties().fireResistant().stacksTo(1)));
-    public static final RegistryObject<Item> FANGSHANHUNDAOQI_2      = ITEMS.register("fangshanhundaoqi_2", () -> new Item(new Item.Properties().fireResistant().stacksTo(1)));
-    public static final RegistryObject<Item> FANGSHANHUNDAOQI_3      = ITEMS.register("fangshanhundaoqi_3", () -> new Item(new Item.Properties().fireResistant().stacksTo(1)));
-    public static final RegistryObject<Item> FANGSHANHUNDAOQI_4      = ITEMS.register("fangshanhundaoqi_4", () -> new Item(new Item.Properties().fireResistant().stacksTo(1)));
-    public static final RegistryObject<Item> FANGSHANHUNDAOQI_5      = ITEMS.register("fangshanhundaoqi_5", () -> new Item(new Item.Properties().fireResistant().stacksTo(1)));
+    public static final RegistryObject<Item> FANGSHANHUNDAOQI_1 = ITEMS.register("fangshanhundaoqi_1",
+            () -> new ThunderProtectionItem(new Item.Properties().durability(256).fireResistant(), 1));
+
+    public static final RegistryObject<Item> FANGSHANHUNDAOQI_2 = ITEMS.register("fangshanhundaoqi_2",
+            () -> new ThunderProtectionItem(new Item.Properties().durability(512).fireResistant(), 2));
+
+    public static final RegistryObject<Item> FANGSHANHUNDAOQI_3 = ITEMS.register("fangshanhundaoqi_3",
+            () -> new ThunderProtectionItem(new Item.Properties().durability(1024).fireResistant(), 3));
+
+    public static final RegistryObject<Item> FANGSHANHUNDAOQI_4 = ITEMS.register("fangshanhundaoqi_4",
+            () -> new ThunderProtectionItem(new Item.Properties().durability(2048).fireResistant(), 4));
+
+    public static final RegistryObject<Item> FANGSHANHUNDAOQI_5 = ITEMS.register("fangshanhundaoqi_5",
+            () -> new ThunderProtectionItem(new Item.Properties().durability(4096).fireResistant(), 5));
 
     //魂技
     //破魂枪
@@ -404,6 +421,20 @@ public class ModItems {
     public static final RegistryObject<SkillPanshijuyuan8> SKILL_PANSHIJUYUAN_8 = ITEMS.register("skill_panshijuyuan_8", SkillPanshijuyuan8::new);
     public static final RegistryObject<SkillPanshijuyuan9> SKILL_PANSHIJUYUAN_9 = ITEMS.register("skill_panshijuyuan_9", SkillPanshijuyuan9::new);
 
+    //占位物品
+    public static final RegistryObject<Item> ATTRIBUTE_BUTTON = ITEMS.register("attribute_button",()->new Item(new Item.Properties()));
+    public static final RegistryObject<Item> SOUL_BONE_BUTTON = ITEMS.register("soul_bone_button",()->new Item(new Item.Properties()));
+    public static final RegistryObject<Item> HUNHUAN_BUTTON = ITEMS.register("hunhuan_button",()->new Item(new Item.Properties()));
+    public static final RegistryObject<Item> SHENKAO_BUTTON = ITEMS.register("shenkao_button",()->new Item(new Item.Properties()));
+
+    public static ArrayList<RegistryObject<Item>> KLBUTTON = new ArrayList<>();
+    static {
+        KLBUTTON.add(ATTRIBUTE_BUTTON);
+        KLBUTTON.add(SOUL_BONE_BUTTON);
+        KLBUTTON.add(HUNHUAN_BUTTON);
+        KLBUTTON.add(SHENKAO_BUTTON);
+    }
+
     public static ArrayList<RegistryObject<Item>> JUHUNPING = new ArrayList<>();
     static {
         JUHUNPING.add(SOUL_GATHERING_BOTTLE_0);
@@ -411,7 +442,6 @@ public class ModItems {
         JUHUNPING.add(SOUL_GATHERING_BOTTLE_2);
         JUHUNPING.add(SOUL_GATHERING_BOTTLE_3);
         JUHUNPING.add(SOUL_GATHERING_BOTTLE_4);
-
     }
 
     public static ArrayList<RegistryObject<? extends Item>> HUNJILIST = new ArrayList<>();
@@ -505,6 +535,10 @@ public class ModItems {
         HUNGULIST.add(FANGSHANHUNDAOQI_5);
     }
 
+    public static final List<RegistryObject<Item>> THUNDER_PROTECTION_LIST = List.of(
+            FANGSHANHUNDAOQI_1, FANGSHANHUNDAOQI_2, FANGSHANHUNDAOQI_3, FANGSHANHUNDAOQI_4, FANGSHANHUNDAOQI_5
+    );
+
     public static ArrayList<RegistryObject<Item>> COLDPROTECTIONLIST = new ArrayList<>();
     static {
         COLDPROTECTIONLIST.add(LOW_COLD_PROTECTION);
@@ -538,6 +572,7 @@ public class ModItems {
     public static ArrayList<RegistryObject<Item>> PUTONGITEM = new ArrayList<>();
     static {
         PUTONGITEM.add(EXTREME_COLD_SNOWFLAKE);
+        PUTONGITEM.add(THUNDERREALM_SNOWFLAKE);
     }
 
     public static ArrayList<RegistryObject<Item>> HUNHUAN_STORAGE_CORE = new ArrayList<>();

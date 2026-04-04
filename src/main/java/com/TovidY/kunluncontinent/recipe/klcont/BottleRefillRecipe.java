@@ -21,8 +21,7 @@ public class BottleRefillRecipe extends CustomRecipe {
 
     private boolean isRepairable(ItemStack stack) {
         if (stack.isEmpty()) return false;
-        return ModItems.COLDPROTECTIONLIST.stream()
-                .anyMatch(reg -> stack.is(reg.get()));
+        return ModItems.COLDPROTECTIONLIST.stream().anyMatch(reg -> stack.is(reg.get())) || ModItems.THUNDER_PROTECTION_LIST.stream().anyMatch(reg -> stack.is(reg.get()));
     }
 
     @Override
@@ -64,7 +63,6 @@ public class BottleRefillRecipe extends CustomRecipe {
         int energy = bottle.getOrCreateTag().getInt("sh_nengliang");
         int needed = target.getDamageValue();
 
-        // 动态计算：有多少能量补多少耐久
         int refill = Math.min(energy, needed);
         target.setDamageValue(target.getDamageValue() - refill);
 

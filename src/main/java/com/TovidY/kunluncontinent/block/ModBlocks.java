@@ -6,6 +6,7 @@ import com.TovidY.kunluncontinent.block.klblock.KLCropBlock;
 import com.TovidY.kunluncontinent.block.klblock.LiandanluBlock;
 import com.TovidY.kunluncontinent.block.portal.polarice.PolarIcePortalBlock;
 import com.TovidY.kunluncontinent.block.klblock.PutuanBlock;
+import com.TovidY.kunluncontinent.block.portal.polarice.ThunderRealmPortalBlock;
 import com.TovidY.kunluncontinent.item.ModItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -140,10 +141,15 @@ public class ModBlocks {
     public static final RegistryObject<Block> POLAR_ICE_PORTAL_BLOCK =
             registerBlock("polar_ice_portal_block",()->
                     new Block(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)));
+    public static final RegistryObject<Block> THUNDER_REALM_PORTAL_BLOCK =
+            registerBlock("thunder_realm_portal_block",()->
+                    new Block(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)));
 
     //传送门方块
     public static final RegistryObject<Block> POLAR_ICE_PORTAL =
             registerBlock("polar_ice_portal", PolarIcePortalBlock::new);
+    public static final RegistryObject<Block> THUNDER_REALM_PORTAL =
+            registerBlock("thunder_realm_portal", ThunderRealmPortalBlock::new);
 
     //炼丹炉
     public static ArrayList<RegistryObject<Block>> LIANDANLULIST = new ArrayList<>();

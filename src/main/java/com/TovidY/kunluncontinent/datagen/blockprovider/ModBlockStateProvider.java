@@ -3,6 +3,7 @@ package com.TovidY.kunluncontinent.datagen.blockprovider;
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.block.ModBlocks;
 import com.TovidY.kunluncontinent.block.portal.polarice.PolarIcePortalBlock;
+import com.TovidY.kunluncontinent.block.portal.polarice.ThunderRealmPortalBlock;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -37,6 +38,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
             simpleBlockWithItem(ModBlocks.DROSS_BLOCK.get(), cubeAll(ModBlocks.DROSS_BLOCK.get()));
             //传送门方块
             simpleBlockWithItem(ModBlocks.POLAR_ICE_PORTAL_BLOCK.get(), cubeAll(ModBlocks.POLAR_ICE_PORTAL_BLOCK.get()));
+            simpleBlockWithItem(ModBlocks.THUNDER_REALM_PORTAL_BLOCK.get(), cubeAll(ModBlocks.THUNDER_REALM_PORTAL_BLOCK.get()));
             //魂土
             simpleBlockWithItem(ModBlocks.SOUL_SOIL.get(), cubeAll(ModBlocks.SOUL_SOIL.get()));
             //草药
@@ -59,6 +61,24 @@ import net.minecraftforge.common.data.ExistingFileHelper;
                 Direction.Axis axis = state.getValue(PolarIcePortalBlock.AXIS);
                 return ConfiguredModel.builder()
                         .modelFile(portalModel)
+                        .rotationY(axis == Direction.Axis.X ? 0 : 90) // Z轴时旋转90度
+                        .build();
+            });
+
+            Block thunderportalBlock = ModBlocks.THUNDER_REALM_PORTAL.get();
+            ModelFile thunderportalModel = models().withExistingParent("thunder_realm_portal", "block/block")
+                    .element()
+                    .from(0f, 0f, 6.01f)
+                    .to(16f, 16f, 9.99f)
+                    .face(Direction.NORTH).texture("#portal").end()
+                    .face(Direction.SOUTH).texture("#portal").end()
+                    .end()
+                    .texture("portal", modLoc("block/thunder_realm_portal"))
+                    .texture("particle", modLoc("block/thunder_realm_portal"));
+            getVariantBuilder(thunderportalBlock).forAllStates(state -> {
+                Direction.Axis axis = state.getValue(ThunderRealmPortalBlock.AXIS);
+                return ConfiguredModel.builder()
+                        .modelFile(thunderportalModel)
                         .rotationY(axis == Direction.Axis.X ? 0 : 90) // Z轴时旋转90度
                         .build();
             });
