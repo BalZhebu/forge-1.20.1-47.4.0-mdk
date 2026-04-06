@@ -1,6 +1,7 @@
 package com.TovidY.kunluncontinent.entity.Icecrysta;
 
 import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
+import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.item.ModItems;
 import com.TovidY.kunluncontinent.worldgen.ModDimensions;
 import net.minecraft.core.BlockPos;
@@ -71,8 +72,13 @@ public class IceCrystalEntity extends Monster implements RangedAttackMob {
 
     @Override
     public EntityDimensions getDimensions(Pose pose) {
-        float scale = 1.0F;
-        return super.getDimensions(pose).scale(scale);
+        EntityDimensions baseDimensions = super.getDimensions(pose);
+        float scaleFactor = this.getCapability(MobAttributeCapabilityProvider.CAPABILITY).map(attr -> {
+            long nianxian = attr.getNianxian();
+            float f = 1.0F + (float)nianxian / 20000.0F;
+            return Math.max(0.8F, Math.min(f, 3.0F));
+        }).orElse(1.0F);
+        return baseDimensions.scale(scaleFactor);
     }
 
     public static boolean checkIceCrystalSpawnRules(EntityType<IceCrystalEntity> entityType, ServerLevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {

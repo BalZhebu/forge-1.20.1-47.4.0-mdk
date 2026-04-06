@@ -76,13 +76,13 @@ public class ModWorldGenOreProvider {
         // min/max: 生成的高度区间。
         // 【灰铁矿】 模拟原版铁矿分布
         // 原版铁矿参考：count 为 10-20，高度在 -64 到 72 之间
-        registerPlacement(context, configuredFeatures, ModBlocks.GRAY_IRON_ORE, -16, 40, 5);
+        registerPlacement(context, configuredFeatures, ModBlocks.GRAY_IRON_ORE, -16, 40, 15);
         registerPlacement(context, configuredFeatures, ModBlocks.RUBY_ORE, -64, -5, 3);
         // 【云纹青铜矿】 模拟稀有矿物 (如钻石/黄金)
         // 原版钻石参考：count 为 4-8，高度在 -64 到 16 之间
-        registerPlacement(context, configuredFeatures, ModBlocks.CLOUD_PATTERNED_BRONZE_ORE, -64, -0, 3);
+        registerPlacement(context, configuredFeatures, ModBlocks.CLOUD_PATTERNED_BRONZE_ORE, -64, -0, 4);
         //赤火矿
-        registerPlacement(context, configuredFeatures, ModBlocks.RED_FIRE_ORE, 1, 100, 3);
+        registerPlacement(context, configuredFeatures, ModBlocks.RED_FIRE_ORE, 1, 100, 8);
         //银矿
         registerPlacement(context, configuredFeatures, ModBlocks.SUNKEN_SILVER_ORE, 0, 128, 5);
         //寒心钢

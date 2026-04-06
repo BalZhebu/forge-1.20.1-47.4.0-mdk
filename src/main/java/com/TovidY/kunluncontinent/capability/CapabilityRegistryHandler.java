@@ -19,11 +19,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
+import net.minecraftforge.event.entity.living.LivingConversionEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 // 注册能力提供者
+
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)  // 改为 FORGE 总线
 public class CapabilityRegistryHandler {
     @SubscribeEvent
@@ -58,6 +60,19 @@ public class CapabilityRegistryHandler {
         }
     }
 
+    @SubscribeEvent
+    public static void onEntityTransform(LivingConversionEvent.Post event) {
+        if (event.getOutcome() instanceof Mob newMob) {
+            event.getEntity().getCapability(MobAttributeCapabilityProvider.CAPABILITY).ifPresent(oldCap -> {
+                newMob.getCapability(MobAttributeCapabilityProvider.CAPABILITY).ifPresent(newCap -> {
+                    newCap.deserializeNBT(oldCap.serializeNBT());
+                });
+            });
+            newMob.setCustomName(null);
+            monsterJoin(newMob);
+        }
+    }
+
     //怪物加入世界时赋予属性
     public static void monsterJoin(Mob entity){
 
@@ -71,23 +86,17 @@ public class CapabilityRegistryHandler {
                     entity.getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxshengming);
                     entity.setHealth(maxshengming);
                 }
-                if(entity.getCustomName() == null){
-                    long nianxian = playerCapability.getNianxian();
-                    if (nianxian>=10000000) {
-                        entity.setCustomName(Component.translatable(entity.getDisplayName().getString()+"-----"+"§c§l"+nianxian+"年"));
-                    }else if (nianxian>=1000000){
-                        entity.setCustomName(Component.translatable(entity.getDisplayName().getString()+"-----"+"§c"+nianxian+"年"));
-                    }else if(nianxian>=100000){
-                        entity.setCustomName(Component.translatable(entity.getDisplayName().getString()+"-----"+"§c"+nianxian+"年"));
-                    }else if(nianxian>=10000){
-                        entity.setCustomName(Component.translatable(entity.getDisplayName().getString()+"-----"+"§0"+nianxian+"年"));
-                    }else if(nianxian>=1000){
-                        entity.setCustomName(Component.translatable(entity.getDisplayName().getString()+"-----"+"§5"+nianxian+"年"));
-                    }else if(nianxian>=100){
-                        entity.setCustomName(Component.translatable(entity.getDisplayName().getString()+"-----"+"§e"+nianxian+"年"));
-                    }else if(nianxian>=1){
-                        entity.setCustomName(Component.translatable(entity.getDisplayName().getString()+"-----"+"§f"+nianxian+"年"));
-                    }
+                long nianxian = playerCapability.getNianxian();
+                if (nianxian > 0) {
+                    String rawName = entity.getType().getDescription().getString();
+                    String colorPrefix = "§f";
+                    if (nianxian >= 10000000) colorPrefix = "§c§l";
+                    else if (nianxian >= 100000) colorPrefix = "§c";
+                    else if (nianxian >= 10000) colorPrefix = "§0";
+                    else if (nianxian >= 1000) colorPrefix = "§5";
+                    else if (nianxian >= 100) colorPrefix = "§e";
+                    Component newName = Component.literal(rawName + "-----" + colorPrefix + nianxian + "年");
+                    entity.setCustomName(newName);
                 }
                 SynsAPI.synsEntityAttribute(entity);
             });

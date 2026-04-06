@@ -4,6 +4,7 @@ import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
 import com.TovidY.kunluncontinent.potion.ModEffects;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -15,10 +16,10 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.Random;
 
 //伤害源判定
+
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID)
 public class CombatEventHandler {
     private static final Random RANDOM = new Random();
-
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onLivingHurt(LivingHurtEvent event) {
         if (!(event.getSource().getEntity() instanceof LivingEntity attacker)) return;
@@ -98,9 +99,15 @@ public class CombatEventHandler {
             target.addEffect(new MobEffectInstance(ModEffects.DIZZINESS.get(), 60, 5));
             showEffectMsg(attacker, "§6§l震荡！", name, baseDamage * 1.2f);
             return true;
-        } else { // 湮灭
+        }else {
             float trueDamage = target.getMaxHealth() * 0.2f;
-            target.hurt(target.damageSources().magic(), trueDamage);
+            DamageSource source;
+            if (attacker instanceof Player player) {
+                source = target.damageSources().playerAttack(player);
+            } else {
+                source = target.damageSources().mobAttack(attacker);
+            }
+            target.hurt(source, trueDamage);
             showEffectMsg(attacker, "§5§l湮灭！", name, trueDamage);
             return true;
         }

@@ -1,6 +1,7 @@
 package com.TovidY.kunluncontinent.datagen.blockprovider;
 
 import com.TovidY.kunluncontinent.block.ModBlocks;
+import com.TovidY.kunluncontinent.block.klblock.KLCropBlock;
 import com.TovidY.kunluncontinent.item.ModItems;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.data.loot.BlockLootSubProvider;
@@ -9,6 +10,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
@@ -78,25 +80,31 @@ public class ModBlockLootTablesProvider extends BlockLootSubProvider {
         this.add(ModBlocks.RED_SPIDER_LILY_BLOCK.get(),
                 block -> createFortuneCropDrops(block, ModItems.RED_SPIDER_LILY_ITEM.get(), ModItems.RED_SPIDER_SEEDS.get(), 3));
 
-        this.add(ModBlocks.GUYUANCAO_BLOCK.get(), block -> createFortuneCropDrops(block, ModItems.GUYUANCAO_ITEM.get(), ModItems.GUYUANCAO_SEEDS.get(), 4));
-        this.add(ModBlocks.FANQICAO_BLOCK.get(), block -> createFortuneCropDrops(block, ModItems.FANQICAO_ITEM.get(), ModItems.FANQICAO_SEEDS.get(), 4));
+        this.add(ModBlocks.GUYUANCAO_BLOCK.get(), block -> createKLCropDrops(block, ModItems.GUYUANCAO_ITEM.get(), ModItems.GUYUANCAO_SEEDS.get()));
+        this.add(ModBlocks.FANQICAO_BLOCK.get(), block -> createKLCropDrops(block, ModItems.FANQICAO_ITEM.get(), ModItems.FANQICAO_SEEDS.get()));
+    }
+
+    protected LootTable.Builder createKLCropDrops(Block block, Item product, Item seed) {
+        KLCropBlock crop = (KLCropBlock) block;
+        return createFortuneCropDrops(block, product, seed, crop.getMaxAge());
     }
 
     protected LootTable.Builder createFortuneCropDrops(Block block, Item product, Item seed, int maxAge) {
+        IntegerProperty ageProp = (block instanceof KLCropBlock crop) ? crop.getAgeProperty() : BlockStateProperties.AGE_3;
         LootItemCondition.Builder isMaxAge = LootItemBlockStatePropertyCondition
                 .hasBlockStateProperties(block)
                 .setProperties(StatePropertiesPredicate.Builder.properties()
-                        .hasProperty(BlockStateProperties.AGE_3, maxAge));
+                        .hasProperty(ageProp, maxAge));
         return LootTable.lootTable()
                 .withPool(LootPool.lootPool()
                         .setRolls(ConstantValue.exactly(1.0F))
                         .add(LootItem.lootTableItem(seed)
-                                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 3.0F)))
-                        ))
+                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 3.0F)))))
                 .withPool(LootPool.lootPool()
                         .setRolls(ConstantValue.exactly(1.0F))
                         .when(isMaxAge)
                         .add(LootItem.lootTableItem(product)
+                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 3.0F)))
                                 .apply(ApplyBonusCount.addOreBonusCount(Enchantments.BLOCK_FORTUNE))));
     }
 

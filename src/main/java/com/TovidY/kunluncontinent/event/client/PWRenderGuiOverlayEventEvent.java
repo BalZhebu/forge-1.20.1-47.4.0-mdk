@@ -24,7 +24,6 @@ import org.joml.Matrix4f;
 import static net.minecraftforge.client.gui.overlay.VanillaGuiOverlay.*;
 
 //屏幕图标图片渲染代码
-
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class PWRenderGuiOverlayEventEvent {
     public static final ResourceLocation jingshenli = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/gui/jingshenli.png");
@@ -35,23 +34,33 @@ public class PWRenderGuiOverlayEventEvent {
     public static final ResourceLocation exp_bar_kong = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/gui/exp_bar_kong.png");
     public static final ResourceLocation exp_bar = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/gui/exp_bar.png");
 
-    @SubscribeEvent(priority= EventPriority.LOWEST)
-    public static void onRenderGuiOverlayEvent(RenderGuiOverlayEvent.Pre event){
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onRenderGuiOverlayEvent(RenderGuiOverlayEvent.Pre event) {
         NamedGuiOverlay overlay = event.getOverlay();
-        if(overlay.id().getPath() == PLAYER_HEALTH.id().getPath()){
+        String path = overlay.id().getPath();
+        if (path.equals(PLAYER_HEALTH.id().getPath())) {
             event.setCanceled(true);
             renderPlayerHealth(event);
-        }
-        if(overlay.id().getPath() == FOOD_LEVEL.id().getPath()){
+        } else if (path.equals(FOOD_LEVEL.id().getPath())) {
             event.setCanceled(true);
         }
-        if(overlay.id().getPath() == ARMOR_LEVEL.id().getPath()){
+        else if (path.equals(ARMOR_LEVEL.id().getPath()) || path.equals(AIR_LEVEL.id().getPath())) {
+            int screenWidth = event.getWindow().getGuiScaledWidth();
+            int screenHeight = event.getWindow().getGuiScaledHeight();
             PoseStack poseStack = event.getGuiGraphics().pose();
-            poseStack.translate(0,-20.0f,0.0f);
+            poseStack.pushPose();
+            float offsetX = -(screenWidth / 2.0f - 91.0f) + 30.0f;
+            float offsetY = -(screenHeight - 39.0f) + 70.0f;
+
+            poseStack.translate(offsetX, offsetY, 0.0f);
         }
-        if(overlay.id().getPath() == AIR_LEVEL.id().getPath()){
-            PoseStack poseStack = event.getGuiGraphics().pose();
-            poseStack.translate(0,-20.0f,0.0f);
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onRenderGuiOverlayPost(RenderGuiOverlayEvent.Post event) {
+        String path = event.getOverlay().id().getPath();
+        if (path.equals(ARMOR_LEVEL.id().getPath()) || path.equals(AIR_LEVEL.id().getPath())) {
+            event.getGuiGraphics().pose().popPose();
         }
     }
 
@@ -67,7 +76,6 @@ public class PWRenderGuiOverlayEventEvent {
 
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
-
             double healthRatio = player.getMaxHealth() > 0 ? (double) player.getHealth() / player.getMaxHealth() : 0;
             int targetWidthH = 82;
             int targetHeightH = 5;
@@ -80,7 +88,6 @@ public class PWRenderGuiOverlayEventEvent {
             int targetHeightF = 5;
             int currentWidthF = (int) (targetWidthF * Math.min(1.0, foodRatio));
             int uWidthF = (int) (117 * Math.min(1.0, foodRatio));
-
             guiGraphics.blit(food, 61, 25, currentWidthF, targetHeightF, 0, 0, uWidthF, 7, 117, 7);
 
             double jsRatio = capability.getMaxjingshenli() > 0 ? (double) capability.getJingshenli() / capability.getMaxjingshenli() : 0;
@@ -90,8 +97,6 @@ public class PWRenderGuiOverlayEventEvent {
             int uWidthJ = (int) (232 * Math.min(1.0, jsRatio));
             guiGraphics.blit(jingshenli, 61, 38, currentWidthJ, targetHeightJ, 0, 0, uWidthJ, 21, 232, 21);
 
-
-
             int expX = screenWidth / 2 - 64;
             int expY = screenHeight - 26;
             double expRatio = capability.getMaxjingyan() > 0 ? (double) capability.getJingyan() / capability.getMaxjingyan() : 0;
@@ -100,20 +105,15 @@ public class PWRenderGuiOverlayEventEvent {
 
             pose.pushPose();
             pose.scale(0.5f, 0.5f, 1.0f);
-
             String healthInfo ="生命："+ formatBigNum(player.getHealth()) + "/" + formatBigNum(player.getMaxHealth());
             guiGraphics.drawString(Minecraft.getInstance().font, healthInfo, 150, 25, 0xFFFFFF, true);
-
             String jsInfo = "精神力: " + formatBigNum(capability.getJingshenli()) + "/" + formatBigNum(capability.getMaxjingshenli());
             guiGraphics.drawString(Minecraft.getInstance().font, jsInfo, 128, 77, 0x55FFFF, true);
-
             String foodInfo = "体力: " + player.getFoodData().getFoodLevel() + "/20";
             guiGraphics.drawString(Minecraft.getInstance().font, foodInfo, 140, 51, 0xFFCC00, true);
-
             String expInfo = "经验: " + formatBigNum(capability.getJingyan()) + "/" + formatBigNum(capability.getMaxjingyan());
             int expTextX = (screenWidth / 2) * 2 - (Minecraft.getInstance().font.width(expInfo) / 2);
             guiGraphics.drawString(Minecraft.getInstance().font, expInfo, expTextX, (screenHeight - 32) * 2 + 10, 0xAAAAAA, true);
-
             pose.popPose();
 
             pose.pushPose();
@@ -137,7 +137,7 @@ public class PWRenderGuiOverlayEventEvent {
     private static void renderCustomExperienceBar(GuiGraphics guiGraphics, Player player, int width, int height) {
         PoseStack poseStack = guiGraphics.pose();
         int barX = 26;
-        int barY = 60;
+        int barY = 62;
         int barWidth = 91;
         int barHeight = 5;
         int playerLevel = player.experienceLevel;
@@ -145,6 +145,7 @@ public class PWRenderGuiOverlayEventEvent {
         guiGraphics.blit(exp_bar_kong, barX, barY, 0, 0, barWidth, barHeight, barWidth, barHeight);
         int filledWidth = (int)(barWidth * experienceProgress);
         guiGraphics.blit(exp_bar, barX, barY, 0, 0, filledWidth, barHeight, barWidth, barHeight);
+
         poseStack.pushPose();
         float scale = 0.7f;
         poseStack.scale(scale, scale, 1f);
@@ -156,31 +157,14 @@ public class PWRenderGuiOverlayEventEvent {
         poseStack.popPose();
     }
 
-
-
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onRenderGuiPre(RenderGuiOverlayEvent.Pre event) {
-        if (!event.getOverlay().id().getPath().equals("experience_bar")) {
-            return;
-        }
-        event.setCanceled(true);
-        LocalPlayer player = Minecraft.getInstance().player;
-        if (player == null) return;
-        renderCustomExperienceBar(event.getGuiGraphics(), player, event.getWindow().getGuiScaledWidth(), event.getWindow().getGuiScaledHeight());
-    }
-
-    @SubscribeEvent(priority= EventPriority.HIGHEST)
-    public static void onRenderGuiOverlayEvent(RenderGuiOverlayEvent.Post event){
-        NamedGuiOverlay overlay = event.getOverlay();
-        if(overlay.id().getPath() == ARMOR_LEVEL.id().getPath()){
-            PoseStack poseStack = event.getGuiGraphics().pose();
-            poseStack.translate(0,20.0f,0.0f);
-
-        }
-        if(overlay.id().getPath() == AIR_LEVEL.id().getPath()){
-            PoseStack poseStack = event.getGuiGraphics().pose();
-            poseStack.translate(0,20.0f,0.0f);
-
+        if (event.getOverlay().id().getPath().equals("experience_bar")) {
+            event.setCanceled(true);
+            LocalPlayer player = Minecraft.getInstance().player;
+            if (player != null) {
+                renderCustomExperienceBar(event.getGuiGraphics(), player, event.getWindow().getGuiScaledWidth(), event.getWindow().getGuiScaledHeight());
+            }
         }
     }
 }

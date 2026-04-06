@@ -31,11 +31,11 @@ public class MobAttributeCapability extends CapabilityAttributeBase implements I
         } else if (nianxian < 1000) {
             float g = 50 + (float) nianxian / 10 + RANDOM.nextInt(50);
             float l = 20 + (float) nianxian / 1000 * 10;
-            applyGrowth(g, l, 2, 20, 10);
+            applyGrowth(g, l, 2, 10, 10);
         } else if (nianxian < 10000) {
             float g = 250 + (float) nianxian / 20 + RANDOM.nextInt(250);
             float l = 30 + (float) nianxian / 10000 * 10;
-            applyGrowth(g, l, 2, 30, 10);
+            applyGrowth(g, l, 2, 25, 10);
         } else if (nianxian < 100000) {
             float g = 750 + (float) nianxian / 67 + RANDOM.nextInt(750);
             float l = 40 + (float) nianxian / 100000 * 10;
@@ -43,7 +43,7 @@ public class MobAttributeCapability extends CapabilityAttributeBase implements I
         } else if (nianxian < 1000000) {
             float g = 3750 + (float) nianxian / 133 + RANDOM.nextInt(3750);
             float l = 50 + (float) nianxian / 1000000 * 10;
-            applyGrowth(g, l, 5, 50, 10);
+            applyGrowth(g, l, 5, 60, 10);
         } else if (nianxian < 10000000) {
             float g = 15000 + (float) nianxian / 500 + RANDOM.nextInt(15000);
             float l = 120 + (float) nianxian / 10000000 * 20;

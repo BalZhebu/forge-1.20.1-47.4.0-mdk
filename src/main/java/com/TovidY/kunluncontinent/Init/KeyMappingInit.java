@@ -30,6 +30,7 @@ public class KeyMappingInit {
     public static final KeyMapping KAIGUAN_MAPPING = new KeyMapping("kaiguan_mapping", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_K, KlMain.MOD_ID);
 
     public static final KeyMapping SKILL_WHEEL = new KeyMapping("key.kunlun.skill_wheel", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, KlMain.MOD_ID);
+
     public static final KeyMapping RELEASE_SKILL = new KeyMapping("key.kunlun.release_skill", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_V, KlMain.MOD_ID);
 
     @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
@@ -85,8 +86,6 @@ public class KeyMappingInit {
             while (RELEASE_SKILL.consumeClick()) {
                 NetworkHandler.INSTANCE.sendToServer(new CPacketReleaseSkill());
             }
-
-            // 其他按键逻辑 (O键、K键)
             if (mc.screen == null) {
                 if (ATTRIBUTE_MAPPING.consumeClick()) {
                     NetworkHandler.INSTANCE.sendToServer(new CPacketOpenAttrubuteGUI());
@@ -95,7 +94,6 @@ public class KeyMappingInit {
                     NetworkHandler.INSTANCE.sendToServer(new CPacketQiehuanWuhun());
                 }
             }
-
             if (Minecraft.getInstance().screen == null) {
                 ATTRIBUTE_MAPPING.consumeClick();
             }

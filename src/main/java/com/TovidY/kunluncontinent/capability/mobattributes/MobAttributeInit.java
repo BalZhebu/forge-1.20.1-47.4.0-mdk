@@ -4,6 +4,7 @@ import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.entity.EntityInit;
 import com.TovidY.kunluncontinent.network.SynsAPI;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -17,12 +18,23 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.List;
 
 // 生成属性赋予
+
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID)
 public class MobAttributeInit {
 
     @SubscribeEvent
     public static void onMobSpawn(MobSpawnEvent.FinalizeSpawn event) {
         Mob mob = event.getEntity();
+
+        if (mob instanceof net.minecraft.world.entity.animal.horse.AbstractHorse) {
+            mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY).ifPresent(attr -> {
+                attr.setNianxian(20);
+                attr.initNianxian(20);
+                applyAttributesToEntity(mob, attr);
+                SynsAPI.synsEntityAttribute(mob);
+            });
+            return;
+        }
 
         mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY).ifPresent(attr -> {
                     if (attr.getNianxian() == 0) {
@@ -64,8 +76,11 @@ public class MobAttributeInit {
         AttributeInstance maxHealthAttr = mob.getAttribute(Attributes.MAX_HEALTH);
         if (maxHealthAttr != null) {
             maxHealthAttr.setBaseValue(attr.getMaxshengming());
+            if (mob instanceof AbstractHorse) {
+                mob.setHealth(attr.getMaxshengming());
+            }
             if (mob.tickCount < 2) {
-                mob.setHealth((float)attr.getMaxshengming());
+                mob.setHealth(attr.getMaxshengming());
             }
         }
     }

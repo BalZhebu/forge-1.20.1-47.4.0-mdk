@@ -5,6 +5,7 @@ import com.TovidY.kunluncontinent.KlMain;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -24,6 +25,8 @@ public class KluxTabButton extends Button {
         this.icon = icon;
         this.tooltip = tooltip;
         this.selected = selected;
+
+        this.setTooltip(Tooltip.create(tooltip));
     }
     @Override
     protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
@@ -38,10 +41,7 @@ public class KluxTabButton extends Button {
             guiGraphics.pose().scale(bgScale, bgScale, bgScale);
             guiGraphics.blit(BUTTON_TEXTURE, 0, 0, 0, 0, TEX_W, TEX_H, TEX_W, TEX_H);
         } else {
-            guiGraphics.setColor(1.2F, 1.2F, 1.2F, 1.0F);
             guiGraphics.blit(BUTTON_TEXTURE, this.getX(), this.getY(), 0, 0, TEX_W, TEX_H, TEX_W, TEX_H);
-
-            guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
         }
 
         guiGraphics.pose().popPose();
@@ -61,9 +61,5 @@ public class KluxTabButton extends Button {
         guiGraphics.renderItem(this.icon, 0, 0);
 
         guiGraphics.pose().popPose();
-
-        if (this.isHovered()) {
-            guiGraphics.renderTooltip(Minecraft.getInstance().font, this.tooltip, mouseX, mouseY);
-        }
     }
 }

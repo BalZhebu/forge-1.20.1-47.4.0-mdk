@@ -34,7 +34,6 @@ public class PWRenderPlayerEvent {
 
     private static final Map<Player, Long> playerShenhuanAnimationStartTime = new HashMap<>();
 
-
     private static final ResourceLocation SHENHUAN = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID,"textures/picture/shenhuan.png");
     private static final ResourceLocation HUNHUAN = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/picture/particletext.png");
 

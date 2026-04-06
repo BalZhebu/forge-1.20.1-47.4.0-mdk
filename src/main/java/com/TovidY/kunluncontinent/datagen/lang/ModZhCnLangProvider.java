@@ -115,6 +115,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
                 "\n§l天赋系统：§r天赋在玩家觉醒武魂时出现，普通天赋最为常见，废物和天才天赋概率一致，是废物还是天才都在一念之间，不同的天赋会略微影响一点点数值，但后期均可通过努力提升。" +
                 "\n§l武魂系统：§r默认按K键可打开武魂，打开武魂时会消耗精神力，打开武魂时可以吸收魂环。" +
                 "\n§l魂环吸收:§r玩家每到10/20/30级等10的倍数的等级时，会锁定等级，必须吸收魂环才可突破下一阶段，吸收时需打开武魂后右键生物掉落的魂环坐上去后消耗精神力吸收魂环，精神力不足将停止吸收，吸收进度重置。" +
+                "\n§l魂核系统：§r魂核是魂环分解后或者魂环消失后生成的产物，，会随着时间流逝消失，可用聚魂瓶收集起来。" +
                 "\n§l重修&转世系统：§r玩家在主世界自然生成的地狱门遗迹可找到生成在地狱岩上的彼岸花，将彼岸花磨成粉可炼制忘川渡buff，喝下后找到重修遗迹，再自己身上有buff的情况下右键重修台就会遭受99道雷劫，但记住！雷劫不致命！请不要用任何手段恢复血量，因为重修需要玩家血量到达20以内才能成功转世，若99道天雷后你血量依旧健康，那么你的转世重修就会失败。重修会使玩家的武魂、魂环、属性、技能配置等全部重置，玩家拥有什么武魂就会给与对应的武魂果实。" +
                 "\n§l重修遗迹：§r通过重修之眼可找到重修遗迹，重修之眼使用方法和末影之眼一致。" +
                 "\n§l武魂果实：§r武魂果实将在玩家转生后会根据玩家拥有的武魂将武魂果实给予给玩家，吃下武魂果实即可觉醒对应的武魂，玩家最多觉醒3个武魂。" +
@@ -126,7 +127,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
                 "\n§l飞行系统：§r当玩家的最大精神力到达5000并等级大于25级时，玩家将解锁飞行能力，飞行时精神力消耗加快，等级越高消耗越慢。" +
                 "\n§l进阶维度系统：§r根据某些特殊生物掉落的物品可合成传送门框架，请查看传送门框架描述来搭建传送门结构，可前往生成高年限生物的维度。" +
                 "\n§l特殊攻击系统：§r玩家攻击生物时有低概率触发特殊效果，例如撕裂、燃烧、震撼、湮灭、等特殊效果，特殊效果可增加玩家对生物造成的那次伤害并附加debuff，注意：怪物也可以对你造成这些特殊效果。" +
-                "\n§l玩家屏幕的GUI属性解释：§r左上角GUI的红色部分的代表玩家血量，血量条右侧体力代表玩家的饱食度，下面浅青色代表玩家的精神力，物品栏上方中间多边形内空白处的数值为玩家当前等级（当玩家进入世界、或更新事件时这个数值会异变，这是正常现象，通常几秒即可恢复），物品栏上方黄色进度条为经验条，满了后自动突破，注意：数值在玩家做出某种事件更替时会出现异常变动，这是正常现象，稍等几秒即可恢复。" +
+                "\n§l玩家屏幕的GUI属性解释：§r左上角GUI的红色部分的代表玩家血量，血量条下面体力条代表玩家的饱食度，体力条下面浅蓝色代表玩家的精神力，物品栏上方中间多边形内空白处的数值为玩家当前等级（当玩家进入世界、或更新事件时这个数值会异变，这是正常现象，通常几秒即可恢复），物品栏上方一点点的位置有个黄色进度条为经验条，满了后自动突破。注意：数值在玩家做出某种事件更替时会出现异常变动，这是正常现象，稍等几秒即可恢复。" +
                 "\n§l维度特色讲解：" +
                 "\n§r1.极寒冰域：常年冰雪的维度。会生成最低万年，最高百万年的生物，玩家在维度内若没有御寒魂导器的话就会根据玩家自身的等级计算可以撑的时间，时间结束后你将会受到百分比的真实伤害。" +
                 "\n§r2.万天雷域：常年下雨降雷的维度。会生成最低万年，最高百万年的生物，玩家在维度内需要电流防御魂器防御自身，否则将有较高概率遭受雷击，雷击会使玩家受到较高的百分比伤害。" +
@@ -188,6 +189,27 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("adv.kunlun.liandanlu8.desc","高效的炼丹");
         add("adv.kunlun.liandanlu9.title","§c九§b阶§5炼§a丹§e炉！");
         add("adv.kunlun.liandanlu9.desc","材料要求极高实用性确不高");
+        add("advancements.kunluncontinent.gray_iron_ingot.title", "灰铁锭");
+        add("advancements.kunluncontinent.gray_iron_ingot.description", "一切的开端");
+        add("advancements.kunluncontinent.cloud_patterned_bronze_ingot.title", "云纹铜锭");
+        add("advancements.kunluncontinent.cloud_patterned_bronze_ingot.description", "更好的灰铁锭");
+        add("advancements.kunluncontinent.red_fire_ingot.title", "赤火锭");
+        add("advancements.kunluncontinent.red_fire_ingot.description", "可在下界中找到~");
+        add("advancements.kunluncontinent.sunken_silver_ingot.title", "沉银");
+        add("advancements.kunluncontinent.sunken_silver_ingot.description", "可在末地中找到");
+        add("advancements.kunluncontinent.rinsei_ingot.title", "凛晶");
+        add("advancements.kunluncontinent.rinsei_ingot.description", "击杀雪魔后掉落~");
+        add("advancements.kunluncontinent.cold_heated_steel_ingot.title", "寒心钢锭");
+        add("advancements.kunluncontinent.cold_heated_steel_ingot.description", "可在极寒冰域中找到~！");
+        add("advancements.kunluncontinent.ruby.title","红宝石");
+        add("advancements.kunluncontinent.ruby.description","一切的开端");
+        add("advancements.kunluncontinent.sapphire.title","蓝晶");
+        add("advancements.kunluncontinent.sapphire.description","下界的器具矿物");
+        add("advancements.kunluncontinent.amethyst.title","紫瑛");
+        add("advancements.kunluncontinent.amethyst.description","末地中的宝贵矿石");
+        add("advancements.kunluncontinent.starlight_stone.title","星辰石");
+        add("advancements.kunluncontinent.starlight_stone.description","异界的宝贵矿石");
+
 
         //魂骨类
         add(ModItems.SOUL_BEAST_SKULL.get(), "§c§k------§r §e《魂骨 · 头骨》 §r§c§k------");

@@ -352,7 +352,7 @@ public class ModItems {
     public static final RegistryObject<Item> SOUL_GATHERING_BOTTLE_3 = ITEMS.register("soul_gathering_bottle_3",
             () -> new SoulGatheringBottleItem(new Item.Properties().stacksTo(1),4).setMaxnengliang(8192));
 
-    public static final RegistryObject<Item> SOUL_GATHERING_BOTTLE_4 = ITEMS.register("soul_gathering_bottle_4",
+    public static final RegistryObject<Item> SOUL_GATHERING_BOTTLE_4 = ITEMS. register("soul_gathering_bottle_4",
             () -> new SoulGatheringBottleItem(new Item.Properties().stacksTo(1),5).setMaxnengliang(16384));
 
     public static final RegistryObject<Item> FIRST_DECOMPOSITION_GOSSIP      = ITEMS.register("first_decomposition_gossip", () -> new DecompositionItem(new Item.Properties().fireResistant().stacksTo(1),1));

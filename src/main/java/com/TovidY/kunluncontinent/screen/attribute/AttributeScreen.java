@@ -53,6 +53,7 @@ public class AttributeScreen extends AbstractContainerScreen<AttributeMenu> {
         int spacing = 6;
         int startX = this.leftPos + 8;
         int startY = this.topPos - 28;
+
         this.addRenderableWidget(new KluxTabButton(startX, startY - 5, selectedSize, selectedSize,
                 new ItemStack(ModItems.ATTRIBUTE_BUTTON.get()), Component.literal("属性面板"), true, b -> {
         }));

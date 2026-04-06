@@ -31,13 +31,185 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
         @Override
         public void generate(HolderLookup.Provider registries, Consumer<Advancement> saver, ExistingFileHelper existingFileHelper) {
             Advancement root = Advancement.Builder.advancement()
-                    .display(ModItems.IRON_ENGRAVING_KNIFE.get(),
+                    .display(ModItems.HUNHUAN_BUTTON.get(),
                             Component.translatable("advancements.kunluncontinent.root.title"),
                             Component.translatable("advancements.kunluncontinent.root.description"),
                             ResourceLocation.tryParse("minecraft:textures/gui/advancements/backgrounds/stone.png"),
                             FrameType.TASK, true, true, false)
                     .addCriterion("on_join", PlayerTrigger.TriggerInstance.tick())
                     .save(saver,ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/root"), existingFileHelper);
+
+            Advancement rubyAdvancement = Advancement.Builder.advancement()
+                    .parent(root)
+                    .display(
+                            ModItems.RUBY.get(),
+                            Component.translatable("advancements.kunluncontinent.ruby.title"),
+                            Component.translatable("advancements.kunluncontinent.ruby.description"),
+                            null,
+                            FrameType.TASK, // 成就框类型：TASK(普通), CHALLENGE(挑战), GOAL(目标)
+                            true,
+                            true,
+                            false
+                    )
+                    .addCriterion("has_ruby", InventoryChangeTrigger.TriggerInstance.hasItems(
+                            ModItems.RUBY.get()
+                    ))
+                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/get_ruby"), existingFileHelper);
+
+            Advancement sapphireAdvancement = Advancement.Builder.advancement()
+                    .parent(rubyAdvancement)
+                    .display(
+                            ModItems.SAPPHIRE.get(),
+                            Component.translatable("advancements.kunluncontinent.sapphire.title"),
+                            Component.translatable("advancements.kunluncontinent.sapphire.description"),
+                            null,
+                            FrameType.TASK, // 成就框类型：TASK(普通), CHALLENGE(挑战), GOAL(目标)
+                            true,
+                            true,
+                            false
+                    )
+                    .addCriterion("has_sapphire", InventoryChangeTrigger.TriggerInstance.hasItems(
+                            ModItems.SAPPHIRE.get()
+                    ))
+                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/get_sapphire"), existingFileHelper);
+
+            Advancement amethystAdvancement = Advancement.Builder.advancement()
+                    .parent(sapphireAdvancement)
+                    .display(
+                            ModItems.AMETHYST.get(),
+                            Component.translatable("advancements.kunluncontinent.amethyst.title"),
+                            Component.translatable("advancements.kunluncontinent.amethyst.description"),
+                            null,
+                            FrameType.CHALLENGE, // 成就框类型：TASK(普通), CHALLENGE(挑战), GOAL(目标)
+                            true,
+                            true,
+                            false
+                    )
+                    .addCriterion("has_amethyst", InventoryChangeTrigger.TriggerInstance.hasItems(
+                            ModItems.AMETHYST.get()
+                    ))
+                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/get_amethyst"), existingFileHelper);
+
+            Advancement starlightstoneAdvancement = Advancement.Builder.advancement()
+                    .parent(amethystAdvancement)
+                    .display(
+                            ModItems.STARLIGHT_STONE.get(),
+                            Component.translatable("advancements.kunluncontinent.starlight_stone.title"),
+                            Component.translatable("advancements.kunluncontinent.starlight_stone.description"),
+                            null,
+                            FrameType.GOAL, // 成就框类型：TASK(普通), CHALLENGE(挑战), GOAL(目标)
+                            true,
+                            true,
+                            false
+                    )
+                    .addCriterion("has_starlight_stone", InventoryChangeTrigger.TriggerInstance.hasItems(
+                            ModItems.STARLIGHT_STONE.get()
+                    ))
+                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/get_starlight_stone"), existingFileHelper);
+
+
+            Advancement grayIronAdvancement = Advancement.Builder.advancement()
+                    .parent(root) // 设置父成就（可选）
+                    .display(
+                            ModItems.GRAY_IRON_INGOT.get(),
+                            Component.translatable("advancements.kunluncontinent.gray_iron_ingot.title"),
+                            Component.translatable("advancements.kunluncontinent.gray_iron_ingot.description"),
+                            null,
+                            FrameType.TASK, // 成就框类型：TASK(普通), CHALLENGE(挑战), GOAL(目标)
+                            true,
+                            true,
+                            false
+                    )
+                    .addCriterion("has_gray_iron_ingot", InventoryChangeTrigger.TriggerInstance.hasItems(
+                            ModItems.GRAY_IRON_INGOT.get()
+                    ))
+                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/get_gray_iron_ingot"), existingFileHelper);
+
+            Advancement grayIronAdvancement2 = Advancement.Builder.advancement()
+                    .parent(grayIronAdvancement) // 设置父成就（可选）
+                    .display(
+                            ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get(),
+                            Component.translatable("advancements.kunluncontinent.cloud_patterned_bronze_ingot.title"),
+                            Component.translatable("advancements.kunluncontinent.cloud_patterned_bronze_ingot.description"),
+                            null,
+                            FrameType.TASK, // 成就框类型：TASK(普通), CHALLENGE(挑战), GOAL(目标)
+                            true,
+                            true,
+                            false
+                    )
+                    .addCriterion("has_gray_iron_ingot", InventoryChangeTrigger.TriggerInstance.hasItems(
+                            ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get()
+                    ))
+                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/get_gray_iron_ingot2"), existingFileHelper);
+
+            Advancement grayIronAdvancement3 = Advancement.Builder.advancement()
+                    .parent(grayIronAdvancement2) // 设置父成就（可选）
+                    .display(
+                            ModItems.RED_FIRE_INGOT.get(),
+                            Component.translatable("advancements.kunluncontinent.red_fire_ingot.title"),
+                            Component.translatable("advancements.kunluncontinent.red_fire_ingot.description"),
+                            null,
+                            FrameType.TASK, // 成就框类型：TASK(普通), CHALLENGE(挑战), GOAL(目标)
+                            true,
+                            true,
+                            false
+                    )
+                    .addCriterion("has_gray_iron_ingot", InventoryChangeTrigger.TriggerInstance.hasItems(
+                            ModItems.RED_FIRE_INGOT.get()
+                    ))
+                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/get_gray_iron_ingot3"), existingFileHelper);
+
+            Advancement grayIronAdvancement4 = Advancement.Builder.advancement()
+                    .parent(grayIronAdvancement3) // 设置父成就（可选）
+                    .display(
+                            ModItems.SUNKEN_SILVER_INGOT.get(),
+                            Component.translatable("advancements.kunluncontinent.sunken_silver_ingot.title"),
+                            Component.translatable("advancements.kunluncontinent.sunken_silver_ingot.description"),
+                            null,
+                            FrameType.TASK, // 成就框类型：TASK(普通), CHALLENGE(挑战), GOAL(目标)
+                            true,
+                            true,
+                            false
+                    )
+                    .addCriterion("has_gray_iron_ingot", InventoryChangeTrigger.TriggerInstance.hasItems(
+                            ModItems.SUNKEN_SILVER_INGOT.get()
+                    ))
+                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/get_gray_iron_ingot4"), existingFileHelper);
+
+            Advancement grayIronAdvancement5 = Advancement.Builder.advancement()
+                    .parent(grayIronAdvancement4) // 设置父成就（可选）
+                    .display(
+                            ModItems.COLD_HEARTED_STEEL_INGOT.get(),
+                            Component.translatable("advancements.kunluncontinent.cold_heated_steel_ingot.title"),
+                            Component.translatable("advancements.kunluncontinent.cold_heated_steel_ingot.description"),
+                            null,
+                            FrameType.CHALLENGE, // 成就框类型：TASK(普通), CHALLENGE(挑战), GOAL(目标)
+                            true,
+                            true,
+                            false
+                    )
+                    .addCriterion("has_gray_iron_ingot", InventoryChangeTrigger.TriggerInstance.hasItems(
+                            ModItems.COLD_HEARTED_STEEL_INGOT.get()
+                    ))
+                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/get_gray_iron_ingot5"), existingFileHelper);
+
+            Advancement grayIronAdvancement6 = Advancement.Builder.advancement()
+                    .parent(grayIronAdvancement5) // 设置父成就（可选）
+                    .display(
+                            ModItems.RINSEI_INGOT.get(),
+                            Component.translatable("advancements.kunluncontinent.rinsei_ingot.title"),
+                            Component.translatable("advancements.kunluncontinent.rinsei_ingot.description"),
+                            null,
+                            FrameType.CHALLENGE, // 成就框类型：TASK(普通), CHALLENGE(挑战), GOAL(目标)
+                            true,
+                            true,
+                            false
+                    )
+                    .addCriterion("has_gray_iron_ingot", InventoryChangeTrigger.TriggerInstance.hasItems(
+                            ModItems.RINSEI_INGOT.get()
+                    ))
+                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/get_gray_iron_ingot6"), existingFileHelper);
+
 
             // 1. 检查获得特定物品/方块的成就
             Advancement obtainItem = Advancement.Builder.advancement()
