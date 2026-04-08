@@ -66,9 +66,6 @@ public class PlayerUpgradeSystem {
             return false;
         }
         if (level == 99) {
-            if (cap.getJingyan() >= cap.getMaxjingyan()) {
-                sendDeityAnnouncement(player);
-            }
             player.connection.send(new ClientboundSetTitleTextPacket(
                     Component.literal("已经满级，请封神后再突破").withStyle(ChatFormatting.RED, ChatFormatting.BOLD)
             ));
@@ -238,6 +235,10 @@ public class PlayerUpgradeSystem {
         capability.setMaxjingyan(capability.getMaxjingyan() + (newLevel * 1.4f) * 1.3f);
         capability.setShengming(capability.getShengming() + 1f);
         capability.setWuchuan(capability.getWuchuan() + 1f);
+
+        if (newLevel == 99) {
+            sendDeityAnnouncement(player);
+        }
 
         ModTriggers.LEVEL_TRIGGER.trigger(player, newLevel);
     }

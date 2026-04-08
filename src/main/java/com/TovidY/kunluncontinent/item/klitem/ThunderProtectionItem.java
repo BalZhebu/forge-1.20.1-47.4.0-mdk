@@ -33,7 +33,6 @@ public class ThunderProtectionItem extends Item {
         tooltip.add(Component.literal("预计护身时长：").withStyle(ChatFormatting.GRAY)
                 .append(Component.literal(timeStr).withStyle(ChatFormatting.AQUA)));
         tooltip.add(Component.empty());
-        tooltip.add(Component.literal("§7[置于背包生效] §c警告：每 5 秒消耗 1 点能量"));
         if (currentDurability <= 0) {
             tooltip.add(Component.literal("!!! 法宝已损坏，失去避雷效果 !!!").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
         } else if (currentDurability < 10) {

@@ -34,6 +34,12 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
     public static final List<ItemLike> SUNKEN_SILVER = List.of(ModBlocks.SUNKEN_SILVER_ORE.get());
     public static final List<ItemLike> COLD_HEARTED_STEEL = List.of(ModBlocks.COLD_HEARTED_STEEL_ORE.get());
 
+    //宝石矿
+    public static final List<ItemLike> RUBY_ORE = List.of(ModBlocks.RUBY_ORE.get());
+    public static final List<ItemLike> SAPPHIRE_ORE = List.of(ModBlocks.SAPPHIRE_ORE.get());
+    public static final List<ItemLike> AMETHYST_ORE = List.of(ModBlocks.AMETHYST_ORE.get());
+    public static final List<ItemLike> STARLIGHT_STONE_ORE = List.of(ModBlocks.STARLIGHT_STONE_ORE.get());
+
     @Override
     protected void buildRecipes(Consumer<FinishedRecipe> pWriter) {
         oreSmelting(pWriter,GRAY_IRON,RecipeCategory.MISC,ModItems.GRAY_IRON_INGOT.get(),0.25F,200,"gray_iron");
@@ -46,6 +52,14 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
         oreBlasting(pWriter,SUNKEN_SILVER,RecipeCategory.MISC,ModItems.SUNKEN_SILVER_INGOT.get(),0.35F,400,"sunken_silver");
         oreSmelting(pWriter,COLD_HEARTED_STEEL,RecipeCategory.MISC,ModItems.COLD_HEARTED_STEEL_INGOT.get(),0.45F,1000,"cold_hearterd_steel");
         oreBlasting(pWriter,COLD_HEARTED_STEEL,RecipeCategory.MISC,ModItems.COLD_HEARTED_STEEL_INGOT.get(),0.45F,800,"cold_hearterd_steel");
+        oreSmelting(pWriter,RUBY_ORE,RecipeCategory.MISC,ModItems.RUBY.get(),0.50F,1000,"ruby");
+        oreBlasting(pWriter,RUBY_ORE,RecipeCategory.MISC,ModItems.RUBY.get(),0.50F,800,"ruby");
+        oreSmelting(pWriter,SAPPHIRE_ORE,RecipeCategory.MISC,ModItems.SAPPHIRE.get(),0.50F,400,"sapphire");
+        oreBlasting(pWriter,SAPPHIRE_ORE,RecipeCategory.MISC,ModItems.SAPPHIRE.get(),0.50F,200,"sapphire");
+        oreSmelting(pWriter,AMETHYST_ORE,RecipeCategory.MISC,ModItems.AMETHYST.get(),0.50F,600,"amethyst");
+        oreBlasting(pWriter,AMETHYST_ORE,RecipeCategory.MISC,ModItems.AMETHYST.get(),0.50F,400,"amethyst");
+        oreSmelting(pWriter,STARLIGHT_STONE_ORE,RecipeCategory.MISC,ModItems.STARLIGHT_STONE.get(),0.50F,800,"starlight_stone");
+        oreBlasting(pWriter,STARLIGHT_STONE_ORE,RecipeCategory.MISC,ModItems.STARLIGHT_STONE.get(),0.50F,400,"starlight_stone");
 
         //聚魂瓶合成
         SpecialRecipeBuilder.special(ModRecipes.BOTTLE_REFILL_SERIALIZER.get())

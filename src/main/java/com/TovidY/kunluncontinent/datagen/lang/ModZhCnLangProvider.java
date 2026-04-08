@@ -147,6 +147,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("item.kunluncontinent.guide_book.tooltip2","§7建议不要弄丢");
 
         add("item.guyuancao_seeds.tooltip","会生成在大部分奖励箱中");
+        add("tooltip.kunluncontinent.polar_ice_portal_block","需摆出地狱传送门的样式");
 
         //成就类
         add("advancements.kunluncontinent.root.title", "初入世界");

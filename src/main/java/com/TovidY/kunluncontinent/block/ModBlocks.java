@@ -140,10 +140,20 @@ public class ModBlocks {
     //传送门框架
     public static final RegistryObject<Block> POLAR_ICE_PORTAL_BLOCK =
             registerBlock("polar_ice_portal_block",()->
-                    new Block(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)));
+                    new Block(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)){
+                        @Override
+                        public void appendHoverText(ItemStack pStack, @Nullable BlockGetter pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
+                            pTooltip.add(Component.translatable("tooltip.kunluncontinent.polar_ice_portal_block").withStyle(ChatFormatting.DARK_GRAY));
+                        }
+                    });
     public static final RegistryObject<Block> THUNDER_REALM_PORTAL_BLOCK =
             registerBlock("thunder_realm_portal_block",()->
-                    new Block(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)));
+                    new Block(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)){
+                        @Override
+                        public void appendHoverText(ItemStack pStack, @Nullable BlockGetter pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
+                            pTooltip.add(Component.translatable("tooltip.kunluncontinent.polar_ice_portal_block").withStyle(ChatFormatting.DARK_GRAY));
+                        }
+                    });
 
     //传送门方块
     public static final RegistryObject<Block> POLAR_ICE_PORTAL =

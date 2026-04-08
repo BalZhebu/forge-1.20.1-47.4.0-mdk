@@ -263,7 +263,7 @@ public class PlayerHunhuanAPI {
     public static void addMaxshengming(ServerPlayer player, float value) {
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(capability -> {
             capability.setMaxshengming(capability.getMaxshengming()+value);
-            player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(capability.getMaxshengming()+value);
+            player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(capability.getMaxshengming());
             syncPlayerAttributeToClient(player, capability);
         });
     }

@@ -86,13 +86,13 @@ public class ModWorldGenOreProvider {
         //银矿
         registerPlacement(context, configuredFeatures, ModBlocks.SUNKEN_SILVER_ORE, 0, 128, 5);
         //寒心钢
-        registerPlacement(context, configuredFeatures, ModBlocks.COLD_HEARTED_STEEL_ORE, -64, 0, 3);
+        registerPlacement(context, configuredFeatures, ModBlocks.COLD_HEARTED_STEEL_ORE, -64, 0, 5);
         //紫水晶
         registerPlacement(context, configuredFeatures, ModBlocks.AMETHYST_ORE, 0, 100, 3);
         //蓝晶
         registerPlacement(context, configuredFeatures, ModBlocks.SAPPHIRE_ORE, 0, 110, 5);
         //星辰石
-        registerPlacement(context, configuredFeatures, ModBlocks.STARLIGHT_STONE_ORE, -64, 0, 5);
+        registerPlacement(context, configuredFeatures, ModBlocks.STARLIGHT_STONE_ORE, -64, 0, 3);
 
         // 注册彼岸花的放置：
         context.register(RED_SPIDER_LILY_PLACED, new PlacedFeature(

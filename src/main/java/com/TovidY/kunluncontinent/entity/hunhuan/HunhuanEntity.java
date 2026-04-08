@@ -38,7 +38,8 @@ import java.util.List;
 import static com.TovidY.kunluncontinent.item.ModItems.hunhuanstorage;
 
 //魂环实体代码
-    public class HunhuanEntity extends Entity {
+
+public class HunhuanEntity extends Entity {
         private int existenceTime;
         public int livetime;
         private Player player;
