@@ -235,6 +235,8 @@ public class PlayerUpgradeSystem {
         capability.setMaxjingyan(capability.getMaxjingyan() + (newLevel * 1.4f) * 1.3f);
         capability.setShengming(capability.getShengming() + 1f);
         capability.setWuchuan(capability.getWuchuan() + 1f);
+        capability.setShanbi(capability.getShanbi() + 1f);
+        capability.setKangbao(capability.getMingzhong() + 1f);
 
         if (newLevel == 99) {
             sendDeityAnnouncement(player);

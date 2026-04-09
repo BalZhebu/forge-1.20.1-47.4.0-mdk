@@ -7,6 +7,8 @@ import com.TovidY.kunluncontinent.network.server.SPacketEntityAttribute;
 import com.TovidY.kunluncontinent.network.server.SPacketPlayerAttribute;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraftforge.network.PacketDistributor;
 
@@ -26,9 +28,21 @@ public interface SynsAPI {
         }
     }
     static void synsEntityAttribute(Entity entity) {
-        entity.getCapability(MobAttributeCapabilityProvider.CAPABILITY).ifPresent(capability -> {
-            NetworkHandler.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity),
-                    new SPacketEntityAttribute(entity.getId(), capability.serializeNBT()));
-        });
+        if (entity instanceof LivingEntity livingEntity) {
+            entity.getCapability(MobAttributeCapabilityProvider.CAPABILITY).ifPresent(capability -> {
+                AttributeInstance maxHealthAttr = livingEntity.getAttribute(Attributes.MAX_HEALTH);
+                if (maxHealthAttr != null) {
+                    float myMaxHP = capability.getMaxshengming();
+                    if (myMaxHP > 0) {
+                        maxHealthAttr.setBaseValue(myMaxHP);
+                        if (livingEntity.tickCount < 5) {
+                            livingEntity.setHealth(myMaxHP);
+                        }
+                    }
+                }
+                NetworkHandler.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity),
+                        new SPacketEntityAttribute(entity.getId(), capability.serializeNBT()));
+            });
+        }
     }
 }

@@ -26,34 +26,34 @@ public class MobAttributeCapability extends CapabilityAttributeBase implements I
     private void updateAttributesByNianxian() {
         if (nianxian < 100) {
             float g = 2 + (float) nianxian / 10 + RANDOM.nextInt(10);
-            float l = 10 + (float) nianxian / 20;
+            float l = 5 + (float) nianxian / 20;
             applyBaseGrowth(g, l);
         } else if (nianxian < 1000) {
-            float g = 50 + (float) nianxian / 10 + RANDOM.nextInt(50);
-            float l = 20 + (float) nianxian / 1000 * 10;
+            float g = 35 + (float) nianxian / 10 + RANDOM.nextInt(50);
+            float l = 15 + (float) nianxian / 1000 * 10;
             applyGrowth(g, l, 2, 10, 10);
         } else if (nianxian < 10000) {
-            float g = 250 + (float) nianxian / 20 + RANDOM.nextInt(250);
-            float l = 30 + (float) nianxian / 10000 * 10;
+            float g = 150 + (float) nianxian / 20 + RANDOM.nextInt(250);
+            float l = 20 + (float) nianxian / 10000 * 10;
             applyGrowth(g, l, 2, 25, 10);
         } else if (nianxian < 100000) {
-            float g = 750 + (float) nianxian / 67 + RANDOM.nextInt(750);
+            float g = 400 + (float) nianxian / 67 + RANDOM.nextInt(750);
             float l = 40 + (float) nianxian / 100000 * 10;
             applyGrowth(g, l, 3, 40, 10);
         } else if (nianxian < 1000000) {
-            float g = 3750 + (float) nianxian / 133 + RANDOM.nextInt(3750);
+            float g = 888 + (float) nianxian / 133 + RANDOM.nextInt(3750);
             float l = 50 + (float) nianxian / 1000000 * 10;
             applyGrowth(g, l, 5, 60, 10);
         } else if (nianxian < 10000000) {
-            float g = 15000 + (float) nianxian / 500 + RANDOM.nextInt(15000);
-            float l = 120 + (float) nianxian / 10000000 * 20;
+            float g = 2560 + (float) nianxian / 500 + RANDOM.nextInt(15000);
+            float l = 100 + (float) nianxian / 10000000 * 20;
             applyGrowth(g, l, 10, 200, 150);
         } else if (nianxian < 100000000) {
-            float g = 100000 + (float) nianxian / 1000 + RANDOM.nextInt(100000);
+            float g = 6400 + (float) nianxian / 1000 + RANDOM.nextInt(100000);
             float l = 200 + (float) nianxian / 100000000 * 50;
             applyGrowth(g, l, 25, 500, 400);
         } else {
-            float g = 500000 + (float) nianxian / 2000 + RANDOM.nextInt(500000);
+            float g = 15000 + (float) nianxian / 2000 + RANDOM.nextInt(500000);
             float l = 500 + (float) nianxian / 1000000000 * 100;
             applyGrowth(g, l, 60, 1200, 1000);
         }
