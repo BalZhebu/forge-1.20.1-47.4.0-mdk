@@ -44,7 +44,6 @@ public class GodInfo {
     }
 
     public void executeRewards(int stage, Player player) {
-        // 如果是累积模式（比如修罗神），前8考不发，第9考全发
         if (this.isCumulative) {
             if (stage < 9) {
                 player.sendSystemMessage(Component.literal("§e奖励已积攒，完成第九考后统一发放！"));
@@ -65,16 +64,41 @@ public class GodInfo {
         }
     }
 
+    private String formatRewardDesc(String desc) {
+        if (desc == null || desc.length() <= 16) return desc;
+        StringBuilder sb = new StringBuilder();
+        String currentColor = "§f";
+        int count = 0;
+        for (int i = 0; i < desc.length(); i++) {
+            char c = desc.charAt(i);
+            if (c == '§' && i + 1 < desc.length()) {
+                currentColor = "§" + desc.charAt(i + 1);
+                sb.append(currentColor);
+                i++;
+                continue;
+            }
+            sb.append(c);
+            count++;
+            if (count >= 16 && i < desc.length() - 1) {
+                sb.append("\n").append(currentColor); // 换行并补颜色
+                count = 0;
+            }
+        }
+        return sb.toString();
+    }
+
     public GodInfo addTask(int stage, GodTaskType type, String target, int count, String desc) {
-        examPools.computeIfAbsent(stage, k -> new ArrayList<>()).add(new GodTask(type, target, count, desc));
+        examPools.computeIfAbsent(stage, k -> new ArrayList<>())
+                .add(new GodTask(type, target, count, desc));
         return this;
     }
 
     public GodInfo addItemReward(int stage, Item item, int count, String desc) {
+        String formatted = formatRewardDesc(desc);
         rewardPools.computeIfAbsent(stage, k -> new ArrayList<>()).add(player -> {
             player.getInventory().add(new ItemStack(item, count));
         });
-        rewardDescriptions.computeIfAbsent(stage, k -> new ArrayList<>()).add(desc);
+        rewardDescriptions.computeIfAbsent(stage, k -> new ArrayList<>()).add(formatted);
         return this;
     }
 
@@ -85,15 +109,17 @@ public class GodInfo {
     }
 
     public GodInfo addAttrReward(int stage, String attrKey, float value, String desc) {
+        String formatted = formatRewardDesc(desc);
         rewardPools.computeIfAbsent(stage, k -> new ArrayList<>()).add(player -> {
             player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
                 if (attrKey.equals("gongji")) cap.setGongji(cap.getGongji() + value);
                 if (attrKey.equals("maxshengming")) cap.setMaxshengming(cap.getMaxshengming() + value);
                 if (attrKey.equals("dengji")) cap.setDengji((int) (cap.getDengji() + value));
+                if (attrKey.equals("maxjingshenli")) cap.setMaxjingshenli(cap.getMaxjingshenli() + value);
                 SynsAPI.synsPlayerAttribute(player);
             });
         });
-        rewardDescriptions.computeIfAbsent(stage, k -> new ArrayList<>()).add(desc);
+        rewardDescriptions.computeIfAbsent(stage, k -> new ArrayList<>()).add(formatted);
         return this;
     }
 

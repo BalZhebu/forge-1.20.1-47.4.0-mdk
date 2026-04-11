@@ -17,7 +17,7 @@ public class GodRegistry {
         register("sea_god", "海神")
                 .setCumulative(true)
                 .addTask(1, GodTaskType.ATTRIBUTE, "maxshengming", 3500000, "第一考：最大生命值达到3500000以上")
-                .addAttrReward(1, "gongji", 1000.0f,"§b攻击力属性提升：1000点（第九考结束后奖励发放）")
+                .addAttrReward(1, "maxjingshenli", 1800.0f,"§b最大精神力提升：1800点")
 
                 .addTask(2, GodTaskType.ITEM_CONSUME, "minecraft:heart_of_the_sea", 1, "第二考：提交海洋之心")
                 .addItemReward(2, Items.TRIDENT, 1,"666物品")

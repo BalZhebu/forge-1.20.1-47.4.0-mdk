@@ -6,8 +6,10 @@ import com.TovidY.kunluncontinent.godclass.interfac.GodInfo;
 import com.TovidY.kunluncontinent.godclass.interfac.GodTaskType;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -42,14 +44,11 @@ public class C2SCheckTaskPacket {
                 if (type == GodTaskType.ATTRIBUTE) {
                     float currentVal = cap.getGodAttributeValue(target);
                     if (currentVal >= required) success = true;
-                }
-                else if (type == GodTaskType.ITEM_CONSUME || type == GodTaskType.ITEM_CHECK) {
+                } else if (type == GodTaskType.ITEM_CONSUME || type == GodTaskType.ITEM_CHECK) {
                     int count = countItem(player, target);
                     if (count >= required) {
                         success = true;
-                        if (type == GodTaskType.ITEM_CONSUME) {
-                            removeItem(player, target, required);
-                        }
+                        if (type == GodTaskType.ITEM_CONSUME) removeItem(player, target, required);
                     }
                 }
                 if (success) {
@@ -57,21 +56,24 @@ public class C2SCheckTaskPacket {
                     GodInfo info = GodRegistry.GODS.get(cap.getGodName());
                     String godDisplayName = (info != null) ? info.getName() : "未知神位";
                     cap.checkTaskCompletion(player);
+                    Component title = Component.literal("§6§l★ 考 核 通 过 ★").withStyle(Style.EMPTY.withBold(true));
+                    Component subtitle = Component.literal("§f" + godDisplayName + " §e第 " + completedStage + " 考 §a完成");
+                    player.connection.send(new net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket(title));
+                    player.connection.send(new net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket(subtitle));
+                    player.connection.send(new net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket(10, 60, 20));
+                    player.playNotifySound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.PLAYERS, 1.0F, 1.0F);
+                    player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
+                            SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 0.8F, 0.7F);
+                    player.playNotifySound(SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 0.5F, 1.2F);
                     if (player.getServer() != null) {
-                        Component broadcastMsg = Component.literal("§6§l【神祇试炼】 §f历经千辛万苦，玩家 §e" + player.getScoreboardName() +
-                                " §f已完成 §b" + godDisplayName + " §f第 §c" + completedStage + " §f考"  );
+                        Component broadcastMsg = Component.literal("§6§l【神祇公告】 §e" + player.getScoreboardName() +
+                                " §f成功突破 §b" + godDisplayName + " §f第 §c" + completedStage + " §f考试炼！");
                         player.getServer().getPlayerList().broadcastSystemMessage(broadcastMsg, false);
                     }
-                    player.playNotifySound(net.minecraft.sounds.SoundEvents.UI_TOAST_CHALLENGE_COMPLETE,
-                            SoundSource.PLAYERS, 1.0F, 1.0F);
-                    player.playNotifySound(net.minecraft.sounds.SoundEvents.LIGHTNING_BOLT_THUNDER,
-                            SoundSource.WEATHER, 0.5F, 0.8F);
-                    player.sendSystemMessage(Component.literal("§6§l考核通过：§f" + godDisplayName + " §e第 " + completedStage + " 考"), true);
                     NetworkHandler.sendToClient(new PacketSyncGodData(cap), player);
                 } else {
-                    player.playNotifySound(net.minecraft.sounds.SoundEvents.GUARDIAN_ATTACK,
-                            SoundSource.PLAYERS, 1.0F, 0.5F);
-                    player.sendSystemMessage(Component.literal("§c考核失败，请检查你的神考完成度"));
+                    player.playNotifySound(SoundEvents.GUARDIAN_ATTACK, SoundSource.PLAYERS, 1.0F, 0.5F);
+                    player.sendSystemMessage(Component.literal("§c§n考核条件未达成§r §7- 请继续努力"), false);
                 }
             });
         });

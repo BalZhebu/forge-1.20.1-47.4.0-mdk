@@ -79,8 +79,9 @@ public class PacketSyncGodData {
 
     public static void handle(PacketSyncGodData msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
+            String cleanDesc = msg.desc != null ? msg.desc.replaceAll("\\n§.", "").replace("\n", "") : "";
             GodClientData.update(msg.godId, msg.displayName, msg.stage, msg.progress,
-                    msg.isGod, msg.desc, msg.target, msg.req, msg.type, msg.rewardDesc);
+                    msg.isGod, cleanDesc, msg.target, msg.req, msg.type, msg.rewardDesc);
         });
         ctx.get().setPacketHandled(true);
     }

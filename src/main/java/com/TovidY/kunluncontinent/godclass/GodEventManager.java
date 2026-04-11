@@ -22,24 +22,14 @@ public class GodEventManager {
                 if (stage < 1 || stage > 9) return;
                 String target = cap.getAssignedTargets()[stage];
                 String typeStr = cap.getAssignedTypes()[stage];
-
-                // 2. 判定是否为击杀任务
                 if (GodTaskType.KILL.name().equals(typeStr) && target != null) {
-                    // 获取被击杀生物的注册名 (例如 "minecraft:zombie")
                     String killedEntityId = ForgeRegistries.ENTITY_TYPES.getKey(event.getEntity().getType()).toString();
-
                     if (killedEntityId.equals(target)) {
-                        // 进度自增
                         cap.addGodTaskProgress(1);
-
-                        // 3. 检查是否达到完成条件
                         int required = cap.getAssignedCounts()[stage];
                         if (cap.getGodTaskProgress() >= required) {
-                            // 达成目标：发放奖励，进入下一考
                             cap.checkTaskCompletion(player);
                         }
-
-                        // 4. 核心修正：调用你 NetworkHandler 里的 sendToClient 方法同步数据
                         NetworkHandler.sendToClient(new PacketSyncGodData(cap), player);
                     }
                 }
