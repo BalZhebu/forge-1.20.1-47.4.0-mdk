@@ -5,6 +5,9 @@ import com.TovidY.kunluncontinent.entity.Icecrysta.CustomModel;
 import com.TovidY.kunluncontinent.entity.Icecrysta.IceCrystalEntity;
 import com.TovidY.kunluncontinent.entity.Icecrysta.IceCrystalRenderer;
 import com.TovidY.kunluncontinent.entity.Icecrysta.IceShardEntity;
+import com.TovidY.kunluncontinent.entity.demon.DemonWhaleEntity;
+import com.TovidY.kunluncontinent.entity.demon.DemonWhaleModel;
+import com.TovidY.kunluncontinent.entity.demon.DemonWhaleRenderer;
 import com.TovidY.kunluncontinent.entity.eyetrans.EyeTransformationEntity;
 import com.TovidY.kunluncontinent.entity.hunhe.HunheEntity;
 import com.TovidY.kunluncontinent.entity.hunhe.HunheRender;
@@ -68,6 +71,11 @@ public class EntityInit {
                     .sized(1.0F, 1.2F)
                     .build("snow_demon"));
 
+    public static final RegistryObject<EntityType<DemonWhaleEntity>> DEMON_WHALE =
+            ENTITY_TYPES.register("demon_whale", () -> EntityType.Builder.of(DemonWhaleEntity::new, MobCategory.MONSTER)
+                    .sized(10.0F, 10.5F)
+                    .build("demon_whale"));
+
     @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {
 
@@ -75,6 +83,7 @@ public class EntityInit {
         public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
             event.registerLayerDefinition(CustomModel.LAYER_LOCATION, CustomModel::createBodyLayer);
             event.registerLayerDefinition(SnowDemonModel.LAYER_LOCATION, SnowDemonModel::createBodyLayer);
+            event.registerLayerDefinition(DemonWhaleModel.LAYER_LOCATION, DemonWhaleModel::createBodyLayer);
         }
 
         @SubscribeEvent
@@ -84,6 +93,8 @@ public class EntityInit {
             EntityRenderers.register(EntityInit.ICE_CRYSTAL.get(), IceCrystalRenderer::new);
             EntityRenderers.register(EntityInit.ICE_SHARD.get(), ThrownItemRenderer::new);
             EntityRenderers.register(EntityInit.SNOW_DEMON.get(), SnowDemonRenderer::new);
+
+            EntityRenderers.register(EntityInit.DEMON_WHALE.get(), DemonWhaleRenderer::new);
         }
 
         @SubscribeEvent
@@ -99,6 +110,7 @@ public class EntityInit {
         public static void registerAttributes(EntityAttributeCreationEvent event) {
             event.put(EntityInit.ICE_CRYSTAL.get(), IceCrystalEntity.createAttributes().build());
             event.put(EntityInit.SNOW_DEMON.get(), SnowDemonEntity.createAttributes().build());
+            event.put(EntityInit.DEMON_WHALE.get(), DemonWhaleEntity.createAttributes().build());
         }
     }
 

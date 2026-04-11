@@ -1,8 +1,11 @@
 package com.TovidY.kunluncontinent.godclass.interfac;
 
+import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
+import com.TovidY.kunluncontinent.capability.playerattributes.PlayerUpgradeSystem;
 import com.TovidY.kunluncontinent.network.SynsAPI;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -114,13 +117,40 @@ public class GodInfo {
             player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
                 if (attrKey.equals("gongji")) cap.setGongji(cap.getGongji() + value);
                 if (attrKey.equals("maxshengming")) cap.setMaxshengming(cap.getMaxshengming() + value);
-                if (attrKey.equals("dengji")) cap.setDengji((int) (cap.getDengji() + value));
                 if (attrKey.equals("maxjingshenli")) cap.setMaxjingshenli(cap.getMaxjingshenli() + value);
+                if (attrKey.equals("dengji")) {
+                    if (player instanceof ServerPlayer serverPlayer) {
+                        int currentLevel = cap.getDengji();
+                        int rewardLevels = (int) value;
+                        for (int i = 0; i < rewardLevels; i++) {
+                            int nextLevel = currentLevel + 1;
+                            if (currentLevel >= 99) {
+                                applyLevelStatsOnly(serverPlayer, cap, 99);
+                            } else {
+                                PlayerUpgradeSystem.processSuccessfulUpgrade(serverPlayer, cap, nextLevel);
+                                currentLevel = nextLevel;
+                            }
+                        }
+                    }
+                }
                 SynsAPI.synsPlayerAttribute(player);
             });
         });
         rewardDescriptions.computeIfAbsent(stage, k -> new ArrayList<>()).add(formatted);
         return this;
+    }
+
+    private void applyLevelStatsOnly(ServerPlayer player, PlayerAttributeCapability capability, int level) {
+        capability.setMaxshengming(capability.getMaxshengming() + (level * 1.4f) * 0.7f);
+        capability.setFangyu(capability.getFangyu() + (level * 0.3f) * 0.7f);
+        capability.setGongji(capability.getGongji() + (level * 0.5f) * 0.65f);
+        capability.setMaxjingshenli(capability.getMaxjingshenli() + (level * 2f) * 1.2f);
+        capability.setMaxjingyan(capability.getMaxjingyan() + (level * 1.4f) * 1.3f);
+        capability.setShengming(capability.getShengming() + 1f);
+        capability.setWuchuan(capability.getWuchuan() + 1f);
+        capability.setShanbi(capability.getShanbi() + 1f);
+        capability.setKangbao(capability.getMingzhong() + 1f);
+        player.sendSystemMessage(Component.literal("§d§l【神赐】 §f由于你已达99级巅峰，无法升级百级，但神赐属性已强化！"));
     }
 
     public GodInfo addCommandReward(int stage, String command) {

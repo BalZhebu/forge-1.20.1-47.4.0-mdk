@@ -201,6 +201,7 @@ public class ModItems {
     //生物蛋
     public static final RegistryObject<Item> ICE_CRYSTAL_SPAWN_EGG = ITEMS.register("ice_crystal_spawn_egg", () -> new ForgeSpawnEggItem(EntityInit.ICE_CRYSTAL, 0xD9F3FF, 0x32A4FF, new Item.Properties()));
     public static final RegistryObject<Item> SNOW_DEMON_SPAWN_EGG = ITEMS.register("snow_demon_spawn_egg", () -> new ForgeSpawnEggItem(EntityInit.SNOW_DEMON, 0x000000, 0xFFFFFF, new Item.Properties()));
+    public static final RegistryObject<Item> DEMONWHALE_SPAWN_EGG = ITEMS.register("demonwhale_spawn_egg", () -> new ForgeSpawnEggItem(EntityInit.DEMON_WHALE, 0xB80505, 0x79400B, new Item.Properties()));
 
     //矿石宝石
     public static final RegistryObject<Item> GRAY_IRON_INGOT = ITEMS.register("gray_iron_ingot",()->new Item(new Item.Properties()));
@@ -510,6 +511,7 @@ public class ModItems {
     static {
         SPAWNEGGLIST.add(ICE_CRYSTAL_SPAWN_EGG);
         SPAWNEGGLIST.add(SNOW_DEMON_SPAWN_EGG);
+        SPAWNEGGLIST.add(DEMONWHALE_SPAWN_EGG);
     }
 
     public static ArrayList<RegistryObject<Item>> HUNGULIST = new ArrayList<>();

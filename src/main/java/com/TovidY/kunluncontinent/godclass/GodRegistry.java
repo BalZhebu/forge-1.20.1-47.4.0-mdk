@@ -16,14 +16,18 @@ public class GodRegistry {
         // ============================================================
         register("sea_god", "海神")
                 .setCumulative(true)
-                .addTask(1, GodTaskType.ATTRIBUTE, "maxshengming", 3500000, "第一考：最大生命值达到3500000以上")
-                .addAttrReward(1, "maxjingshenli", 1800.0f,"§b最大精神力提升：1800点")
 
-                .addTask(2, GodTaskType.ITEM_CONSUME, "minecraft:heart_of_the_sea", 1, "第二考：提交海洋之心")
-                .addItemReward(2, Items.TRIDENT, 1,"666物品")
+                .addTask(1, GodTaskType.ITEM_CONSUME, "minecraft:heart_of_the_sea", 15, "第一考：提交海洋之心（证明你对海洋的敬畏）")
+                .addAttrReward(1, "maxshengming", 50000,"§b最大生命值提高：50000点")
 
-                .addTask(3, GodTaskType.ATTRIBUTE, "jingshenli", 200, "第三考：精神力达到200")
-                .addAttrReward(3, "maxshengming", 20.0f,"最大生命值提升：20");
+                .addTask(2, GodTaskType.ATTRIBUTE, "maxshengming", 3500000, "第二考：最大生命值达到3500000以上")
+                .addAttrReward(2, "dengji", 1,"§b当前等级+1")
+
+                .addTask(3, GodTaskType.HUNHUAN_NIANXIAN, "any", 950000, "第三考：拥有一枚95万年以上魂环")
+                .addAttrReward(3, "maxjingshenli", 3000.0f,"§b最大精神力提升：3000点")
+
+        ;
+
 
         // ============================================================
         // 例子 2：修罗神 (Asura God) - 杀戮意志，积攒奖励至第九考

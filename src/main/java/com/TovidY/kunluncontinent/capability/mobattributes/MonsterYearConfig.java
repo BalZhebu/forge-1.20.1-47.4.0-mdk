@@ -26,6 +26,8 @@ public class MonsterYearConfig {
         register(EntityType.WARDEN, 500000, 1300000);
         //冰晶
         register(EntityInit.ICE_CRYSTAL.get(), 500, 880000);
+        //魔鲸
+        register(EntityInit.DEMON_WHALE.get(), 1000000, 9000000);
     }
 
     private static void register(EntityType<?> type, int min, int max) {

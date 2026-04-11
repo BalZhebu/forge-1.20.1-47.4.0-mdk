@@ -1,5 +1,6 @@
 package com.TovidY.kunluncontinent.network.client;
 
+import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.godclass.GodRegistry;
 import com.TovidY.kunluncontinent.godclass.interfac.GodInfo;
@@ -16,6 +17,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -44,7 +47,27 @@ public class C2SCheckTaskPacket {
                 if (type == GodTaskType.ATTRIBUTE) {
                     float currentVal = cap.getGodAttributeValue(target);
                     if (currentVal >= required) success = true;
-                } else if (type == GodTaskType.ITEM_CONSUME || type == GodTaskType.ITEM_CHECK) {
+                } else if (type == GodTaskType.HUNHUAN_NIANXIAN) {
+                    if (cap.getWuhunList() != null && !cap.getWuhunList().isEmpty()) {
+                        Map<String, List<MobAttributeCapability>> wuhunRingsMap = cap.getMonsterCapabilityLists();
+                        long maxNianxianFound = 0;
+                        for (List<MobAttributeCapability> rings : wuhunRingsMap.values()) {
+                            if (rings == null) continue;
+                            for (MobAttributeCapability ringCap : rings) {
+                                if (ringCap.getNianxian() > maxNianxianFound) {
+                                    maxNianxianFound = (long) ringCap.getNianxian();
+                                }
+                            }
+                        }
+                        if (maxNianxianFound >= required) {
+                            success = true;
+                        } else {
+                            player.sendSystemMessage(Component.literal("§c当前最高魂环年限为: §e" + maxNianxianFound + " §c，未达考核要求: §e" + required));
+                        }
+                    } else {
+                        player.sendSystemMessage(Component.translatable("请开启武魂"));
+                    }
+                }else if (type == GodTaskType.ITEM_CONSUME || type == GodTaskType.ITEM_CHECK) {
                     int count = countItem(player, target);
                     if (count >= required) {
                         success = true;
