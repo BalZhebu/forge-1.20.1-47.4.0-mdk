@@ -31,12 +31,12 @@ public class PolarIcePortalBlock extends Block {
 
     public PolarIcePortalBlock() {
         super(BlockBehaviour.Properties.of()
-                .noCollission() // 玩家可以穿过去
-                .strength(-1.0F) // 不可破坏
-                .lightLevel((state) -> 12) // 发出冰蓝色的光
+                .noCollission()
+                .strength(-1.0F)
+                .lightLevel((state) -> 12)
                 .noLootTable()
                 .pushReaction(PushReaction.BLOCK)
-                .noOcclusion()); // 不能被活塞推
+                .noOcclusion());
 
         this.registerDefaultState(this.stateDefinition.any().setValue(AXIS, Direction.Axis.X));
     }

@@ -453,17 +453,25 @@ public class PWPlayerTickEvent {
 
     private static void updatePlayerFly(Player player, @NotNull PlayerAttributeCapability capability) {
         if (!player.isCreative() && !player.isSpectator()) {
+            boolean canFlyPrev = player.getAbilities().mayfly;
             if (player.getPersistentData().contains("knocked_down")) {
                 player.getAbilities().mayfly = false;
                 player.getAbilities().flying = false;
-            }
-            else if (ModAttributeAPI.getMaxjingshenli(player) > 5000) {
+            } else if (ModAttributeAPI.getMaxjingshenli(player) > 5000) {
                 player.getAbilities().mayfly = true;
             } else {
                 player.getAbilities().mayfly = false;
+                player.getAbilities().flying = false;
             }
-            if (player.getAbilities().flying && player.level().getGameTime() % 10 == 0) {
-                capability.setJingshenli(capability.getJingshenli() - 30 + (float) capability.getDengji() / 5);
+            if (canFlyPrev != player.getAbilities().mayfly) {
+                player.onUpdateAbilities();
+            }
+            if (player.getAbilities().flying) {
+                if (player.level().getGameTime() % 10 == 0) {
+                    float currentJs = capability.getJingshenli();
+                    float cost = 30.0f - (float) capability.getDengji() / 5.0f;
+                    capability.setJingshenli(currentJs - cost);
+                }
             }
             if (capability.getWuhunName() != null && player.level().getGameTime() % 20 == 0) {
                 int level = capability.getDengji();

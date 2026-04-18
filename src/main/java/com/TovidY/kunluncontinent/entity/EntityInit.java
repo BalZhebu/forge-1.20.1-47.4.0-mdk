@@ -73,7 +73,7 @@ public class EntityInit {
 
     public static final RegistryObject<EntityType<DemonWhaleEntity>> DEMON_WHALE =
             ENTITY_TYPES.register("demon_whale", () -> EntityType.Builder.of(DemonWhaleEntity::new, MobCategory.MONSTER)
-                    .sized(10.0F, 10.5F)
+                    .sized(8.0F, 6.5F)
                     .build("demon_whale"));
 
     @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)

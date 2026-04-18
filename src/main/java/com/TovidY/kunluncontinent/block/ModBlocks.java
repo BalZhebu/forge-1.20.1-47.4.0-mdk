@@ -1,11 +1,8 @@
 package com.TovidY.kunluncontinent.block;
 
 import com.TovidY.kunluncontinent.KlMain;
-import com.TovidY.kunluncontinent.block.klblock.CultivationPlatformBlock;
-import com.TovidY.kunluncontinent.block.klblock.KLCropBlock;
-import com.TovidY.kunluncontinent.block.klblock.LiandanluBlock;
+import com.TovidY.kunluncontinent.block.klblock.*;
 import com.TovidY.kunluncontinent.block.portal.polarice.PolarIcePortalBlock;
-import com.TovidY.kunluncontinent.block.klblock.PutuanBlock;
 import com.TovidY.kunluncontinent.block.portal.polarice.ThunderRealmPortalBlock;
 import com.TovidY.kunluncontinent.item.ModItems;
 import net.minecraft.ChatFormatting;
@@ -154,6 +151,9 @@ public class ModBlocks {
                             pTooltip.add(Component.translatable("tooltip.kunluncontinent.polar_ice_portal_block").withStyle(ChatFormatting.DARK_GRAY));
                         }
                     });
+
+    //海底祭坛
+    public static final RegistryObject<Block> UNDERWATER_ALTAR = registerBlock("underwater_alta", UnderwaterAltarBlock::new);
 
     //传送门方块
     public static final RegistryObject<Block> POLAR_ICE_PORTAL =

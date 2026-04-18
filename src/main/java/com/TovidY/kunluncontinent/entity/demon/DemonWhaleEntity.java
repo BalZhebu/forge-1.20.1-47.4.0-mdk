@@ -3,10 +3,14 @@ package com.TovidY.kunluncontinent.entity.demon;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapabilityProvider;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -32,6 +36,11 @@ import java.util.concurrent.atomic.AtomicReference;
 public class DemonWhaleEntity extends Monster {
 
     private int skillCooldown = 300;
+
+    private static final EntityDataAccessor<Boolean> IS_CASTING = SynchedEntityData.defineId(DemonWhaleEntity.class, EntityDataSerializers.BOOLEAN);
+
+    private int castTimer = 0; // 蓄力计时器（60 ticks = 3秒）
+    private int pendingSkill = -1; // 准备释放的技能编号
 
     private int waveTicks = 0;
 
@@ -61,7 +70,21 @@ public class DemonWhaleEntity extends Monster {
     }
 
     @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(IS_CASTING, false);
+    }
+
+    public boolean isCasting() {
+        return this.entityData.get(IS_CASTING);
+    }
+
+    @Override
     public boolean doHurtTarget(Entity target) {
+        if (this.distanceToSqr(target) > this.getMeleeAttackRangeSqr((LivingEntity) target) * 1.5D) {
+            return false;
+        }
+
         Vec3 originalMovement = target.getDeltaMovement();
         boolean hurt = super.doHurtTarget(target);
         if (hurt) {
@@ -72,21 +95,65 @@ public class DemonWhaleEntity extends Monster {
     }
 
     @Override
+    public double getMeleeAttackRangeSqr(LivingEntity target) {
+        float f = this.getBbWidth() * 0.8F;
+        return (double)(f * f + target.getBbWidth());
+    }
+
+    @Override
     public void aiStep() {
         super.aiStep();
-        if (!this.level().isClientSide && this.isAlive() && this.getTarget() != null) {
-            if (skillCooldown > 0) {
-                skillCooldown--;
-            } else {
-                int skillType = this.random.nextInt(3);
-                triggerSkill(skillType);
-                skillCooldown = 300 + this.random.nextInt(301);
+        if (!this.level().isClientSide) {
+            if (this.isAlive() && this.getTarget() != null) {
+                if (skillCooldown > 0 && !isCasting()) {
+                    skillCooldown--;
+                }
+                else if (skillCooldown <= 0 && !isCasting()) {
+                    startCasting();
+                }
+            }
+            if (isCasting()) {
+                castTimer--;
+                if (castTimer <= 0) {
+                    this.entityData.set(IS_CASTING, false);
+                    if (pendingSkill != -1) {
+                        triggerSkill(pendingSkill);
+                        pendingSkill = -1;
+                    }
+                    skillCooldown = 300 + this.random.nextInt(301);
+                }
             }
             if (waveTicks > 0) {
                 handleWaterWave();
                 waveTicks--;
             }
+        } else {
+            if (this.isCasting()) {
+                renderCastingParticles();
+            }
         }
+    }
+
+    private void renderCastingParticles() {
+        for (int i = 0; i < 5; i++) {
+            double dx = this.getX() + (this.random.nextDouble() - 0.5D) * 10.0D;
+            double dy = this.getY() + this.random.nextDouble() * 5.0D;
+            double dz = this.getZ() + (this.random.nextDouble() - 0.5D) * 10.0D;
+            double vx = (this.getX() - dx) * 0.1D;
+            double vy = (this.getY() + 2.0D - dy) * 0.1D;
+            double vz = (this.getZ() - dz) * 0.1D;
+            this.level().addParticle(ParticleTypes.SOUL, dx, dy, dz, vx, vy, vz);
+            this.level().addParticle(ParticleTypes.GLOW, dx, dy, dz, 0, 0, 0);
+        }
+    }
+
+    private void startCasting() {
+        this.castTimer = 60; // 3秒蓄力
+        this.pendingSkill = this.random.nextInt(3); // 预选技能
+        this.entityData.set(IS_CASTING, true);
+
+        this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
+                SoundEvents.ENDER_DRAGON_GROWL, this.getSoundSource(), 1.0F, 0.5F);
     }
 
     private void triggerSkill(int type) {
@@ -217,9 +284,9 @@ public class DemonWhaleEntity extends Monster {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.2D, false));
-        this.goalSelector.addGoal(3, new RandomSwimmingGoal(this, 1.0D, 20));
-        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1.0D));
-        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 12.0F)); // 增大观察范围
+        this.goalSelector.addGoal(3, new RandomSwimmingGoal(this, 1.0D, 40));
+        this.goalSelector.addGoal(4, new RandomStrollGoal(this, 0.8D, 60));
+        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
@@ -247,6 +314,19 @@ public class DemonWhaleEntity extends Monster {
         if (this.isAlive() && !this.isInWater()) {
             this.setAirSupply(300);
         }
+        if (!this.level().isClientSide) {
+            // 只有当状态真正改变且移动停止时才强制重置导航，减少抽搐
+            boolean inWater = this.isInWater();
+            if (inWater && this.navigation != this.waterNav) {
+                this.navigation.stop(); // 切换前先停下当前路径
+                this.navigation = this.waterNav;
+                this.moveControl = this.aquaticMoveControl;
+            } else if (!inWater && this.navigation != this.groundNav) {
+                this.navigation.stop();
+                this.navigation = this.groundNav;
+                this.moveControl = this.landMoveControl;
+            }
+        }
     }
 
     public float getVisualScale() {
@@ -254,7 +334,7 @@ public class DemonWhaleEntity extends Monster {
         this.getCapability(MobAttributeCapabilityProvider.CAPABILITY).ifPresent(attr -> {
             s.set(1.0F + (float)attr.getNianxian() / 50000.0F);
         });
-        return Math.min(s.get(), 4.0F);
+        return Math.min(s.get(), 2.5F);
     }
 
     @Override
@@ -268,9 +348,6 @@ public class DemonWhaleEntity extends Monster {
             this.moveRelative(this.getSpeed(), travelVector);
             this.move(MoverType.SELF, this.getDeltaMovement());
             this.setDeltaMovement(this.getDeltaMovement().scale(0.9D).add(0, -0.005D, 0));
-            if (this.getTarget() == null) {
-                this.setDeltaMovement(this.getDeltaMovement().add(0, -0.005D, 0));
-            }
         } else {
             super.travel(travelVector);
         }

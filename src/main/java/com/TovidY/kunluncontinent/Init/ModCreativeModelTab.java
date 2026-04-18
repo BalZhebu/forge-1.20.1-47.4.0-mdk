@@ -77,6 +77,8 @@ public class ModCreativeModelTab {
                             pOutput.accept(itemRegistryObject.get());
                         }
 
+                        pOutput.accept(ModBlocks.UNDERWATER_ALTAR.get());
+
                         //魂骨
                         for (RegistryObject<Item> itemRegistryObject : ModItems.HUNGULIST){
                             pOutput.accept(itemRegistryObject.get());

@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.block;
 
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.block.blockentity.LiandanluBlockEntity;
+import com.TovidY.kunluncontinent.block.blockentity.UnderwaterAltarTile;
 import com.TovidY.kunluncontinent.block.klblock.LiandanluBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -32,6 +33,12 @@ public class ModBlockEntities {
                             ModBlocks.LIANDANLU7.get(), // 补上 7 阶
                             ModBlocks.LIANDANLU8.get(), // 补上 8 阶
                             ModBlocks.LIANDANLU9.get()  // 补上 9 阶
+                    ).build(null));
+
+    public static final RegistryObject<BlockEntityType<UnderwaterAltarTile>> UNDERWATER_ALTAR_TILE =
+            BLOCK_ENTITIES.register("underwater_altar_be", () ->
+                    BlockEntityType.Builder.of(UnderwaterAltarTile::new,
+                            ModBlocks.UNDERWATER_ALTAR.get()
                     ).build(null));
 
     public static void register(IEventBus eventBus) {

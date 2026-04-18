@@ -147,6 +147,12 @@ import net.minecraftforge.common.data.ExistingFileHelper;
             itemModels().withExistingParent("putuan_block",
                     ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/putuan_block"));
 
+            Block underwater = ModBlocks.UNDERWATER_ALTAR.get();
+            simpleBlock(underwater, new ModelFile.UncheckedModelFile(
+                    ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/underwater_alta")));
+            itemModels().withExistingParent("underwater_alta",
+                    ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/underwater_alta"));
+
         }
 
         private void makeCrop(CropBlock block, String name) {

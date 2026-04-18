@@ -124,7 +124,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
                 "\n§l年限生成系统：§r玩家距离世界坐标越远，生成高年限的生物概率越高，最远10000格以外，，到达一万格后，这个值将会到达极限。" +
                 "\n§l魂骨系统：§r玩家在击杀生物时有极低概率掉落魂骨（击杀生物年限在1000万年以上时魂骨百分百掉落），魂骨是词条制，最低为1词条，最高为10词条。词条越多，概率越低。" +
                 "\n§l蒲团修炼系统：§r玩家在前期难以修炼时可以用蒲团修炼，玩家在前期时修满一个周期（10分钟）可直升两级，修炼时玩家有10分钟修炼时间，时间结束后就会被强制停止修炼，可通过除不修炼的任何情况下都可以恢复这个修炼时间，提示：若玩家修炼时间已经结束，但仍然可以修炼，但这次修炼只会恢复精神力，而不会增加修为。" +
-                "\n§l飞行系统：§r当玩家的最大精神力到达5000并等级大于25级时，玩家将解锁飞行能力，飞行时精神力消耗加快，等级越高消耗越慢。" +
+                "\n§l飞行系统：§r当玩家的最大精神力到达5000以上时，玩家将解锁飞行能力，飞行时精神力消耗加快，等级越高消耗越慢。" +
                 "\n§l进阶维度系统：§r根据某些特殊生物掉落的物品可合成传送门框架，请查看传送门框架描述来搭建传送门结构，可前往生成高年限生物的维度。" +
                 "\n§l特殊攻击系统：§r玩家攻击生物时有低概率触发特殊效果，例如撕裂、燃烧、震撼、湮灭、等特殊效果，特殊效果可增加玩家对生物造成的那次伤害并附加debuff，注意：怪物也可以对你造成这些特殊效果。" +
                 "\n§l玩家屏幕的GUI属性解释：§r左上角GUI的红色部分的代表玩家血量，血量条下面体力条代表玩家的饱食度，体力条下面浅蓝色代表玩家的精神力，物品栏上方中间多边形内空白处的数值为玩家当前等级（当玩家进入世界、或更新事件时这个数值会异变，这是正常现象，通常几秒即可恢复），物品栏上方一点点的位置有个黄色进度条为经验条，满了后自动突破。注意：数值在玩家做出某种事件更替时会出现异常变动，这是正常现象，稍等几秒即可恢复。" +
@@ -138,6 +138,8 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.EXTREME_COLD.get(),"§b冰晶");
 
         add(ModItems.DEMONWHALE_SPAWN_EGG.get(),"§c魔鲸刷怪蛋");
+
+
 
         add(ModItems.ATTRIBUTE_BUTTON.get(),"属性面板");
         add(ModItems.SOUL_BONE_BUTTON.get(),"魂骨面板");
@@ -426,6 +428,9 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.RINSEI_LEGGINGS.get(), "§b凛晶护腿");
         add(ModItems.RINSEI_BOOTS.get(), "§b凛晶靴子");
 
+        //物品类
+        add(ModItems.DEEP_SEA_OFFERINGS.get(),"§b深海祭品");
+
         //方块类
         add(ModBlocks.CULTIVATION_PLATFORM.get(),"重修台");
         add(ModBlocks.GRAY_IRON_ORE.get(),"灰铁矿");
@@ -433,6 +438,8 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModBlocks.RED_FIRE_ORE.get(), "赤火矿");
         add(ModBlocks.SUNKEN_SILVER_ORE.get(), "沉银矿");
         add(ModBlocks.COLD_HEARTED_STEEL_ORE.get(), "寒心钢矿");
+
+        add(ModBlocks.UNDERWATER_ALTAR.get(), "海底祭坛");
 
         add(ModBlocks.RUBY_ORE.get(), "深层红宝石原矿");
         add(ModBlocks.AMETHYST_ORE.get(),"紫瑛原矿");
