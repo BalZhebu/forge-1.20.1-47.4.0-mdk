@@ -2,12 +2,8 @@ package com.TovidY.kunluncontinent.block.klblock;
 
 import com.TovidY.kunluncontinent.block.ModBlockEntities;
 import com.TovidY.kunluncontinent.block.blockentity.UnderwaterAltarTile;
-import com.TovidY.kunluncontinent.entity.EntityInit;
-import com.TovidY.kunluncontinent.entity.demon.DemonWhaleEntity;
 import com.TovidY.kunluncontinent.item.ModItems;
 import net.minecraft.core.BlockPos;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;

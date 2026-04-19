@@ -168,7 +168,16 @@ public class ModItems {
     public static final RegistryObject<Item> EXTREME_COLD_SNOWFLAKE_FRAGMENT = ITEMS.register("extreme_cold_snowflake_fragment",()->new Item(new Item.Properties()));
     public static final RegistryObject<Item> GUIDE_BOOK = ITEMS.register("guide_book",()->new GuideBookItem(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EXTREME_COLD = ITEMS.register("extreme_cold",()->new Item(new Item.Properties()));
+
+    public static final RegistryObject<Item> DEEPSEA_JINGHUA = ITEMS.register("deepsea_jinghua",()->new Item(new Item.Properties()){
+        @Override
+        public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
+            pTooltipComponents.add(Component.translatable("item.deepsea_jinghua.tooltip").withStyle(ChatFormatting.GRAY));
+        }
+    });
+
     public static final RegistryObject<Item> EYE_TRANSFORMATION  = ITEMS.register("eye_transformation",()->new EyeTransformationItem(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> EYE_DEEP_SEA = ITEMS.register("eye_deep_sea",()->new EyeDeepSeaItem(new Item.Properties().stacksTo(1)));
 
     public static final RegistryObject<Item> DEEP_SEA_OFFERINGS = ITEMS.register("deep_sea_offerings",()->new Item(new Item.Properties()));
 
@@ -505,7 +514,10 @@ public class ModItems {
         NORMALITEMSLIST.add(GUIDE_BOOK);
         NORMALITEMSLIST.add(EXTREME_COLD);
 
+        NORMALITEMSLIST.add(DEEPSEA_JINGHUA);
+
         NORMALITEMSLIST.add(EYE_TRANSFORMATION);
+        NORMALITEMSLIST.add(EYE_DEEP_SEA);
 
         NORMALITEMSLIST.add(DEEP_SEA_OFFERINGS);
     }

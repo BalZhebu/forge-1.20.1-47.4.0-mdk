@@ -104,6 +104,28 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .unlockedBy("has_eye", has(ModItems.EYE_TRANSFORMATION.get()))
                 .save(pWriter);
 
+        //深海之眼
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.EYE_DEEP_SEA.get())
+                .pattern("ZXZ")
+                .pattern("XOX")
+                .pattern("ZXZ")
+                .define('X', ModItems.SAPPHIRE.get())
+                .define('Z', ModItems.DEEPSEA_JINGHUA.get())
+                .define('O', Items.ENDER_EYE)
+                .unlockedBy("has_eye_deep", has(ModItems.EYE_DEEP_SEA.get()))
+                .save(pWriter);
+
+        //深渊祭品
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.DEEP_SEA_OFFERINGS.get())
+                .pattern("ZXZ")
+                .pattern("XOX")
+                .pattern("ZXZ")
+                .define('O', Items.ENCHANTED_GOLDEN_APPLE)
+                .define('Z', ModItems.DEEPSEA_JINGHUA.get())
+                .define('X', ModItems.EYE_DEEP_SEA.get())
+                .unlockedBy("has_eye_dee_sea", has(ModItems.DEEP_SEA_OFFERINGS.get()))
+                .save(pWriter);
+
         //一阶魂环分解器
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.FIRST_DECOMPOSITION_GOSSIP.get())
                 .pattern("ZXZ")

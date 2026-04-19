@@ -2,7 +2,6 @@ package com.TovidY.kunluncontinent.datagen.oredatagen;
 
 import com.TovidY.kunluncontinent.KlMain;
 import com.mojang.datafixers.util.Pair;
-import io.netty.util.Constant;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
@@ -25,6 +24,8 @@ import net.minecraft.world.level.levelgen.structure.structures.JigsawStructure;
 
 import java.util.List;
 import java.util.Map;
+
+
 public class ModStructureProvider {
 
     public static final ResourceKey<Structure> MY_BUILDING = ResourceKey.create(Registries.STRUCTURE,
@@ -32,6 +33,12 @@ public class ModStructureProvider {
 
     public static final ResourceKey<StructureSet> MY_BUILDING_SET = ResourceKey.create(Registries.STRUCTURE_SET,
             ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "my_building_set"));
+
+    public static final ResourceKey<Structure> UNDERWATER_RUINS = ResourceKey.create(Registries.STRUCTURE,
+            ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "underwater_ruins"));
+
+    public static final ResourceKey<StructureSet> UNDERWATER_RUINS_SET = ResourceKey.create(Registries.STRUCTURE_SET,
+            ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "underwater_ruins_set"));
 
     public static void bootstrapStructure(BootstapContext<Structure> context) {
         HolderGetter<Biome> biomes = context.lookup(Registries.BIOME);
@@ -50,6 +57,20 @@ public class ModStructureProvider {
                 false,
                 Heightmap.Types.WORLD_SURFACE_WG
         ));
+
+        context.register(UNDERWATER_RUINS, new JigsawStructure(
+                new Structure.StructureSettings(
+                        biomes.getOrThrow(BiomeTags.IS_DEEP_OCEAN),
+                        Map.of(),
+                        GenerationStep.Decoration.SURFACE_STRUCTURES,
+                        TerrainAdjustment.BEARD_THIN
+                ),
+                pools.getOrThrow(ResourceKey.create(Registries.TEMPLATE_POOL, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "underwater_ruins_pool"))),
+                1,
+                ConstantHeight.of(VerticalAnchor.absolute(0)),
+                false,
+                Heightmap.Types.OCEAN_FLOOR_WG
+        ));
     }
 
     public static void bootstrapPools(BootstapContext<StructureTemplatePool> context) {
@@ -66,6 +87,16 @@ public class ModStructureProvider {
                         StructureTemplatePool.Projection.RIGID
                 )
         );
+
+        context.register(ResourceKey.create(Registries.TEMPLATE_POOL, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "underwater_ruins_pool")),
+                new StructureTemplatePool(
+                        emptyPool,
+                        List.of(
+                                Pair.of(StructurePoolElement.single(KlMain.MOD_ID + ":underwater_ruins"), 1)
+                        ),
+                        StructureTemplatePool.Projection.RIGID
+                )
+        );
     }
 
     public static void bootstrapStructureSet(BootstapContext<StructureSet> context) {
@@ -73,11 +104,16 @@ public class ModStructureProvider {
 
         context.register(MY_BUILDING_SET, new StructureSet(
                 structures.getOrThrow(MY_BUILDING),
+                new RandomSpreadStructurePlacement(500, 100, RandomSpreadType.LINEAR, 143576182)
+        ));
+
+        context.register(UNDERWATER_RUINS_SET, new StructureSet(
+                structures.getOrThrow(UNDERWATER_RUINS),
                 new RandomSpreadStructurePlacement(
-                        800, // spacing: 区块跨度
-                        100, // separation: 最小距离
+                        100,
+                        20,
                         RandomSpreadType.LINEAR,
-                        143576182 // 盐值
+                        986514321
                 )
         ));
     }

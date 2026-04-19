@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.List;
 
 //玩家击杀生物事件
+
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class KLivingDeathEvent {
     private static final RandomSource RANDOM = RandomSource.create();
@@ -43,6 +44,9 @@ public class KLivingDeathEvent {
         entity.getCapability(MobAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
             Entity sourceEntity = event.getSource().getEntity();
             if (!(sourceEntity instanceof Player player)) return;
+
+            ModDropHandler.tryExtraDrops(entity, player);
+
             NeidanDropHandler.tryDropNeidan(entity, cap, player);
             handleExperience(player, cap);
             tryGenerateHunhuan(cap, entity.level(), entity.getOnPos());
@@ -110,16 +114,16 @@ public class KLivingDeathEvent {
 
     private static int rollAttributeCount() {
         double r = RANDOM.nextDouble();
-        if (r < 0.05) return 1;   // 5% 概率 1 词条
-        if (r < 0.15) return 2;   // 10% 概率 2 词条
-        if (r < 0.35) return 3;   // 20% 概率 3 词条
-        if (r < 0.65) return 4;   // 30% 概率 4 词条 (峰值)
-        if (r < 0.85) return 5;   // 20% 概率 5 词条 (峰值)
-        if (r < 0.93) return 6;   // 8% 概率 6 词条
-        if (r < 0.97) return 7;   // 4% 概率 7 词条
-        if (r < 0.985) return 8;  // 1.5% 概率 8 词条
-        if (r < 0.995) return 9;  // 1% 概率 9 词条
-        return 10;                // 0.5% 概率 10 词条 (极品全满)
+        if (r < 0.05) return 1;
+        if (r < 0.15) return 2;
+        if (r < 0.35) return 3;
+        if (r < 0.65) return 4;
+        if (r < 0.85) return 5;
+        if (r < 0.93) return 6;
+        if (r < 0.97) return 7;
+        if (r < 0.985) return 8;
+        if (r < 0.995) return 9;
+        return 10;
     }
 
     private static double calculateHunguChance(int nianxian) {

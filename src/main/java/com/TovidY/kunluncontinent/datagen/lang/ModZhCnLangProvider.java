@@ -429,6 +429,9 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.RINSEI_BOOTS.get(), "§b凛晶靴子");
 
         //物品类
+        add(ModItems.DEEPSEA_JINGHUA.get(),"§b海洋精华");
+        add("item.deepsea_jinghua.tooltip","击杀水生生物概率掉落");
+        add(ModItems.EYE_DEEP_SEA.get(),"§b深海之眼");
         add(ModItems.DEEP_SEA_OFFERINGS.get(),"§b深海祭品");
 
         //方块类

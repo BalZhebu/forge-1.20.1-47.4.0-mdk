@@ -26,6 +26,8 @@ public class GodRegistry {
                 .addTask(3, GodTaskType.HUNHUAN_NIANXIAN, "any", 950000, "第三考：拥有一枚95万年以上魂环")
                 .addAttrReward(3, "maxjingshenli", 3000.0f,"§b最大精神力提升：3000点")
 
+                .addTask(4, GodTaskType.KILL, "kunluncontinent:demon_whale", 1, "第四考：击杀1只魔鲸")
+                .addAttrReward(4, "gongji", 1500.0f,"§b攻击力提升：1500点")
         ;
 
 
