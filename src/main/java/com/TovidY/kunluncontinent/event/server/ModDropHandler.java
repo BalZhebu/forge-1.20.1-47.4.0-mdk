@@ -16,7 +16,7 @@ public class ModDropHandler {
     public static void tryExtraDrops(LivingEntity entity, Player player) {
         // 1. 海洋生物掉落深海精华 (6% 概率)
         // 使用 isMarine(entity) 自动判断所有属于水生、鱼类、甚至包含海洋关键词的生物
-        handleSimpleDrop(entity, 0.50, ModItems.DEEPSEA_JINGHUA.get(), ModDropHandler::isMarine);
+        handleSimpleDrop(entity, 0.06, ModItems.DEEPSEA_JINGHUA.get(), ModDropHandler::isMarine);
 
         // --- 以后在这里加新的掉落逻辑 ---
         // 例子：击杀僵尸类生物 10% 掉落某个东西

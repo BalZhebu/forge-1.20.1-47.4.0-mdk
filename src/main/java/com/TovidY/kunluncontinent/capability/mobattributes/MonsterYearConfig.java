@@ -19,11 +19,11 @@ public class MonsterYearConfig {
 
     static {
         //末影龙
-        register(EntityType.ENDER_DRAGON, 500000, 2000000);
+        register(EntityType.ENDER_DRAGON, 100000, 990000);
         //凋零
-        register(EntityType.WITHER, 800000, 1500000);
+        register(EntityType.WITHER, 200000, 990000);
         //坚守者
-        register(EntityType.WARDEN, 500000, 1300000);
+        register(EntityType.WARDEN, 300000, 990000);
         //冰晶
         register(EntityInit.ICE_CRYSTAL.get(), 500, 880000);
         //魔鲸

@@ -126,6 +126,19 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .unlockedBy("has_eye_dee_sea", has(ModItems.DEEP_SEA_OFFERINGS.get()))
                 .save(pWriter);
 
+        //魔鲸徽章
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.DEMON_WHALE_MEDAL.get())
+                .pattern(" A ")
+                .pattern("BCD")
+                .pattern(" E ")
+                .define('A', Items.DRAGON_HEAD)
+                .define('B', Items.NETHER_STAR)
+                .define('C', ModItems.DEMON_WHALE_BADGE.get())
+                .define('D', Items.SCULK_CATALYST)
+                .define('E', ModItems.DEEPSEA_JINGHUA.get())
+                .unlockedBy("has_demon_whale_badge", has(ModItems.DEMON_WHALE_MEDAL.get()))
+                .save(pWriter);
+
         //一阶魂环分解器
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.FIRST_DECOMPOSITION_GOSSIP.get())
                 .pattern("ZXZ")

@@ -28,6 +28,9 @@ public class GodRegistry {
 
                 .addTask(4, GodTaskType.KILL, "kunluncontinent:demon_whale", 1, "第四考：击杀1只魔鲸")
                 .addAttrReward(4, "gongji", 1500.0f,"§b攻击力提升：1500点")
+
+                .addTask(5, GodTaskType.ITEM_CONSUME, "kunluncontinent:demon_whale_medal", 1, "第五考：提交一个深海勋章")
+                .addAttrReward(5, "fangyu", 3000.0f,"§b防御提升：3000点")
         ;
 
 

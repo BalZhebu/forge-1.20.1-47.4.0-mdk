@@ -1,6 +1,7 @@
 package com.TovidY.kunluncontinent.entity.demon;
 
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapabilityProvider;
+import com.TovidY.kunluncontinent.item.ModItems;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -12,6 +13,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.BossEvent;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -22,9 +24,12 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.navigation.WaterBoundPathNavigation;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.Vec3;
@@ -39,8 +44,8 @@ public class DemonWhaleEntity extends Monster {
 
     private static final EntityDataAccessor<Boolean> IS_CASTING = SynchedEntityData.defineId(DemonWhaleEntity.class, EntityDataSerializers.BOOLEAN);
 
-    private int castTimer = 0; // 蓄力计时器（60 ticks = 3秒）
-    private int pendingSkill = -1; // 准备释放的技能编号
+    private int castTimer = 0;
+    private int pendingSkill = -1;
 
     private int waveTicks = 0;
 
@@ -75,6 +80,45 @@ public class DemonWhaleEntity extends Monster {
         this.entityData.define(IS_CASTING, false);
     }
 
+    @Override
+    protected void dropCustomDeathLoot(DamageSource source, int lootingMultiplier, boolean killedByPlayer) {
+        super.dropCustomDeathLoot(source, lootingMultiplier, killedByPlayer);
+        if (killedByPlayer) {
+            ItemStack neidanStack = new ItemStack(ModItems.NEIDAN6.get());
+            int min = 5;
+            int max = 30;
+            int count = min + this.random.nextInt(max - min + 1);
+            neidanStack.setCount(count);
+            neidanStack.getOrCreateTag().putString("Quality", "ZHEN");
+            neidanStack.getOrCreateTag().putString("Source", "DemonWhale");
+            ItemEntity neidanEntity = this.spawnAtLocation(neidanStack);
+            if (neidanEntity != null) {
+                neidanEntity.setGlowingTag(true); // 开启实体发光轮廓
+            }
+
+            ItemStack huizhangStack = new ItemStack(ModItems.DEMON_WHALE_BADGE.get());
+            huizhangStack.setCount(1);
+
+            ItemEntity badgeEntity = this.spawnAtLocation(huizhangStack);
+            if (badgeEntity != null) {
+                badgeEntity.setGlowingTag(true);
+            }
+
+            ItemStack kuangwuStack = new ItemStack(ModItems.COLD_HEARTED_STEEL_INGOT.get());
+            int kuangwumin = 3;
+            int kuangwumax = 10;
+            int count1 = kuangwumin + this.random.nextInt(kuangwumax - kuangwumin + 1);
+            kuangwuStack.setCount(count1);
+
+            ItemEntity kuangwuEntity = this.spawnAtLocation(kuangwuStack);
+            if (kuangwuEntity != null) {
+                kuangwuEntity.setGlowingTag(true);
+            }
+
+
+            this.spawnAtLocation(kuangwuStack);
+        }
+    }
     public boolean isCasting() {
         return this.entityData.get(IS_CASTING);
     }

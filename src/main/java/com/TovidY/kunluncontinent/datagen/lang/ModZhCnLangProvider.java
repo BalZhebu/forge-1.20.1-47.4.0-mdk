@@ -433,6 +433,8 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("item.deepsea_jinghua.tooltip","击杀水生生物概率掉落");
         add(ModItems.EYE_DEEP_SEA.get(),"§b深海之眼");
         add(ModItems.DEEP_SEA_OFFERINGS.get(),"§b深海祭品");
+        add(ModItems.DEMON_WHALE_MEDAL.get(),"§b深海勋章");
+        add(ModItems.DEMON_WHALE_BADGE.get(), "§b魔鲸徽章");
 
         //方块类
         add(ModBlocks.CULTIVATION_PLATFORM.get(),"重修台");
@@ -454,6 +456,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModBlocks.DROSS_BLOCK.get(), "丹渣块");
         add("tooltip.kunluncontinent.dross_block","放入炼丹炉可明显减少破碎丹药概率");
         add(ModBlocks.SOUL_SOIL.get(),"魂土");
+        add("item.demon_whale_badge.tooltip","击杀魔鲸必定掉落");
 
         //武魂果实
         add(ModItems.GUOSHI_POHUNQIANG.get(), "§c武魂果实 - 破魂枪");

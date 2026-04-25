@@ -169,6 +169,14 @@ public class ModItems {
     public static final RegistryObject<Item> GUIDE_BOOK = ITEMS.register("guide_book",()->new GuideBookItem(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EXTREME_COLD = ITEMS.register("extreme_cold",()->new Item(new Item.Properties()));
 
+    public static final RegistryObject<Item> DEMON_WHALE_MEDAL = ITEMS.register("demon_whale_medal",()->new Item(new Item.Properties()));
+    public static final RegistryObject<Item> DEMON_WHALE_BADGE = ITEMS.register("demon_whale_badge",()->new Item(new Item.Properties()){
+        @Override
+        public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
+            pTooltipComponents.add(Component.translatable("item.demon_whale_badge.tooltip").withStyle(ChatFormatting.GRAY));
+        }
+    });
+
     public static final RegistryObject<Item> DEEPSEA_JINGHUA = ITEMS.register("deepsea_jinghua",()->new Item(new Item.Properties()){
         @Override
         public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
@@ -513,6 +521,8 @@ public class ModItems {
         NORMALITEMSLIST.add(EXTREME_COLD_SNOWFLAKE_FRAGMENT);
         NORMALITEMSLIST.add(GUIDE_BOOK);
         NORMALITEMSLIST.add(EXTREME_COLD);
+        NORMALITEMSLIST.add(DEMON_WHALE_MEDAL);
+        NORMALITEMSLIST.add(DEMON_WHALE_BADGE);
 
         NORMALITEMSLIST.add(DEEPSEA_JINGHUA);
 

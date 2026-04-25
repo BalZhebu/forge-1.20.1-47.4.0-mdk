@@ -118,6 +118,7 @@ public class GodInfo {
                 if (attrKey.equals("gongji")) cap.setGongji(cap.getGongji() + value);
                 if (attrKey.equals("maxshengming")) cap.setMaxshengming(cap.getMaxshengming() + value);
                 if (attrKey.equals("maxjingshenli")) cap.setMaxjingshenli(cap.getMaxjingshenli() + value);
+                if (attrKey.equals("fangyu")) cap.setFangyu(cap.getFangyu() + value);
                 if (attrKey.equals("dengji")) {
                     if (player instanceof ServerPlayer serverPlayer) {
                         int currentLevel = cap.getDengji();

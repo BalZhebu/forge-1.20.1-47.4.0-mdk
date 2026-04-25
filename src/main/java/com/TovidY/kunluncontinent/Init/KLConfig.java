@@ -58,10 +58,10 @@ public class KLConfig {
                 .defineInRange("hunhuanTier5Prob", 0.3, 0.0, 1.0);
         TIER6_PROB = builder
                 .comment("1000000年内魂环生成概率")
-                .defineInRange("hunhuanTier6Prob", 0.32, 0.0, 1.0);
+                .defineInRange("hunhuanTier6Prob", 0.8, 0.0, 1.0);
         TIER7_PROB = builder
                 .comment("10000000年以上魂环生成概率")
-                .defineInRange("hunhuanTier7Prob", 0.70, 0.0, 1.0);
+                .defineInRange("hunhuanTier7Prob", 1.0, 0.0, 1.0);
 
         // 新增爆率配置项
         builder.push("魂骨爆率配置").comment("这些配置只在魂骨平衡为true时生效(本功能供开发测试用，私自修改导致存档问题不予解决！)");
@@ -78,7 +78,7 @@ public class KLConfig {
         dropChanceTier5 = builder.comment("100000-999999年魂兽的魂骨爆率")
                 .defineInRange("tier5", 0.01, 0.0, 1.0);
         dropChanceTier6 = builder.comment("1000000-9999999年魂兽的魂骨爆率")
-                .defineInRange("tier6", 0.01, 0.0, 1.0);
+                .defineInRange("tier6", 0.5, 0.0, 1.0);
         dropChanceTier7 = builder.comment("10000000年魂兽的魂骨爆率")
                 .defineInRange("tier7", 1.0, 0.0, 1.0);
 

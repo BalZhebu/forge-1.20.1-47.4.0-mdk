@@ -29,10 +29,10 @@ public class MobAttributeLogic {
             maxNianxian = 150000;
         } else if (dimension == Level.END) {
             minNianxian = 1000;
-            maxNianxian = 1500000;
+            maxNianxian = 300000;
         } else if (dimension.equals(ModDimensions.POLAR_ICE_REALM_LEVEL_KEY)) {
             minNianxian = 10000;
-            maxNianxian = 1200000;
+            maxNianxian = 999999;
         } else {
             minNianxian = 1;
             maxNianxian = 1000;
