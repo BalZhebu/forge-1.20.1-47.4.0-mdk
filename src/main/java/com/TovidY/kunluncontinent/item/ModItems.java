@@ -177,6 +177,15 @@ public class ModItems {
         }
     });
 
+    public static final RegistryObject<Item> LIGHTNING_FRAGMENTS = ITEMS.register("lightning_fragments",()->new Item(new Item.Properties()){
+        @Override
+        public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
+            pTooltipComponents.add(Component.translatable("item.lightning_fragments.tooltip").withStyle(ChatFormatting.GRAY));
+            pTooltipComponents.add(Component.translatable("item.lightning_fragments.tooltip2").withStyle(ChatFormatting.GRAY));
+            pTooltipComponents.add(Component.translatable("item.lightning_fragments.tooltip3").withStyle(ChatFormatting.GRAY));
+        }
+    });
+
     public static final RegistryObject<Item> DEEPSEA_JINGHUA = ITEMS.register("deepsea_jinghua",()->new Item(new Item.Properties()){
         @Override
         public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
@@ -525,6 +534,8 @@ public class ModItems {
         NORMALITEMSLIST.add(DEMON_WHALE_BADGE);
 
         NORMALITEMSLIST.add(DEEPSEA_JINGHUA);
+
+        NORMALITEMSLIST.add(LIGHTNING_FRAGMENTS);
 
         NORMALITEMSLIST.add(EYE_TRANSFORMATION);
         NORMALITEMSLIST.add(EYE_DEEP_SEA);

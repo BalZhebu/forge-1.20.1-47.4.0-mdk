@@ -45,6 +45,8 @@ public class NetworkHandler {
         register(CPacketCycleSkill.class, CPacketCycleSkill::encode, CPacketCycleSkill::decode, CPacketCycleSkill::handle);
         register(S2CCastingSyncPacket.class, S2CCastingSyncPacket::encode, S2CCastingSyncPacket::decode, S2CCastingSyncPacket::handle);
 
+        INSTANCE.registerMessage(99, PacketChangeCamera.class, PacketChangeCamera::toBytes, PacketChangeCamera::new, PacketChangeCamera::handle);
+
         //服务端
         register(PacketSyncPage.class, PacketSyncPage::encode, PacketSyncPage::decode, PacketSyncPage::handle);
         register(SPacketEntityAttribute.class, SPacketEntityAttribute::encode, SPacketEntityAttribute::decode, SPacketEntityAttribute::handle);

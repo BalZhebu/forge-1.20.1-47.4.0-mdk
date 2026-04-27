@@ -431,10 +431,14 @@ public class ModZhCnLangProvider extends LanguageProvider {
         //物品类
         add(ModItems.DEEPSEA_JINGHUA.get(),"§b海洋精华");
         add("item.deepsea_jinghua.tooltip","击杀水生生物概率掉落");
+        add("item.lightning_fragments.tooltip","在220格以上的高度放置避雷针");
+        add("item.lightning_fragments.tooltip2","将凛晶扔在避雷针1格范围内");
+        add("item.lightning_fragments.tooltip3","等待一段时间后就会变成闪电碎片");
         add(ModItems.EYE_DEEP_SEA.get(),"§b深海之眼");
         add(ModItems.DEEP_SEA_OFFERINGS.get(),"§b深海祭品");
-        add(ModItems.DEMON_WHALE_MEDAL.get(),"§b深海勋章");
+        add(ModItems.DEMON_WHALE_MEDAL.get(),"§1§l深海勋章");
         add(ModItems.DEMON_WHALE_BADGE.get(), "§b魔鲸徽章");
+        add(ModItems.LIGHTNING_FRAGMENTS.get(),"§e闪电碎片");
 
         //方块类
         add(ModBlocks.CULTIVATION_PLATFORM.get(),"重修台");

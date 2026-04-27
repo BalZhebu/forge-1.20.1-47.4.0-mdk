@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.command;
 
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.godclass.GodRegistry;
+import com.TovidY.kunluncontinent.godclass.interfac.GodInfo;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.client.PacketSyncGodData;
 import com.mojang.brigadier.CommandDispatcher;
@@ -46,6 +47,34 @@ public class ShenweiCommand {
                                         })
                                 )
                         )
+                )
+                .then(Commands.literal("shenqi_test")
+                        .requires(source -> source.hasPermission(2))
+                        .then(Commands.argument("target", EntityArgument.player())
+                                        .then(Commands.argument("godid", StringArgumentType.string())
+                                                .suggests((context, builder) -> {
+                                                    GodRegistry.GODS.keySet().forEach(builder::suggest);
+                                                    return builder.buildFuture();
+                                                })
+                                                .executes(context -> {
+                                                    ServerPlayer player = EntityArgument.getPlayer(context, "target");
+                                                    String godId = StringArgumentType.getString(context, "godid");
+                                                    GodInfo godInfo = GodRegistry.GODS.get(godId);
+
+                                                    if (godInfo == null) {
+                                                        context.getSource().sendFailure(Component.literal("§c错误：找不到神位 " + godId));
+                                                        return 0;
+                                                    }
+
+                                                    godInfo.startAscensionAnimation(player);
+
+                                                    context.getSource().sendSuccess(() ->
+                                                            Component.literal("§d§l[测试] §f正在开启 §e" + godInfo.getName() + " §f的10秒成神仪式动画！"), true);
+
+                                                    return 1;
+                                                })
+                                        )
+                                )
                 )
         );
     }

@@ -396,12 +396,11 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         }
     }
 
-    // 检查并完成任务的方法
     public void checkTaskCompletion(Player player) {
         GodInfo info = GodRegistry.GODS.get(this.godName);
         if (info == null) return;
-        info.executeRewards(this.currentStage, player); // 发放奖励
-        this.nextGodStage(); // 进入下一阶段（该方法已在之前写好）
+        info.executeRewards(this.currentStage, player);
+        this.nextGodStage();
 
         if (this.isGod()) {
             player.sendSystemMessage(Component.literal("§6恭喜你，成就" + info.name + "之位！"));
@@ -522,7 +521,10 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
     public void setBaojilv(float baojilv) { this.baojilv = baojilv; }
 
     public float getBaojishanghai() { return baojishanghai; }
-    public void setBaojishanghai(float baojishanghai) { this.baojishanghai = baojishanghai; }
+
+    public void setBaojishanghai(float baojishanghai) {
+        this.baojishanghai = baojishanghai;
+    }
 
     public float getXixue() { return xixue; }
     public void setXixue(float xixue) { this.xixue = xixue; }

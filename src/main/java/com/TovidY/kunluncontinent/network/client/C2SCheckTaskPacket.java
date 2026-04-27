@@ -36,8 +36,19 @@ public class C2SCheckTaskPacket {
 
         ctx.get().enqueueWork(() -> {
             player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
+
                 if (!cap.hasActiveTask() || cap.isGod()) return;
+
                 int stage = cap.getCurrentStage();
+
+                if (stage == 9) {
+                    if (cap.getDengji() < 99) {
+                        player.sendSystemMessage(Component.literal("§c§l【神祇要求】 §f请将自身等级提升到99级"), true);
+                        player.playNotifySound(SoundEvents.VILLAGER_NO, SoundSource.PLAYERS, 1.0F, 1.0F);
+                        return;
+                    }
+                }
+
                 String typeStr = cap.getAssignedTypes()[stage];
                 String target = cap.getAssignedTargets()[stage];
                 int required = cap.getAssignedCounts()[stage];
@@ -78,7 +89,9 @@ public class C2SCheckTaskPacket {
                     int completedStage = cap.getCurrentStage();
                     GodInfo info = GodRegistry.GODS.get(cap.getGodName());
                     String godDisplayName = (info != null) ? info.getName() : "未知神位";
+
                     cap.checkTaskCompletion(player);
+
                     Component title = Component.literal("§6§l★ 考 核 通 过 ★").withStyle(Style.EMPTY.withBold(true));
                     Component subtitle = Component.literal("§f" + godDisplayName + " §e第 " + completedStage + " 考 §a完成");
                     player.connection.send(new net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket(title));

@@ -92,6 +92,26 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
         LiandanRecipeBuilder.create(ModItems.FANQICAO_ITEM.get(), ModItems.FANQI_DAN.get(), 150)
                 .special()
                 .save(pWriter,ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "fanqi_dan_from"));
+        //雷域石
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.THUNDERREALM_SNOWFLAKE.get())
+                .pattern("XXX")
+                .pattern("XOX")
+                .pattern("XXX")
+                .define('X', ModItems.LIGHTNING_FRAGMENTS.get())
+                .define('O', Items.FLINT_AND_STEEL)
+                .unlockedBy("has_thunderrealm", has(ModItems.THUNDERREALM_SNOWFLAKE.get()))
+                .save(pWriter);
+
+        //万雷天域传送门框架
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.THUNDER_REALM_PORTAL_BLOCK.get(),5)
+                .pattern("ZXZ")
+                .pattern("XOX")
+                .pattern("ZXZ")
+                .define('Z', Items.OBSIDIAN)
+                .define('X', ModItems.LIGHTNING_FRAGMENTS.get())
+                .define('O', ModBlocks.POLAR_ICE_PORTAL_BLOCK.get())
+                .unlockedBy("has_thunderrealm", has(ModBlocks.THUNDER_REALM_PORTAL_BLOCK.get()))
+                .save(pWriter);
 
         //重修之眼的配方
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.EYE_TRANSFORMATION.get())
@@ -454,6 +474,65 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .define('R', ModItems.STARLIGHT_STONE.get())
                 .unlockedBy("has_knife", has(ModItems.TOP_LEVEL_HEXIN.get()))
                 .save(pWriter);
+
+        //一阶防闪魂导器
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.FANGSHANHUNDAOQI_1.get())
+                .pattern("XRX")
+                .pattern("RKR")
+                .pattern("XRX")
+                .define('K', ModItems.LOW_HUNHUAN_STORAGE_CORE.get())
+                .define('X', Items.LIGHTNING_ROD)
+                .define('R', ModItems.GRAY_IRON_INGOT.get())
+                .unlockedBy("has_cold_protections", has(ModItems.FANGSHANHUNDAOQI_1.get()))
+                .save(pWriter);
+
+        //二阶防闪魂导器
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.FANGSHANHUNDAOQI_2.get())
+                .pattern("XRX")
+                .pattern("RKR")
+                .pattern("XRX")
+                .define('K', ModItems.FANGSHANHUNDAOQI_1.get())
+                .define('X', ModItems.LOW_HUNHUAN_STORAGE_CORE.get())
+                .define('R', ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get())
+                .unlockedBy("has_cold_protections", has(ModItems.FANGSHANHUNDAOQI_2.get()))
+                .save(pWriter);
+
+        //三阶防闪魂导器
+        SmithingTransformRecipeBuilder.smithing(
+                        Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
+                        Ingredient.of(ModItems.FANGSHANHUNDAOQI_2.get()),
+                        Ingredient.of(ModItems.MIDDLE_HUNHUAN_STORAGE_CORE.get()),
+                        RecipeCategory.COMBAT,
+                        ModItems.FANGSHANHUNDAOQI_3.get()
+                )
+                .unlocks("has_kunluncontinent_fangshanhunqi", inventoryTrigger(ItemPredicate.Builder.item()
+                        .of(ModItems.MIDDLE_HUNHUAN_STORAGE_CORE.get()).build()))
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_fangshanhundaoqi3"));
+
+        //四阶防闪魂导器
+        SmithingTransformRecipeBuilder.smithing(
+                        Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
+                        Ingredient.of(ModItems.FANGSHANHUNDAOQI_3.get()),
+                        Ingredient.of(ModItems.HIGH_HUNHUAN_STORAGE_CORE.get()),
+                        RecipeCategory.COMBAT,
+                        ModItems.FANGSHANHUNDAOQI_4.get()
+                )
+                .unlocks("has_kunluncontinent_fangshanhunqi", inventoryTrigger(ItemPredicate.Builder.item()
+                        .of(ModItems.MIDDLE_HUNHUAN_STORAGE_CORE.get()).build()))
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_fangshanhundaoqi4"));
+
+        //五阶防闪魂导器
+        SmithingTransformRecipeBuilder.smithing(
+                        Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
+                        Ingredient.of(ModItems.FANGSHANHUNDAOQI_4.get()),
+                        Ingredient.of(ModItems.TOP_HUNHUAN_STORAGE_CORE.get()),
+                        RecipeCategory.COMBAT,
+                        ModItems.FANGSHANHUNDAOQI_5.get()
+                )
+                .unlocks("has_kunluncontinent_fangshanhunqi", inventoryTrigger(ItemPredicate.Builder.item()
+                        .of(ModItems.TOP_HUNHUAN_STORAGE_CORE.get()).build()))
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_fangshanhundaoqi5"));
+
 
         //低阶御寒魂导器
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.LOW_COLD_PROTECTION.get())

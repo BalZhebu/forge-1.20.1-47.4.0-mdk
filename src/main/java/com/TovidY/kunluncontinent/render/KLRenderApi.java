@@ -41,8 +41,6 @@ public interface KLRenderApi {
         RenderSystem.depthMask(true);
     }
 
-
-
     public static void renderdibu(float partialTick, PoseStack poseStack, float scale, ResourceLocation resourceLocation){
 
         KLRenderApi.renderStart(resourceLocation,poseStack);
