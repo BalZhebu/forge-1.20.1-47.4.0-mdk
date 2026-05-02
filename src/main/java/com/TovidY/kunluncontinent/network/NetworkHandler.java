@@ -50,18 +50,15 @@ public class NetworkHandler {
         //服务端
         register(PacketSyncPage.class, PacketSyncPage::encode, PacketSyncPage::decode, PacketSyncPage::handle);
         register(SPacketEntityAttribute.class, SPacketEntityAttribute::encode, SPacketEntityAttribute::decode, SPacketEntityAttribute::handle);
-        register(SPacketSyncPlayerAttribute.class, SPacketSyncPlayerAttribute::encode, SPacketSyncPlayerAttribute::decode, SPacketSyncPlayerAttribute::handle);
         register(SPacketPlayerAttribute.class, SPacketPlayerAttribute::encode, SPacketPlayerAttribute::decode, SPacketPlayerAttribute::handle);
-
+        register(PacketChangeDisplayMode.class,PacketChangeDisplayMode::encode,PacketChangeDisplayMode::decode,PacketChangeDisplayMode::handle);
+        register(PacketToggleConfig.class, PacketToggleConfig::encode,PacketToggleConfig::decode,PacketToggleConfig::handle);
 
         // 服务端发给客户端（同步数据）
         register(PacketSyncGodData.class, PacketSyncGodData::encode, PacketSyncGodData::decode, PacketSyncGodData::handle);
 
         // 客户端发给服务端（点击检测按钮）
         register(C2SCheckTaskPacket.class, C2SCheckTaskPacket::encode, C2SCheckTaskPacket::decode, C2SCheckTaskPacket::handle);
-
-
-
 
     }
 

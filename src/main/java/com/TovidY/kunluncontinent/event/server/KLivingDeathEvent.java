@@ -6,19 +6,31 @@ import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
 import com.TovidY.kunluncontinent.capability.itemattribute.ItemAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapability;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapabilityProvider;
+import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
+import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerHunhuanAPI;
 import com.TovidY.kunluncontinent.command.HunguAdminStatus;
 import com.TovidY.kunluncontinent.entity.EntityInit;
 import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanEntity;
 import com.TovidY.kunluncontinent.item.ModItems;
 import com.TovidY.kunluncontinent.item.neidanitems.NeidanDropHandler;
+import com.TovidY.kunluncontinent.network.SynsAPI;
+import com.TovidY.kunluncontinent.network.client.PacketSyncGodData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.Drowned;
+import net.minecraft.world.entity.monster.ElderGuardian;
+import net.minecraft.world.entity.monster.Guardian;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -26,6 +38,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,6 +59,8 @@ public class KLivingDeathEvent {
             if (!(sourceEntity instanceof Player player)) return;
 
             ModDropHandler.tryExtraDrops(entity, player);
+
+            handleGodGlimpse((ServerPlayer) player,entity);
 
             NeidanDropHandler.tryDropNeidan(entity, cap, player);
             handleExperience(player, cap);
@@ -143,6 +158,75 @@ public class KLivingDeathEvent {
         if (RANDOM.nextDouble() <= prob) {
             addHunhuanEntity(cap, level, pos);
         }
+    }
+    private static void handleGodGlimpse(ServerPlayer player, LivingEntity victim) {
+        player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
+            // 1. 基础互斥逻辑：如果已经有神位了，直接跳过判定
+            // 检查 godName 是否为空，确保玩家一次只能开启一个神考
+            if (cap.getGodName() != null && !cap.getGodName().isEmpty()) {
+                return;
+            }
+            // 2. 门槛判定逻辑
+            // 如果开启了 debugIgnoreTianfu (由指令控制)，则跳过等级和天赋检查
+            // 否则，必须满足：等级 > 75 且 先天天赋 >= 7
+            boolean isQualified = cap.debugIgnoreTianfu || (cap.getDengji() > 75 && cap.getXiantianTalent() >= 7);
+
+            if (isQualified) {
+                // --- A. 海神获取逻辑 (溺尸、守卫者、远古守卫者) ---
+                if (victim instanceof Drowned || victim instanceof Guardian || victim instanceof ElderGuardian) {
+                    // 如果开启了 debugForceSuccess，概率为 100%，否则为 0.5%
+                    float chance = cap.debugForceSuccess ? 1.0f : 0.005f;
+                    if (RANDOM.nextFloat() < chance) {
+                        triggerGodExam(player, cap, "sea_god", "§b海神");
+                        resetDebugStatus(cap);
+                        return;
+                    }
+                }
+
+                // --- B. 天使神获取逻辑 (击杀亡灵生物) ---
+                if (victim.getMobType() == MobType.UNDEAD) {
+                    // 如果开启了 debugForceSuccess，概率为 100%，否则为 0.2%
+                    float chance = cap.debugForceSuccess ? 1.0f : 0.002f;
+                    if (RANDOM.nextFloat() < chance) {
+                        triggerGodExam(player, cap, "angel_god", "§e天使神");
+                        resetDebugStatus(cap);
+                        return;
+                    }
+                }
+
+                // --- C. 修罗神获取逻辑 (攻击力 > 15W，击杀任意生物) ---
+                if (cap.getGongji() > 150000f) {
+                    // 如果开启了 debugForceSuccess，概率为 100%，否则为 0.05%
+                    float chance = cap.debugForceSuccess ? 1.0f : 0.0005f;
+                    if (RANDOM.nextFloat() < chance) {
+                        triggerGodExam(player, cap, "asura_god", "§c修罗神");
+                        resetDebugStatus(cap);
+                        return;
+                    }
+                }
+            }
+        });
+    }
+
+    private static void resetDebugStatus(PlayerAttributeCapability cap) {
+        cap.debugIgnoreTianfu = false;
+        cap.debugForceSuccess = false;
+    }
+
+    private static void triggerGodExam(ServerPlayer player, PlayerAttributeCapability cap, String godId, String godName) {
+        cap.initializeGodExam(player, godId);
+        MinecraftServer server = player.getServer();
+        if (server != null) {
+            Component msg = Component.literal("§l§f【神之遗迹】§6天降异象，神辉洒落！§f玩家 §e" + player.getName().getString() + " §f得到了 " + godName + " §f的认可，开启了神之试炼！");
+            server.getPlayerList().broadcastSystemMessage(msg, false);
+        }
+        player.playNotifySound(SoundEvents.END_PORTAL_SPAWN, SoundSource.PLAYERS, 1.0f, 0.5f);
+        com.TovidY.kunluncontinent.network.NetworkHandler.sendToClient(
+                new PacketSyncGodData(cap),
+                player
+        );
+        SynsAPI.synsPlayerAttribute(player);
+        resetDebugStatus(cap);
     }
 
     private static double getHunhuanProb(long nianxian) {

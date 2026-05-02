@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.event.client;
 
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
+import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.potion.ModEffects;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.damagesource.DamageSource;
@@ -32,7 +33,8 @@ public class CombatEventHandler {
         if (RANDOM.nextFloat() < dodgeChance) {
             event.setCanceled(true);
             if (attacker instanceof Player player) {
-                player.displayClientMessage(Component.literal("§e" + target.getDisplayName().getString() + " §7§l闪避了这次攻击！"), true);
+                Component dodgeMsg = Component.literal("§e" + target.getDisplayName().getString() + " §7§l闪避了这次攻击！");
+                processDisplay(player, dodgeMsg);
             }
             return;
         }
@@ -119,8 +121,25 @@ public class CombatEventHandler {
 
     private static void showEffectMsg(LivingEntity attacker, String prefix, String targetName, float dmg) {
         if (attacker instanceof Player player) {
-            player.displayClientMessage(Component.literal(prefix + " §f对 §e" + targetName + " §f造成 §6§l" + String.format("%.1f", dmg) + " 点伤害"), true);
+            Component msg = Component.literal(prefix + " §f对 §e" + targetName + " §f造成 §6§l" + String.format("%.1f", dmg) + " 点伤害");
+            processDisplay(player, msg);
         }
+    }
+
+    private static void processDisplay(Player player, Component msg) {
+        player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
+            int mode = cap.getDamageDisplayMode();
+            switch (mode) {
+                case 0:
+                    player.displayClientMessage(msg, true);
+                    break;
+                case 1:
+                    player.displayClientMessage(msg, false);
+                    break;
+                case 2:
+                    break;
+            }
+        });
     }
 
     private static void sendDamageMessage(Player player, LivingEntity target, float damage, boolean isCrit) {
@@ -129,6 +148,7 @@ public class CombatEventHandler {
         Component msg = isCrit
                 ? Component.literal("§c§l暴击！ §f对 §e" + name + " §f造成 §6§l" + dmgStr+ " 点伤害")
                 : Component.literal("§7对 §e" + name + " §f造成 §f" + dmgStr+ " 点伤害");
-        player.displayClientMessage(msg, true);
+
+        processDisplay(player, msg);
     }
 }

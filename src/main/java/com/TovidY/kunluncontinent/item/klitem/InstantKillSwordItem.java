@@ -5,6 +5,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
@@ -26,16 +27,20 @@ public class InstantKillSwordItem extends SwordItem {
     public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         if (!attacker.level().isClientSide) {
             target.invulnerableTime = 0;
-            target.die(attacker.damageSources().generic());
+            DamageSource source = (attacker instanceof Player player)
+                    ? attacker.damageSources().playerAttack(player)
+                    : attacker.damageSources().mobAttack(attacker);
+            target.hurt(source, Float.MAX_VALUE);
             if (target.isAlive()) {
                 target.setHealth(0);
+                target.die(source);
                 if (!(target instanceof Player)) {
                     target.discard();
                 }
-                if (attacker instanceof Player player) {
-                    player.displayClientMessage(Component.literal("§8[§4审判§8] §f已抹除：")
-                            .append(target.getDisplayName()), true);
-                }
+            }
+            if (attacker instanceof Player player) {
+                player.displayClientMessage(Component.literal("§8[§4审判§8] §f已抹除：")
+                        .append(target.getDisplayName()), true);
             }
         }
         return true;

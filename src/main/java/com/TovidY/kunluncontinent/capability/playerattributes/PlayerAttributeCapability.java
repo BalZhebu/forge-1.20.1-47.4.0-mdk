@@ -84,6 +84,9 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
     private String forcedTalent = "";
     private int xiantianTalent = 0;
 
+    private int damageDisplayMode = 0;
+    private long configFlags = 0xFFL;
+
     private int zhuanshengshu = 0;
 
     private final ItemStackHandler hunguInventory = new ItemStackHandler(7) {
@@ -91,6 +94,9 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         protected void onContentsChanged(int slot) {
         }
     };
+
+    public boolean debugIgnoreTianfu = false;
+    public boolean debugForceSuccess = false;
 
     private final Map<String, Float> boneOnlyStats = new HashMap<>();
     public Map<String, Float> getBoneOnlyStats() { return boneOnlyStats; }
@@ -140,11 +146,16 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         tag.putInt("Zhuanshengshu", zhuanshengshu);
         tag.putInt("Hunhuankuaiguan", hunhuankuaiguan);
 
+        tag.putInt("DamageDisplayMode", damageDisplayMode);
+        tag.putLong("configFlags", configFlags);
+
         // 保存神祇系统数据
         tag.putString("GodName", godName);
         tag.putInt("CurrentGodStage", currentStage);
         tag.putInt("GodTaskProgress", taskProgress);
         tag.putBoolean("IsGod", isGod);
+
+        tag.putInt("XiantianTalent", this.xiantianTalent);
 
         // 在 serializeNBT 中增加：
         ListTag taskTag = new ListTag();
@@ -158,14 +169,12 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         }
         tag.put("GodTasks", taskTag);
 
-        // --- 核心修复：保存武魂名称的原始顺序 ---
         ListTag wuhunOrderTag = new ListTag();
         for (String name : wuhunListsname) {
             wuhunOrderTag.add(StringTag.valueOf(name));
         }
         tag.put("WuhunOrderList", wuhunOrderTag);
 
-        // 保存每个武魂的具体魂环数据
         for (Map.Entry<String, List<MobAttributeCapability>> entry : monsterCapabilityLists.entrySet()) {
             String wuhunName = entry.getKey();
             tag.putBoolean("iswuhun" + wuhunName, true);
@@ -175,8 +184,6 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
                 ringIndex++;
             }
         }
-
-        // 保存其他数据
         CompoundTag boneTag = new CompoundTag();
         for (Map.Entry<String, Float> entry : boneOnlyStats.entrySet()) {
             boneTag.putFloat(entry.getKey(), entry.getValue());
@@ -225,11 +232,23 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         this.usingAll = nbt.getBoolean("usingAll");
         this.hunhuankuaiguan = nbt.getInt("Hunhuankuaiguan");
 
+        this.damageDisplayMode = nbt.getInt("DamageDisplayMode");
+
+        if (nbt.contains("configFlags")) {
+            this.configFlags = nbt.getLong("configFlags");
+        } else {
+            this.configFlags = 0xFFL;
+        }
+
         // 读取神祇系统数据
         this.godName = nbt.getString("GodName");
         this.currentStage = nbt.getInt("CurrentGodStage");
         this.taskProgress = nbt.getInt("GodTaskProgress");
         this.isGod = nbt.getBoolean("IsGod");
+
+        if (nbt.contains("XiantianTalent")) {
+            this.xiantianTalent = nbt.getInt("XiantianTalent");
+        }
 
         // 在 deserializeNBT 中增加：
         if (nbt.contains("GodTasks")) {
@@ -357,6 +376,14 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         };
     }
 
+    public boolean isConfigOpen(int index) {
+        return ((configFlags >> index) & 1) == 1;
+    }
+
+    public void toggleConfig(int index) {
+        this.configFlags ^= (1L << index);
+    }
+
     public void refreshBoneAttributes(Player player) {
         this.boneOnlyStats.clear();
         for (int i = 0; i < 7; i++) {
@@ -482,6 +509,9 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         return monsterCapabilityLists.get(wuhunListsname.get(hunhuankuaiguan));
     }
 
+    public int getDamageDisplayMode() { return damageDisplayMode; }
+    public void setDamageDisplayMode(int mode) { this.damageDisplayMode = mode; }
+
     public int getZhuanshengshu() {return zhuanshengshu;}
     public void setZhuanshengshu(int zhuanshengshu) {
         this.zhuanshengshu = zhuanshengshu;
@@ -519,6 +549,9 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
 
     public float getBaojilv() { return baojilv; }
     public void setBaojilv(float baojilv) { this.baojilv = baojilv; }
+
+    public long getConfigFlags() { return configFlags; }
+    public void setConfigFlags(long flags) { this.configFlags = flags; }
 
     public float getBaojishanghai() { return baojishanghai; }
 

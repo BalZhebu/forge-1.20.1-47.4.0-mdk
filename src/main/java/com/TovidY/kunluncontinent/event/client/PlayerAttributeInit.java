@@ -4,9 +4,7 @@ import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.item.ModItems;
-import com.TovidY.kunluncontinent.network.NetworkHandler;
-import com.TovidY.kunluncontinent.network.server.SPacketSyncPlayerAttribute;
-import com.mojang.logging.LogUtils;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -16,7 +14,6 @@ import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
-import org.slf4j.Logger;
 
 //设置玩家初始属性
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID)
@@ -74,15 +71,14 @@ public class PlayerAttributeInit {
         maxHealthAttr.setBaseValue(targetMaxHealth);
     }
 
-
     private static void syncAllAttributesToClient(ServerPlayer player, PlayerAttributeCapability attr) {
-        SPacketSyncPlayerAttribute packet = new SPacketSyncPlayerAttribute(
-            attr.getShengming(), attr.getMaxshengming(), attr.getJingshenli(), attr.getMaxjingshenli(),
-            attr.getMingzhong(), attr.getFangyu(), attr.getGongji(), attr.getBaojilv(), attr.getBaojishanghai(),
-            attr.getXixue(), attr.getShanbi(), attr.getKangbao(), attr.getJingyan(), attr.getDengji(), attr.getMaxjingyan()
-                , (int)attr.getShengmingHuifu(), attr.getWuchuan(),attr.getBoneOnlyStats()
+        CompoundTag nbtData = attr.serializeNBT();
+        com.TovidY.kunluncontinent.network.server.SPacketPlayerAttribute packet =
+                new com.TovidY.kunluncontinent.network.server.SPacketPlayerAttribute(player.getId(), nbtData);
+        com.TovidY.kunluncontinent.network.NetworkHandler.INSTANCE.send(
+                PacketDistributor.PLAYER.with(() -> player),
+                packet
         );
-        NetworkHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), packet);
     }
 
 }

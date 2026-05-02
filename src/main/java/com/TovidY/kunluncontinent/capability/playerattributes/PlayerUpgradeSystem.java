@@ -2,9 +2,8 @@ package com.TovidY.kunluncontinent.capability.playerattributes;
 
 import com.TovidY.kunluncontinent.advancement.ModTriggers;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapability;
-import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.SynsAPI;
-import com.TovidY.kunluncontinent.network.server.SPacketSyncPlayerAttribute;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.server.MinecraftServer;
@@ -19,7 +18,6 @@ import java.util.Random;
 
 import static com.TovidY.kunluncontinent.capability.playerattributes.PlayerHunhuanAPI.addWuHun;
 import net.minecraft.ChatFormatting;
-import org.antlr.v4.codegen.model.Sync;
 import org.jetbrains.annotations.NotNull;
 
 //天赋系统
@@ -165,7 +163,9 @@ public class PlayerUpgradeSystem {
         applyGrowthAndBonus(capability, finalLevel, bonusHP, bonusAtk, bonusDef);
         ModTriggers.LEVEL_TRIGGER.trigger(player, finalLevel);
         addWuHun(player);
+
         capability.setXiantianTalent(talentLevel);
+
         player.sendSystemMessage(Component.literal("§e【觉醒仪式】§f你的魂力已觉醒！"));
         player.sendSystemMessage(Component.literal("检测到资质：").append(Component.literal(talentName).withStyle(color))
                 .append(" §f(先天等级: +" + talentLevel + ")"));
@@ -242,17 +242,29 @@ public class PlayerUpgradeSystem {
             sendDeityAnnouncement(player);
         }
 
+        if (newLevel == 75) {
+            checkGodGlimpseEntry(player, capability, newLevel);
+        }
+
         ModTriggers.LEVEL_TRIGGER.trigger(player, newLevel);
     }
 
+    private static void checkGodGlimpseEntry(ServerPlayer player, PlayerAttributeCapability capability, int level) {
+        if (level > 75 && capability.getXiantianTalent() >= 7) {
+            if (!capability.hasActiveTask()) {
+                player.sendSystemMessage(Component.literal("§6§l【神明的注视】§f你感觉到虚空中有视线投射而来...通过某种行为来引起祂们的注意吧！"));
+            }
+        }
+    }
+
     private static void syncAttributesToClient(ServerPlayer player, PlayerAttributeCapability capability) {
-        SPacketSyncPlayerAttribute packet = new SPacketSyncPlayerAttribute(
-                capability.getShengming(), capability.getMaxshengming(), capability.getJingshenli(), capability.getMaxjingshenli(),
-                capability.getMingzhong(), capability.getFangyu(), capability.getGongji(), capability.getBaojilv(), capability.getBaojishanghai(),
-                capability.getXixue(), capability.getShanbi(), capability.getKangbao(), capability.getJingyan(), capability.getDengji(), capability.getMaxjingyan(),
-                (int)capability.getWuchuan(),capability.getShengmingHuifu(), capability.getBoneOnlyStats()
+        CompoundTag nbtData = capability.serializeNBT();
+        com.TovidY.kunluncontinent.network.server.SPacketPlayerAttribute packet =
+                new com.TovidY.kunluncontinent.network.server.SPacketPlayerAttribute(player.getId(), nbtData);
+        com.TovidY.kunluncontinent.network.NetworkHandler.INSTANCE.send(
+                PacketDistributor.PLAYER.with(() -> player),
+                packet
         );
-        NetworkHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), packet);
     }
 
     public static void triggerUpgradeCheck(ServerPlayer player) {

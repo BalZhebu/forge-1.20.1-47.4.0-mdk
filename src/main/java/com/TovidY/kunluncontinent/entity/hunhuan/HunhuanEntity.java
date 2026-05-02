@@ -50,8 +50,6 @@ public class HunhuanEntity extends Entity {
             super(entityType, level);
         }
 
-
-
         public static final ResourceLocation HUNHUAN = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/gui/hunhuan.png");
 
         @Override

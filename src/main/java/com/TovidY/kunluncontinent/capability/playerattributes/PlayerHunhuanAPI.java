@@ -8,6 +8,7 @@ import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.SynsAPI;
 import com.TovidY.kunluncontinent.network.client.PacketSyncGodData;
 import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -217,12 +218,15 @@ public class PlayerHunhuanAPI {
             if (capability.getJingyan() >= capability.getMaxjingyan()) {
                 performUpgrade(player, capability);
             }
+        if (capability.isConfigOpen(3)) {
+            String formattedValue = String.format("%.2f", value);
+            int currentExp = (int) capability.getJingyan();
+            int maxExp = (int) capability.getMaxjingyan();
+
+            player.sendSystemMessage(Component.translatable("吸收经验成功",
+                    formattedValue + " §e当前经验:" + currentExp + "/" + maxExp));
+        }
         });
-        String formattedValue = String.format("%.2f", value);
-        int currentExp = (int) ModAttributeAPI.getJingyan(player);
-        int maxExp = (int) ModAttributeAPI.getMaxjingyan(player);
-        player.sendSystemMessage(Component.translatable("吸收经验成功",
-                formattedValue + " §e当前经验:" + currentExp + "/" + maxExp));
     }
 
     public static void addBaojilv(ServerPlayer player, float value) {
@@ -375,14 +379,13 @@ public class PlayerHunhuanAPI {
      * 同步玩家属性到客户端
      */
     private static void syncPlayerAttributeToClient(ServerPlayer player, PlayerAttributeCapability capability) {
-        com.TovidY.kunluncontinent.network.server.SPacketSyncPlayerAttribute packet = 
-            new com.TovidY.kunluncontinent.network.server.SPacketSyncPlayerAttribute(
-                capability.getShengming(), capability.getMaxshengming(), capability.getJingshenli(), capability.getMaxjingshenli(),
-                capability.getMingzhong(), capability.getFangyu(), capability.getGongji(), capability.getBaojilv(), capability.getBaojishanghai(),
-                capability.getXixue(), capability.getShanbi(), capability.getKangbao(), capability.getJingyan(), capability.getDengji(), capability.getMaxjingyan(),
-                    (int)capability.getWuchuan(),capability.getShengmingHuifu(),capability.getBoneOnlyStats()
-            );
-        com.TovidY.kunluncontinent.network.NetworkHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), packet);
+        CompoundTag nbtData = capability.serializeNBT();
+        com.TovidY.kunluncontinent.network.server.SPacketPlayerAttribute packet =
+                new com.TovidY.kunluncontinent.network.server.SPacketPlayerAttribute(player.getId(), nbtData);
+        com.TovidY.kunluncontinent.network.NetworkHandler.INSTANCE.send(
+                PacketDistributor.PLAYER.with(() -> player),
+                packet
+        );
     }
 
 }

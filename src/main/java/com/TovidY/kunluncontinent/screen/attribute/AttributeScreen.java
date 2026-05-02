@@ -10,6 +10,8 @@ import com.TovidY.kunluncontinent.network.server.PacketSyncPage;
 import com.TovidY.kunluncontinent.screen.KluxTabButton;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -25,7 +27,6 @@ import static net.minecraft.client.gui.screens.inventory.InventoryScreen.renderE
 //属性面板渲染
 
 public class AttributeScreen extends AbstractContainerScreen<AttributeMenu> {
-    //资源路径，如果提示警告则在ResourceLocation的后面加入fromNamespaceAndPath
     private static final int ATTRIBUTE_TEXT_OFFSET_X = 14;
     private static final int ATTRIBUTE_TEXT_OFFSET_Y = 14;
     private static final int LINE_SPACING = 15;
@@ -75,6 +76,17 @@ public class AttributeScreen extends AbstractContainerScreen<AttributeMenu> {
             }));
         }
 
+        int btnSize = 16;
+        int margin = 5;
+        int btnX = this.leftPos + this.imageWidth - btnSize - margin;
+        int btnY = this.topPos + this.imageHeight - btnSize - margin;
+        this.addRenderableWidget(Button.builder(Component.literal("⚙"), b -> {
+                    NetworkHandler.INSTANCE.sendToServer(new PacketSyncPage(4));
+                })
+                .bounds(btnX, btnY, btnSize, btnSize)
+                .tooltip(Tooltip.create(Component.literal("打开配置信息")))
+                .build());
+
         this.inventoryLabelY = 10000;
         this.titleLabelY = 10000;
     }
@@ -109,7 +121,7 @@ public class AttributeScreen extends AbstractContainerScreen<AttributeMenu> {
         mutableComponents.clear();
         int startX = this.leftPos + ATTRIBUTE_TEXT_OFFSET_X - 6;
         int startY = this.topPos + ATTRIBUTE_TEXT_OFFSET_Y - 5;
-        int textColor = -65436; // 也就是你的自定义颜色
+        int textColor = -65436;
         final int SPACING = 12;
 
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(attributes -> {
@@ -159,6 +171,9 @@ public class AttributeScreen extends AbstractContainerScreen<AttributeMenu> {
             int topY = this.topPos + 8;
             guiGraphics.drawString(this.font, timeText, rightX, topY, 0xFFFF00, true);
 
+            String tianfuText = "天赋等级：" + attributes.getXiantianTalent() + " 级";
+            guiGraphics.drawString(this.font, tianfuText, rightX + 25, topY + SPACING + 12, 0xFFFF00, true);
+
             int rightXOffset = 10;
             int topYOffset = 8;
 
@@ -174,7 +189,6 @@ public class AttributeScreen extends AbstractContainerScreen<AttributeMenu> {
         });
     }
 
-    //可用ESC或E关闭窗口
     @Override
     public boolean keyPressed(int key, int i, int j) {
         return super.keyPressed(key, i, j);

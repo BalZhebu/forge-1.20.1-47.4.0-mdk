@@ -3,8 +3,6 @@ package com.TovidY.kunluncontinent.command;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.event.client.PlayerAttributeInit;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerUpgradeSystem;
-import com.TovidY.kunluncontinent.network.NetworkHandler;
-import com.TovidY.kunluncontinent.network.server.SPacketSyncPlayerAttribute;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -15,6 +13,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.PacketDistributor;
@@ -205,12 +204,13 @@ public class AttributeCommand {
 
     // 同步属性到客户端
     private static void syncToClient(ServerPlayer player, com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability attr) {
-        SPacketSyncPlayerAttribute packet = new SPacketSyncPlayerAttribute(
-            attr.getShengming(), attr.getMaxshengming(), attr.getJingshenli(), attr.getMaxjingshenli(),
-            attr.getMingzhong(), attr.getFangyu(), attr.getGongji(), attr.getBaojilv(), attr.getBaojishanghai(),
-            attr.getXixue(), attr.getShanbi(), attr.getKangbao(), attr.getJingyan(), attr.getDengji(), attr.getMaxjingyan(),
-                (int)attr.getWuchuan(),attr.getShengmingHuifu(),attr.getBoneOnlyStats()
+        CompoundTag nbtData = attr.serializeNBT();
+        com.TovidY.kunluncontinent.network.server.SPacketPlayerAttribute packet =
+                new com.TovidY.kunluncontinent.network.server.SPacketPlayerAttribute(player.getId(), nbtData);
+        com.TovidY.kunluncontinent.network.NetworkHandler.INSTANCE.send(
+                PacketDistributor.PLAYER.with(() -> player),
+                packet
         );
-        NetworkHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), packet);
     }
+
 }

@@ -27,6 +27,7 @@ import org.joml.Matrix4f;
 import java.util.*;
 
 //玩家的魂环渲染
+
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class PWRenderPlayerEvent {
     private static final int ANIMATION_DURATION = 80;
@@ -181,6 +182,12 @@ private static void renderShenhuan(Entity entity, float partialTick, PoseStack p
 
     @SubscribeEvent
     public static void renderPlayerEventPost(RenderPlayerEvent.Post event) {
+        Player localPlayer = Minecraft.getInstance().player;
+        if (localPlayer == null) return;
+        boolean isOpen = localPlayer.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
+                .map(cap -> cap.isConfigOpen(2)).orElse(true);
+        if (!isOpen) return;
+
         PoseStack poseStack = event.getPoseStack();
         Player entity = event.getEntity();
         if (entity == null) return;

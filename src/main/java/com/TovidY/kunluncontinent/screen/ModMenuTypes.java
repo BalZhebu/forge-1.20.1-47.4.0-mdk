@@ -3,6 +3,7 @@ package com.TovidY.kunluncontinent.screen;
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.screen.attribute.AttributeMenu;
 import com.TovidY.kunluncontinent.screen.attribute.AttributeScreen;
+import com.TovidY.kunluncontinent.screen.attribute.config.ConfigScreen;
 import com.TovidY.kunluncontinent.screen.attribute.hungu.HunguMenu;
 import com.TovidY.kunluncontinent.screen.attribute.hungu.HunguScreen;
 import com.TovidY.kunluncontinent.screen.attribute.hunhuan.HunhuanMenu;
@@ -29,6 +30,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 //该类用于写入menu
 //面板注册
+
 public class ModMenuTypes {
     public static final DeferredRegister<MenuType<?>> MENUS =
             DeferredRegister.create(ForgeRegistries.MENU_TYPES, KlMain.MOD_ID);
@@ -48,6 +50,9 @@ public class ModMenuTypes {
 
     public static final RegistryObject<MenuType<ShenkaoMenu>> SHENKAO_MENU =
             registerMenuType("shenkao_menu", ShenkaoMenu::new);
+
+    public static final RegistryObject<MenuType<HunhuanMenu>> CONFIG_MENU =
+            registerMenuType("config_menu", HunhuanMenu::new);
 
     //引导书
     public static final RegistryObject<MenuType<GuideBookMenu>> GUIDE_BOOK_MENU =
@@ -71,6 +76,8 @@ public class ModMenuTypes {
             MenuScreens.register(ModMenuTypes.GUIDE_BOOK_MENU.get(), GuidBookScreen::new);
             MenuScreens.register(ModMenuTypes.HUNHUAN_MENU.get(), HunhuanScreen::new);
             MenuScreens.register(ModMenuTypes.SHENKAO_MENU.get(), ShenkaoScreen::new);
+
+            MenuScreens.register(ModMenuTypes.CONFIG_MENU.get(), ConfigScreen::new);
 
         }
     }

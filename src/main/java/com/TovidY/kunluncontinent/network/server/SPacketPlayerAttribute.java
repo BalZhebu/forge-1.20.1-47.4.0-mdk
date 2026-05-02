@@ -13,9 +13,8 @@ import java.util.function.Supplier;
 
 // 同步玩家属性数据的网络包
 public class SPacketPlayerAttribute {
-
-    private int entityId;
-    private CompoundTag nbt;
+    private final int entityId;
+    private final CompoundTag nbt;
 
     public SPacketPlayerAttribute(int entityId, CompoundTag nbt) {
         this.entityId = entityId;
@@ -33,9 +32,9 @@ public class SPacketPlayerAttribute {
 
     public static void handle(SPacketPlayerAttribute msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            ClientLevel world = Minecraft.getInstance().level;
-            if (world != null) {
-                Entity entity = world.getEntity(msg.entityId);
+            ClientLevel level = Minecraft.getInstance().level;
+            if (level != null) {
+                Entity entity = level.getEntity(msg.entityId);
                 if (entity != null) {
                     entity.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
                         cap.deserializeNBT(msg.nbt);

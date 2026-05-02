@@ -2,11 +2,14 @@ package com.TovidY.kunluncontinent.event.client;
 
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapabilityProvider;
+import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.render.KLRenderApi;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -22,6 +25,12 @@ public class PWRenderLivingEvent {
 
     @SubscribeEvent
     public static void renderLivingEventPost(RenderLivingEvent.Post event){
+        Player localPlayer = Minecraft.getInstance().player;
+        if (localPlayer == null) return;
+        boolean isOpen = localPlayer.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
+                .map(cap -> cap.isConfigOpen(1)).orElse(true);
+        if (!isOpen) return;
+
         LivingEntity entity = event.getEntity();
         if(entity == null) return;
         if (entity.tickCount < 1 || !entity.isAlive()) return;

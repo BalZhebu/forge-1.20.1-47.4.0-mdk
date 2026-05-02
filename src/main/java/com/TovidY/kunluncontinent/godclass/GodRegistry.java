@@ -132,6 +132,8 @@ public class GodRegistry {
                 ;
     }
 
+
+
     private static GodInfo register(String id, String name) {
         GodInfo info = new GodInfo(id, name);
         GODS.put(id, info);

@@ -1,4 +1,4 @@
-// 1.20.1	2026-04-27T17:34:37.2856905	Recipes
+// 1.20.1	2026-04-27T17:39:25.8915121	Recipes
 02d3818a9afddbb3f60c51e2b143f20dcb222b5a data/kunluncontinent/advancements/recipes/combat/cloud_patterned_bronze_boots.json
 72929926456f0725762eafe4e20e09bdb89c9613 data/kunluncontinent/advancements/recipes/combat/cloud_patterned_bronze_chestplate.json
 47a987ebd5e90408769d6cc2148608f9bfea25fd data/kunluncontinent/advancements/recipes/combat/cloud_patterned_bronze_helmet.json
@@ -256,7 +256,7 @@ e08216a6d91825b7e0aeceef4485f67cdde4ebec data/kunluncontinent/recipes/sunken_sil
 db3463e6ff6ae79898b38df242c8253d12b61462 data/kunluncontinent/recipes/sunken_silver_sword.json
 d79802e79bb543a776075d8c38e4fb8f37e1826b data/kunluncontinent/recipes/taixupowang_dan_from_neidan7.json
 9c0a6d5c50472846597a5b62eb5b296cd9dd7f49 data/kunluncontinent/recipes/thunderrealm_snowflake.json
-95730cfc2eea118799821aad01a27e679cacea36 data/kunluncontinent/recipes/thunder_realm_portal_block.json
+88f51c0ecb5513010b9550c689596522fb32c5ce data/kunluncontinent/recipes/thunder_realm_portal_block.json
 c55c34e946f9e738fd05585f4cae5259e2fdc1a3 data/kunluncontinent/recipes/top_cold_protection.json
 65f37158cc0e8bc063cc1820bbb7d64def402c92 data/kunluncontinent/recipes/top_hunhuan_storage_core.json
 e562e8c95454ab2bef7c449ff5b8c22e5ca8dbf5 data/kunluncontinent/recipes/top_level_hexin.json

@@ -13,6 +13,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraftforge.network.PacketDistributor;
 
 // 同步属性接口
+
 public interface SynsAPI {
     static void synsPlayerAttribute(Entity entity){
         if(entity instanceof ServerPlayer livingEntity){
@@ -20,13 +21,15 @@ public interface SynsAPI {
             if(livingEntity.getMaxHealth() != maxshengming){
                 livingEntity.getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxshengming);
             }
-
             entity.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(capability -> {
-
-                NetworkHandler.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> livingEntity), new SPacketPlayerAttribute(entity.getId(),capability.serializeNBT()));
+                NetworkHandler.INSTANCE.send(
+                        PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> livingEntity),
+                        new SPacketPlayerAttribute(livingEntity.getId(), capability.serializeNBT())
+                );
             });
         }
     }
+
     static void synsEntityAttribute(Entity entity) {
         if (entity instanceof LivingEntity livingEntity) {
             entity.getCapability(MobAttributeCapabilityProvider.CAPABILITY).ifPresent(capability -> {

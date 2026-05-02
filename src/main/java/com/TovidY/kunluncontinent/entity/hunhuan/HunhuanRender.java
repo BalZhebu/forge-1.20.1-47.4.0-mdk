@@ -1,5 +1,6 @@
 package com.TovidY.kunluncontinent.entity.hunhuan;
 
+import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -16,8 +17,16 @@ public class HunhuanRender extends EntityRenderer<HunhuanEntity> {
 
     @Override
     public void render(HunhuanEntity entity, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
-        long nianxian = entity.getNianxianSync();
-        renderHunhuan(entity, partialTicks, poseStack, (int) nianxian, 0);
+        net.minecraft.client.player.LocalPlayer player = net.minecraft.client.Minecraft.getInstance().player;
+        if (player != null) {
+            player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
+                if (cap.isConfigOpen(4)) {
+                    long nianxian = entity.getNianxianSync();
+                    renderHunhuan(entity, partialTicks, poseStack, (int) nianxian, 0);
+                }
+            });
+        }
+
         super.render(entity, yaw, partialTicks, poseStack, buffer, packedLight);
     }
 

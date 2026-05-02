@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 //配方生成
-
 public class ModRecipesProvider extends RecipeProvider implements IConditionBuilder  {
     public ModRecipesProvider(PackOutput pOutput) {
         super(pOutput);

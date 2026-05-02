@@ -17,5 +17,6 @@ public class ModCommands {
         MonsterCommand.register(event.getDispatcher());
         HunguCommand.register(event.getDispatcher());
         ShenweiCommand.register(event.getDispatcher());
+        com.TovidY.kunluncontinent.command.shenkao.ShenweiCommand.register(event.getDispatcher());
     }
 }
