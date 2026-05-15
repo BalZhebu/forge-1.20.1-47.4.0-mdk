@@ -12,8 +12,10 @@ import com.TovidY.kunluncontinent.capability.playerattributes.PlayerHunhuanAPI;
 import com.TovidY.kunluncontinent.command.HunguAdminStatus;
 import com.TovidY.kunluncontinent.entity.EntityInit;
 import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanEntity;
+import com.TovidY.kunluncontinent.godclass.interfac.GodTaskType;
 import com.TovidY.kunluncontinent.item.ModItems;
 import com.TovidY.kunluncontinent.item.neidanitems.NeidanDropHandler;
+import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.SynsAPI;
 import com.TovidY.kunluncontinent.network.client.PacketSyncGodData;
 import net.minecraft.core.BlockPos;
@@ -39,6 +41,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -66,6 +69,30 @@ public class KLivingDeathEvent {
             handleExperience(player, cap);
             tryGenerateHunhuan(cap, entity.level(), entity.getOnPos());
             handleHunguDrop(entity, (int) cap.getNianxian(), player);
+
+            handleGodKillTask(player, entity);
+        });
+    }
+
+    private static void handleGodKillTask(Player player, LivingEntity killedEntity) {
+        if (!(player instanceof ServerPlayer serverPlayer)) return;
+        serverPlayer.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(godCap -> {
+            if (godCap.getGodName().isEmpty() || godCap.isGod() || godCap.getAssignedTargets() == null) return;
+            int stage = godCap.getCurrentStage();
+            if (stage < 1 || stage > 9) return;
+            String typeStr = godCap.getAssignedTypes()[stage];
+            if (!GodTaskType.KILL.name().equals(typeStr)) return;
+            String target = godCap.getAssignedTargets()[stage];
+            if (target == null) return;
+            String killedEntityId = ForgeRegistries.ENTITY_TYPES.getKey(killedEntity.getType()).toString();
+            if (killedEntityId.equals(target)) {
+                godCap.addGodTaskProgress(1);
+                int required = godCap.getAssignedCounts()[stage];
+                if (godCap.getGodTaskProgress() >= required) {
+                    godCap.checkTaskCompletion(serverPlayer);
+                }
+                NetworkHandler.sendToClient(new PacketSyncGodData(godCap), serverPlayer);
+            }
         });
     }
 
@@ -194,8 +221,8 @@ public class KLivingDeathEvent {
                     }
                 }
 
-                // --- C. 修罗神获取逻辑 (攻击力 > 15W，击杀任意生物) ---
-                if (cap.getGongji() > 150000f) {
+                // --- C. 修罗神获取逻辑 (攻击力 > 5W，击杀任意生物) ---
+                if (cap.getGongji() > 50000f) {
                     // 如果开启了 debugForceSuccess，概率为 100%，否则为 0.05%
                     float chance = cap.debugForceSuccess ? 1.0f : 0.0005f;
                     if (RANDOM.nextFloat() < chance) {

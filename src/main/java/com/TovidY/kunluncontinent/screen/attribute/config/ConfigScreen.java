@@ -30,8 +30,8 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
             new ConfigItem("生物魂环显示", 1),
             new ConfigItem("玩家魂环显示", 2),
             new ConfigItem("吸收经验提示", 3),
-            new ConfigItem("魂环实体显示", 4)
-
+            new ConfigItem("魂环实体显示", 4),
+            new ConfigItem("魂核实体显示", 5)
     );
 
     public ConfigScreen(HunhuanMenu pMenu, Inventory pPlayerInventory, Component pTitle) {

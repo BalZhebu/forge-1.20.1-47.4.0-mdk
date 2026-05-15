@@ -1,10 +1,12 @@
 package com.TovidY.kunluncontinent.entity.hunhe;
 
 import com.TovidY.kunluncontinent.KlMain;
+import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.render.KLRenderApi;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -12,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
 
 //魂核渲染
+
 public class HunheRender extends EntityRenderer<HunheEntity> {
     public HunheRender(EntityRendererProvider.Context context) {
         super(context);
@@ -20,7 +23,13 @@ public class HunheRender extends EntityRenderer<HunheEntity> {
     public static final ResourceLocation TEXT = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID,"textures/entity/hunhe.png");
 
     public void render(HunheEntity entity, float v, float v1, PoseStack poseStack, MultiBufferSource multiBufferSource, int i) {
-        renderHunhe(entity,v1,poseStack,entity.getValue());
+        net.minecraft.client.player.LocalPlayer localPlayer = Minecraft.getInstance().player;
+        if (localPlayer != null) {
+            boolean isVisible = localPlayer.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
+                    .map(cap -> cap.isConfigOpen(5)).orElse(true);
+            if (!isVisible) return;
+        }
+        renderHunhe(entity, v1, poseStack, entity.getValue());
     }
 
     private void renderHunhe(HunheEntity entity, float v1, PoseStack poseStack, float value) {
