@@ -71,7 +71,6 @@ public class EyeDeepSeaItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
-        // 你可以手动添加提示，或者继续使用翻译键
         pTooltipComponents.add(Component.translatable("tooltip.item.klitem.eyetf"));
     }
 }

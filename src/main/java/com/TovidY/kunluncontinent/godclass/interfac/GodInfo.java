@@ -276,7 +276,7 @@ public class GodInfo {
         capability.setWuchuan(capability.getWuchuan() + 1f);
         capability.setShanbi(capability.getShanbi() + 1f);
         capability.setKangbao(capability.getMingzhong() + 1f);
-        player.sendSystemMessage(Component.literal("§d§l【神赐】 §f由于你已达99级巅峰，无法升级百级，但神赐属性已强化！"));
+        player.sendSystemMessage(Component.literal("§d§l【神赐】 §f由于你已达99级巅峰，无法升级百级，但各类属性已强化！"));
     }
 
     public GodTask getRandomTask(int stage, RandomSource random) {

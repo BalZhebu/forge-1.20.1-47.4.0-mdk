@@ -52,6 +52,8 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
 
     private boolean initialized = false;
 
+    private int uiOffsetY = 0;
+
     private Map<String, BaseSkillItem[]> wuhunSkillsMap = new HashMap<>();
     private Map<String, Integer> selectedSkillIndexMap = new HashMap<>();
 
@@ -149,6 +151,8 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         tag.putInt("DamageDisplayMode", damageDisplayMode);
         tag.putLong("configFlags", configFlags);
 
+        tag.putInt("UiOffsetY", this.uiOffsetY);
+
         // 保存神祇系统数据
         tag.putString("GodName", godName);
         tag.putInt("CurrentGodStage", currentStage);
@@ -233,6 +237,10 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         this.hunhuankuaiguan = nbt.getInt("Hunhuankuaiguan");
 
         this.damageDisplayMode = nbt.getInt("DamageDisplayMode");
+
+        if (nbt.contains("UiOffsetY")) {
+            this.uiOffsetY = nbt.getInt("UiOffsetY");
+        }
 
         if (nbt.contains("configFlags")) {
             this.configFlags = nbt.getLong("configFlags");
@@ -582,6 +590,14 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
     
     public boolean isInitialized() { return initialized; }
     public void setInitialized(boolean initialized) { this.initialized = initialized; }
+
+    public int getUiOffsetY() {
+        return this.uiOffsetY;
+    }
+
+    public void setUiOffsetY(int value) {
+        this.uiOffsetY = value;
+    }
 
     public void startCasting(BaseSkillItem skill, int time) {
         this.currentCastingSkill = skill;

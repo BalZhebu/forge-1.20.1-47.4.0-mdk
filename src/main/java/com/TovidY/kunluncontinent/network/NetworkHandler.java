@@ -54,6 +54,8 @@ public class NetworkHandler {
         register(PacketChangeDisplayMode.class,PacketChangeDisplayMode::encode,PacketChangeDisplayMode::decode,PacketChangeDisplayMode::handle);
         register(PacketToggleConfig.class, PacketToggleConfig::encode,PacketToggleConfig::decode,PacketToggleConfig::handle);
 
+        register(PacketUpdateUIOffset.class, PacketUpdateUIOffset::toBytes, PacketUpdateUIOffset::new, PacketUpdateUIOffset::handle);
+
         // 服务端发给客户端（同步数据）
         register(PacketSyncGodData.class, PacketSyncGodData::encode, PacketSyncGodData::decode, PacketSyncGodData::handle);
 

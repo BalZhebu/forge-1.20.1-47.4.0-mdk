@@ -47,6 +47,7 @@ import com.TovidY.kunluncontinent.item.baseskillist.zhenshen.SkillPohun7;
 import com.TovidY.kunluncontinent.item.hungu.BoneItem;
 import com.TovidY.kunluncontinent.item.klitem.*;
 import com.TovidY.kunluncontinent.item.neidanitems.NeidanItem;
+import com.TovidY.kunluncontinent.item.testitemblock.InstantKillSwordItem;
 import com.TovidY.kunluncontinent.item.testitemblock.TestLevelUp;
 import com.TovidY.kunluncontinent.item.tool.DecompositionItem;
 import com.TovidY.kunluncontinent.item.tool.ModSwordBaseItem;

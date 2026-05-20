@@ -8,6 +8,7 @@ import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCap
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerUpgradeSystem;
 import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanEntity;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
+import com.TovidY.kunluncontinent.item.klitem.ZhuanShengTestItem;
 import com.TovidY.kunluncontinent.network.SynsAPI;
 import com.TovidY.kunluncontinent.worldgen.ModDimensions;
 import net.minecraft.ChatFormatting;
@@ -32,6 +33,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -50,10 +52,13 @@ public class PWPlayerTickEvent {
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         Player player = event.player;
+
         if (event.phase == TickEvent.Phase.END && !player.level().isClientSide && player instanceof ServerPlayer serverPlayer) {
             long gameTime = player.level().getGameTime();
             player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(capability -> {
                 playerUpdateServere(player, capability);
+
+                handleReincarnationLogic(serverPlayer, gameTime);
 
                 handleSkillCasting(serverPlayer, capability, gameTime);
                 handleLieDiLanding(serverPlayer);
@@ -77,7 +82,7 @@ public class PWPlayerTickEvent {
                     updateJingshenliRegen(player, capability);
                 }
                 updatePlayerFly(player, capability);
-                
+
                 handleMeditationLogic(serverPlayer, capability, gameTime);
             });
         }
@@ -486,6 +491,81 @@ public class PWPlayerTickEvent {
                     cost = 15.0f + (level * 0.25f);
                 }
                 capability.setJingshenli(capability.getJingshenli() - cost);
+            }
+        }
+    }
+
+    private static void handleReincarnationLogic(ServerPlayer player, long gameTime) {
+        CompoundTag data = player.getPersistentData();
+        // 进度检查
+        ZhuanShengTestItem.checkReincarnationProgress(player);
+        // 1. 天劫倒计时阶段
+        if (data.getBoolean("IsPreparingReincarnation")) {
+            int timer = data.getInt("ReincarnationTimer");
+            if (timer > 0) {
+                data.putInt("ReincarnationTimer", timer - 1);
+                if (timer % 20 == 0) {
+                    player.sendSystemMessage(Component.literal("天劫倒计时: " + (timer / 20) + "秒").withStyle(ChatFormatting.RED));
+                }
+            } else {
+                data.remove("IsPreparingReincarnation");
+                data.putBoolean("IsLightningPhase", true);
+                data.putInt("LightningCount", 0);
+                player.sendSystemMessage(Component.literal("天威降临，雷劫开始！（天雷会压低血量但不至死，20血以下时将获得转生重修的机会）").withStyle(ChatFormatting.DARK_RED));
+            }
+        }
+        // 2. 雷劫轰顶阶段
+        if (data.getBoolean("IsLightningPhase")) {
+            // 借用主 Tick 里的统一 gameTime，每秒（20刻）执行一次
+            if (gameTime % 20 == 0) {
+                int count = data.getInt("LightningCount");
+                float currentHealth = player.getHealth();
+                // 成功转生条件
+                if (currentHealth <= 20.0f && count > 0) {
+                    player.sendSystemMessage(Component.literal("劫难已满，破后而立！").withStyle(ChatFormatting.LIGHT_PURPLE));
+                    data.remove("IsLightningPhase");
+                    data.remove("LightningCount");
+                    player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
+                        ZhuanShengTestItem.completeReincarnation(player, cap);
+                    });
+                }
+                else if (count >= 99) {
+                    player.sendSystemMessage(Component.literal("雷劫消散，你的实力太过强大，无法堕入轮回。（血量达到20以下时才会进入轮回）").withStyle(ChatFormatting.GRAY));
+                    data.remove("IsLightningPhase");
+                }
+                // 降雷伤害
+                else {
+                    LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(player.level());
+                    if (bolt != null) {
+                        bolt.setPos(player.position());
+                        bolt.setVisualOnly(true);
+                        player.level().addFreshEntity(bolt);
+                    }
+                    float damageAmount = currentHealth * 0.95f;
+                    player.hurt(player.damageSources().lightningBolt(), damageAmount);
+                    player.setHealth(Math.max(1.0f, currentHealth * 0.2f));
+                    data.putInt("LightningCount", count + 1);
+                    player.sendSystemMessage(Component.literal("第 " + (count + 1) + " 重雷劫...").withStyle(ChatFormatting.DARK_PURPLE));
+                }
+            }
+        }
+    }
+
+    /**
+     * 玩家死亡事件（监听玩家死亡以重置转生状态）
+     * 提示：这个是 LivingDeathEvent，不能写进 onPlayerTick 内部，但可以写在同一个类里方便统一管理。
+     */
+    @SubscribeEvent
+    public static void onPlayerDeath(LivingDeathEvent event) {
+        if (!event.getEntity().level().isClientSide && event.getEntity() instanceof Player player) {
+            ZhuanShengTestItem.cancelReincarnation(player);
+
+            CompoundTag data = player.getPersistentData();
+            if (data.contains("IsPreparingReincarnation") || data.contains("IsLightningPhase")) {
+                data.remove("IsPreparingReincarnation");
+                data.remove("IsLightningPhase");
+                data.remove("ReincarnationTimer");
+                data.remove("LightningCount");
             }
         }
     }

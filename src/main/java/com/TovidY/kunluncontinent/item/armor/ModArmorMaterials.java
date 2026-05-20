@@ -14,55 +14,26 @@ import java.util.function.Supplier;
 
 //装备属性接口
 public enum ModArmorMaterials implements ArmorMaterial {
-    //基础耐久乘数例钻石=33，铁=15，皮革=5
-    //构造参数，33 = 基础耐久度乘数，4/7/10/4、都是各部位护甲值，30 = 附魔能力，ARMOR_EQUIP_DIAMOND穿戴音效，3.0F = 盔甲韧性，0.1F = 击退抗性，Ingredient方法 = 修复材料
 
-    GRAY_IRON("gray_iron", 33, Util.make(new EnumMap<>(ArmorItem.Type.class), (map) -> {
-        map.put(ArmorItem.Type.BOOTS, 4);
-        map.put(ArmorItem.Type.LEGGINGS, 7);
-        map.put(ArmorItem.Type.CHESTPLATE, 10);
-        map.put(ArmorItem.Type.HELMET, 4);
-    }), 30, SoundEvents.ARMOR_EQUIP_DIAMOND, 3.0F, 0.1F, () ->
-            Ingredient.of(ModItems.GRAY_IRON_INGOT.get())),
+    // 构造参数：名字, 耐久乘数, 防御值数组[鞋, 腿, 胸, 头], 附魔能力, 音效, 韧性, 击退抗性, 修复材料Suppier
 
-    CLOUD_PATTERNED_BRONZE("cloud_patterned_bronze",40,Util.make(new EnumMap<>(ArmorItem.Type.class),(map) -> {
-        map.put(ArmorItem.Type.HELMET,6);
-        map.put(ArmorItem.Type.CHESTPLATE,12);
-        map.put(ArmorItem.Type.LEGGINGS,9);
-        map.put(ArmorItem.Type.BOOTS,6);
-    }),30,SoundEvents.ARMOR_EQUIP_NETHERITE,5.0F,0.2F,()->Ingredient.of(ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get())),
+    GRAY_IRON("gray_iron", 33, new int[]{4, 7, 10, 4}, 30, SoundEvents.ARMOR_EQUIP_DIAMOND, 3.0F, 0.1F,
+            () -> Ingredient.of(ModItems.GRAY_IRON_INGOT.get())),
 
-    RED_FIRE("red_fire", 55, Util.make(new EnumMap<>(ArmorItem.Type.class), (map) -> {
-        map.put(ArmorItem.Type.HELMET, 10);
-        map.put(ArmorItem.Type.CHESTPLATE, 15);
-        map.put(ArmorItem.Type.LEGGINGS, 13);
-        map.put(ArmorItem.Type.BOOTS, 8);
-    }), 30, SoundEvents.ARMOR_EQUIP_NETHERITE, 7.0F, 0.3F, () -> Ingredient.of(ModItems.RED_FIRE_INGOT.get())),
+    CLOUD_PATTERNED_BRONZE("cloud_patterned_bronze", 40, new int[]{6, 9, 12, 6}, 30, SoundEvents.ARMOR_EQUIP_NETHERITE, 5.0F, 0.2F,
+            () -> Ingredient.of(ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get())),
 
-    SUNKEN_SILVER("sunken_silver", 70, Util.make(new EnumMap<>(ArmorItem.Type.class), (map) -> {
-        map.put(ArmorItem.Type.HELMET, 13);
-        map.put(ArmorItem.Type.CHESTPLATE, 20);
-        map.put(ArmorItem.Type.LEGGINGS, 15);
-        map.put(ArmorItem.Type.BOOTS, 10);
-    }), 30, SoundEvents.ARMOR_EQUIP_NETHERITE, 10.0F, 0.5F, () -> Ingredient.of(ModItems.SUNKEN_SILVER_INGOT.get())),
+    RED_FIRE("red_fire", 55, new int[]{8, 13, 15, 10}, 30, SoundEvents.ARMOR_EQUIP_NETHERITE, 7.0F, 0.3F,
+            () -> Ingredient.of(ModItems.RED_FIRE_INGOT.get())),
 
-    COLD_HEARTED_STEEL("cold_hearted_steel", 88, Util.make(new EnumMap<>(ArmorItem.Type.class), (map) -> {
-        map.put(ArmorItem.Type.HELMET, 15);
-        map.put(ArmorItem.Type.CHESTPLATE, 25);
-        map.put(ArmorItem.Type.LEGGINGS, 20);
-        map.put(ArmorItem.Type.BOOTS, 15);
-    }), 30, SoundEvents.ARMOR_EQUIP_NETHERITE, 15.0F, 0.8F, () -> Ingredient.of(ModItems.COLD_HEARTED_STEEL_INGOT.get())),
+    SUNKEN_SILVER("sunken_silver", 70, new int[]{10, 15, 20, 13}, 30, SoundEvents.ARMOR_EQUIP_NETHERITE, 10.0F, 0.5F,
+            () -> Ingredient.of(ModItems.SUNKEN_SILVER_INGOT.get())),
 
-    RINSEI("rinsei", 100, Util.make(new EnumMap<>(ArmorItem.Type.class), (map) -> {
-        map.put(ArmorItem.Type.HELMET, 18);
-        map.put(ArmorItem.Type.CHESTPLATE, 27);
-        map.put(ArmorItem.Type.LEGGINGS, 22);
-        map.put(ArmorItem.Type.BOOTS, 17);
-    }), 30, SoundEvents.ARMOR_EQUIP_NETHERITE, 18.0F, 0.8F, () -> Ingredient.of(ModItems.COLD_HEARTED_STEEL_INGOT.get())),
+    COLD_HEARTED_STEEL("cold_hearted_steel", 88, new int[]{15, 20, 25, 15}, 30, SoundEvents.ARMOR_EQUIP_NETHERITE, 15.0F, 0.8F,
+            () -> Ingredient.of(ModItems.COLD_HEARTED_STEEL_INGOT.get())),
 
-
-    ;
-
+    RINSEI("rinsei", 100, new int[]{17, 22, 27, 18}, 30, SoundEvents.ARMOR_EQUIP_NETHERITE, 18.0F, 0.8F,
+            () -> Ingredient.of(ModItems.RINSEI_INGOT.get()));
 
     private static final EnumMap<ArmorItem.Type, Integer> HEALTH_FUNCTION_FOR_TYPE = Util.make(new EnumMap<>(ArmorItem.Type.class), (map) -> {
         map.put(ArmorItem.Type.BOOTS, 13);
@@ -80,15 +51,21 @@ public enum ModArmorMaterials implements ArmorMaterial {
     private final float knockbackResistance;
     private final Supplier<Ingredient> repairIngredient;
 
-    ModArmorMaterials(String name, int durabilityMultiplier, EnumMap<ArmorItem.Type, Integer> protectionFunctionForType, int enchantmentValue, SoundEvent sound, float toughness, float knockbackResistance, Supplier<Ingredient> repairIngredient) {
+    ModArmorMaterials(String name, int durabilityMultiplier, int[] protectionArray, int enchantmentValue, SoundEvent sound, float toughness, float knockbackResistance, Supplier<Ingredient> repairIngredient) {
         this.name = name;
         this.durabilityMultiplier = durabilityMultiplier;
-        this.protectionFunctionForType = protectionFunctionForType;
         this.enchantmentValue = enchantmentValue;
         this.sound = sound;
         this.toughness = toughness;
         this.knockbackResistance = knockbackResistance;
         this.repairIngredient = repairIngredient;
+
+        // 内部自动映射
+        this.protectionFunctionForType = new EnumMap<>(ArmorItem.Type.class);
+        this.protectionFunctionForType.put(ArmorItem.Type.BOOTS, protectionArray[0]);
+        this.protectionFunctionForType.put(ArmorItem.Type.LEGGINGS, protectionArray[1]);
+        this.protectionFunctionForType.put(ArmorItem.Type.CHESTPLATE, protectionArray[2]);
+        this.protectionFunctionForType.put(ArmorItem.Type.HELMET, protectionArray[3]);
     }
 
     public int getDurabilityForType(ArmorItem.Type pType) {
@@ -122,5 +99,4 @@ public enum ModArmorMaterials implements ArmorMaterial {
     public float getKnockbackResistance() {
         return this.knockbackResistance;
     }
-
 }
