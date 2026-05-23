@@ -19,7 +19,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class ShenkaoScreen extends AbstractContainerScreen<ShenkaoMenu> {
     private static final ResourceLocation TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/screens/shenkaogui.png");
+            new ResourceLocation(KlMain.MOD_ID, "textures/screens/shenkaogui.png");
 
     public ShenkaoScreen(ShenkaoMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);

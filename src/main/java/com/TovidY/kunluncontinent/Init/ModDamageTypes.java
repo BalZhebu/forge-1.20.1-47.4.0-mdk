@@ -12,7 +12,7 @@ public class ModDamageTypes {
     // 这里的 Key 必须与你 Handler 里引用的一致
     public static final ResourceKey<DamageType> EXTREME_COLD = ResourceKey.create(
             Registries.DAMAGE_TYPE,
-            ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "extreme_cold")
+            new ResourceLocation(KlMain.MOD_ID, "extreme_cold")
     );
 
     public static void bootstrap(BootstapContext<DamageType> context) {

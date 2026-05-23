@@ -13,7 +13,7 @@ import org.joml.Matrix4f;
 
 public class UnderwaterAltarRenderer implements BlockEntityRenderer<UnderwaterAltarTile> {
 
-    public static final ResourceLocation HUNHUAN = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/picture/particletext.png");
+    public static final ResourceLocation HUNHUAN = new ResourceLocation(KlMain.MOD_ID, "textures/picture/particletext.png");
 
     public UnderwaterAltarRenderer(BlockEntityRendererProvider.Context context) {
     }

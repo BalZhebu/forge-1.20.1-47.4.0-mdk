@@ -22,18 +22,18 @@ public class ModBiomeModifiers {
     // 基础生成：所有雪地群系（低概率）
     public static final ResourceKey<BiomeModifier> ADD_ICE_CRYSTAL_BASE = ResourceKey.create(
             ForgeRegistries.Keys.BIOME_MODIFIERS,
-            ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "add_ice_crystal_snowy")
+            new ResourceLocation(KlMain.MOD_ID, "add_ice_crystal_snowy")
     );
 
     // 额外生成：仅限冰刺之地（高概率）
     public static final ResourceKey<BiomeModifier> ADD_ICE_CRYSTAL_SPIKES = ResourceKey.create(
             ForgeRegistries.Keys.BIOME_MODIFIERS,
-            ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "add_ice_crystal_spikes")
+            new ResourceLocation(KlMain.MOD_ID, "add_ice_crystal_spikes")
     );
 
     public static final ResourceKey<BiomeModifier> ADD_ICE_CRYSTAL_ICE = ResourceKey.create(
             ForgeRegistries.Keys.BIOME_MODIFIERS,
-            ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "add_ice_crystal_ice")
+            new ResourceLocation(KlMain.MOD_ID, "add_ice_crystal_ice")
     );
 
     public static void bootstrap(BootstapContext<BiomeModifier> context) {

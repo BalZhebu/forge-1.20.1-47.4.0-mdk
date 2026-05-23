@@ -20,7 +20,7 @@ public class HunheRender extends EntityRenderer<HunheEntity> {
         super(context);
     }
 
-    public static final ResourceLocation TEXT = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID,"textures/entity/hunhe.png");
+    public static final ResourceLocation TEXT =new ResourceLocation(KlMain.MOD_ID,"textures/entity/hunhe.png");
 
     public void render(HunheEntity entity, float v, float v1, PoseStack poseStack, MultiBufferSource multiBufferSource, int i) {
         net.minecraft.client.player.LocalPlayer localPlayer = Minecraft.getInstance().player;

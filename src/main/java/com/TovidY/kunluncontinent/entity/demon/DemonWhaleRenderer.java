@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 
 public class DemonWhaleRenderer extends MobRenderer<DemonWhaleEntity, DemonWhaleModel<DemonWhaleEntity>> {
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/entity/custommodel.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation(KlMain.MOD_ID, "textures/entity/custommodel.png");
 
     public DemonWhaleRenderer(EntityRendererProvider.Context context) {
         super(context, new DemonWhaleModel<>(context.bakeLayer(DemonWhaleModel.LAYER_LOCATION)), 0.7F);

@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 
 public class SnowDemonRenderer extends MobRenderer<SnowDemonEntity, SnowDemonModel<SnowDemonEntity>> {
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/entity/snowdemon.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation(KlMain.MOD_ID, "textures/entity/snowdemon.png");
 
     public SnowDemonRenderer(EntityRendererProvider.Context context) {
         super(context, new SnowDemonModel<>(context.bakeLayer(SnowDemonModel.LAYER_LOCATION)), 0.7F);

@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 public class JEIKluxPlugin implements IModPlugin {
     @Override
     public ResourceLocation getPluginUid() {
-        return ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "jei_klux");
+        return new ResourceLocation(KlMain.MOD_ID, "jei_klux");
     }
 
     @Override
@@ -79,7 +79,7 @@ public class JEIKluxPlugin implements IModPlugin {
             ItemStack result = target.copy();
             result.setDamageValue(0);
             ShapelessRecipe dummyRecipe = new ShapelessRecipe(
-                    ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "jei_repair_" + target.getItem().toString()),
+                    new ResourceLocation(KlMain.MOD_ID, "jei_repair_" + target.getItem().toString()),
                     "repair",
                     CraftingBookCategory.EQUIPMENT,
                     result,

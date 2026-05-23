@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 public class KluxTabButton extends Button {
-    private static final ResourceLocation BUTTON_TEXTURE = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/screens/anniu.png");
+    private static final ResourceLocation BUTTON_TEXTURE = new ResourceLocation(KlMain.MOD_ID, "textures/screens/anniu.png");
     private final ItemStack icon;
     private final Component tooltip;
     private final boolean selected;

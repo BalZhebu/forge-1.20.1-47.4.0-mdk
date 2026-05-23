@@ -21,11 +21,11 @@ public class ModItemModelsProvider extends ItemModelProvider {
     protected void registerModels() {
 
         //测试物品
-        ResourceLocation sharedTexture = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "item/ceshi");
+        ResourceLocation sharedTexture = new ResourceLocation(KlMain.MOD_ID, "item/ceshi");
         for (RegistryObject<Item> itemRegistry : ModItems.DEBUG_ITEM_BLOCK) {
             Item item = itemRegistry.get();
             ResourceLocation id = ForgeRegistries.ITEMS.getKey(item);
-            withExistingParent(id.getPath(), ResourceLocation.withDefaultNamespace("item/generated"))
+            withExistingParent(id.getPath(),new ResourceLocation("item/generated"))
                     .texture("layer0", sharedTexture);
         }
 
@@ -146,14 +146,14 @@ public class ModItemModelsProvider extends ItemModelProvider {
         }
 
         return withExistingParent(id.getPath(),
-                ResourceLocation.withDefaultNamespace("item/handheld"))
+                new ResourceLocation("item/handheld"))
                 .texture("layer0",
-                        ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "item/" + id.getPath()));
+                        new ResourceLocation(KlMain.MOD_ID, "item/" + id.getPath()));
     }
 
     private void spawnEggItem(Item item) {
         ResourceLocation id = ForgeRegistries.ITEMS.getKey(item);
-        withExistingParent(id.getPath(), ResourceLocation.withDefaultNamespace("item/template_spawn_egg"));
+        withExistingParent(id.getPath(),new ResourceLocation("item/template_spawn_egg"));
     }
 
 }

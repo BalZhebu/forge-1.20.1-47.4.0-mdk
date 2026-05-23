@@ -11,7 +11,7 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
 
 public class DemonWhaleModel<T extends DemonWhaleEntity> extends HierarchicalModel<T> {
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/entity/custommodel.png"), "main");
+	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(KlMain.MOD_ID, "textures/entity/custommodel.png"), "main");
 	private final ModelPart root;
 	private final ModelPart All;
 	private final ModelPart Body;

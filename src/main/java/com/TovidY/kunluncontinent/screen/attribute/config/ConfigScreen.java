@@ -20,7 +20,7 @@ import net.minecraft.world.entity.player.Inventory;
 import java.util.List;
 
 public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/screens/config_gui.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation(KlMain.MOD_ID, "textures/screens/config_gui.png");
 
     private int currentPage = 0;
     private static final int ROWS = 6;

@@ -8,7 +8,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.GsonHelper;
 
 public class LevelTrigger extends SimpleCriterionTrigger<LevelTrigger.Instance> {
-    private static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "level_up");
+    private static final ResourceLocation ID = new ResourceLocation(KlMain.MOD_ID, "level_up");
 
     @Override
     public ResourceLocation getId() { return ID; }

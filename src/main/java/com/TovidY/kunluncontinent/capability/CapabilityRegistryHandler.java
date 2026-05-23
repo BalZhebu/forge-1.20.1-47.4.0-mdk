@@ -34,12 +34,12 @@ public class CapabilityRegistryHandler {
         //玩家附加属性
         if (event.getObject() instanceof Player) {
             PlayerAttributeCapabilityProvider provider = new PlayerAttributeCapabilityProvider();
-            event.addCapability(ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "player_attribute"), provider);
+            event.addCapability(new ResourceLocation(KlMain.MOD_ID, "player_attribute"), provider);
         }
         // 为怪物附加属性
         if (entity instanceof Mob || entity instanceof HunhuanEntity) {
             MobAttributeCapabilityProvider provider = new MobAttributeCapabilityProvider();
-            event.addCapability(ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "mob_attribute"), provider);
+            event.addCapability(new ResourceLocation(KlMain.MOD_ID, "mob_attribute"), provider);
             if (entity instanceof Mob mob) {
                 monsterJoin(mob);
             }

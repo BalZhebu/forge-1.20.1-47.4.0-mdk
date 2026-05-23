@@ -98,7 +98,7 @@ public class ModBiomeModifierProvider {
         ));
 
         //彼岸花
-        context.register(ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "add_red_spider_lily")),
+        context.register(ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, new ResourceLocation(KlMain.MOD_ID, "add_red_spider_lily")),
                 new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
                         biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
                         HolderSet.direct(placedFeatures.getOrThrow(RED_SPIDER_LILY_PLACED)),
@@ -107,6 +107,6 @@ public class ModBiomeModifierProvider {
     }
 
     private static ResourceKey<BiomeModifier> createKey(String name) {
-        return ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS,ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, name));
+        return ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS,new ResourceLocation(KlMain.MOD_ID, name));
     }
 }

@@ -37,7 +37,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                             ResourceLocation.tryParse("minecraft:textures/gui/advancements/backgrounds/stone.png"),
                             FrameType.TASK, true, true, false)
                     .addCriterion("on_join", PlayerTrigger.TriggerInstance.tick())
-                    .save(saver,ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/root"), existingFileHelper);
+                    .save(saver,new ResourceLocation(KlMain.MOD_ID, "main/root"), existingFileHelper);
 
             Advancement rubyAdvancement = Advancement.Builder.advancement()
                     .parent(root)
@@ -54,7 +54,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                     .addCriterion("has_ruby", InventoryChangeTrigger.TriggerInstance.hasItems(
                             ModItems.RUBY.get()
                     ))
-                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/get_ruby"), existingFileHelper);
+                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/get_ruby"), existingFileHelper);
 
             Advancement sapphireAdvancement = Advancement.Builder.advancement()
                     .parent(rubyAdvancement)
@@ -71,7 +71,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                     .addCriterion("has_sapphire", InventoryChangeTrigger.TriggerInstance.hasItems(
                             ModItems.SAPPHIRE.get()
                     ))
-                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/get_sapphire"), existingFileHelper);
+                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/get_sapphire"), existingFileHelper);
 
             Advancement amethystAdvancement = Advancement.Builder.advancement()
                     .parent(sapphireAdvancement)
@@ -88,7 +88,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                     .addCriterion("has_amethyst", InventoryChangeTrigger.TriggerInstance.hasItems(
                             ModItems.AMETHYST.get()
                     ))
-                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/get_amethyst"), existingFileHelper);
+                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/get_amethyst"), existingFileHelper);
 
             Advancement starlightstoneAdvancement = Advancement.Builder.advancement()
                     .parent(amethystAdvancement)
@@ -105,7 +105,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                     .addCriterion("has_starlight_stone", InventoryChangeTrigger.TriggerInstance.hasItems(
                             ModItems.STARLIGHT_STONE.get()
                     ))
-                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/get_starlight_stone"), existingFileHelper);
+                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/get_starlight_stone"), existingFileHelper);
 
 
             Advancement grayIronAdvancement = Advancement.Builder.advancement()
@@ -123,7 +123,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                     .addCriterion("has_gray_iron_ingot", InventoryChangeTrigger.TriggerInstance.hasItems(
                             ModItems.GRAY_IRON_INGOT.get()
                     ))
-                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/get_gray_iron_ingot"), existingFileHelper);
+                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/get_gray_iron_ingot"), existingFileHelper);
 
             Advancement grayIronAdvancement2 = Advancement.Builder.advancement()
                     .parent(grayIronAdvancement) // 设置父成就（可选）
@@ -140,7 +140,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                     .addCriterion("has_gray_iron_ingot", InventoryChangeTrigger.TriggerInstance.hasItems(
                             ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get()
                     ))
-                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/get_gray_iron_ingot2"), existingFileHelper);
+                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/get_gray_iron_ingot2"), existingFileHelper);
 
             Advancement grayIronAdvancement3 = Advancement.Builder.advancement()
                     .parent(grayIronAdvancement2) // 设置父成就（可选）
@@ -157,7 +157,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                     .addCriterion("has_gray_iron_ingot", InventoryChangeTrigger.TriggerInstance.hasItems(
                             ModItems.RED_FIRE_INGOT.get()
                     ))
-                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/get_gray_iron_ingot3"), existingFileHelper);
+                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/get_gray_iron_ingot3"), existingFileHelper);
 
             Advancement grayIronAdvancement4 = Advancement.Builder.advancement()
                     .parent(grayIronAdvancement3) // 设置父成就（可选）
@@ -174,7 +174,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                     .addCriterion("has_gray_iron_ingot", InventoryChangeTrigger.TriggerInstance.hasItems(
                             ModItems.SUNKEN_SILVER_INGOT.get()
                     ))
-                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/get_gray_iron_ingot4"), existingFileHelper);
+                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/get_gray_iron_ingot4"), existingFileHelper);
 
             Advancement grayIronAdvancement5 = Advancement.Builder.advancement()
                     .parent(grayIronAdvancement4) // 设置父成就（可选）
@@ -191,7 +191,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                     .addCriterion("has_gray_iron_ingot", InventoryChangeTrigger.TriggerInstance.hasItems(
                             ModItems.COLD_HEARTED_STEEL_INGOT.get()
                     ))
-                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/get_gray_iron_ingot5"), existingFileHelper);
+                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/get_gray_iron_ingot5"), existingFileHelper);
 
             Advancement grayIronAdvancement6 = Advancement.Builder.advancement()
                     .parent(grayIronAdvancement5) // 设置父成就（可选）
@@ -208,7 +208,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                     .addCriterion("has_gray_iron_ingot", InventoryChangeTrigger.TriggerInstance.hasItems(
                             ModItems.RINSEI_INGOT.get()
                     ))
-                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/get_gray_iron_ingot6"), existingFileHelper);
+                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/get_gray_iron_ingot6"), existingFileHelper);
 
 
             // 1. 检查获得特定物品/方块的成就
@@ -222,7 +222,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                             FrameType.TASK, true, true, false
                     )
                     .addCriterion("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(ModBlocks.LIANDANLU1.get()))
-                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/liandanlu1"), existingFileHelper);
+                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/liandanlu1"), existingFileHelper);
 
             // 1. 检查获得特定物品/方块的成就
             Advancement liandanlu2 = Advancement.Builder.advancement()
@@ -235,7 +235,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                             FrameType.TASK, true, true, false
                     )
                     .addCriterion("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(ModBlocks.LIANDANLU2.get()))
-                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/liandanlu2"), existingFileHelper);
+                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/liandanlu2"), existingFileHelper);
 
             Advancement liandanlu3 = Advancement.Builder.advancement()
                     .parent(liandanlu2)
@@ -247,7 +247,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                             FrameType.TASK, true, true, false
                     )
                     .addCriterion("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(ModBlocks.LIANDANLU3.get()))
-                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/liandanlu3"), existingFileHelper);
+                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/liandanlu3"), existingFileHelper);
 
             Advancement liandanlu4 = Advancement.Builder.advancement()
                     .parent(liandanlu3)
@@ -259,7 +259,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                             FrameType.GOAL, true, true, false
                     )
                     .addCriterion("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(ModBlocks.LIANDANLU4.get()))
-                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/liandanlu4"), existingFileHelper);
+                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/liandanlu4"), existingFileHelper);
 
             Advancement liandanlu5 = Advancement.Builder.advancement()
                     .parent(liandanlu4)
@@ -272,7 +272,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                     )
 
                     .addCriterion("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(ModBlocks.LIANDANLU5.get()))
-                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/liandanlu5"), existingFileHelper);
+                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/liandanlu5"), existingFileHelper);
 
             Advancement liandanlu6 = Advancement.Builder.advancement()
                     .parent(liandanlu5)
@@ -285,7 +285,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                     )
 
                     .addCriterion("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(ModBlocks.LIANDANLU6.get()))
-                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/liandanlu6"), existingFileHelper);
+                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/liandanlu6"), existingFileHelper);
 
             Advancement liandanlu7 = Advancement.Builder.advancement()
                     .parent(liandanlu6)
@@ -298,7 +298,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                     )
 
                     .addCriterion("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(ModBlocks.LIANDANLU7.get()))
-                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/liandanlu7"), existingFileHelper);
+                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/liandanlu7"), existingFileHelper);
 
             Advancement liandanlu8 = Advancement.Builder.advancement()
                     .parent(liandanlu7)
@@ -311,7 +311,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                     )
 
                     .addCriterion("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(ModBlocks.LIANDANLU8.get()))
-                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/liandanlu8"), existingFileHelper);
+                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/liandanlu8"), existingFileHelper);
 
             Advancement liandanlu9 = Advancement.Builder.advancement()
                     .parent(liandanlu8)
@@ -323,7 +323,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                             FrameType.CHALLENGE, true, true, false
                     )
                     .addCriterion("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(ModBlocks.LIANDANLU9.get()))
-                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/liandanlu9"), existingFileHelper);
+                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/liandanlu9"), existingFileHelper);
 
             Advancement level10 = Advancement.Builder.advancement()
                     .parent(root)
@@ -336,7 +336,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                             FrameType.GOAL, true, true, false
                     )
                     .addCriterion("reached_lvl", LevelTrigger.Instance.levelReached(10))
-                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/level_10"), existingFileHelper);
+                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/level_10"), existingFileHelper);
 
             Advancement level20 = Advancement.Builder.advancement()
                     .parent(level10)
@@ -348,7 +348,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                             FrameType.GOAL, true, true, false
                     )
                     .addCriterion("reached_lvl", LevelTrigger.Instance.levelReached(20))
-                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/level_20"), existingFileHelper);
+                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/level_20"), existingFileHelper);
 
             Advancement level30 = Advancement.Builder.advancement()
                     .parent(level20)
@@ -360,7 +360,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                             FrameType.GOAL, true, true, false
                     )
                     .addCriterion("reached_lvl", LevelTrigger.Instance.levelReached(30))
-                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/level_30"), existingFileHelper);
+                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/level_30"), existingFileHelper);
 
             Advancement level40 = Advancement.Builder.advancement()
                     .parent(level30)
@@ -372,7 +372,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                             FrameType.GOAL, true, true, false
                     )
                     .addCriterion("reached_lvl", LevelTrigger.Instance.levelReached(40))
-                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/level_40"), existingFileHelper);
+                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/level_40"), existingFileHelper);
 
             Advancement level50 = Advancement.Builder.advancement()
                     .parent(level40)
@@ -384,7 +384,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                             FrameType.GOAL, true, true, false
                     )
                     .addCriterion("reached_lvl", LevelTrigger.Instance.levelReached(50))
-                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/level_50"), existingFileHelper);
+                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/level_50"), existingFileHelper);
 
             Advancement level60 = Advancement.Builder.advancement()
                     .parent(level50)
@@ -396,7 +396,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                             FrameType.GOAL, true, true, false
                     )
                     .addCriterion("reached_lvl", LevelTrigger.Instance.levelReached(60))
-                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/level_60"), existingFileHelper);
+                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/level_60"), existingFileHelper);
 
             Advancement level70 = Advancement.Builder.advancement()
                     .parent(level60)
@@ -408,7 +408,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                             FrameType.GOAL, true, true, false
                     )
                     .addCriterion("reached_lvl", LevelTrigger.Instance.levelReached(70))
-                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/level_70"), existingFileHelper);
+                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/level_70"), existingFileHelper);
 
             Advancement level80 = Advancement.Builder.advancement()
                     .parent(level70)
@@ -420,7 +420,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                             FrameType.CHALLENGE, true, true, false
                     )
                     .addCriterion("reached_lvl", LevelTrigger.Instance.levelReached(80))
-                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/level_80"), existingFileHelper);
+                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/level_80"), existingFileHelper);
 
             Advancement level90 = Advancement.Builder.advancement()
                     .parent(level80)
@@ -432,7 +432,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                             FrameType.CHALLENGE, true, true, false
                     )
                     .addCriterion("reached_lvl", LevelTrigger.Instance.levelReached(90))
-                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/level_90"), existingFileHelper);
+                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/level_90"), existingFileHelper);
 
             Advancement level99 = Advancement.Builder.advancement()
                     .parent(level90)
@@ -444,7 +444,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                             FrameType.CHALLENGE, true, true, false
                     )
                     .addCriterion("reached_lvl", LevelTrigger.Instance.levelReached(99))
-                    .save(saver, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "main/level_99"), existingFileHelper);
+                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/level_99"), existingFileHelper);
         }
     }
 }

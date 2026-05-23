@@ -16,12 +16,12 @@ import java.util.List;
 
 public class GuidBookScreen extends AbstractContainerScreen<GuideBookMenu> {
 
-    private static final ResourceLocation BOOK_TEXTURE = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/gui/guide_book.png");
+    private static final ResourceLocation BOOK_TEXTURE = new ResourceLocation(KlMain.MOD_ID, "textures/gui/guide_book.png");
 
-    private static final ResourceLocation LEFT_BUTTON = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/gui/right_book.png");
-    private static final ResourceLocation LEFT_BUTTON_HOVER = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/gui/right_book_max.png");
-    private static final ResourceLocation RIGHT_BUTTON = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/gui/left_book.png");
-    private static final ResourceLocation RIGHT_BUTTON_HOVER = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/gui/left_book_max.png");
+    private static final ResourceLocation LEFT_BUTTON = new ResourceLocation(KlMain.MOD_ID, "textures/gui/right_book.png");
+    private static final ResourceLocation LEFT_BUTTON_HOVER = new ResourceLocation(KlMain.MOD_ID, "textures/gui/right_book_max.png");
+    private static final ResourceLocation RIGHT_BUTTON = new ResourceLocation(KlMain.MOD_ID, "textures/gui/left_book.png");
+    private static final ResourceLocation RIGHT_BUTTON_HOVER = new ResourceLocation(KlMain.MOD_ID, "textures/gui/left_book_max.png");
 
     private int currentPage = 0;
     private List<FormattedCharSequence> cachedLines;

@@ -13,7 +13,7 @@ public class ModTags {
     public static class Blocks {
         // 如果以后有需要方块标签，写在这里
         private static TagKey<Block> tag(String name) {
-            return BlockTags.create(ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, name));
+            return BlockTags.create(new ResourceLocation(KlMain.MOD_ID, name));
         }
     }
 
@@ -23,7 +23,7 @@ public class ModTags {
         public static final TagKey<Item> ENGRAVING_KNIFE = tag("engraving_knife");
 
         private static TagKey<Item> tag(String name) {
-            return ItemTags.create(ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, name));
+            return ItemTags.create(new ResourceLocation(KlMain.MOD_ID, name));
         }
     }
 }

@@ -29,10 +29,10 @@ import java.util.List;
 public class ModWorldGenOreProvider {
 
     public static final ResourceKey<ConfiguredFeature<?, ?>> RED_SPIDER_LILY_CONFIG =
-            ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "red_spider_lily"));
+            ResourceKey.create(Registries.CONFIGURED_FEATURE, new ResourceLocation(KlMain.MOD_ID, "red_spider_lily"));
 
     public static final ResourceKey<PlacedFeature> RED_SPIDER_LILY_PLACED =
-            ResourceKey.create(Registries.PLACED_FEATURE,ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "red_spider_lily"));
+            ResourceKey.create(Registries.PLACED_FEATURE,new ResourceLocation(KlMain.MOD_ID, "red_spider_lily"));
 
     /**
      * 第一步：配置特征 (ConfiguredFeature)

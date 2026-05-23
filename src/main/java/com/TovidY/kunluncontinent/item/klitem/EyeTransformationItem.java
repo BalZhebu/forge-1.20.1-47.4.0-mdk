@@ -37,7 +37,7 @@ public class EyeTransformationItem extends Item {
             ServerLevel serverLevel = (ServerLevel) level;
 
             ResourceKey<Structure> structureKey = ResourceKey.create(Registries.STRUCTURE,
-                    ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "my_building"));
+                    new ResourceLocation(KlMain.MOD_ID, "my_building"));
 
             var registry = serverLevel.registryAccess().lookupOrThrow(Registries.STRUCTURE);
             var structureHolder = registry.get(structureKey);

@@ -66,31 +66,31 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
 
         //丹药炼制代码
         LiandanRecipeBuilder.create(ModItems.NEIDAN1.get(), ModItems.CHUYUAN_DAN.get(), 400)
-                .save(pWriter,ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "chuyuan_dan_from_neidan1"));
+                .save(pWriter,new ResourceLocation(KlMain.MOD_ID, "chuyuan_dan_from_neidan1"));
         LiandanRecipeBuilder.create(ModItems.NEIDAN2.get(), ModItems.BAICAOLING_DAN.get(), 400)
-                .save(pWriter,ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "baicaoling_dan_from_neidan2"));
+                .save(pWriter,new ResourceLocation(KlMain.MOD_ID, "baicaoling_dan_from_neidan2"));
         LiandanRecipeBuilder.create(ModItems.NEIDAN3.get(), ModItems.QIANHUABAO_DAN.get(), 400)
-                .save(pWriter,ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "qianhuabao_dan_from_neidan3"));
+                .save(pWriter,new ResourceLocation(KlMain.MOD_ID, "qianhuabao_dan_from_neidan3"));
         LiandanRecipeBuilder.create(ModItems.NEIDAN4.get(), ModItems.WANPOXUAN_DAN.get(), 400)
-                .save(pWriter,ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "wanpoxuan_dan_from_neidan4"));
+                .save(pWriter,new ResourceLocation(KlMain.MOD_ID, "wanpoxuan_dan_from_neidan4"));
         LiandanRecipeBuilder.create(ModItems.NEIDAN5.get(), ModItems.SHIFANGJIE_DAN.get(), 400)
-                .save(pWriter,ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "shifangjie_dan_from_neidan5"));
+                .save(pWriter,new ResourceLocation(KlMain.MOD_ID, "shifangjie_dan_from_neidan5"));
         LiandanRecipeBuilder.create(ModItems.NEIDAN6.get(), ModItems.HUANYUANYIQI_DAN.get(), 400)
-                .save(pWriter,ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "huanyuanyiqi_dan_from_neidan6"));
+                .save(pWriter,new ResourceLocation(KlMain.MOD_ID, "huanyuanyiqi_dan_from_neidan6"));
         LiandanRecipeBuilder.create(ModItems.NEIDAN7.get(), ModItems.TAIXUPOWANG_DAN.get(), 400)
-                .save(pWriter,ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "taixupowang_dan_from_neidan7"));
+                .save(pWriter,new ResourceLocation(KlMain.MOD_ID, "taixupowang_dan_from_neidan7"));
         LiandanRecipeBuilder.create(ModItems.NEIDAN8.get(), ModItems.QIANWANXINGCHEN_DAN.get(), 400)
-                .save(pWriter,ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "qianwanxingchen_dan_from_neidan8"));
+                .save(pWriter,new ResourceLocation(KlMain.MOD_ID, "qianwanxingchen_dan_from_neidan8"));
         LiandanRecipeBuilder.create(ModItems.NEIDAN9.get(), ModItems.YIZAICHUANGSHENG_DAN.get(), 400)
-                .save(pWriter,ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "yizhaichuangsheng_dan_from_neidan9"));
+                .save(pWriter,new ResourceLocation(KlMain.MOD_ID, "yizhaichuangsheng_dan_from_neidan9"));
 
         LiandanRecipeBuilder.create(ModItems.GUYUANCAO_ITEM.get(), ModItems.GUYUAN_DAN.get(), 200)
                 .special()
-                .save(pWriter,ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "guyuan_dan_from"));
+                .save(pWriter,new ResourceLocation(KlMain.MOD_ID, "guyuan_dan_from"));
 
         LiandanRecipeBuilder.create(ModItems.FANQICAO_ITEM.get(), ModItems.FANQI_DAN.get(), 150)
                 .special()
-                .save(pWriter,ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "fanqi_dan_from"));
+                .save(pWriter,new ResourceLocation(KlMain.MOD_ID, "fanqi_dan_from"));
         //雷域石
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.THUNDERREALM_SNOWFLAKE.get())
                 .pattern("XXX")
@@ -179,7 +179,7 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 )
                 .unlocks("has_kunluncontinent_ecomposition_gossip_1", inventoryTrigger(ItemPredicate.Builder.item()
                         .of(ModItems.RUBY.get()).build()))
-                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_ecomposition_gossip_1"));
+                .save(pWriter, new ResourceLocation(KlMain.MOD_ID, "kunluncontinent_ecomposition_gossip_1"));
 
         //三阶魂环分解器
         SmithingTransformRecipeBuilder.smithing(
@@ -191,7 +191,7 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 )
                 .unlocks("has_kunluncontinent_ecomposition_gossip_2", inventoryTrigger(ItemPredicate.Builder.item()
                         .of(ModItems.SAPPHIRE.get()).build()))
-                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_ecomposition_gossip_2"));
+                .save(pWriter, new ResourceLocation(KlMain.MOD_ID, "kunluncontinent_ecomposition_gossip_2"));
 
         //四阶魂环分解器
         SmithingTransformRecipeBuilder.smithing(
@@ -203,7 +203,7 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 )
                 .unlocks("has_kunluncontinent_ecomposition_gossip_3", inventoryTrigger(ItemPredicate.Builder.item()
                         .of(ModItems.AMETHYST.get()).build()))
-                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_ecomposition_gossip_3"));
+                .save(pWriter, new ResourceLocation(KlMain.MOD_ID, "kunluncontinent_ecomposition_gossip_3"));
 
         //五阶魂环分解
         SmithingTransformRecipeBuilder.smithing(
@@ -215,7 +215,7 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 )
                 .unlocks("has_kunluncontinent_ecomposition_gossip_4", inventoryTrigger(ItemPredicate.Builder.item()
                         .of(ModItems.STARLIGHT_STONE.get()).build()))
-                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_ecomposition_gossip_4"));
+                .save(pWriter, new ResourceLocation(KlMain.MOD_ID, "kunluncontinent_ecomposition_gossip_4"));
 
         //一阶聚魂瓶
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.SOUL_GATHERING_BOTTLE_0.get())
@@ -238,7 +238,7 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 )
                 .unlocks("has_kunluncontinent_soul_gathering_bottle_1", inventoryTrigger(ItemPredicate.Builder.item()
                         .of(ModItems.RUBY.get()).build()))
-                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_soul_gathering_bottle_1"));
+                .save(pWriter, new ResourceLocation(KlMain.MOD_ID, "kunluncontinent_soul_gathering_bottle_1"));
 
         //三阶聚魂瓶
         SmithingTransformRecipeBuilder.smithing(
@@ -250,7 +250,7 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 )
                 .unlocks("has_kunluncontinent_soul_gathering_bottle_2", inventoryTrigger(ItemPredicate.Builder.item()
                         .of(ModItems.SAPPHIRE.get()).build()))
-                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_soul_gathering_bottle_2"));
+                .save(pWriter, new ResourceLocation(KlMain.MOD_ID, "kunluncontinent_soul_gathering_bottle_2"));
 
         //四阶聚魂瓶
         SmithingTransformRecipeBuilder.smithing(
@@ -262,7 +262,7 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 )
                 .unlocks("has_kunluncontinent_soul_gathering_bottle_3", inventoryTrigger(ItemPredicate.Builder.item()
                         .of(ModItems.AMETHYST.get()).build()))
-                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_soul_gathering_bottle_3"));
+                .save(pWriter, new ResourceLocation(KlMain.MOD_ID, "kunluncontinent_soul_gathering_bottle_3"));
 
         //五阶聚魂瓶
         SmithingTransformRecipeBuilder.smithing(
@@ -274,7 +274,7 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 )
                 .unlocks("has_kunluncontinent_soul_gathering_bottle_4", inventoryTrigger(ItemPredicate.Builder.item()
                         .of(ModItems.STARLIGHT_STONE.get()).build()))
-                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_soul_gathering_bottle_4"));
+                .save(pWriter, new ResourceLocation(KlMain.MOD_ID, "kunluncontinent_soul_gathering_bottle_4"));
 
 
         //锻造模版
@@ -506,7 +506,7 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 )
                 .unlocks("has_kunluncontinent_fangshanhunqi", inventoryTrigger(ItemPredicate.Builder.item()
                         .of(ModItems.MIDDLE_HUNHUAN_STORAGE_CORE.get()).build()))
-                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_fangshanhundaoqi3"));
+                .save(pWriter, new ResourceLocation(KlMain.MOD_ID, "kunluncontinent_fangshanhundaoqi3"));
 
         //四阶防闪魂导器
         SmithingTransformRecipeBuilder.smithing(
@@ -518,7 +518,7 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 )
                 .unlocks("has_kunluncontinent_fangshanhunqi", inventoryTrigger(ItemPredicate.Builder.item()
                         .of(ModItems.MIDDLE_HUNHUAN_STORAGE_CORE.get()).build()))
-                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_fangshanhundaoqi4"));
+                .save(pWriter, new ResourceLocation(KlMain.MOD_ID, "kunluncontinent_fangshanhundaoqi4"));
 
         //五阶防闪魂导器
         SmithingTransformRecipeBuilder.smithing(
@@ -530,7 +530,7 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 )
                 .unlocks("has_kunluncontinent_fangshanhunqi", inventoryTrigger(ItemPredicate.Builder.item()
                         .of(ModItems.TOP_HUNHUAN_STORAGE_CORE.get()).build()))
-                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_fangshanhundaoqi5"));
+                .save(pWriter, new ResourceLocation(KlMain.MOD_ID, "kunluncontinent_fangshanhundaoqi5"));
 
 
         //低阶御寒魂导器
@@ -645,7 +645,7 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                         ModBlocks.LIANDANLU6.get().asItem())
                 .unlocks("has_liandanlu6", inventoryTrigger(ItemPredicate.Builder.item()
                         .of(ModItems.RINSEI_INGOT.get()).build()))
-                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "liandanlu6_smithing"));
+                .save(pWriter, new ResourceLocation(KlMain.MOD_ID, "liandanlu6_smithing"));
 
         //丹渣块
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.DROSS_BLOCK.get())
@@ -1032,7 +1032,7 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 )
                 .unlocks("has_kunluncontinent_rinsei_duanzao", inventoryTrigger(ItemPredicate.Builder.item()
                         .of(ModItems.RINSEI_INGOT.get()).build())) // 解锁条件：获得该锭时解锁配方册
-                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_weapon_smithing1")); // 保存路径
+                .save(pWriter, new ResourceLocation(KlMain.MOD_ID, "kunluncontinent_weapon_smithing1")); // 保存路径
 
         SmithingTransformRecipeBuilder.smithing(
                         Ingredient.of(ModItems.RINSEI_FORGING_TEMPLATE.get()), // 锻造模板
@@ -1043,7 +1043,7 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 )
                 .unlocks("has_kunluncontinent_rinsei_duanzao", inventoryTrigger(ItemPredicate.Builder.item()
                         .of(ModItems.RINSEI_INGOT.get()).build())) // 解锁条件：获得该锭时解锁配方册
-                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_weapon_smithing2"));
+                .save(pWriter, new ResourceLocation(KlMain.MOD_ID, "kunluncontinent_weapon_smithing2"));
 
         SmithingTransformRecipeBuilder.smithing(
                         Ingredient.of(ModItems.RINSEI_FORGING_TEMPLATE.get()), // 锻造模板
@@ -1054,7 +1054,7 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 )
                 .unlocks("has_kunluncontinent_rinsei_duanzao", inventoryTrigger(ItemPredicate.Builder.item()
                         .of(ModItems.RINSEI_INGOT.get()).build())) // 解锁条件：获得该锭时解锁配方册
-                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_weapon_smithing3"));
+                .save(pWriter, new ResourceLocation(KlMain.MOD_ID, "kunluncontinent_weapon_smithing3"));
 
         SmithingTransformRecipeBuilder.smithing(
                         Ingredient.of(ModItems.RINSEI_FORGING_TEMPLATE.get()), // 锻造模板
@@ -1065,7 +1065,7 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 )
                 .unlocks("has_kunluncontinent_rinsei_duanzao", inventoryTrigger(ItemPredicate.Builder.item()
                         .of(ModItems.RINSEI_INGOT.get()).build())) // 解锁条件：获得该锭时解锁配方册
-                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_weapon_smithing4"));
+                .save(pWriter, new ResourceLocation(KlMain.MOD_ID, "kunluncontinent_weapon_smithing4"));
         SmithingTransformRecipeBuilder.smithing(
                         Ingredient.of(ModItems.RINSEI_FORGING_TEMPLATE.get()), // 锻造模板
                         Ingredient.of(ModItems.COLD_HEARTED_STEEL_HOE.get()), // 基础武器（材料武器）
@@ -1075,7 +1075,7 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 )
                 .unlocks("has_kunluncontinent_rinsei_duanzao", inventoryTrigger(ItemPredicate.Builder.item()
                         .of(ModItems.RINSEI_INGOT.get()).build())) // 解锁条件：获得该锭时解锁配方册
-                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_weapon_smithing5"));
+                .save(pWriter, new ResourceLocation(KlMain.MOD_ID, "kunluncontinent_weapon_smithing5"));
 
         SmithingTransformRecipeBuilder.smithing(
                         Ingredient.of(ModItems.RINSEI_FORGING_TEMPLATE.get()), // 锻造模板
@@ -1086,7 +1086,7 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 )
                 .unlocks("has_kunluncontinent_rinsei_duanzao", inventoryTrigger(ItemPredicate.Builder.item()
                         .of(ModItems.RINSEI_INGOT.get()).build())) // 解锁条件：获得该锭时解锁配方册
-                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_weapon_smithing6"));
+                .save(pWriter, new ResourceLocation(KlMain.MOD_ID, "kunluncontinent_weapon_smithing6"));
 
         SmithingTransformRecipeBuilder.smithing(
                         Ingredient.of(ModItems.RINSEI_FORGING_TEMPLATE.get()), // 锻造模板
@@ -1097,7 +1097,7 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 )
                 .unlocks("has_kunluncontinent_rinsei_duanzao", inventoryTrigger(ItemPredicate.Builder.item()
                         .of(ModItems.RINSEI_INGOT.get()).build())) // 解锁条件：获得该锭时解锁配方册
-                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_weapon_smithing7"));
+                .save(pWriter, new ResourceLocation(KlMain.MOD_ID, "kunluncontinent_weapon_smithing7"));
 
         SmithingTransformRecipeBuilder.smithing(
                         Ingredient.of(ModItems.RINSEI_FORGING_TEMPLATE.get()), // 锻造模板
@@ -1108,7 +1108,7 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 )
                 .unlocks("has_kunluncontinent_rinsei_duanzao", inventoryTrigger(ItemPredicate.Builder.item()
                         .of(ModItems.RINSEI_INGOT.get()).build())) // 解锁条件：获得该锭时解锁配方册
-                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_weapon_smithing8"));
+                .save(pWriter, new ResourceLocation(KlMain.MOD_ID, "kunluncontinent_weapon_smithing8"));
 
         SmithingTransformRecipeBuilder.smithing(
                         Ingredient.of(ModItems.RINSEI_FORGING_TEMPLATE.get()),
@@ -1119,7 +1119,7 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 )
                 .unlocks("has_kunluncontinent_rinsei_duanzao", inventoryTrigger(ItemPredicate.Builder.item()
                         .of(ModItems.RINSEI_INGOT.get()).build()))
-                .save(pWriter, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kunluncontinent_weapon_smithing9"));
+                .save(pWriter, new ResourceLocation(KlMain.MOD_ID, "kunluncontinent_weapon_smithing9"));
     }
 
     protected static void oreSmelting(Consumer<FinishedRecipe> pFinishedRecipeConsumer, List<ItemLike> pIngredients, RecipeCategory pCategory, ItemLike pResult, float pExperience, int pCookingTIme, String pGroup) {

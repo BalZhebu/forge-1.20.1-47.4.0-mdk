@@ -29,16 +29,16 @@ import java.util.Map;
 public class ModStructureProvider {
 
     public static final ResourceKey<Structure> MY_BUILDING = ResourceKey.create(Registries.STRUCTURE,
-            ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "my_building"));
+            new ResourceLocation(KlMain.MOD_ID, "my_building"));
 
     public static final ResourceKey<StructureSet> MY_BUILDING_SET = ResourceKey.create(Registries.STRUCTURE_SET,
-            ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "my_building_set"));
+            new ResourceLocation(KlMain.MOD_ID, "my_building_set"));
 
     public static final ResourceKey<Structure> UNDERWATER_RUINS = ResourceKey.create(Registries.STRUCTURE,
-            ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "underwater_ruins"));
+            new ResourceLocation(KlMain.MOD_ID, "underwater_ruins"));
 
     public static final ResourceKey<StructureSet> UNDERWATER_RUINS_SET = ResourceKey.create(Registries.STRUCTURE_SET,
-            ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "underwater_ruins_set"));
+            new ResourceLocation(KlMain.MOD_ID, "underwater_ruins_set"));
 
     public static void bootstrapStructure(BootstapContext<Structure> context) {
         HolderGetter<Biome> biomes = context.lookup(Registries.BIOME);
@@ -51,7 +51,7 @@ public class ModStructureProvider {
                         GenerationStep.Decoration.SURFACE_STRUCTURES,
                         TerrainAdjustment.BEARD_THIN
                 ),
-                pools.getOrThrow(ResourceKey.create(Registries.TEMPLATE_POOL, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "my_building_pool"))),
+                pools.getOrThrow(ResourceKey.create(Registries.TEMPLATE_POOL, new ResourceLocation(KlMain.MOD_ID, "my_building_pool"))),
                 1,
                 ConstantHeight.of(VerticalAnchor.absolute(0)),
                 false,
@@ -65,7 +65,7 @@ public class ModStructureProvider {
                         GenerationStep.Decoration.SURFACE_STRUCTURES,
                         TerrainAdjustment.BEARD_THIN
                 ),
-                pools.getOrThrow(ResourceKey.create(Registries.TEMPLATE_POOL, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "underwater_ruins_pool"))),
+                pools.getOrThrow(ResourceKey.create(Registries.TEMPLATE_POOL, new ResourceLocation(KlMain.MOD_ID, "underwater_ruins_pool"))),
                 1,
                 ConstantHeight.of(VerticalAnchor.absolute(0)),
                 false,
@@ -78,7 +78,7 @@ public class ModStructureProvider {
 
         Holder<StructureTemplatePool> emptyPool = pools.getOrThrow(Pools.EMPTY);
 
-        context.register(ResourceKey.create(Registries.TEMPLATE_POOL, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "my_building_pool")),
+        context.register(ResourceKey.create(Registries.TEMPLATE_POOL, new ResourceLocation(KlMain.MOD_ID, "my_building_pool")),
                 new StructureTemplatePool(
                         emptyPool,
                         List.of(
@@ -88,7 +88,7 @@ public class ModStructureProvider {
                 )
         );
 
-        context.register(ResourceKey.create(Registries.TEMPLATE_POOL, ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "underwater_ruins_pool")),
+        context.register(ResourceKey.create(Registries.TEMPLATE_POOL, new ResourceLocation(KlMain.MOD_ID, "underwater_ruins_pool")),
                 new StructureTemplatePool(
                         emptyPool,
                         List.of(

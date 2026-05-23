@@ -32,7 +32,7 @@ public class AttributeScreen extends AbstractContainerScreen<AttributeMenu> {
     private static final int LINE_SPACING = 15;
 
     private static final ResourceLocation TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/screens/attributemenu.png");
+            new ResourceLocation(KlMain.MOD_ID, "textures/screens/attributemenu.png");
 
     private float xMouse;
     private float yMouse;

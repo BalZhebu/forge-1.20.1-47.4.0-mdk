@@ -20,7 +20,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.Map;
 
 public class HunguScreen extends AbstractContainerScreen<HunguMenu> {
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID,"textures/screens/hungu.png");
+    private static final ResourceLocation TEXTURE =new ResourceLocation(KlMain.MOD_ID,"textures/screens/hungu.png");
 
     public HunguScreen(HunguMenu container, Inventory inventory, Component text) {
         super(container, inventory, text);

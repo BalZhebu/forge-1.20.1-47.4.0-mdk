@@ -16,7 +16,7 @@ import net.minecraft.world.entity.Entity;
 
 public class CustomModel<T extends Entity> extends EntityModel<T> {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/entity/ice_crystal.png"), "main");
+	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(KlMain.MOD_ID, "textures/entity/ice_crystal.png"), "main");
 	private final ModelPart bone;
 	private final ModelPart bone4;
 	private final ModelPart bone5;

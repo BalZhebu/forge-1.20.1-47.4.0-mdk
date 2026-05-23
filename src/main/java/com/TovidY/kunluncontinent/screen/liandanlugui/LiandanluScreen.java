@@ -14,10 +14,21 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Optional;
-
 public class LiandanluScreen extends AbstractContainerScreen<LiandanluMenu> {
     private static final ResourceLocation TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/screens/liandanlu.png");
+            new ResourceLocation(KlMain.MOD_ID, "textures/screens/liandanlu.png");
+    private static final ResourceLocation FLAME_EMPTY =
+            new ResourceLocation(KlMain.MOD_ID, "textures/screens/huoyan.png");
+    private static final ResourceLocation FLAME_FULL =
+            new ResourceLocation(KlMain.MOD_ID, "textures/screens/huoyanmax.png");
+
+    private static final int ORIGINAL_FLAME_SIZE = 14;
+    private static final int FLAME_SCALE = 2;
+    private static final int DISPLAY_FLAME_SIZE = ORIGINAL_FLAME_SIZE * FLAME_SCALE;
+
+    private final SimpleContainer lastContainer = new SimpleContainer(5);
+    private Optional<LiandanRecipe> cachedRecipe = Optional.empty();
+    private int lastSlotHash = 0;
 
     public LiandanluScreen(LiandanluMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
@@ -27,18 +38,32 @@ public class LiandanluScreen extends AbstractContainerScreen<LiandanluMenu> {
         this.titleLabelY = 10000;
     }
 
-    private static final ResourceLocation FLAME_EMPTY =
-            ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/screens/huoyan.png");
-    private static final ResourceLocation FLAME_FULL =
-            ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/screens/huoyanmax.png");
+    private void updateRecipeCache() {
+        if (this.minecraft == null || this.minecraft.level == null) return;
 
-    @Override
-    protected void init() {
-        super.init();
+        // 计算当前前5个槽位物品的简易Hash值
+        int currentHash = 1;
+        for (int i = 0; i < 5; i++) {
+            ItemStack stack = this.menu.getSlot(i).getItem();
+            currentHash = 31 * currentHash + stack.getItem().hashCode() + stack.getCount();
+        }
+
+        // 如果Hash没变，说明材料没动，直接沿用缓存
+        if (currentHash != lastSlotHash) {
+            this.lastSlotHash = currentHash;
+            for (int i = 0; i < 5; i++) {
+                this.lastContainer.setItem(i, this.menu.getSlot(i).getItem());
+            }
+            this.cachedRecipe = this.minecraft.level.getRecipeManager()
+                    .getRecipeFor(ModRecipes.LIANDAN_TYPE.get(), this.lastContainer, this.minecraft.level);
+        }
     }
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        // 每帧渲染先更新一次配方缓存
+        updateRecipeCache();
+
         this.renderBackground(guiGraphics);
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
         renderAlchmenyInfo(guiGraphics);
@@ -46,56 +71,38 @@ public class LiandanluScreen extends AbstractContainerScreen<LiandanluMenu> {
     }
 
     private void renderAlchmenyInfo(GuiGraphics guiGraphics) {
-        SimpleContainer container = new SimpleContainer(5);
-        for (int i = 0; i < 5; i++) {
-            container.setItem(i, this.menu.getSlot(i).getItem());
-        }
+        if (cachedRecipe.isPresent()) {
+            LiandanRecipe recipe = cachedRecipe.get();
+            ItemStack resultStack = recipe.getResultItem(this.minecraft.level.registryAccess());
+            Component resultName = Component.literal("预测产出：").append(resultStack.getHoverName());
+            guiGraphics.drawString(this.font, resultName, this.leftPos + 8, this.topPos + 28, 0xFFD700, true);
 
-        if (this.minecraft.level != null) {
-            var recipeManager = this.minecraft.level.getRecipeManager();
-            Optional<LiandanRecipe> match = recipeManager.getRecipeFor(ModRecipes.LIANDAN_TYPE.get(), container, this.minecraft.level);
-
-            if (match.isPresent()) {
-                ItemStack resultStack = match.get().getResultItem(this.minecraft.level.registryAccess());
-                Component resultName = Component.literal("预测产出：").append(resultStack.getHoverName());
-                guiGraphics.drawString(this.font, resultName, this.leftPos + 8, this.topPos + 28, 0xFFD700, true);
-
-                // 统一渲染概率
-                renderProbabilities(guiGraphics);
-            } else {
-                guiGraphics.drawString(this.font, "等待投放材料...", this.leftPos + 8, this.topPos + 28, 0xAAAAAA, true);
-            }
+            // 渲染概率
+            renderProbabilities(guiGraphics, recipe);
+        } else {
+            guiGraphics.drawString(this.font, "等待投放材料...", this.leftPos + 8, this.topPos + 28, 0xAAAAAA, true);
         }
     }
 
-    private void renderProbabilities(GuiGraphics guiGraphics) {
+    private void renderProbabilities(GuiGraphics guiGraphics, LiandanRecipe recipe) {
         String[] labels = {"碎", "散", "丹", "灵", "宝", "仙"};
         int[] colors = {0x777777, 0x55FF55, 0x5555FF, 0xAA00AA, 0xFFAA00, 0xFF5555};
 
         double[] weights = calculateWeightsForDisplay();
 
-        SimpleContainer container = new SimpleContainer(5);
-        for (int i = 0; i < 5; i++) {
-            container.setItem(i, this.menu.getSlot(i).getItem());
-        }
-
-        if (this.minecraft.level != null) {
-            var recipeManager = this.minecraft.level.getRecipeManager();
-            Optional<LiandanRecipe> match = recipeManager.getRecipeFor(ModRecipes.LIANDAN_TYPE.get(), container, this.minecraft.level);
-            if (match.isPresent() && match.get().isSpecial()) {
-                double brokenWeight = weights[0];
-                if (brokenWeight > 0) {
-                    weights[0] = 0;
-                    double remainingTotal = 0;
-                    for (double w : weights) remainingTotal += w;
-                    if (remainingTotal > 0) {
-                        for (int i = 1; i < weights.length; i++) {
-                            double ratio = weights[i] / remainingTotal;
-                            weights[i] += brokenWeight * ratio;
-                        }
-                    } else {
-                        weights[1] = 100.0;
+        if (recipe.isSpecial()) {
+            double brokenWeight = weights[0];
+            if (brokenWeight > 0) {
+                weights[0] = 0;
+                double remainingTotal = 0;
+                for (double w : weights) remainingTotal += w;
+                if (remainingTotal > 0) {
+                    for (int i = 1; i < weights.length; i++) {
+                        double ratio = weights[i] / remainingTotal;
+                        weights[i] += brokenWeight * ratio;
                     }
+                } else {
+                    weights[1] = 100.0;
                 }
             }
         }
@@ -113,12 +120,8 @@ public class LiandanluScreen extends AbstractContainerScreen<LiandanluMenu> {
             double chance = (weights[i] / totalWeight) * 100;
             int currentX = startX + (i * horizontalSpacing);
             int color = (chance > 0.01) ? colors[i] : 0x444444;
-            String percentText;
-            if (chance > 0 && chance < 1) {
-                percentText = "<1%";
-            } else {
-                percentText = String.format("%.0f%%", chance);
-            }
+            String percentText = (chance > 0 && chance < 1) ? "<1%" : String.format("%.0f%%", chance);
+
             guiGraphics.drawString(this.font, labels[i], currentX, yPos, color, true);
             guiGraphics.drawString(this.font, percentText, currentX + 10, yPos, 0xFFFFFF, true);
         }
@@ -178,37 +181,47 @@ public class LiandanluScreen extends AbstractContainerScreen<LiandanluMenu> {
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        // 开启混合模式，防止火焰边缘及半透明部分出现黑边或像素闪烁
+        RenderSystem.enableBlend();
+
         guiGraphics.blit(TEXTURE, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
 
-        int originalSize = 14;
-        int scale = 2;
-        int displaySize = originalSize * scale;
         int flameX = this.leftPos + 95;
         int flameY = this.topPos + 30;
-        guiGraphics.blit(FLAME_EMPTY, flameX, flameY, displaySize, displaySize, 0, 0, originalSize, originalSize, originalSize, originalSize);
+
+        // 渲染底色暗火焰
+        guiGraphics.blit(FLAME_EMPTY, flameX, flameY, DISPLAY_FLAME_SIZE, DISPLAY_FLAME_SIZE, 0, 0, ORIGINAL_FLAME_SIZE, ORIGINAL_FLAME_SIZE, ORIGINAL_FLAME_SIZE, ORIGINAL_FLAME_SIZE);
 
         int progress = this.menu.getProgress();
         int maxProgress = this.menu.getMaxProgress();
 
         if (maxProgress > 0 && progress > 0) {
             float ratio = Math.min(1.0F, (float) progress / maxProgress);
-            int scaledSourceHeight = Math.round(ratio * originalSize);
-            int scaledDisplayHeight = scaledSourceHeight * scale;
+
+            // 【核心防抖修改】：用浮点数运算加最终向下取整，避免中间态因四舍五入产生的 1px 坐标漂移
+            int scaledSourceHeight = (int)(ratio * ORIGINAL_FLAME_SIZE);
+            int scaledDisplayHeight = scaledSourceHeight * FLAME_SCALE;
+
             if (scaledSourceHeight > 0) {
+                // 计算高亮满火焰切片偏移
+                int textureVOffset = ORIGINAL_FLAME_SIZE - scaledSourceHeight;
+                int screenYOffset = DISPLAY_FLAME_SIZE - scaledDisplayHeight;
+
                 guiGraphics.blit(FLAME_FULL,
                         flameX,
-                        flameY + (displaySize - scaledDisplayHeight),
-                        displaySize,
+                        flameY + screenYOffset,
+                        DISPLAY_FLAME_SIZE,
                         scaledDisplayHeight,
                         0,
-                        (float) (originalSize - scaledSourceHeight),
-                        originalSize,
+                        (float) textureVOffset,
+                        ORIGINAL_FLAME_SIZE,
                         scaledSourceHeight,
-                        originalSize,
-                        originalSize
+                        ORIGINAL_FLAME_SIZE,
+                        ORIGINAL_FLAME_SIZE
                 );
             }
         }
+        RenderSystem.disableBlend();
     }
 
     @Override

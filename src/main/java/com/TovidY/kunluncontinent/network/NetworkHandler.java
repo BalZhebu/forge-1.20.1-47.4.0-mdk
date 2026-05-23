@@ -29,7 +29,7 @@ public class NetworkHandler {
     private static int id = 0;
 
     public static void register() {
-        INSTANCE = NetworkRegistry.ChannelBuilder.named(ResourceLocation.fromNamespaceAndPath(
+        INSTANCE = NetworkRegistry.ChannelBuilder.named(new ResourceLocation(
                 KlMain.MOD_ID, "main"))
                 .networkProtocolVersion(() -> PTC_VERSION).clientAcceptedVersions(PTC_VERSION::equals)
                 .serverAcceptedVersions(PTC_VERSION::equals).simpleChannel();

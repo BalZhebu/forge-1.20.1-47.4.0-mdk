@@ -23,11 +23,11 @@ import org.jetbrains.annotations.Nullable;
 
 public class JEIKlCategory implements IRecipeCategory<LiandanRecipe> {
 
-    public static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "kl_polishing");
-    public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/gui/liandanlu_jei.png");
+    public static final ResourceLocation UID =new ResourceLocation(KlMain.MOD_ID, "kl_polishing");
+    public static final ResourceLocation TEXTURE =new ResourceLocation(KlMain.MOD_ID, "textures/gui/liandanlu_jei.png");
 
-    private final ResourceLocation PROGRESS_EMPTY = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/screens/huoyan.png");
-    private final ResourceLocation PROGRESS_FULL = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/screens/huoyanmax.png");
+    private final ResourceLocation PROGRESS_EMPTY = new ResourceLocation(KlMain.MOD_ID, "textures/screens/huoyan.png");
+    private final ResourceLocation PROGRESS_FULL =new ResourceLocation(KlMain.MOD_ID, "textures/screens/huoyanmax.png");
 
     public static final RecipeType<LiandanRecipe> LIANDANLU_TYPE = new RecipeType<>(UID, LiandanRecipe.class);
 

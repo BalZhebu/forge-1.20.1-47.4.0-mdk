@@ -30,7 +30,7 @@ public class ExtremeColdHandler {
 
     public static final ResourceKey<DamageType> EXTREME_COLD_TYPE = ResourceKey.create(
             Registries.DAMAGE_TYPE,
-            ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "extreme_cold")
+            new ResourceLocation(KlMain.MOD_ID, "extreme_cold")
     );
 
     private static DamageSource getExtremeColdDamageSource(LivingEntity entity) {

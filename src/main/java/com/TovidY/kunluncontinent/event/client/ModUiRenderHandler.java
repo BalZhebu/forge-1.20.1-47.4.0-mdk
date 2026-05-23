@@ -23,12 +23,11 @@ import static net.minecraftforge.client.gui.overlay.VanillaGuiOverlay.*;
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class ModUiRenderHandler {
 
-    // ==================== 资源与常量定义 ====================
-    public static final ResourceLocation jingshenli = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/gui/testing/jingshenli.png");
-    public static final ResourceLocation health = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/gui/testing/healthy.png");
-    public static final ResourceLocation food = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/gui/testing/baoshidu.png");
-    public static final ResourceLocation exp = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/gui/testing/exp.png");
-    public static final ResourceLocation tubza = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/gui/testing/tubza.png");
+    public static final ResourceLocation jingshenli = new ResourceLocation(KlMain.MOD_ID, "textures/gui/testing/jingshenli.png");
+    public static final ResourceLocation health = new ResourceLocation(KlMain.MOD_ID, "textures/gui/testing/healthy.png");
+    public static final ResourceLocation food = new ResourceLocation(KlMain.MOD_ID, "textures/gui/testing/baoshidu.png");
+    public static final ResourceLocation exp = new ResourceLocation(KlMain.MOD_ID, "textures/gui/testing/exp.png");
+    public static final ResourceLocation tubza = new ResourceLocation(KlMain.MOD_ID, "textures/gui/testing/tubza.png");
 
     private static final int BAR_X = 58;
     private static final int BAR_W = 87;
@@ -38,24 +37,21 @@ public class ModUiRenderHandler {
     private static final int JINGSHEN_Y = 53;
     private static final int EXP_Y = 65;
 
-    // ==================== 1. 原 RenderGui 逻辑（底图与修炼时间） ====================
     @SubscribeEvent(priority = EventPriority.NORMAL)
     public static void onRenderGui(RenderGuiEvent.Pre event) {
         Player entity = Minecraft.getInstance().player;
         if (entity == null) return;
 
-        // 检查屏幕UI显示开关 (index 6)
         boolean[] isUiOpen = {true};
         int[] offsetY = {0};
         entity.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
             isUiOpen[0] = cap.isConfigOpen(6);
-            offsetY[0] = cap.getUiOffsetY(); // 获取保存的 Y 轴偏移量
+            offsetY[0] = cap.getUiOffsetY();
         });
 
         if (isUiOpen[0]) {
             PoseStack pose = event.getGuiGraphics().pose();
             pose.pushPose();
-            // 应用玩家自定义的上下平移量
             pose.translate(0.0f, (float) offsetY[0], 0.0f);
 
             RenderSystem.disableDepthTest();
@@ -74,7 +70,6 @@ public class ModUiRenderHandler {
             pose.popPose();
         }
 
-        // 核心机制：修炼时间（独立在平移和隐藏之外，永远在原位显示）
         boolean isMeditating = entity.getVehicle() instanceof net.minecraft.world.entity.decoration.ArmorStand;
         if (isMeditating) {
             int x = event.getWindow().getGuiScaledWidth();
@@ -88,7 +83,6 @@ public class ModUiRenderHandler {
         }
     }
 
-    // ==================== 2. 原 PWRenderGuiOverlay 逻辑 (Pre 阶段) ====================
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onRenderGuiOverlayPre(RenderGuiOverlayEvent.Pre event) {
         LocalPlayer player = Minecraft.getInstance().player;
@@ -103,7 +97,6 @@ public class ModUiRenderHandler {
                 if (cap.isConfigOpen(6)) {
                     PoseStack pose = event.getGuiGraphics().pose();
                     pose.pushPose();
-                    // 让自定义属性条也吃这个全局 Y 轴偏移量
                     pose.translate(0.0f, (float) cap.getUiOffsetY(), 0.0f);
                     renderPlayerHealth(event);
                     pose.popPose();
@@ -115,7 +108,6 @@ public class ModUiRenderHandler {
         }
     }
 
-    // ==================== 4. 核心绘制方法 ====================
     private static void renderPlayerHealth(RenderGuiOverlayEvent.Pre event) {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return;

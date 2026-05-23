@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 
 public class IceCrystalRenderer extends MobRenderer<IceCrystalEntity, CustomModel<IceCrystalEntity>> {
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "textures/entity/ice_crystal.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation(KlMain.MOD_ID, "textures/entity/ice_crystal.png");
 
     public IceCrystalRenderer(EntityRendererProvider.Context context) {
         super(context, new CustomModel<>(context.bakeLayer(CustomModel.LAYER_LOCATION)), 0.5F);

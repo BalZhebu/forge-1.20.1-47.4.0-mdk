@@ -88,70 +88,70 @@ import net.minecraftforge.common.data.ExistingFileHelper;
             Block liandanlu1 = ModBlocks.LIANDANLU1.get();
             // 生成 blockstate
             simpleBlock(liandanlu1, new ModelFile.UncheckedModelFile(
-                    ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/liandanlu1")));
+                    new ResourceLocation(KlMain.MOD_ID, "block/liandanlu1")));
             //生成item
             itemModels().withExistingParent("liandanlu1",
-                    ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/liandanlu1"));
+                    new ResourceLocation(KlMain.MOD_ID, "block/liandanlu1"));
 
             Block liandanlu2 = ModBlocks.LIANDANLU2.get();
             simpleBlock(liandanlu2, new ModelFile.UncheckedModelFile(
-                    ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/liandanlu2")));
+                    new ResourceLocation(KlMain.MOD_ID, "block/liandanlu2")));
             itemModels().withExistingParent("liandanlu2",
-                    ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/liandanlu2"));
+                    new ResourceLocation(KlMain.MOD_ID, "block/liandanlu2"));
 
             Block liandanlu3 = ModBlocks.LIANDANLU3.get();
             simpleBlock(liandanlu3, new ModelFile.UncheckedModelFile(
-                    ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/liandanlu3")));
+                    new ResourceLocation(KlMain.MOD_ID, "block/liandanlu3")));
             itemModels().withExistingParent("liandanlu3",
-                    ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/liandanlu3"));
+                    new ResourceLocation(KlMain.MOD_ID, "block/liandanlu3"));
 
             Block liandanlu4 = ModBlocks.LIANDANLU4.get();
             simpleBlock(liandanlu4, new ModelFile.UncheckedModelFile(
-                    ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/liandanlu4")));
+                    new ResourceLocation(KlMain.MOD_ID, "block/liandanlu4")));
             itemModels().withExistingParent("liandanlu4",
-                    ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/liandanlu4"));
+                    new ResourceLocation(KlMain.MOD_ID, "block/liandanlu4"));
 
             Block liandanlu5 = ModBlocks.LIANDANLU5.get();
             simpleBlock(liandanlu5, new ModelFile.UncheckedModelFile(
-                    ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/liandanlu5")));
+                    new ResourceLocation(KlMain.MOD_ID, "block/liandanlu5")));
             itemModels().withExistingParent("liandanlu5",
-                    ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/liandanlu5"));
+                    new ResourceLocation(KlMain.MOD_ID, "block/liandanlu5"));
 
             Block liandanlu6 = ModBlocks.LIANDANLU6.get();
             simpleBlock(liandanlu6, new ModelFile.UncheckedModelFile(
-                    ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/liandanlu6")));
+                    new ResourceLocation(KlMain.MOD_ID, "block/liandanlu6")));
             itemModels().withExistingParent("liandanlu6",
-                    ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/liandanlu6"));
+                    new ResourceLocation(KlMain.MOD_ID, "block/liandanlu6"));
 
             Block liandanlu7 = ModBlocks.LIANDANLU7.get();
             simpleBlock(liandanlu7, new ModelFile.UncheckedModelFile(
-                    ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/liandanlu7")));
+                    new ResourceLocation(KlMain.MOD_ID, "block/liandanlu7")));
             itemModels().withExistingParent("liandanlu7",
-                    ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/liandanlu7"));
+                    new ResourceLocation(KlMain.MOD_ID, "block/liandanlu7"));
 
             Block liandanlu8 = ModBlocks.LIANDANLU8.get();
             simpleBlock(liandanlu8, new ModelFile.UncheckedModelFile(
-                    ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/liandanlu8")));
+                    new ResourceLocation(KlMain.MOD_ID, "block/liandanlu8")));
             itemModels().withExistingParent("liandanlu8",
-                    ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/liandanlu8"));
+                    new ResourceLocation(KlMain.MOD_ID, "block/liandanlu8"));
 
             Block liandanlu9 = ModBlocks.LIANDANLU9.get();
             simpleBlock(liandanlu9, new ModelFile.UncheckedModelFile(
-                    ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/liandanlu9")));
+                    new ResourceLocation(KlMain.MOD_ID, "block/liandanlu9")));
             itemModels().withExistingParent("liandanlu9",
-                    ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/liandanlu9"));
+                    new ResourceLocation(KlMain.MOD_ID, "block/liandanlu9"));
 
             Block putuan = ModBlocks.PUTUAN_BLOCK.get();
             simpleBlock(putuan, new ModelFile.UncheckedModelFile(
-                    ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/putuan_block")));
+                    new ResourceLocation(KlMain.MOD_ID, "block/putuan_block")));
             itemModels().withExistingParent("putuan_block",
-                    ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/putuan_block"));
+                    new ResourceLocation(KlMain.MOD_ID, "block/putuan_block"));
 
             Block underwater = ModBlocks.UNDERWATER_ALTAR.get();
             simpleBlock(underwater, new ModelFile.UncheckedModelFile(
-                    ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/underwater_alta")));
+                    new ResourceLocation(KlMain.MOD_ID, "block/underwater_alta")));
             itemModels().withExistingParent("underwater_alta",
-                    ResourceLocation.fromNamespaceAndPath(KlMain.MOD_ID, "block/underwater_alta"));
+                    new ResourceLocation(KlMain.MOD_ID, "block/underwater_alta"));
 
         }
 

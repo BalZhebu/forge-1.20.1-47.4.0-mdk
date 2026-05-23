@@ -25,7 +25,6 @@ import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
@@ -37,9 +36,9 @@ public class KlMain {
     public static final String MOD_ID = "kunluncontinent";
     public static final Random random = new Random();
 
-    public KlMain(FMLJavaModLoadingContext context)
+    public KlMain()
     {
-        IEventBus modEventBus = context.getModEventBus();
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         MinecraftForge.EVENT_BUS.register(this);
 
@@ -52,7 +51,7 @@ public class KlMain {
 
         ModLootModifiers.register(modEventBus);
 
-        context.registerConfig(ModConfig.Type.COMMON, KLConfig.CONFIG);
+        net.minecraftforge.fml.ModLoadingContext.get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.COMMON, KLConfig.CONFIG);
 
         ModMenuTypes.register(modEventBus);
 
@@ -61,8 +60,6 @@ public class KlMain {
         ModRecipes.register(modEventBus);
 
         EntityInit.register(modEventBus);
-
-        changeAttributesIO();
 
         NetworkHandler.register();
 
@@ -89,21 +86,10 @@ public class KlMain {
     }
 
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-    public class EventHandler {
+    public static class EventHandler {
         @SubscribeEvent
         public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
             DecompositionItem.onPlayerTick(event);
-        }
-    }
-
-    //解除生命值限制
-    public static void changeAttributesIO()  {
-        try {
-            Field privateField = RangedAttribute.class.getDeclaredFields()[1];
-            privateField.setAccessible(true);
-            privateField.set(Attributes.MAX_HEALTH, Float.MAX_VALUE);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
         }
     }
 
