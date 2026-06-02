@@ -1,0 +1,38 @@
+{
+  "parent": "kunluncontinent:main/get_amethyst",
+  "criteria": {
+    "has_starlight_stone": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "kunluncontinent:starlight_stone"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.kunluncontinent.starlight_stone.description"
+    },
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:starlight_stone"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.kunluncontinent.starlight_stone.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_starlight_stone"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

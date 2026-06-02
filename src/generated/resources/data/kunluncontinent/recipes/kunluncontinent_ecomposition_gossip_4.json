@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "kunluncontinent:top_hunhuan_storage_core"
+  },
+  "base": {
+    "item": "kunluncontinent:four_decomposition_gossip"
+  },
+  "result": {
+    "item": "kunluncontinent:five_decomposition_gossip"
+  },
+  "template": {
+    "item": "kunluncontinent:rinsei_forging_template"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "parent": "kunluncontinent:main/root",
+  "criteria": {
+    "has_gray_iron_ingot": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "kunluncontinent:gray_iron_ingot"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.kunluncontinent.gray_iron_ingot.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:gray_iron_ingot"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.kunluncontinent.gray_iron_ingot.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_gray_iron_ingot"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

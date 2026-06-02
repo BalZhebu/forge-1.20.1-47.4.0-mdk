@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "kunluncontinent:low_hunhuan_storage_core"
+  },
+  "base": {
+    "item": "kunluncontinent:soul_gathering_bottle_0"
+  },
+  "result": {
+    "item": "kunluncontinent:soul_gathering_bottle_1"
+  },
+  "template": {
+    "item": "minecraft:netherite_upgrade_smithing_template"
+  }
+}

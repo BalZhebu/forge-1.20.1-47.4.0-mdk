@@ -1,0 +1,38 @@
+{
+  "parent": "kunluncontinent:main/get_gray_iron_ingot5",
+  "criteria": {
+    "has_gray_iron_ingot": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "kunluncontinent:rinsei_ingot"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.kunluncontinent.rinsei_ingot.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:rinsei_ingot"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.kunluncontinent.rinsei_ingot.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_gray_iron_ingot"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

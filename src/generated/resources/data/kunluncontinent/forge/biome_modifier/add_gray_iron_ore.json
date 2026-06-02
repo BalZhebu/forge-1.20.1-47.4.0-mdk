@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#minecraft:is_overworld",
+  "features": "kunluncontinent:gray_iron_ore",
+  "step": "underground_ores"
+}

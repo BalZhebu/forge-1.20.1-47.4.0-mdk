@@ -1,0 +1,11 @@
+{
+  "type": "kunluncontinent:polar_ice_realm_type",
+  "generator": {
+    "type": "minecraft:noise",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "kunluncontinent:polar_ice_realm"
+    },
+    "settings": "minecraft:overworld"
+  }
+}

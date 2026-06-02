@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_extreme_cold_snowflak": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "kunluncontinent:extreme_cold"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "kunluncontinent:extreme_cold"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_extreme_cold_snowflak",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "kunluncontinent:extreme_cold"
+    ]
+  },
+  "sends_telemetry_event": false
+}

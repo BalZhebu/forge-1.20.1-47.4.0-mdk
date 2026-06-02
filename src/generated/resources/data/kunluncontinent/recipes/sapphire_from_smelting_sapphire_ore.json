@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 400,
+  "experience": 0.5,
+  "group": "sapphire",
+  "ingredient": {
+    "item": "kunluncontinent:sapphire_ore"
+  },
+  "result": "kunluncontinent:sapphire"
+}

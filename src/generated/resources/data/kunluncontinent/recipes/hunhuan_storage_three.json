@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "#": {
+      "item": "kunluncontinent:red_fire_ingot"
+    },
+    "X": {
+      "item": "kunluncontinent:middle_hunhuan_storage_core"
+    },
+    "Y": {
+      "item": "kunluncontinent:hunhuan_storage_two"
+    },
+    "Z": {
+      "item": "kunluncontinent:cloud_patterned_bronze_ingot"
+    }
+  },
+  "pattern": [
+    "#Y#",
+    "ZXZ",
+    "#Z#"
+  ],
+  "result": {
+    "item": "kunluncontinent:hunhuan_storage_three"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "#": {
+      "item": "kunluncontinent:red_fire_ingot"
+    },
+    "M": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "###",
+    " M ",
+    " M "
+  ],
+  "result": {
+    "item": "kunluncontinent:red_fire_pickaxe"
+  },
+  "show_notification": true
+}

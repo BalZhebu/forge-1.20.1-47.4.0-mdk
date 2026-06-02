@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_liandanlu3": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "kunluncontinent:liandanlu3"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "kunluncontinent:liandanlu3"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_liandanlu3",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "kunluncontinent:liandanlu3"
+    ]
+  },
+  "sends_telemetry_event": false
+}

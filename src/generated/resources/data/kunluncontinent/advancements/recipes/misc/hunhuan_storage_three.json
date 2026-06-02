@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_hunhuan_storage": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "kunluncontinent:hunhuan_storage_three"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "kunluncontinent:hunhuan_storage_three"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_hunhuan_storage",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "kunluncontinent:hunhuan_storage_three"
+    ]
+  },
+  "sends_telemetry_event": false
+}

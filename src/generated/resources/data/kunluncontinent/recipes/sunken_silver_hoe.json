@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "#": {
+      "item": "kunluncontinent:sunken_silver_ingot"
+    },
+    "M": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "##",
+    " M",
+    " M"
+  ],
+  "result": {
+    "item": "kunluncontinent:sunken_silver_hoe"
+  },
+  "show_notification": true
+}

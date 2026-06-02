@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "K": {
+      "tag": "kunluncontinent:engraving_knife"
+    },
+    "R": {
+      "item": "kunluncontinent:ruby"
+    }
+  },
+  "pattern": [
+    "RRR",
+    "RKR",
+    "RRR"
+  ],
+  "result": {
+    "item": "kunluncontinent:low_level_hexin"
+  },
+  "show_notification": true
+}

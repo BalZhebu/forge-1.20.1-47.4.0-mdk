@@ -1,0 +1,14 @@
+{
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 986514321,
+    "separation": 20,
+    "spacing": 100
+  },
+  "structures": [
+    {
+      "structure": "kunluncontinent:underwater_ruins",
+      "weight": 1
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "parent": "kunluncontinent:main/get_sapphire",
+  "criteria": {
+    "has_amethyst": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "kunluncontinent:amethyst"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.kunluncontinent.amethyst.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:amethyst"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.kunluncontinent.amethyst.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_amethyst"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

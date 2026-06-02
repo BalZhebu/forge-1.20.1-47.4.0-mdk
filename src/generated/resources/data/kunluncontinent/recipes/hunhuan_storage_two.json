@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "#": {
+      "item": "kunluncontinent:cloud_patterned_bronze_ingot"
+    },
+    "X": {
+      "item": "kunluncontinent:low_hunhuan_storage_core"
+    },
+    "Y": {
+      "item": "kunluncontinent:hunhuan_storage_one"
+    },
+    "Z": {
+      "item": "kunluncontinent:gray_iron_ingot"
+    }
+  },
+  "pattern": [
+    "#Y#",
+    "ZXZ",
+    "#Z#"
+  ],
+  "result": {
+    "item": "kunluncontinent:hunhuan_storage_two"
+  },
+  "show_notification": true
+}

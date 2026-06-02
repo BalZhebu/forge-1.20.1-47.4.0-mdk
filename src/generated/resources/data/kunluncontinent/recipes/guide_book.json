@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "item": "minecraft:book"
+    },
+    "X": {
+      "item": "kunluncontinent:gray_iron_ingot"
+    }
+  },
+  "pattern": [
+    "IX"
+  ],
+  "result": {
+    "item": "kunluncontinent:guide_book"
+  },
+  "show_notification": true
+}

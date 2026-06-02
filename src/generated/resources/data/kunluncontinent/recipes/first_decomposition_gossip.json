@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "O": {
+      "item": "kunluncontinent:soul_gathering_bottle_0"
+    },
+    "X": {
+      "item": "kunluncontinent:gray_iron_ingot"
+    },
+    "Z": {
+      "item": "kunluncontinent:cloud_patterned_bronze_ingot"
+    }
+  },
+  "pattern": [
+    "ZXZ",
+    "XOX",
+    "ZXZ"
+  ],
+  "result": {
+    "item": "kunluncontinent:first_decomposition_gossip"
+  },
+  "show_notification": true
+}

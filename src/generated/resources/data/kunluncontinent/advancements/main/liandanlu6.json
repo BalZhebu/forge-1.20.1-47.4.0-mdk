@@ -1,0 +1,38 @@
+{
+  "parent": "kunluncontinent:main/liandanlu5",
+  "criteria": {
+    "has_item": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "kunluncontinent:liandanlu6"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "adv.kunlun.liandanlu6.desc"
+    },
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:liandanlu6"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "adv.kunlun.liandanlu6.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_item"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

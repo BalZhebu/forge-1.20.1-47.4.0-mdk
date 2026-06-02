@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_kunluncontinent_ecomposition_gossip_1": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "kunluncontinent:ruby"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "kunluncontinent:kunluncontinent_ecomposition_gossip_1"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_kunluncontinent_ecomposition_gossip_1",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "kunluncontinent:kunluncontinent_ecomposition_gossip_1"
+    ]
+  },
+  "sends_telemetry_event": false
+}

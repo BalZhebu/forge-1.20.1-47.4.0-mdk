@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "#": {
+      "item": "kunluncontinent:cold_hearted_steel_ingot"
+    },
+    "M": {
+      "item": "kunluncontinent:sunken_silver_ingot"
+    }
+  },
+  "pattern": [
+    "#",
+    "M",
+    "M"
+  ],
+  "result": {
+    "item": "kunluncontinent:cold_hearted_steel_shovel"
+  },
+  "show_notification": true
+}

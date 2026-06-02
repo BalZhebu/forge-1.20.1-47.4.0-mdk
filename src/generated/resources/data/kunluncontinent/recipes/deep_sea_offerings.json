@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "O": {
+      "item": "minecraft:enchanted_golden_apple"
+    },
+    "X": {
+      "item": "kunluncontinent:eye_deep_sea"
+    },
+    "Z": {
+      "item": "kunluncontinent:deepsea_jinghua"
+    }
+  },
+  "pattern": [
+    "ZXZ",
+    "XOX",
+    "ZXZ"
+  ],
+  "result": {
+    "item": "kunluncontinent:deep_sea_offerings"
+  },
+  "show_notification": true
+}

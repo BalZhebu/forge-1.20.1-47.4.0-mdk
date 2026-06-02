@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "K": {
+      "item": "kunluncontinent:high_hunhuan_storage_core"
+    },
+    "R": {
+      "item": "kunluncontinent:amethyst"
+    },
+    "X": {
+      "item": "kunluncontinent:red_fire_ingot"
+    }
+  },
+  "pattern": [
+    "XRX",
+    "RKR",
+    "XRX"
+  ],
+  "result": {
+    "item": "kunluncontinent:high_cold_protection"
+  },
+  "show_notification": true
+}

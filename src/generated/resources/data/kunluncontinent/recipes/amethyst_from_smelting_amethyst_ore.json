@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 600,
+  "experience": 0.5,
+  "group": "amethyst",
+  "ingredient": {
+    "item": "kunluncontinent:amethyst_ore"
+  },
+  "result": "kunluncontinent:amethyst"
+}

@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "O": {
+      "item": "kunluncontinent:polar_ice_portal_block"
+    },
+    "X": {
+      "item": "kunluncontinent:lightning_fragments"
+    },
+    "Z": {
+      "item": "minecraft:obsidian"
+    }
+  },
+  "pattern": [
+    "ZXZ",
+    "XOX",
+    "ZXZ"
+  ],
+  "result": {
+    "count": 5,
+    "item": "kunluncontinent:thunder_realm_portal_block"
+  },
+  "show_notification": true
+}

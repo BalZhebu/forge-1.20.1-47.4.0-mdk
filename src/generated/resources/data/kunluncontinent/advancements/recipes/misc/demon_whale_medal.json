@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_demon_whale_badge": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "kunluncontinent:demon_whale_medal"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "kunluncontinent:demon_whale_medal"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_demon_whale_badge",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "kunluncontinent:demon_whale_medal"
+    ]
+  },
+  "sends_telemetry_event": false
+}

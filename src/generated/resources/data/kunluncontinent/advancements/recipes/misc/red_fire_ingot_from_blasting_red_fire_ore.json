@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_red_fire_ore": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "kunluncontinent:red_fire_ore"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "kunluncontinent:red_fire_ingot_from_blasting_red_fire_ore"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_red_fire_ore",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "kunluncontinent:red_fire_ingot_from_blasting_red_fire_ore"
+    ]
+  },
+  "sends_telemetry_event": false
+}

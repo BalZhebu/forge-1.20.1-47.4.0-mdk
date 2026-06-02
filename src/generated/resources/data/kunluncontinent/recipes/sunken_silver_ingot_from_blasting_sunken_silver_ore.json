@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "cookingtime": 400,
+  "experience": 0.35,
+  "group": "sunken_silver",
+  "ingredient": {
+    "item": "kunluncontinent:sunken_silver_ore"
+  },
+  "result": "kunluncontinent:sunken_silver_ingot"
+}

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.35,
+  "group": "red_fire",
+  "ingredient": {
+    "item": "kunluncontinent:red_fire_ore"
+  },
+  "result": "kunluncontinent:red_fire_ingot"
+}

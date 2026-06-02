@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "K": {
+      "tag": "kunluncontinent:engraving_knife"
+    },
+    "R": {
+      "item": "kunluncontinent:starlight_stone"
+    },
+    "X": {
+      "item": "kunluncontinent:high_hunhuan_storage_core"
+    }
+  },
+  "pattern": [
+    "XRX",
+    "RKR",
+    "XRX"
+  ],
+  "result": {
+    "item": "kunluncontinent:top_hunhuan_storage_core"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,11 @@
+{
+  "type": "kunlun:liandan",
+  "cookTime": 400,
+  "ingredient": {
+    "item": "kunluncontinent:neidan3"
+  },
+  "isSpecial": false,
+  "result": {
+    "item": "kunluncontinent:qianhuabao_dan"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "parent": "kunluncontinent:main/root",
+  "criteria": {
+    "has_ruby": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "kunluncontinent:ruby"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.kunluncontinent.ruby.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:ruby"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.kunluncontinent.ruby.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_ruby"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

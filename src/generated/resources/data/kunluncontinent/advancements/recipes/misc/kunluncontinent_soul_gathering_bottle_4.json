@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_kunluncontinent_soul_gathering_bottle_4": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "kunluncontinent:starlight_stone"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "kunluncontinent:kunluncontinent_soul_gathering_bottle_4"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_kunluncontinent_soul_gathering_bottle_4",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "kunluncontinent:kunluncontinent_soul_gathering_bottle_4"
+    ]
+  },
+  "sends_telemetry_event": false
+}

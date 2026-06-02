@@ -99,7 +99,7 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
         // ==================== 主页面布局逻辑 ====================
         this.minecraft.player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
             this.addRenderableWidget(Button.builder(getModeComponent(cap.getDamageDisplayMode()), b -> {
-                int nextMode = (cap.getDamageDisplayMode() + 1) % 3;
+                int nextMode = (cap.getDamageDisplayMode() + 1) % 4;
                 NetworkHandler.INSTANCE.sendToServer(new PacketChangeDisplayMode(nextMode));
                 b.setMessage(getModeComponent(nextMode));
             }).bounds(startX, startY, btnWidth, btnHeight).build());
@@ -201,6 +201,7 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
         return switch (mode) {
             case 0 -> Component.literal(prefix + "§a物品栏上方");
             case 1 -> Component.literal(prefix + "§b聊天栏");
+            case 2 -> Component.literal(prefix + "§d3D数字");
             default -> Component.literal(prefix + "§c已隐藏");
         };
     }

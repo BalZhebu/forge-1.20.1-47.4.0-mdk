@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "cookingtime": 800,
+  "experience": 0.45,
+  "group": "cold_hearterd_steel",
+  "ingredient": {
+    "item": "kunluncontinent:cold_hearterd_steel_ore"
+  },
+  "result": "kunluncontinent:cold_hearted_steel_ingot"
+}

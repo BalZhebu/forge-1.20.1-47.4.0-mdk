@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "K": {
+      "item": "kunluncontinent:middle_hunhuan_storage_core"
+    },
+    "R": {
+      "item": "kunluncontinent:sapphire"
+    },
+    "X": {
+      "item": "kunluncontinent:cloud_patterned_bronze_ingot"
+    }
+  },
+  "pattern": [
+    "XRX",
+    "RKR",
+    "XRX"
+  ],
+  "result": {
+    "item": "kunluncontinent:mid_cold_protection"
+  },
+  "show_notification": true
+}

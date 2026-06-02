@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "kunluncontinent:polar_ice_realm",
+  "features": "kunluncontinent:starlight_stone_ore",
+  "step": "underground_ores"
+}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "minecraft:flint_and_steel"
+    },
+    "I": {
+      "item": "kunluncontinent:extreme_cold_snowflake_fragment"
+    }
+  },
+  "pattern": [
+    "III",
+    "IAI",
+    "III"
+  ],
+  "result": {
+    "item": "kunluncontinent:extreme_cold_snowflake"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,14 @@
+{
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 143576182,
+    "separation": 100,
+    "spacing": 500
+  },
+  "structures": [
+    {
+      "structure": "kunluncontinent:my_building",
+      "weight": 1
+    }
+  ]
+}

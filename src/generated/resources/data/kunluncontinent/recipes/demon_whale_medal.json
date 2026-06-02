@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "minecraft:dragon_head"
+    },
+    "B": {
+      "item": "minecraft:nether_star"
+    },
+    "C": {
+      "item": "kunluncontinent:demon_whale_badge"
+    },
+    "D": {
+      "item": "minecraft:sculk_catalyst"
+    },
+    "E": {
+      "item": "kunluncontinent:deepsea_jinghua"
+    }
+  },
+  "pattern": [
+    " A ",
+    "BCD",
+    " E "
+  ],
+  "result": {
+    "item": "kunluncontinent:demon_whale_medal"
+  },
+  "show_notification": true
+}

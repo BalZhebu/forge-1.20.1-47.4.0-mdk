@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "kunluncontinent:item/cold_hearted_steel_leggings"
+  }
+}

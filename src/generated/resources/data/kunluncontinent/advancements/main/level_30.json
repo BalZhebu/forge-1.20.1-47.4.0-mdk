@@ -1,0 +1,32 @@
+{
+  "parent": "kunluncontinent:main/level_20",
+  "criteria": {
+    "reached_lvl": {
+      "conditions": {
+        "min_level": 30
+      },
+      "trigger": "kunluncontinent:level_up"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "adv.kunlun.lvl30.desc"
+    },
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:qianhuabao_dan"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "adv.kunlun.lvl30.title"
+    }
+  },
+  "requirements": [
+    [
+      "reached_lvl"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "#": {
+      "item": "kunluncontinent:gray_iron_ingot"
+    },
+    "X": {
+      "item": "kunluncontinent:low_hunhuan_storage_core"
+    },
+    "Y": {
+      "item": "kunluncontinent:neidan1"
+    },
+    "Z": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "pattern": [
+    "#Y#",
+    "ZXZ",
+    "#Z#"
+  ],
+  "result": {
+    "item": "kunluncontinent:hunhuan_storage_one"
+  },
+  "show_notification": true
+}

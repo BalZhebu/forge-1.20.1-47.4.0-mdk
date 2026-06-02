@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "kunluncontinent:rinsei_ingot"
+  },
+  "base": {
+    "item": "kunluncontinent:liandanlu5"
+  },
+  "result": {
+    "item": "kunluncontinent:liandanlu6"
+  },
+  "template": {
+    "item": "kunluncontinent:middle_level_hexin"
+  }
+}

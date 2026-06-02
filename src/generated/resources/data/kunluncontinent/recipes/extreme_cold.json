@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "item": "kunluncontinent:extreme_cold_snowflake_fragment"
+    }
+  },
+  "pattern": [
+    "II",
+    "II"
+  ],
+  "result": {
+    "item": "kunluncontinent:extreme_cold"
+  },
+  "show_notification": true
+}

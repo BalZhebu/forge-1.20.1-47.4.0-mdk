@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "cookingtime": 400,
+  "experience": 0.5,
+  "group": "amethyst",
+  "ingredient": {
+    "item": "kunluncontinent:amethyst_ore"
+  },
+  "result": "kunluncontinent:amethyst"
+}

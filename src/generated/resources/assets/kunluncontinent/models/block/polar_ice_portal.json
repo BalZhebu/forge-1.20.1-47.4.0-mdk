@@ -1,0 +1,29 @@
+{
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "north": {
+          "texture": "#portal"
+        },
+        "south": {
+          "texture": "#portal"
+        }
+      },
+      "from": [
+        0,
+        0,
+        6.01
+      ],
+      "to": [
+        16,
+        16,
+        9.99
+      ]
+    }
+  ],
+  "textures": {
+    "particle": "kunluncontinent:block/polar_ice_portal",
+    "portal": "kunluncontinent:block/polar_ice_portal"
+  }
+}

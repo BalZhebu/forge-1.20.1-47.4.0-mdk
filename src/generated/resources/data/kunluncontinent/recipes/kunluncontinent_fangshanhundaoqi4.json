@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "kunluncontinent:high_hunhuan_storage_core"
+  },
+  "base": {
+    "item": "kunluncontinent:fangshanhundaoqi_3"
+  },
+  "result": {
+    "item": "kunluncontinent:fangshanhundaoqi_4"
+  },
+  "template": {
+    "item": "minecraft:netherite_upgrade_smithing_template"
+  }
+}

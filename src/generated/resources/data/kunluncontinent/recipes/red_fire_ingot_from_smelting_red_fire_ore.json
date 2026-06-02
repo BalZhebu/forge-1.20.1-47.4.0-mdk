@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 400,
+  "experience": 0.35,
+  "group": "red_fire",
+  "ingredient": {
+    "item": "kunluncontinent:red_fire_ore"
+  },
+  "result": "kunluncontinent:red_fire_ingot"
+}

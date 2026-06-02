@@ -1,0 +1,30 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": "kunluncontinent:polar_ice_realm",
+  "spawners": [
+    {
+      "type": "kunluncontinent:ice_crystal",
+      "maxCount": 1,
+      "minCount": 1,
+      "weight": 15
+    },
+    {
+      "type": "kunluncontinent:snow_demon",
+      "maxCount": 1,
+      "minCount": 1,
+      "weight": 10
+    },
+    {
+      "type": "minecraft:stray",
+      "maxCount": 4,
+      "minCount": 2,
+      "weight": 20
+    },
+    {
+      "type": "minecraft:creeper",
+      "maxCount": 1,
+      "minCount": 1,
+      "weight": 10
+    }
+  ]
+}

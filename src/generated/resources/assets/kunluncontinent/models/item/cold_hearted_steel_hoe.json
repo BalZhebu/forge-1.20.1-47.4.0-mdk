@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "kunluncontinent:item/cold_hearted_steel_hoe"
+  }
+}

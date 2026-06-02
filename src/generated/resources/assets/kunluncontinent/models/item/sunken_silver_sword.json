@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "kunluncontinent:item/sunken_silver_sword"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "#": {
+      "item": "minecraft:diamond"
+    },
+    "M": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    " ##",
+    " M#",
+    "M  "
+  ],
+  "result": {
+    "item": "kunluncontinent:diamond_engravings_knife"
+  },
+  "show_notification": true
+}

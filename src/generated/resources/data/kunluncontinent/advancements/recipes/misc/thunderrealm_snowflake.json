@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "kunluncontinent:thunderrealm_snowflake"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_thunderrealm": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "kunluncontinent:thunderrealm_snowflake"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_thunderrealm",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "kunluncontinent:thunderrealm_snowflake"
+    ]
+  },
+  "sends_telemetry_event": false
+}

@@ -1,0 +1,11 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "kunluncontinent:block/thunder_realm_portal"
+    },
+    "axis=z": {
+      "model": "kunluncontinent:block/thunder_realm_portal",
+      "y": 90
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_polar_ice_portal_block_peifang)": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "kunluncontinent:extreme_cold"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "kunluncontinent:polar_ice_portal_block"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_polar_ice_portal_block_peifang)",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "kunluncontinent:polar_ice_portal_block"
+    ]
+  },
+  "sends_telemetry_event": false
+}

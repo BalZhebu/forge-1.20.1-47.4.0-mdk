@@ -1,0 +1,38 @@
+{
+  "parent": "kunluncontinent:main/get_gray_iron_ingot3",
+  "criteria": {
+    "has_gray_iron_ingot": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "kunluncontinent:sunken_silver_ingot"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.kunluncontinent.sunken_silver_ingot.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:sunken_silver_ingot"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.kunluncontinent.sunken_silver_ingot.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_gray_iron_ingot"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

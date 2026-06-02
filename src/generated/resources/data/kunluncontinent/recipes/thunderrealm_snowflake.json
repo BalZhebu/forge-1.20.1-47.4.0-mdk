@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "O": {
+      "item": "minecraft:flint_and_steel"
+    },
+    "X": {
+      "item": "kunluncontinent:lightning_fragments"
+    }
+  },
+  "pattern": [
+    "XXX",
+    "XOX",
+    "XXX"
+  ],
+  "result": {
+    "item": "kunluncontinent:thunderrealm_snowflake"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,38 @@
+{
+  "parent": "kunluncontinent:main/get_ruby",
+  "criteria": {
+    "has_sapphire": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "kunluncontinent:sapphire"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.kunluncontinent.sapphire.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:sapphire"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.kunluncontinent.sapphire.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_sapphire"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

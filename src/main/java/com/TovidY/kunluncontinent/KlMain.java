@@ -57,6 +57,8 @@ public class KlMain {
 
         ModCreativeModelTab.register(modEventBus);
 
+        changeAttributesIO();
+
         ModRecipes.register(modEventBus);
 
         EntityInit.register(modEventBus);
@@ -90,6 +92,16 @@ public class KlMain {
         @SubscribeEvent
         public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
             DecompositionItem.onPlayerTick(event);
+        }
+    }
+
+    public static void changeAttributesIO()  {
+        try {
+            Field privateField = RangedAttribute.class.getDeclaredFields()[1];
+            privateField.setAccessible(true);
+            privateField.set(Attributes.MAX_HEALTH, Float.MAX_VALUE);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 

@@ -1,0 +1,11 @@
+{
+  "type": "kunlun:liandan",
+  "cookTime": 150,
+  "ingredient": {
+    "item": "kunluncontinent:fanqicao_item"
+  },
+  "isSpecial": true,
+  "result": {
+    "item": "kunluncontinent:fanqi_dan"
+  }
+}

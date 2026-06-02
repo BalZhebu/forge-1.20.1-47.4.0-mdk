@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "kunluncontinent:high_hunhuan_storage_core"
+  },
+  "base": {
+    "item": "kunluncontinent:three_decomposition_gossip"
+  },
+  "result": {
+    "item": "kunluncontinent:four_decomposition_gossip"
+  },
+  "template": {
+    "item": "minecraft:netherite_upgrade_smithing_template"
+  }
+}

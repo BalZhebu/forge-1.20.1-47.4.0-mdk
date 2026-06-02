@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "minecraft:netherite_upgrade_smithing_template"
+    },
+    "B": {
+      "item": "kunluncontinent:extreme_cold"
+    },
+    "I": {
+      "item": "kunluncontinent:rinsei_ingot"
+    }
+  },
+  "pattern": [
+    "IAI",
+    "IBI",
+    "III"
+  ],
+  "result": {
+    "count": 3,
+    "item": "kunluncontinent:rinsei_forging_template"
+  },
+  "show_notification": true
+}

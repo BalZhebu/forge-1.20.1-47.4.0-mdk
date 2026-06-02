@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 800,
+  "experience": 0.35,
+  "group": "sunken_silver",
+  "ingredient": {
+    "item": "kunluncontinent:sunken_silver_ore"
+  },
+  "result": "kunluncontinent:sunken_silver_ingot"
+}

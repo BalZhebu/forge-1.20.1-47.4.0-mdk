@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "O": {
+      "item": "minecraft:ender_eye"
+    },
+    "X": {
+      "item": "kunluncontinent:red_fire_ingot"
+    },
+    "Z": {
+      "item": "kunluncontinent:sunken_silver_ingot"
+    }
+  },
+  "pattern": [
+    "ZXZ",
+    "XOX",
+    "ZXZ"
+  ],
+  "result": {
+    "item": "kunluncontinent:eye_transformation"
+  },
+  "show_notification": true
+}

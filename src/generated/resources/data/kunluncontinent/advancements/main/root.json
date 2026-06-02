@@ -1,0 +1,30 @@
+{
+  "criteria": {
+    "on_join": {
+      "conditions": {},
+      "trigger": "minecraft:tick"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "background": "minecraft:textures/gui/advancements/backgrounds/stone.png",
+    "description": {
+      "translate": "advancements.kunluncontinent.root.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:hunhuan_button"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.kunluncontinent.root.title"
+    }
+  },
+  "requirements": [
+    [
+      "on_join"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

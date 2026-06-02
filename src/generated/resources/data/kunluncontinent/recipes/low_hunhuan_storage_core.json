@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "K": {
+      "tag": "kunluncontinent:engraving_knife"
+    },
+    "R": {
+      "item": "kunluncontinent:ruby"
+    }
+  },
+  "pattern": [
+    " R ",
+    "RKR",
+    " R "
+  ],
+  "result": {
+    "item": "kunluncontinent:low_hunhuan_storage_core"
+  },
+  "show_notification": true
+}

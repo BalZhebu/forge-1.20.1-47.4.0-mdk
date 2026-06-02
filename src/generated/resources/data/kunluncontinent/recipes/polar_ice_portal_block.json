@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "item": "minecraft:snow_block"
+    },
+    "W": {
+      "item": "kunluncontinent:extreme_cold"
+    }
+  },
+  "pattern": [
+    "III",
+    "IWI",
+    "III"
+  ],
+  "result": {
+    "item": "kunluncontinent:polar_ice_portal_block"
+  },
+  "show_notification": true
+}

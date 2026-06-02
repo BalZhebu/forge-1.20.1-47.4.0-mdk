@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#minecraft:is_overworld",
+  "features": "kunluncontinent:cloud_patterned_bronze_ore",
+  "step": "underground_ores"
+}

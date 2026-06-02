@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "#": {
+      "item": "minecraft:obsidian"
+    },
+    "X": {
+      "item": "kunluncontinent:low_level_hexin"
+    },
+    "Z": {
+      "item": "kunluncontinent:gray_iron_ingot"
+    }
+  },
+  "pattern": [
+    "#Z#",
+    "ZXZ",
+    "#Z#"
+  ],
+  "result": {
+    "item": "kunluncontinent:liandanlu1"
+  },
+  "show_notification": true
+}

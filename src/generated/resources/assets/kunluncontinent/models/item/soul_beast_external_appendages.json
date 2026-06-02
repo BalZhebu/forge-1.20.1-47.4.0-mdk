@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "kunluncontinent:item/soul_beast_external_appendages"
+  }
+}

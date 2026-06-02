@@ -4,11 +4,13 @@ import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.potion.ModEffects;
+import com.TovidY.kunluncontinent.render.DamageIndicatorRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -17,15 +19,17 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.Random;
 
 //伤害源判定
-
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID)
 public class CombatEventHandler {
     private static final Random RANDOM = new Random();
+
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onLivingHurt(LivingHurtEvent event) {
         if (!(event.getSource().getEntity() instanceof LivingEntity attacker)) return;
         LivingEntity target = event.getEntity();
         if (target == null || !target.isAlive()) return;
+
+        // ==================== 闪避判定 ====================
         float shanbi = ModAttributeAPI.getShanbi(target);
         float mingzhong = ModAttributeAPI.getMingzhong(attacker);
         float diff = Math.max(0, shanbi - mingzhong);
@@ -34,10 +38,12 @@ public class CombatEventHandler {
             event.setCanceled(true);
             if (attacker instanceof Player player) {
                 Component dodgeMsg = Component.literal("§e" + target.getDisplayName().getString() + " §7§l闪避了这次攻击！");
-                processDisplay(player, dodgeMsg);
+                processDisplay(player, target, dodgeMsg, "闪避", 0xFFFFFF00); // 闪避黄色字
             }
             return;
         }
+
+        // ==================== 伤害计算 ====================
         float gongji = ModAttributeAPI.getGongji(attacker);
         float wuchuan = ModAttributeAPI.getWuchuan(attacker);
         float fangyu = ModAttributeAPI.getEffectiveFangyu(target);
@@ -46,14 +52,20 @@ public class CombatEventHandler {
         float reductionFactor = 100f / (100f + effectiveFangyu);
         float baseDamage = (gongji + event.getAmount()) * reductionFactor;
         float finalDamage = baseDamage;
+
         boolean isCrit = false;
         boolean effectTriggered = false;
+
+        // ==================== 5大特殊特效判定 ====================
         if (RANDOM.nextFloat() < 0.1f) {
-            if (handleSpecialEffects(attacker, target, baseDamage)) {
+            // 我们重写了 handleSpecialEffects 的逻辑，将其合并以便于飘字分类
+            effectTriggered = triggerSpecialEffects(attacker, target, baseDamage);
+            if (effectTriggered) {
                 finalDamage = calculateSpecialDamage(attacker, target, baseDamage);
-                effectTriggered = true;
             }
         }
+
+        // ==================== 暴击判定 ====================
         if (!effectTriggered) {
             float baojilv = ModAttributeAPI.getBaojilv(attacker);
             float kangbao = ModAttributeAPI.getKangbao(target);
@@ -64,12 +76,22 @@ public class CombatEventHandler {
                 finalDamage = baseDamage * (baojishanghai / 100f);
             }
         }
+
         finalDamage = Math.max(0.1f, finalDamage);
         event.setAmount(finalDamage);
         handleLifesteal(attacker, finalDamage);
+
+        // ==================== 普通/暴击伤害消息发送 ====================
         if (attacker instanceof Player player) {
             if (!effectTriggered) {
-                sendDamageMessage(player, target, finalDamage, isCrit);
+                String dmgStr = String.format("%.1f", finalDamage);
+                if (isCrit) {
+                    Component msg = Component.literal("§c§l暴击！ §f对 §e" + target.getDisplayName().getString() + " §f造成 §6§l" + dmgStr + " 点伤害");
+                    processDisplay(player, target, msg, "暴击 " + dmgStr, 0xFFFF2222); // 暴击大红色
+                } else {
+                    Component msg = Component.literal("§7对 §e" + target.getDisplayName().getString() + " §f造成 §f" + dmgStr + " 点伤害");
+                    processDisplay(player, target, msg, dmgStr, 0xFFFFFFFF); // 普通伤害白色
+                }
             }
         }
     }
@@ -82,35 +104,37 @@ public class CombatEventHandler {
         }
     }
 
-    private static boolean handleSpecialEffects(LivingEntity attacker, LivingEntity target, float baseDamage) {
+    /**
+     * 重构后的五大属性触发逻辑，方便将特效名字和特殊颜色直接带入3D世界飘字系统
+     */
+    private static boolean triggerSpecialEffects(LivingEntity attacker, LivingEntity target, float baseDamage) {
         float roll = RANDOM.nextFloat();
         String name = target.getDisplayName().getString();
 
-        if (roll <= 0.225f) { // 撕裂
-            showEffectMsg(attacker, "§7§l撕裂！", name, baseDamage * 1.5f);
+        if (roll <= 0.225f) { // 1. 撕裂
+            float dmg = baseDamage * 1.5f;
+            showEffectMsg(attacker, target, "§7§l撕裂！", name, dmg, "撕裂 " + String.format("%.1f", dmg), 0xFF999999); // 灰色
             return true;
-        } else if (roll <= 0.45f) { // 破甲
+        } else if (roll <= 0.45f) { // 2. 破甲
             target.addEffect(new MobEffectInstance(ModEffects.ARMOR_PIERCING.get(), 60, 1));
-            showEffectMsg(attacker, "§9§l破甲！", name, baseDamage * 1.4f);
+            float dmg = baseDamage * 1.4f;
+            showEffectMsg(attacker, target, "§9§l破甲！", name, dmg, "破甲 " + String.format("%.1f", dmg), 0xFF5555FF); // 蓝色
             return true;
-        } else if (roll <= 0.675f) { // 燃烧
+        } else if (roll <= 0.675f) { // 3. 燃烧
             target.addEffect(new MobEffectInstance(ModEffects.SCORCHING.get(), 200, 1));
-            showEffectMsg(attacker, "§4§l燃烧！", name, baseDamage * 1.2f);
+            float dmg = baseDamage * 1.2f;
+            showEffectMsg(attacker, target, "§4§l燃烧！", name, dmg, "燃烧 " + String.format("%.1f", dmg), 0xFFFF5555); // 火红色
             return true;
-        } else if (roll <= 0.9f) { // 震荡
+        } else if (roll <= 0.9f) { // 4. 震荡
             target.addEffect(new MobEffectInstance(ModEffects.DIZZINESS.get(), 60, 5));
-            showEffectMsg(attacker, "§6§l震荡！", name, baseDamage * 1.2f);
+            float dmg = baseDamage * 1.2f;
+            showEffectMsg(attacker, target, "§6§l震荡！", name, dmg, "震荡 " + String.format("%.1f", dmg), 0xFFFFAA00); // 橙黄色
             return true;
-        }else {
+        } else { // 5. 湮灭
             float trueDamage = target.getMaxHealth() * 0.2f;
-            DamageSource source;
-            if (attacker instanceof Player player) {
-                source = target.damageSources().playerAttack(player);
-            } else {
-                source = target.damageSources().mobAttack(attacker);
-            }
+            DamageSource source = attacker instanceof Player p ? target.damageSources().playerAttack(p) : target.damageSources().mobAttack(attacker);
             target.hurt(source, trueDamage);
-            showEffectMsg(attacker, "§5§l湮灭！", name, trueDamage);
+            showEffectMsg(attacker, target, "§5§l湮灭！", name, trueDamage, "湮灭 " + String.format("%.1f", trueDamage), 0xFFAA00AA); // 紫色
             return true;
         }
     }
@@ -119,36 +143,35 @@ public class CombatEventHandler {
         return base * 1.3f;
     }
 
-    private static void showEffectMsg(LivingEntity attacker, String prefix, String targetName, float dmg) {
+    private static void showEffectMsg(LivingEntity attacker, LivingEntity target, String prefix, String targetName, float dmg, String indicatorText, int color) {
         if (attacker instanceof Player player) {
             Component msg = Component.literal(prefix + " §f对 §e" + targetName + " §f造成 §6§l" + String.format("%.1f", dmg) + " 点伤害");
-            processDisplay(player, msg);
+            processDisplay(player, target, msg, indicatorText, color);
         }
     }
 
-    private static void processDisplay(Player player, Component msg) {
+    private static void processDisplay(Player player, LivingEntity target, Component msg, String indicatorText, int color) {
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
             int mode = cap.getDamageDisplayMode();
             switch (mode) {
                 case 0:
-                    player.displayClientMessage(msg, true);
+                    player.displayClientMessage(msg, true); // 物品栏上方
                     break;
                 case 1:
-                    player.displayClientMessage(msg, false);
+                    player.displayClientMessage(msg, false); // 聊天栏
                     break;
                 case 2:
+                    if (player.level().isClientSide()) {
+                        Vec3 spawnPos = new Vec3(target.getX(), target.getY() + target.getBbHeight() + 0.2D, target.getZ());
+                        DamageIndicatorRenderer.addIndicator(indicatorText, color, spawnPos);
+                    } else {
+                        Vec3 spawnPos = new Vec3(target.getX(), target.getY() + target.getBbHeight() + 0.2D, target.getZ());
+                        DamageIndicatorRenderer.addIndicator(indicatorText, color, spawnPos);
+                    }
+                    break;
+                case 3:
                     break;
             }
         });
-    }
-
-    private static void sendDamageMessage(Player player, LivingEntity target, float damage, boolean isCrit) {
-        String name = target.getDisplayName().getString();
-        String dmgStr = String.format("%.1f", damage);
-        Component msg = isCrit
-                ? Component.literal("§c§l暴击！ §f对 §e" + name + " §f造成 §6§l" + dmgStr+ " 点伤害")
-                : Component.literal("§7对 §e" + name + " §f造成 §f" + dmgStr+ " 点伤害");
-
-        processDisplay(player, msg);
     }
 }

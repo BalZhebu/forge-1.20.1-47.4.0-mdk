@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_kunluncontinent_rinsei_duanzao": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "kunluncontinent:rinsei_ingot"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "kunluncontinent:kunluncontinent_weapon_smithing5"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_kunluncontinent_rinsei_duanzao",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "kunluncontinent:kunluncontinent_weapon_smithing5"
+    ]
+  },
+  "sends_telemetry_event": false
+}

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "kunluncontinent:rinsei_ingot"
+  },
+  "base": {
+    "item": "kunluncontinent:cold_hearted_steel_boots"
+  },
+  "result": {
+    "item": "kunluncontinent:rinsei_boots"
+  },
+  "template": {
+    "item": "kunluncontinent:rinsei_forging_template"
+  }
+}

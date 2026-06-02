@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "K": {
+      "item": "kunluncontinent:fangshanhundaoqi_1"
+    },
+    "R": {
+      "item": "kunluncontinent:cloud_patterned_bronze_ingot"
+    },
+    "X": {
+      "item": "kunluncontinent:low_hunhuan_storage_core"
+    }
+  },
+  "pattern": [
+    "XRX",
+    "RKR",
+    "XRX"
+  ],
+  "result": {
+    "item": "kunluncontinent:fangshanhundaoqi_2"
+  },
+  "show_notification": true
+}

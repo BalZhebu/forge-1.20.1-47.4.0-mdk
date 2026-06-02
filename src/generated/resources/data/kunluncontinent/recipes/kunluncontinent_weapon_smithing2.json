@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "kunluncontinent:rinsei_ingot"
+  },
+  "base": {
+    "item": "kunluncontinent:cold_hearted_steel_pickaxe"
+  },
+  "result": {
+    "item": "kunluncontinent:rinsei_pickaxe"
+  },
+  "template": {
+    "item": "kunluncontinent:rinsei_forging_template"
+  }
+}
