@@ -13,166 +13,71 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+
 //创造物品栏
 public class ModCreativeModelTab {
     public static final DeferredRegister<CreativeModeTab> KUNLUN_TABS =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, KlMain.MOD_ID);
 
+    private static Supplier<ItemStack> ICON_SUPPLIER;
+
     public static final RegistryObject<CreativeModeTab> KUNLUN_TAB =
-            KUNLUN_TABS.register("kunlun_tab" ,()-> CreativeModeTab.builder()
-                    .icon(()->new ItemStack(ModBlocks.CULTIVATION_PLATFORM.get()))
+            KUNLUN_TABS.register("kunlun_tab", () -> CreativeModeTab.builder()
+                    .icon(() -> {
+                        if (ICON_SUPPLIER == null) {
+                            ICON_SUPPLIER = () -> new ItemStack(ModBlocks.CULTIVATION_PLATFORM.get());
+                        }
+                        return ICON_SUPPLIER.get();
+                    })
                     .title(Component.translatable("itemGroup.kunlun_tab"))
-                    .displayItems((pParameters, pOutput) ->{
+                    .displayItems((pParameters, pOutput) -> {
 
-                        for (RegistryObject<Item> itemRegistryObject : ModItems.DEBUG_ITEM_BLOCK){
-                            pOutput.accept(itemRegistryObject.get());
-                        }
+                        Stream.of(
+                                        ModItems.DEBUG_ITEM_BLOCK.stream(),
 
-                        for (RegistryObject<Item> itemRegistryObject1 : ModItems.KLBUTTON){
-                            pOutput.accept(itemRegistryObject1.get());
-                        }
+                                        Stream.of(ModItems.POHUNQIANG, ModItems.BAHUANGJI),
 
+                                        ModItems.WUHUNGUOSHI.stream(),
+                                        ModItems.CAOYAOLIST.stream(),
+                                        ModItems.SEEDSLIST.stream(),
 
-                        //武魂武器
-                        pOutput.accept(ModItems.POHUNQIANG.get());
-                        pOutput.accept(ModItems.BAHUANGJI.get());
+                                        Stream.of(ModItems.INSTANT_KILL_SWORD,
+                                                ModBlocks.POLAR_ICE_PORTAL_BLOCK,
+                                                ModBlocks.THUNDER_REALM_PORTAL_BLOCK,
+                                                ModItems.RED_SPIDER_LILY_POTION,
+                                                ModBlocks.STONE_STAMP,
+                                                ModBlocks.SUMMON_TOWER),
 
-                        //武魂果实
-                        for (RegistryObject<Item> itemRegistryObject : ModItems.WUHUNGUOSHI){
-                            pOutput.accept(itemRegistryObject.get());
-                        }
+                                        ModItems.PUTONGITEM.stream(),
+                                        ModItems.NORMALITEMSLIST.stream(),
+                                        ModBlocks.MODBLOCKS.stream(),
+                                        Stream.of(ModBlocks.UNDERWATER_ALTAR),
+                                        ModItems.HUNGULIST.stream(),
+                                        ModItems.JUHUNPING.stream(),
+                                        ModItems.DUANZAOMOBAN.stream(),
+                                        ModItems.hunhuanstorage.stream(),
+                                        ModItems.COLDPROTECTIONLIST.stream(),
+                                        ModItems.ENGRAVING_KNIFE.stream(),
+                                        ModItems.HEXIN.stream(),
+                                        ModItems.HUNHUAN_STORAGE_CORE.stream(),
+                                        ModItems.NEIDANLIST.stream(),
+                                        ModBlocks.LIANDANLULIST.stream(),
+                                        ModItems.DANYAOITEM.stream(),
+                                        ModBlocks.MODORE.stream(),
+                                        ModItems.MODSTONE.stream(),
+                                        ModItems.EQUIPMENT.stream(),
+                                        ModItems.TOOL.stream(),
+                                        ModItems.SPAWNEGGLIST.stream()
 
-                        //草药
-                        for (RegistryObject<Item> itemRegistryObject : ModItems.CAOYAOLIST){
-                            pOutput.accept(itemRegistryObject.get());
-                        }
-
-                        //种子
-                        for (RegistryObject<Item> itemRegistryObject : ModItems.SEEDSLIST){
-                            pOutput.accept(itemRegistryObject.get());
-                        }
-
-
-                        //秒杀剑
-                        pOutput.accept(ModItems.INSTANT_KILL_SWORD.get());
-
-                        pOutput.accept(ModBlocks.POLAR_ICE_PORTAL_BLOCK.get());
-                        pOutput.accept(ModBlocks.THUNDER_REALM_PORTAL_BLOCK.get());
-
-                        //药水
-                        pOutput.accept(ModItems.RED_SPIDER_LILY_POTION.get());
-
-                        //打火石
-                        for (RegistryObject<Item> itemRegistryObject : ModItems.PUTONGITEM){
-                            pOutput.accept(itemRegistryObject.get());
-                        }
-
-                        //普通物品
-                        for (RegistryObject<Item> itemRegistryObject : ModItems.NORMALITEMSLIST){
-                            pOutput.accept(itemRegistryObject.get());
-                        }
-
-                        //MOD方块
-                        for (RegistryObject<Block> itemRegistryObject : ModBlocks.MODBLOCKS){
-                            pOutput.accept(itemRegistryObject.get());
-                        }
-
-                        pOutput.accept(ModBlocks.UNDERWATER_ALTAR.get());
-
-                        //魂骨
-                        for (RegistryObject<Item> itemRegistryObject : ModItems.HUNGULIST){
-                            pOutput.accept(itemRegistryObject.get());
-                        }
-
-                        //聚魂瓶
-                        for (RegistryObject<Item> itemRegistryObject : ModItems.JUHUNPING){
-                            pOutput.accept(itemRegistryObject.get());
-                        }
-
-                        //锻造模版
-                        for (RegistryObject<Item> itemRegistryObject : ModItems.DUANZAOMOBAN){
-                            pOutput.accept(itemRegistryObject.get());
-                        }
-
-                        //魂环收纳器
-                        for (RegistryObject<Item> itemRegistryObject : ModItems.hunhuanstorage){
-                            pOutput.accept(itemRegistryObject.get());
-                        }
-
-                        //御寒魂导器
-                        for (RegistryObject<Item> itemRegistryObject : ModItems.COLDPROTECTIONLIST){
-                            pOutput.accept(itemRegistryObject.get());
-                        }
-
-                        //刻刀
-                        for (RegistryObject<Item> itemRegistryObject : ModItems.ENGRAVING_KNIFE){
-                            pOutput.accept(itemRegistryObject.get());
-                        }
-
-                        //丹炉核心
-                        for (RegistryObject<Item> itemRegistryObject : ModItems.HEXIN){
-                            pOutput.accept(itemRegistryObject.get());
-                        }
-
-                        //魂环储存核心
-                        for (RegistryObject<Item> itemRegistryObject : ModItems.HUNHUAN_STORAGE_CORE){
-                            pOutput.accept(itemRegistryObject.get());
-                        }
-
-                        //内丹
-                        for (RegistryObject<Item> itemRegistryObject : ModItems.NEIDANLIST){
-                            pOutput.accept(itemRegistryObject.get());
-                        }
-
-                        //炼丹炉
-                        for (RegistryObject<Block> itemRegistryObject : ModBlocks.LIANDANLULIST){
-                            pOutput.accept(itemRegistryObject.get());
-                        }
-
-                        //丹药
-                        for (RegistryObject<Item> itemRegistryObject : ModItems.DANYAOITEM) {
-                            pOutput.accept(itemRegistryObject.get());
-                        }
-
-                        //MOD矿物
-                        for (RegistryObject<Block> itemRegistryObject : ModBlocks.MODORE) {
-                            pOutput.accept(itemRegistryObject.get());
-                        }
-
-                        //MOD锭
-                        for (RegistryObject<Item> itemRegistryObject : ModItems.MODSTONE) {
-                            pOutput.accept(itemRegistryObject.get());
-                        }
-
-                        //MOD装备
-                        for (RegistryObject<Item> itemRegistryObject : ModItems.EQUIPMENT) {
-                            pOutput.accept(itemRegistryObject.get());
-                        }
-
-                        //MOD工具
-                        for (RegistryObject<Item> itemRegistryObject : ModItems.TOOL) {
-                            pOutput.accept(itemRegistryObject.get());
-                        }
-
-                        //生物蛋
-                        for (RegistryObject<Item> itemRegistryObject : ModItems.SPAWNEGGLIST) {
-                            pOutput.accept(itemRegistryObject.get());
-                        }
-
+                                )
+                                .flatMap(stream -> stream)
+                                .map(RegistryObject::get)
+                                .forEach(pOutput::accept);
                     }).build());
 
-
-
-//    public static final RegistryObject<CreativeModeTab> KUNLUN_BLOCK_TAB =
-//            KUNLUN_TABS.register("kunlun_block_tab" ,()-> CreativeModeTab.builder()
-//                    .icon(()->new ItemStack(ModItems.EVA.get()))
-//                    .title(Component.translatable("itemGroup.kunlun_block_tab"))
-//                    .displayItems((pParameters, pOutput) ->{
-//                        pOutput.accept(ModItems.AWM.get());
-//                    }).withTabsBefore(KUNLUN_TAB.getKey())
-//                    .build());
-
-    public static void register(IEventBus eventBus){
+    public static void register(IEventBus eventBus) {
         KUNLUN_TABS.register(eventBus);
     }
 }

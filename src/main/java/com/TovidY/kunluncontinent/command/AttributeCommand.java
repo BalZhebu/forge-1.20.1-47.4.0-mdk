@@ -1,5 +1,7 @@
 package com.TovidY.kunluncontinent.command;
 
+import com.TovidY.kunluncontinent.KlMain;
+import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.event.client.PlayerAttributeInit;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerUpgradeSystem;
@@ -16,201 +18,118 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 //指令格式/kunluncontinent attribute <属性名称> <增加/减少> <值> <玩家>
-// 属性修改指令
 
+@Mod.EventBusSubscriber(modid = KlMain.MOD_ID)
 public class AttributeCommand {
 
-    private static final List<String> ATTRIBUTE_NAMES = Arrays.asList(
-        "shengming", "maxshengming", "jingshenli", "maxjingshenli",
-        "mingzhong", "fangyu", "gongji", "baojilv", "baojishanghai",
-        "xixue", "shanbi", "kangbao", "jingyan", "dengji", "maxjingyan",
-        "wuchuan", "shengminghuifu"
-    );
+    private record AttributeHandler(
+            java.util.function.Function<PlayerAttributeCapability, Float> getter,
+            java.util.function.BiConsumer<PlayerAttributeCapability, Float> setter,
+            float minValue,
+            java.util.function.BiConsumer<ServerPlayer, Float> extraAction
+    ) {}
 
-    private static final SuggestionProvider<CommandSourceStack> ATTRIBUTE_SUGGESTIONS = 
-        (context, builder) -> SharedSuggestionProvider.suggest(ATTRIBUTE_NAMES, builder);
-    
+    private static final Map<String, AttributeHandler> ATTRIBUTES = new java.util.HashMap<>();
+
+    static {
+        registerAttr("shengming", PlayerAttributeCapability::getShengming, PlayerAttributeCapability::setShengming, Float.NEGATIVE_INFINITY, (player, val) -> player.setHealth(Math.min(val, player.getMaxHealth())));
+        registerAttr("maxshengming", PlayerAttributeCapability::getMaxshengming, PlayerAttributeCapability::setMaxshengming, 1.0f, PlayerAttributeInit::syncMaxHealthToPlayer);
+        registerAttr("jingshenli", PlayerAttributeCapability::getJingshenli, PlayerAttributeCapability::setJingshenli, Float.NEGATIVE_INFINITY, null);
+        registerAttr("maxjingshenli", PlayerAttributeCapability::getMaxjingshenli, PlayerAttributeCapability::setMaxjingshenli, 1.0f, null);
+        registerAttr("mingzhong", PlayerAttributeCapability::getMingzhong, PlayerAttributeCapability::setMingzhong, Float.NEGATIVE_INFINITY, null);
+        registerAttr("fangyu", PlayerAttributeCapability::getFangyu, PlayerAttributeCapability::setFangyu, 0.0f, null);
+        registerAttr("gongji", PlayerAttributeCapability::getGongji, PlayerAttributeCapability::setGongji, 0.0f, null);
+        registerAttr("baojilv", PlayerAttributeCapability::getBaojilv, PlayerAttributeCapability::setBaojilv, Float.NEGATIVE_INFINITY, null);
+        registerAttr("baojishanghai", PlayerAttributeCapability::getBaojishanghai, PlayerAttributeCapability::setBaojishanghai, 0.0f, null);
+        registerAttr("xixue", PlayerAttributeCapability::getXixue, PlayerAttributeCapability::setXixue, Float.NEGATIVE_INFINITY, null);
+        registerAttr("shanbi", PlayerAttributeCapability::getShanbi, PlayerAttributeCapability::setShanbi, Float.NEGATIVE_INFINITY, null);
+        registerAttr("kangbao", PlayerAttributeCapability::getKangbao, PlayerAttributeCapability::setKangbao, Float.NEGATIVE_INFINITY, null);
+        registerAttr("jingyan", PlayerAttributeCapability::getJingyan, PlayerAttributeCapability::setJingyan, 0.0f, null);
+        registerAttr("dengji", attr -> (float) attr.getDengji(), (attr, val) -> attr.setDengji(val.intValue()), 0.0f, null);
+        registerAttr("maxjingyan", PlayerAttributeCapability::getMaxjingyan, PlayerAttributeCapability::setMaxjingyan, 1.0f, null);
+        registerAttr("wuchuan", PlayerAttributeCapability::getWuchuan, PlayerAttributeCapability::setWuchuan, Float.NEGATIVE_INFINITY, null);
+        registerAttr("shengminghuifu", PlayerAttributeCapability::getShengmingHuifu, PlayerAttributeCapability::setShengmingHuifu, Float.NEGATIVE_INFINITY, null);
+    }
+
+    private static void registerAttr(String name, java.util.function.Function<PlayerAttributeCapability, Float> getter, java.util.function.BiConsumer<PlayerAttributeCapability, Float> setter, float min, java.util.function.BiConsumer<ServerPlayer, Float> action) {
+        ATTRIBUTES.put(name, new AttributeHandler(getter, setter, min, action));
+    }
+
+    private static final SuggestionProvider<CommandSourceStack> ATTRIBUTE_SUGGESTIONS =
+            (context, builder) -> SharedSuggestionProvider.suggest(ATTRIBUTES.keySet(), builder);
+
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
-            Commands.literal("kunluncontinent")
-                .requires(source -> source.hasPermission(2)) // 需要OP权限
-                .then(Commands.literal("attribute")
-                    .then(Commands.argument("attributeName", StringArgumentType.string())
-                        .suggests(ATTRIBUTE_SUGGESTIONS)
-                        .then(Commands.literal("add")
-                            .then(Commands.argument("value", FloatArgumentType.floatArg())
-                                .executes(context -> modifySelfAttribute(context))
-                                .then(Commands.argument("player", EntityArgument.player())
-                                    .executes(context -> modifyPlayerAttribute(context))
+                Commands.literal("kunluncontinent")
+                        .requires(source -> source.hasPermission(2))
+                        .then(Commands.literal("attribute")
+                                // 💡 极致优化 3：换用 word() 类型，不仅运行速度更快，玩家输入命令时再也不需要加无脑的双引号了！
+                                .then(Commands.argument("attributeName", StringArgumentType.word())
+                                        .suggests(ATTRIBUTE_SUGGESTIONS)
+                                        .then(Commands.literal("add")
+                                                .then(Commands.argument("value", FloatArgumentType.floatArg())
+                                                        .executes(context -> modifyAttribute(context, null))
+                                                        .then(Commands.argument("player", EntityArgument.player())
+                                                                .executes(context -> modifyAttribute(context, EntityArgument.getPlayer(context, "player")))
+                                                        )
+                                                )
+                                        )
                                 )
-                            )
                         )
-                    )
-                )
         );
     }
 
-    private static int modifySelfAttribute(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        ServerPlayer player = context.getSource().getPlayerOrException();
-        String attributeName = StringArgumentType.getString(context, "attributeName");
+    private static int modifyAttribute(CommandContext<CommandSourceStack> context, ServerPlayer target) throws CommandSyntaxException {
+        ServerPlayer player = (target == null) ? context.getSource().getPlayerOrException() : target;
+        String attributeName = StringArgumentType.getString(context, "attributeName").toLowerCase();
         float value = FloatArgumentType.getFloat(context, "value");
-        
-        return modifyAttribute(player, attributeName, value, context.getSource());
-    }
+        CommandSourceStack source = context.getSource();
 
-    private static int modifyPlayerAttribute(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        ServerPlayer targetPlayer = EntityArgument.getPlayer(context, "player");
-        String attributeName = StringArgumentType.getString(context, "attributeName");
-        float value = FloatArgumentType.getFloat(context, "value");
-        
-        return modifyAttribute(targetPlayer, attributeName, value, context.getSource());
-    }
+        AttributeHandler handler = ATTRIBUTES.get(attributeName);
+        if (handler == null) {
+            source.sendFailure(Component.literal("§c未知的属性名称: " + attributeName + "，请联系作者TovidY"));
+            source.sendFailure(Component.literal("§e可用属性: " + String.join(", ", ATTRIBUTES.keySet())));
+            return 0;
+        }
 
-    private static int modifyAttribute(ServerPlayer player, String attributeName, float value, CommandSourceStack source) {
         return player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).map(attr -> {
-            float oldValue;
-            float newValue;
-            
-            switch (attributeName.toLowerCase()) {
-                case "shengming":
-                    oldValue = attr.getShengming();
-                    newValue = oldValue + value;
-                    attr.setShengming(newValue);
-                    player.setHealth(Math.min(newValue, player.getMaxHealth()));
-                    break;
-                    
-                case "maxshengming":
-                    oldValue = attr.getMaxshengming();
-                    newValue = Math.max(1.0f, oldValue + value);
-                    attr.setMaxshengming(newValue);
-                    PlayerAttributeInit.syncMaxHealthToPlayer(player, newValue);
-                    break;
-                    
-                case "jingshenli":
-                    oldValue = attr.getJingshenli();
-                    newValue = oldValue + value;
-                    attr.setJingshenli(newValue);
-                    break;
-                    
-                case "maxjingshenli":
-                    oldValue = attr.getMaxjingshenli();
-                    newValue = Math.max(1.0f, oldValue + value);
-                    attr.setMaxjingshenli(newValue);
-                    break;
-                    
-                case "mingzhong":
-                    oldValue = attr.getMingzhong();
-                    newValue = oldValue + value;
-                    attr.setMingzhong(newValue);
-                    break;
-                    
-                case "fangyu":
-                    oldValue = attr.getFangyu();
-                    newValue = Math.max(0.0f, oldValue + value);
-                    attr.setFangyu(newValue);
-                    break;
-                    
-                case "gongji":
-                    oldValue = attr.getGongji();
-                    newValue = Math.max(0.0f, oldValue + value);
-                    attr.setGongji(newValue);
-                    break;
-                    
-                case "baojilv":
-                    oldValue = attr.getBaojilv();
-                    newValue = oldValue + value;
-                    attr.setBaojilv(newValue);
-                    break;
-                    
-                case "baojishanghai":
-                    oldValue = attr.getBaojishanghai();
-                    newValue = Math.max(0.0f, oldValue + value);
-                    attr.setBaojishanghai(newValue);
-                    break;
-                    
-                case "xixue":
-                    oldValue = attr.getXixue();
-                    newValue = oldValue + value;
-                    attr.setXixue(newValue);
-                    break;
-                    
-                case "shanbi":
-                    oldValue = attr.getShanbi();
-                    newValue = oldValue + value;
-                    attr.setShanbi(newValue);
-                    break;
-                    
-                case "kangbao":
-                    oldValue = attr.getKangbao();
-                    newValue = oldValue + value;
-                    attr.setKangbao(newValue);
-                    break;
-                    
-                case "jingyan":
-                    oldValue = attr.getJingyan();
-                    newValue = Math.max(0.0f, oldValue + value);
-                    attr.setJingyan(newValue);
-                    break;
-                    
-                case "dengji":
-                    oldValue = attr.getDengji();
-                    newValue = Math.max(0.0f, oldValue + value);
-                    attr.setDengji((int)newValue);
-                    break;
-                    
-                case "maxjingyan":
-                    oldValue = attr.getMaxjingyan();
-                    newValue = Math.max(1.0f, oldValue + value);
-                    attr.setMaxjingyan(newValue);
-                    break;
-                case "wuchuan":
-                    oldValue = attr.getWuchuan();
-                    newValue = oldValue + value;
-                    attr.setWuchuan(newValue);
-                    break;
-                case "shengminghuifu":
-                    oldValue = attr.getShengmingHuifu();
-                    newValue = oldValue + value;
-                    attr.setShengmingHuifu(newValue);
-                    break;
-                default:
-                    source.sendFailure(Component.literal("§c未知的属性名称: " + attributeName + "请联系作者TovidY"));
-                    source.sendFailure(Component.literal("§e可用属性: " + String.join(", ", ATTRIBUTE_NAMES)));
-                    return 0;
+            float oldValue = handler.getter.apply(attr);
+            float newValue = handler.minValue == Float.NEGATIVE_INFINITY ? oldValue + value : Math.max(handler.minValue, oldValue + value);
+
+            handler.setter.accept(attr, newValue);
+
+            if (handler.extraAction != null) {
+                handler.extraAction.accept(player, newValue);
             }
 
             String operation = value >= 0 ? "增加" : "减少";
             source.sendSuccess(() -> Component.literal(
-                "§a成功" + operation + "玩家 §e" + player.getName().getString() + 
-                " §a的 §6" + attributeName + " §a属性"
+                    "§a成功" + operation + "玩家 §e" + player.getName().getString() + " §a的 §6" + attributeName + " §a属性"
             ), true);
             source.sendSuccess(() -> Component.literal(
-                "§7" + oldValue + " §f-> §b" + String.format("%.2f", newValue) + 
-                " §7(变化: " + (value >= 0 ? "§a+" : "§c") + String.format("%.2f", value) + "§7)"
+                    "§7" + oldValue + " §f-> §b" + String.format("%.2f", newValue) + " §7(变化: " + (value >= 0 ? "§a+" : "§c") + String.format("%.2f", value) + "§7)"
             ), false);
+
             syncToClient(player, attr);
-            if (attributeName.equalsIgnoreCase("jingyan")) {
+
+            if ("jingyan".equals(attributeName) && value > 0) {
                 PlayerUpgradeSystem.checkAndProcessUpgrade(player, attr);
             }
             return 1;
         }).orElse(0);
     }
 
-    // 同步属性到客户端
-    private static void syncToClient(ServerPlayer player, com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability attr) {
+    private static void syncToClient(ServerPlayer player, PlayerAttributeCapability attr) {
         CompoundTag nbtData = attr.serializeNBT();
-        com.TovidY.kunluncontinent.network.server.SPacketPlayerAttribute packet =
-                new com.TovidY.kunluncontinent.network.server.SPacketPlayerAttribute(player.getId(), nbtData);
-        com.TovidY.kunluncontinent.network.NetworkHandler.INSTANCE.send(
-                PacketDistributor.PLAYER.with(() -> player),
-                packet
-        );
+        var packet = new com.TovidY.kunluncontinent.network.server.SPacketPlayerAttribute(player.getId(), nbtData);
+        com.TovidY.kunluncontinent.network.NetworkHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), packet);
     }
-
 }

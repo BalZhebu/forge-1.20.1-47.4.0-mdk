@@ -45,6 +45,9 @@ public class ModBlockLootTablesProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.SAPPHIRE_ORE.get());
         dropSelf(ModBlocks.STARLIGHT_STONE_ORE.get());
 
+        //石碑
+        dropSelf(ModBlocks.STONE_STAMP.get());
+
         //蒲团
         dropSelf(ModBlocks.PUTUAN_BLOCK.get());
 

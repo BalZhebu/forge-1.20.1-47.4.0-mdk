@@ -17,6 +17,10 @@ public class ModZhCnLangProvider extends LanguageProvider {
     @Override
     protected void addTranslations() {
 
+        //方块类
+        add(ModBlocks.STONE_STAMP.get(), "石碑");
+        add(ModBlocks.SUMMON_TOWER.get(), "召唤塔");
+
         //别忘了写分配技能的类
         //技能代码
         add(ModItems.SKILL_POHUN_1.get(), "§c《破魂枪》第一魂技[破魂枪]");
@@ -110,7 +114,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("guide.kunlun.chapter1.content","§1§l《欢迎来到昆仑大陆！祝您玩的愉快 ~ 》\n[本引导书更新于’1.0‘版本]§r\n§c§l请各位玩家务必认真仔细查看，基本收录了正常游玩时遇到的所有常见攻略" +
                 "\n§c以下为基础教程：§r" +
                 "\n§l属性面板系统：§r默认按O键打开属性面板，在属性面板下按住Shift键可查询具体数值，例如玩家的攻击力为10000时属性面板会自动缩进变为1万，按下Shift即可查看具体数值。" +
-                "\n§l玩家屏幕的GUI属性解释：§r玩家屏幕左上角UI四个属性条分别为：生命值(红色)，饱和度(橙色)，精神力(蓝色)，经验值(绿色)。左边下面一点位置的数字代码是你当前的等级。注意！当玩家做出某种更新数值的举动（进入维度等）数值会变的异常，这是正常现象等待几秒即可恢复" +
+                "\n§l玩家屏幕的GUI属性解释：§r玩家屏幕左上角UI四个属性条分别为：生命值(红色)，饱和度(橙色)，精神力(蓝色)，经验值(绿色)。经验条的左侧下面一点位置的数字代表是你当前的等级。注意！当玩家做出某种更新数值的举动（进入维度等）数值会变的异常，这是正常现象等待几秒即可恢复。" +
                 "\n§l技能系统：§r默认长按R键可打开技能栏，按V键可释放选中的技能，按住R键时用鼠标滑动选择技能，鼠标移动到对应技能灰色滑块后松开R键即可选择技能，选择不松开R键的话技能栏右侧会出现技能的相关介绍，点按R可快速按顺序切换技能。魂技的威力关乎于吸收魂环的年限，年限越大魂技越强，消耗精神力越多。" +
                 "\n§l觉醒武魂：§r玩家击杀生物、炼制丹药、用蒲团修炼，都可以获得经验，经验值满了后自动突破下一个等级，当玩家第一次突破成功时，将会觉醒武魂并分配玩家的天赋。" +
                 "\n§l天赋系统：§r天赋在玩家觉醒武魂时出现，普通天赋最为常见，废物和天才天赋概率一致，是废物还是天才都在一念之间，不同的天赋会略微影响一点点数值，但后期均可通过努力提升。" +
@@ -251,7 +255,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModBlocks.POLAR_ICE_PORTAL.get(), "极寒冰域传送门");
         add(ModBlocks.THUNDER_REALM_PORTAL.get(), "万雷天域传送门");
         //打火石
-        add(ModItems.EXTREME_COLD_SNOWFLAKE.get(), "§b极寒冰域打火石");
+        add(ModItems.EXTREME_COLD_SNOWFLAKE.get(), "§b极寒石");
         add(ModItems.THUNDERREALM_SNOWFLAKE.get(),"§8雷域石");
 
         //普通物品
@@ -524,8 +528,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("tooltip.kunlun.neidan_item_tier","高品质内丹低概率掉落");
         add("tooltip.kunlun.instant_kill_sword.1","代码级秒杀：无视防御，强制抹除数据。");
         add("tooltip.kunlun.instant_kill_sword.2","世间万物，皆为定数；唯我一剑，可断因果。");
-        add("tooltip.kunluncontinent.extreme_cold_snowflake1","需右键最底下传送门框架");
-        add("tooltip.kunluncontinent.extreme_cold_snowflake2","从左往右的第二个方块最上面的一面激活传送门");
+        add("tooltip.kunluncontinent.extreme_cold_snowflake1","需右键传送门内侧的面即可激活");
         add("tooltip.item.klitem.eyetf","§7可重复使用");
         add("item.red_spider_seeds.tooltip","§7生成在废弃地狱门附近的地狱岩上");
         add("gui.kunluncontinent.casting","§e正在施法中...");

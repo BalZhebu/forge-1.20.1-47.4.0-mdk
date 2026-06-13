@@ -360,6 +360,12 @@ public class PlayerHunhuanAPI {
 
             newplayerCapability.resetGodSystem();
 
+            // ==================== 【新增：幻境塔转生重置】 ====================
+            newplayerCapability.setCurrentTowerFloor(0);       // 贬回第 1 层
+            newplayerCapability.setTowerLastActiveTick(0);     // 清空发呆时间戳
+            newplayerCapability.setTowerChallenging(false);    // 强行解除挑战状态锁
+            // ================================================================
+
             //技能转生重置
             newplayerCapability.getWuhunSkillsMap().clear();
             newplayerCapability.getWuhunListsname().clear();

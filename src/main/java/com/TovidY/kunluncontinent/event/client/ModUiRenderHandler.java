@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.event.client;
 
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
+import com.TovidY.kunluncontinent.tower.floor.ClientTimerManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -17,8 +18,9 @@ import net.minecraftforge.client.gui.overlay.NamedGuiOverlay;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-
-import static net.minecraftforge.client.gui.overlay.VanillaGuiOverlay.*;
+import net.minecraft.client.gui.Font;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class ModUiRenderHandler {
@@ -41,6 +43,23 @@ public class ModUiRenderHandler {
     public static void onRenderGui(RenderGuiEvent.Pre event) {
         Player entity = Minecraft.getInstance().player;
         if (entity == null) return;
+
+        int seconds = ClientTimerManager.getRemainingSeconds();
+        if (seconds > 0 && !Minecraft.getInstance().options.hideGui) {
+            GuiGraphics guiGraphics = event.getGuiGraphics();
+            Font font = Minecraft.getInstance().font;
+            String timeStr = String.format("%02d:%02d", seconds / 60, seconds % 60);
+            int textColor = (seconds <= 10) ? 0xFF5555 : 0x55FFFF;
+            Component labelComponent = Component.literal("[幻境剩余时间] ").withStyle(Style.EMPTY.withColor(0xFF55FF));
+            Component timeComponent = Component.literal(timeStr).withStyle(Style.EMPTY.withColor(textColor));
+            Component finalComponent = Component.empty().append(labelComponent).append(timeComponent);
+            int width = event.getWindow().getGuiScaledWidth();
+            int height = event.getWindow().getGuiScaledHeight();
+            int x = (width - font.width(finalComponent)) / 2;
+            int y = height - 85;
+
+            guiGraphics.drawString(font, finalComponent, x, y, 0xFFFFFF, true);
+        }
 
         boolean[] isUiOpen = {true};
         int[] offsetY = {0};
@@ -91,7 +110,8 @@ public class ModUiRenderHandler {
         NamedGuiOverlay overlay = event.getOverlay();
         String path = overlay.id().getPath();
 
-        if (path.equals(PLAYER_HEALTH.id().getPath())) {
+        // 兼容写法
+        if (path.equals("player_health") || path.contains("health")) {
             event.setCanceled(true);
             player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
                 if (cap.isConfigOpen(6)) {
@@ -103,7 +123,7 @@ public class ModUiRenderHandler {
                 }
             });
         }
-        else if (path.equals(FOOD_LEVEL.id().getPath())) {
+        else if (path.equals("food_level") || path.contains("food")) {
             event.setCanceled(true); // 隐藏原版饱食度
         }
     }

@@ -54,6 +54,8 @@ public class NetworkHandler {
         register(PacketChangeDisplayMode.class,PacketChangeDisplayMode::encode,PacketChangeDisplayMode::decode,PacketChangeDisplayMode::handle);
         register(PacketToggleConfig.class, PacketToggleConfig::encode,PacketToggleConfig::decode,PacketToggleConfig::handle);
 
+        register(PacketSyncTowerTimer.class, PacketSyncTowerTimer::encode, PacketSyncTowerTimer::decode, PacketSyncTowerTimer::handle);
+
         register(PacketUpdateUIOffset.class, PacketUpdateUIOffset::toBytes, PacketUpdateUIOffset::new, PacketUpdateUIOffset::handle);
 
         // 服务端发给客户端（同步数据）
@@ -62,6 +64,7 @@ public class NetworkHandler {
         // 客户端发给服务端（点击检测按钮）
         register(C2SCheckTaskPacket.class, C2SCheckTaskPacket::encode, C2SCheckTaskPacket::decode, C2SCheckTaskPacket::handle);
 
+        INSTANCE.registerMessage(id, S2CSkillNotifyPacket.class, S2CSkillNotifyPacket::encode, S2CSkillNotifyPacket::decode, S2CSkillNotifyPacket::handle);
     }
 
     private static <M> void register(Class<M> messageType, BiConsumer<M, FriendlyByteBuf> encoder,

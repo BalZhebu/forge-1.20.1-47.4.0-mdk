@@ -5,6 +5,8 @@ import com.TovidY.kunluncontinent.block.klblock.*;
 import com.TovidY.kunluncontinent.block.portal.polarice.PolarIcePortalBlock;
 import com.TovidY.kunluncontinent.block.portal.polarice.ThunderRealmPortalBlock;
 import com.TovidY.kunluncontinent.item.ModItems;
+import com.TovidY.kunluncontinent.tower.block.StoneStampBlock;
+import com.TovidY.kunluncontinent.tower.block.SummonTowerBlock;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
@@ -20,6 +22,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.Nullable;
+import org.stringtemplate.v4.ST;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -160,6 +163,15 @@ public class ModBlocks {
             registerBlock("polar_ice_portal", PolarIcePortalBlock::new);
     public static final RegistryObject<Block> THUNDER_REALM_PORTAL =
             registerBlock("thunder_realm_portal", ThunderRealmPortalBlock::new);
+
+    //石碑
+    public static final RegistryObject<Block> STONE_STAMP =
+            registerBlock("stone_stamp", () ->
+                    new StoneStampBlock(BlockBehaviour.Properties.copy(Blocks.STONE).noOcclusion()));
+
+    //召唤塔
+    public static final RegistryObject<Block> SUMMON_TOWER = registerBlock("summon_tower", () ->
+            new SummonTowerBlock(BlockBehaviour.Properties.copy(Blocks.STONE).noOcclusion().noLootTable()));
 
     //炼丹炉
     public static ArrayList<RegistryObject<Block>> LIANDANLULIST = new ArrayList<>();

@@ -54,6 +54,11 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
 
     private int uiOffsetY = 0;
 
+    // ==================== 【昆仑大陆·爬塔系统字段】 ====================
+    private int currentTowerFloor = 0;      // 当前爬塔层数 (0代表第一层)
+    private long towerLastActiveTick = 0;   // 爬塔防挂机最后活动Tick
+    private boolean isTowerChallenging = false; // 是否处于爬塔挑战中
+
     private Map<String, BaseSkillItem[]> wuhunSkillsMap = new HashMap<>();
     private Map<String, Integer> selectedSkillIndexMap = new HashMap<>();
 
@@ -161,6 +166,11 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
 
         tag.putInt("XiantianTalent", this.xiantianTalent);
 
+        // 保存爬塔系统数据
+        tag.putInt("CurrentTowerFloor", currentTowerFloor);
+        tag.putLong("TowerLastActiveTick", towerLastActiveTick);
+        tag.putBoolean("IsTowerChallenging", isTowerChallenging);
+
         // 在 serializeNBT 中增加：
         ListTag taskTag = new ListTag();
         for (int i = 1; i <= 9; i++) {
@@ -257,6 +267,11 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         if (nbt.contains("XiantianTalent")) {
             this.xiantianTalent = nbt.getInt("XiantianTalent");
         }
+
+        // 读取爬塔系统数据
+        this.currentTowerFloor = nbt.getInt("CurrentTowerFloor");
+        this.towerLastActiveTick = nbt.getLong("TowerLastActiveTick");
+        this.isTowerChallenging = nbt.getBoolean("IsTowerChallenging");
 
         // 在 deserializeNBT 中增加：
         if (nbt.contains("GodTasks")) {
@@ -365,6 +380,16 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
             this.isGod = true;
         }
     }
+
+    // ==================== 【昆仑大陆·爬塔系统 API】 ====================
+    public int getCurrentTowerFloor() { return this.currentTowerFloor; }
+    public void setCurrentTowerFloor(int floor) { this.currentTowerFloor = Math.max(0, floor); }
+
+    public long getTowerLastActiveTick() { return this.towerLastActiveTick; }
+    public void setTowerLastActiveTick(long tick) { this.towerLastActiveTick = tick; }
+
+    public boolean isTowerChallenging() { return this.isTowerChallenging; }
+    public void setTowerChallenging(boolean challenging) { this.isTowerChallenging = challenging; }
 
     public int getGodTaskProgress() { return taskProgress; }
     public void setGodTaskProgress(int progress) { this.taskProgress = progress; }
@@ -689,6 +714,30 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         }
     }
 
+    public boolean isBrandNewConfig() {
+        return this.gongji == 1.0f && this.maxshengming == 20.0f && this.dengji == 0;
+    }
+
+    public void initDefaultAttributes() {
+        this.shengming = 20.0f;
+        this.maxshengming = 20.0f;
+        this.jingshenli = 20.0f;
+        this.maxjingshenli = 20.0f;
+        this.mingzhong = 1.0f;
+        this.fangyu = 1.0f;
+        this.gongji = 1.0f;
+        this.baojilv = 5.0f;
+        this.baojishanghai = 150.0f;
+        this.xixue = 1.0f;
+        this.shanbi = 1.0f;
+        this.kangbao = 1.0f;
+        this.jingyan = 0.0f;
+        this.dengji = 0;
+        this.maxjingyan = 20.0f;
+        this.shengminghuifu = 1.0f;
+        this.wuchuan = 1.0f;
+        this.xiulianTime = 600;
+    }
 
     private Map<String, Long> skillCooldowns = new HashMap<>();
 

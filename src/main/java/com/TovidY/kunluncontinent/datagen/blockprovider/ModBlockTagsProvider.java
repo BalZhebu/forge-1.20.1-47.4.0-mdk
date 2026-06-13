@@ -51,16 +51,19 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(ModBlocks.LIANDANLU7.get())
                 .add(ModBlocks.LIANDANLU8.get())
                 .add(ModBlocks.LIANDANLU9.get())
+                .add(ModBlocks.STONE_STAMP.get())
 
         ;
         //需要铁镐破坏
         tag(BlockTags.NEEDS_IRON_TOOL)
                 .add(ModBlocks.GRAY_IRON_ORE.get())
                 .add(ModBlocks.RUBY_ORE.get())
+
         ;
         //需要钻石镐
         tag(BlockTags.NEEDS_DIAMOND_TOOL)
                 .add(ModBlocks.CLOUD_PATTERNED_BRONZE_ORE.get())
+                .add(ModBlocks.STONE_STAMP.get())
                 .add(ModBlocks.SAPPHIRE_ORE.get())
                 .add(ModBlocks.RED_FIRE_ORE.get())
                 .add(ModBlocks.LIANDANLU1.get())

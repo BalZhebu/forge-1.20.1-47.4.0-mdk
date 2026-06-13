@@ -49,6 +49,8 @@ public class JEIKluxPlugin implements IModPlugin {
     @Override
     public void registerCategories(IRecipeCategoryRegistration registration) {
         registration.addRecipeCategories(new JEIKlCategory(registration.getJeiHelpers().getGuiHelper()));
+
+        registration.addRecipeCategories(new JEIPortalCategory(registration.getJeiHelpers().getGuiHelper()));
     }
 
     @Override
@@ -66,6 +68,20 @@ public class JEIKluxPlugin implements IModPlugin {
                         new ItemStack(ModItems.RED_SPIDER_LILY_POTION.get())
                 )
         ));
+
+        //多结构配方
+        List<PortalJeiRecipe> portalRecipes = new ArrayList<>();
+        portalRecipes.add(new PortalJeiRecipe(
+                ModBlocks.POLAR_ICE_PORTAL_BLOCK.get(),
+                ModBlocks.POLAR_ICE_PORTAL.get(),
+                new ItemStack(ModItems.EXTREME_COLD_SNOWFLAKE.get())
+        ));
+        portalRecipes.add(new PortalJeiRecipe(
+                ModBlocks.THUNDER_REALM_PORTAL_BLOCK.get(),
+                ModBlocks.THUNDER_REALM_PORTAL.get(),
+                new ItemStack(ModItems.THUNDERREALM_SNOWFLAKE.get())
+        ));
+        registration.addRecipes(JEIPortalCategory.TYPE, portalRecipes);
 
         List<ItemStack> repairables = new ArrayList<>();
         ModItems.COLDPROTECTIONLIST.forEach(reg -> repairables.add(new ItemStack(reg.get())));
@@ -94,7 +110,6 @@ public class JEIKluxPlugin implements IModPlugin {
 
     @Override
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {
-        // 这里的点击区域可以根据你的火焰位置微调
         registration.addRecipeClickArea(LiandanluScreen.class, 105, 30, 32, 32,
                 JEIKlCategory.LIANDANLU_TYPE);
     }
@@ -102,5 +117,10 @@ public class JEIKluxPlugin implements IModPlugin {
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
         registration.addRecipeCatalyst(new ItemStack(ModBlocks.LIANDANLU1.get()), JEIKlCategory.LIANDANLU_TYPE);
+
+        registration.addRecipeCatalyst(new ItemStack(ModBlocks.POLAR_ICE_PORTAL_BLOCK.get()), JEIPortalCategory.TYPE);
+        registration.addRecipeCatalyst(new ItemStack(ModBlocks.THUNDER_REALM_PORTAL_BLOCK.get()), JEIPortalCategory.TYPE);
+        registration.addRecipeCatalyst(new ItemStack(ModItems.EXTREME_COLD_SNOWFLAKE.get()), JEIPortalCategory.TYPE);
+        registration.addRecipeCatalyst(new ItemStack(ModItems.THUNDERREALM_SNOWFLAKE.get()), JEIPortalCategory.TYPE);
     }
 }

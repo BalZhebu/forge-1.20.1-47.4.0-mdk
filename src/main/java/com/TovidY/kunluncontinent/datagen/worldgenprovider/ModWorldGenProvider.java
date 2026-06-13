@@ -15,8 +15,10 @@ import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
+import net.minecraft.world.level.levelgen.flat.FlatLevelGeneratorSettings;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
+import java.util.Optional;
 import java.util.OptionalLong;
 
 public class ModWorldGenProvider {
@@ -59,6 +61,24 @@ public class ModWorldGenProvider {
                 .mobSpawnSettings(new MobSpawnSettings.Builder().build())
                 .generationSettings(gen.build())
                 .build());
+
+        BiomeSpecialEffects towerEffects = new BiomeSpecialEffects.Builder()
+                .fogColor(0x0A0515)
+                .skyColor(0x05020A)
+                .waterColor(0x110522)
+                .waterFogColor(0x050111)
+                .build();
+        BiomeGenerationSettings.Builder towerGen = new BiomeGenerationSettings.Builder(
+                context.lookup(Registries.PLACED_FEATURE), context.lookup(Registries.CONFIGURED_CARVER));
+        context.register(ModDimensions.TOWER_BIOME, new Biome.BiomeBuilder()
+                .hasPrecipitation(false)
+                .temperature(0.5F)
+                .downfall(0.0F)
+                .specialEffects(towerEffects)
+                .mobSpawnSettings(new MobSpawnSettings.Builder().build())
+                .generationSettings(towerGen.build())
+                .build());
+
     }
 
     public static void bootstrapType(BootstapContext<DimensionType> context) {
@@ -76,18 +96,40 @@ public class ModWorldGenProvider {
                 BuiltinDimensionTypes.OVERWORLD_EFFECTS,
                 0.1f, new DimensionType.MonsterSettings(false, false, ConstantInt.of(7), 0)
         ));
+
+        context.register(ModDimensions.TOWER_REALM_TYPE, new DimensionType(
+                OptionalLong.empty(),
+                true,
+                false,
+                false,
+                true,
+                1.0,
+                true,
+                false,
+                0,
+                256,
+                256,
+                BlockTags.INFINIBURN_OVERWORLD,
+                BuiltinDimensionTypes.END_EFFECTS,
+                0.1f,
+                new DimensionType.MonsterSettings(false, false, ConstantInt.of(0), 0) // 禁止原版任何自然刷怪
+        ));
+
     }
 
     public static void bootstrapStem(BootstapContext<LevelStem> context) {
         HolderGetter<Biome> biomes = context.lookup(Registries.BIOME);
         HolderGetter<DimensionType> types = context.lookup(Registries.DIMENSION_TYPE);
         HolderGetter<NoiseGeneratorSettings> noiseSettings = context.lookup(Registries.NOISE_SETTINGS);
+
+        // 1. 极地冰原
         LevelStem stem = new LevelStem(types.getOrThrow(ModDimensions.POLAR_ICE_REALM_TYPE),
                 new NoiseBasedChunkGenerator(
                         new FixedBiomeSource(biomes.getOrThrow(ModDimensions.POLAR_ICE_BIOME)),
-                        noiseSettings.getOrThrow(NoiseGeneratorSettings.OVERWORLD) // 使用主世界噪声地形
+                        noiseSettings.getOrThrow(NoiseGeneratorSettings.OVERWORLD)
                 ));
 
+        // 2. 万雷天域
         context.register(ModDimensions.THUNDER_REALM_STEM, new LevelStem(
                 types.getOrThrow(ModDimensions.THUNDER_REALM_TYPE),
                 new NoiseBasedChunkGenerator(
@@ -96,6 +138,24 @@ public class ModWorldGenProvider {
                 )
         ));
 
+        net.minecraft.world.level.levelgen.flat.FlatLevelGeneratorSettings flatSettings =
+                new net.minecraft.world.level.levelgen.flat.FlatLevelGeneratorSettings(
+                        java.util.Optional.empty(),
+                        biomes.getOrThrow(ModDimensions.TOWER_BIOME),
+                        java.util.Collections.emptyList()
+                );
+        flatSettings.getLayersInfo().clear();
+        flatSettings.getLayersInfo().add(new net.minecraft.world.level.levelgen.flat.FlatLayerInfo(1, net.minecraft.world.level.block.Blocks.AIR));
+
+        net.minecraft.world.level.chunk.ChunkGenerator voidGenerator =
+                new net.minecraft.world.level.levelgen.FlatLevelSource(flatSettings);
+
+        LevelStem towerStem = new LevelStem(
+                types.getOrThrow(ModDimensions.TOWER_REALM_TYPE),
+                voidGenerator
+        );
+
+        context.register(ResourceKey.create(Registries.LEVEL_STEM, ModDimensions.TOWER_REALM_LEVEL_KEY.location()), towerStem);
         context.register(ResourceKey.create(Registries.LEVEL_STEM, ModDimensions.POLAR_ICE_REALM_LEVEL_KEY.location()), stem);
     }
 }

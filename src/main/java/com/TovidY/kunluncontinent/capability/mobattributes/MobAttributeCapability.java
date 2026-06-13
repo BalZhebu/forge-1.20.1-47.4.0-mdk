@@ -13,6 +13,8 @@ public class MobAttributeCapability extends CapabilityAttributeBase implements I
     private long nianxian;
     private boolean shenci;
 
+    private float tempWugongModifier = 0f;
+
     public MobAttributeCapability() {
         super();
         this.nianxian = 0;
@@ -100,6 +102,19 @@ public class MobAttributeCapability extends CapabilityAttributeBase implements I
         super.deserializeNBT(nbt);
         this.nianxian = nbt.getLong("nianxian");
         this.shenci = nbt.getBoolean("shenci");
+    }
+
+    public void addTempWugong(float value) {
+        this.tempWugongModifier += value;
+    }
+
+    public void removeTempWugong(float value) {
+        this.tempWugongModifier -= value;
+    }
+
+    @Override
+    public float getGongji() {
+        return super.getGongji() + this.tempWugongModifier;
     }
 
     public boolean isShenci() {

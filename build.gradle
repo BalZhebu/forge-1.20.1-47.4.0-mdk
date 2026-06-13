@@ -182,11 +182,12 @@ dependencies {
     //极简血量显示4
     runtimeOnly fg.deobf("curse.maven:Neat-238372:4580940")
 
+    //创世神
+    runtimeOnly fg.deobf("curse.maven:worldedit-225608:4586218")
+
     //假人mod与前置
     runtimeOnly fg.deobf("curse.maven:mmmmmmmmmmmm-225738:6860192")
     runtimeOnly fg.deobf("curse.maven:selene-499980:7541536")
-
-
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     // Example mod dependency using a mod jar from ./libs with a flat dir repository

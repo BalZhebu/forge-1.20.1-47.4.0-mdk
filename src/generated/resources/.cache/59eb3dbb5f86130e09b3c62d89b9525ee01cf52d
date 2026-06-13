@@ -1,4 +1,4 @@
-// 1.20.1	2026-04-06T16:48:12.7069376	Loot Tables
+// 1.20.1	2026-06-13T12:54:44.3403939	Loot Tables
 b39e90e703172bab167d574461bb2992554a27a6 data/kunluncontinent/loot_tables/blocks/amethyst_ore.json
 66c3c20c81092639bca775de1ba907fba6171307 data/kunluncontinent/loot_tables/blocks/cloud_patterned_bronze_ore.json
 8ccc28509eb056c2c0742b6d4b9ee8df889e05ae data/kunluncontinent/loot_tables/blocks/cold_hearterd_steel_ore.json
@@ -24,5 +24,6 @@ c0361b9af63e72b3c74fc59c24be56c87dd1d3d5 data/kunluncontinent/loot_tables/blocks
 006f2ed1c849430bdfd71bf40add276f519d83b2 data/kunluncontinent/loot_tables/blocks/sapphire_ore.json
 dc4957e0444e95bc060f97560977a1bec12939af data/kunluncontinent/loot_tables/blocks/soul_soil.json
 3c20f1f082d2365d74757a50f7d0985ab45907d7 data/kunluncontinent/loot_tables/blocks/starlight_stone_ore.json
+c6af51f904dc799261086c80fbf768dc3a8c8ef8 data/kunluncontinent/loot_tables/blocks/stone_stamp.json
 746293c141e54c9b84249e7e85b224dab26c2bdb data/kunluncontinent/loot_tables/blocks/sunken_silver_ore.json
 2e550a2e49d8961f28e9784e68b17306c040f135 data/kunluncontinent/loot_tables/blocks/thunder_realm_portal_block.json

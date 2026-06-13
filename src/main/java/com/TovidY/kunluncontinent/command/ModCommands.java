@@ -18,5 +18,6 @@ public class ModCommands {
         HunguCommand.register(event.getDispatcher());
         ShenweiCommand.register(event.getDispatcher());
         com.TovidY.kunluncontinent.command.shenkao.ShenweiCommand.register(event.getDispatcher());
+        TowerCommand.register(event.getDispatcher());
     }
 }

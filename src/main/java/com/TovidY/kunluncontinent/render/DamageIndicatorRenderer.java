@@ -24,7 +24,7 @@ public class DamageIndicatorRenderer {
         public final int color;
         public double x, y, z;
         public int age;
-        public final int maxAge = 30; // 飘字存在 30 帧（约 1.5 秒）
+        public final int maxAge = 30;
         public final double speedY;
 
         public IndicatorInstance(String text, int color, Vec3 pos) {

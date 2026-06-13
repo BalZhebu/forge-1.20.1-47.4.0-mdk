@@ -34,6 +34,10 @@ import net.minecraftforge.common.data.ExistingFileHelper;
             simpleBlockWithItem(ModBlocks.AMETHYST_ORE.get(), cubeAll(ModBlocks.AMETHYST_ORE.get()));
             simpleBlockWithItem(ModBlocks.SAPPHIRE_ORE.get(), cubeAll(ModBlocks.SAPPHIRE_ORE.get()));
             simpleBlockWithItem(ModBlocks.STARLIGHT_STONE_ORE.get(), cubeAll(ModBlocks.STARLIGHT_STONE_ORE.get()));
+            //石碑
+            simpleBlockWithItem(ModBlocks.STONE_STAMP.get(), cubeAll(ModBlocks.STONE_STAMP.get()));
+            //召唤塔
+            simpleBlockWithItem(ModBlocks.SUMMON_TOWER.get(), cubeAll(ModBlocks.SUMMON_TOWER.get()));
             //丹渣块
             simpleBlockWithItem(ModBlocks.DROSS_BLOCK.get(), cubeAll(ModBlocks.DROSS_BLOCK.get()));
             //传送门方块

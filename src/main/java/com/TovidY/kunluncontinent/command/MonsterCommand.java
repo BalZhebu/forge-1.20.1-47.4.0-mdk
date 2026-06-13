@@ -22,7 +22,6 @@ public class MonsterCommand {
         dispatcher.register(Commands.literal("kunluncontinent")
                 .requires(source -> source.hasPermission(2))
                 .then(Commands.literal("monster")
-                        // 使用 ResourceLocationArgument 代替 EntitySummonArgument
                         .then(Commands.argument("entity_id", ResourceLocationArgument.id())
                                 .suggests(SuggestionProviders.SUMMONABLE_ENTITIES)
                                 .then(Commands.argument("nianxian", LongArgumentType.longArg(0, 999999999))
@@ -70,7 +69,7 @@ public class MonsterCommand {
                 return 0;
             }
         }).orElseGet(() -> {
-            source.sendFailure(Component.literal("§c找不到实体 ID: " + entityId));
+            source.sendFailure(Component.literal("§c找不到实体ID: " + entityId));
             return 0;
         });
     }

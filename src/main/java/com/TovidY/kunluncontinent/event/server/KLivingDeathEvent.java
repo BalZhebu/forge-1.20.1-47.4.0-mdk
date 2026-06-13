@@ -18,6 +18,7 @@ import com.TovidY.kunluncontinent.item.neidanitems.NeidanDropHandler;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.SynsAPI;
 import com.TovidY.kunluncontinent.network.client.PacketSyncGodData;
+import com.TovidY.kunluncontinent.network.server.PacketSyncTowerTimer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -28,6 +29,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Drowned;
@@ -57,6 +59,11 @@ public class KLivingDeathEvent {
     public static void livingDeathEvent(LivingDeathEvent event) {
         LivingEntity entity = event.getEntity();
         if (entity == null || entity.level().isClientSide) return;
+
+        towerSpawed(entity);
+
+        playerDeach(entity);
+
         entity.getCapability(MobAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
             Entity sourceEntity = event.getSource().getEntity();
             if (!(sourceEntity instanceof Player player)) return;
@@ -72,6 +79,91 @@ public class KLivingDeathEvent {
 
             handleGodKillTask(player, entity);
         });
+    }
+
+    private static void playerDeach(LivingEntity entity) {
+        if (entity instanceof ServerPlayer player) {
+            player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(attr -> {
+                if (attr.isTowerChallenging()) {
+                    attr.setTowerChallenging(false);
+                    attr.setTowerLastActiveTick(0);
+                    int currentFloor = attr.getCurrentTowerFloor();
+                    attr.setCurrentTowerFloor(Math.max(0, currentFloor - 1));
+                    player.sendSystemMessage(Component.literal("§4[幻境法则] 不幸身陨，历练就此终结！攻略失败！"));
+                    com.TovidY.kunluncontinent.tower.TowerSpawnerEngine.clearTowerMonstersForPlayer(player);
+                    com.TovidY.kunluncontinent.tower.TowerStateManager.releaseTower(player);
+                    com.TovidY.kunluncontinent.network.NetworkHandler.sendToClient(
+                            new PacketSyncTowerTimer(0, false), player
+                    );
+                    SynsAPI.synsPlayerAttribute(player);
+                }
+            });
+            return; // 死的既然是玩家自己，后面针对怪物的能力值和魂环掉落判定直接熔断拦截，不走后续逻辑
+        }
+    }
+
+    @SubscribeEvent
+    public static void onMobTakeDamage(net.minecraftforge.event.entity.living.LivingHurtEvent event) {
+        if (event.getEntity().level().isClientSide || !(event.getEntity() instanceof Mob mob)) return;
+        var nbt = mob.getPersistentData();
+        if (nbt.getBoolean("Skill_BuSi_Available")) {
+            float currentHealth = mob.getHealth();
+            float incomingDamage = event.getAmount();
+            float nextHealth = currentHealth - incomingDamage;
+            float maxHealth = mob.getMaxHealth();
+            float threshold = maxHealth * 0.05f;
+            if (nextHealth <= threshold || nextHealth <= 0) {
+                event.setCanceled(true);
+                mob.setHealth(maxHealth);
+                var modifier = com.TovidY.kunluncontinent.tower.skill.TowerSkillPool.getSkillByName("不死");
+                if (modifier != null) {
+                    com.TovidY.kunluncontinent.tower.skill.TowerSkillNotifier.popSkillText(mob, modifier.getTriggerText());
+                }
+                nbt.putBoolean("Skill_BuSi_Available", false);
+                nbt.putBoolean("Skill_BuSi_Triggered", true);
+                mob.level().playSound(null, mob.getX(), mob.getY(), mob.getZ(),
+                        net.minecraft.sounds.SoundEvents.TOTEM_USE,
+                        net.minecraft.sounds.SoundSource.HOSTILE, 1.0F, 1.0F);
+            }
+        }
+    }
+
+    private static void towerSpawed(LivingEntity entity) {
+        if (entity instanceof Mob mob) {
+            CompoundTag tag = mob.getPersistentData();
+            if (tag.contains("TowerSpawned") && tag.getBoolean("TowerSpawned") && tag.contains("TowerOwner")) {
+                String ownerUuid = tag.getString("TowerOwner");
+                ServerPlayer towerPlayer = mob.getServer().getPlayerList().getPlayer(java.util.UUID.fromString(ownerUuid));
+                if (towerPlayer != null) {
+                    mob.getServer().execute(() -> {
+                        boolean hasRemaining = false;
+                        for (Entity e : towerPlayer.serverLevel().getAllEntities()) {
+                            if (e instanceof Mob remainingMob && remainingMob.isAlive()) {
+                                CompoundTag rTag = remainingMob.getPersistentData();
+                                if (rTag.contains("TowerSpawned") && rTag.getString("TowerOwner").equals(ownerUuid)) {
+                                    hasRemaining = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!hasRemaining) {
+                            towerPlayer.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(attr -> {
+                                if (attr.isTowerChallenging()) {
+                                    int oldFloor = attr.getCurrentTowerFloor();
+                                    attr.setCurrentTowerFloor(oldFloor + 1);
+                                    attr.setTowerChallenging(false);
+                                    attr.setTowerLastActiveTick(0);
+
+                                    towerPlayer.sendSystemMessage(Component.literal("§a§l[昆仑大陆] 历练成功！恭喜通关第 " + (oldFloor + 1) + " 层！已解锁下一层。"));
+                                    NetworkHandler.sendToClient(new PacketSyncTowerTimer(0, false), towerPlayer);
+                                    SynsAPI.synsPlayerAttribute(towerPlayer);
+                                }
+                            });
+                        }
+                    });
+                }
+            }
+        }
     }
 
     private static void handleGodKillTask(Player player, LivingEntity killedEntity) {
