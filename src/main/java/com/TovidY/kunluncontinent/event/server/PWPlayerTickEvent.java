@@ -459,9 +459,31 @@ public class PWPlayerTickEvent {
     private static void updatePlayerFly(Player player, @NotNull PlayerAttributeCapability capability) {
         if (!player.isCreative() && !player.isSpectator()) {
             boolean canFlyPrev = player.getAbilities().mayfly;
+
+            boolean isAntiFlyZone = false;
+            // 只有当玩家所在的维度是服务器维度时才进行实体扫描（防止客户端异步问题）
+            if (!player.level().isClientSide() && player.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+                net.minecraft.world.phys.AABB checkArea = player.getBoundingBox().inflate(40.0D);
+                java.util.List<Mob> nearbyMobs = serverLevel.getEntitiesOfClass(Mob.class, checkArea, Mob::isAlive);
+                for (Mob mob : nearbyMobs) {
+                    if (mob.getPersistentData().getBoolean("Skill_JinKong_Available")) {
+                        isAntiFlyZone = true;
+                        break;
+                    }
+                }
+            }
             if (player.getPersistentData().contains("knocked_down")) {
                 player.getAbilities().mayfly = false;
                 player.getAbilities().flying = false;
+            }
+            else if (isAntiFlyZone) {
+                if (player.getAbilities().mayfly || player.getAbilities().flying) {
+                    player.getAbilities().mayfly = false;
+                    player.getAbilities().flying = false;
+                    if (player.level().getGameTime() % 40 == 0) {
+                        player.sendSystemMessage(Component.literal("§4§l【禁空法则】§c 四周有《禁空》词条生物压制，被强制击落！"));
+                    }
+                }
             } else if (ModAttributeAPI.getMaxjingshenli(player) > 5000) {
                 player.getAbilities().mayfly = true;
             } else {
@@ -483,7 +505,7 @@ public class PWPlayerTickEvent {
                 float cost;
                 if (level <= 20) {
                     cost = 1.0f + (level * 0.01f);
-                }else if (level <= 30) {
+                } else if (level <= 30) {
                     cost = 3.0f + (level * 0.1f);
                 } else if (level <= 89) {
                     cost = 10.0f + (level * 0.2f);

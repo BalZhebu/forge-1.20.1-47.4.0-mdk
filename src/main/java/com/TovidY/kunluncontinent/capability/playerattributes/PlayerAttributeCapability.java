@@ -381,7 +381,6 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         }
     }
 
-    // ==================== 【昆仑大陆·爬塔系统 API】 ====================
     public int getCurrentTowerFloor() { return this.currentTowerFloor; }
     public void setCurrentTowerFloor(int floor) { this.currentTowerFloor = Math.max(0, floor); }
 

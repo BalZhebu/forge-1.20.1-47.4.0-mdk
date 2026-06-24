@@ -52,13 +52,21 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(ModBlocks.LIANDANLU8.get())
                 .add(ModBlocks.LIANDANLU9.get())
                 .add(ModBlocks.STONE_STAMP.get())
+                //矿物块
+                .add(ModBlocks.GRAY_BLOCK.get())
+                .add(ModBlocks.CLOUD_PATTERNED_BRONZE_BLOCK.get())
+                .add(ModBlocks.RED_FIRE_BLOCK.get())
+                .add(ModBlocks.SUNKEN_SILVER_BLOCK.get())
+                .add(ModBlocks.COLD_HEARTED_STEEL_BLOCK.get())
+                .add(ModBlocks.RINSEI_BLOCK.get())
 
         ;
         //需要铁镐破坏
         tag(BlockTags.NEEDS_IRON_TOOL)
                 .add(ModBlocks.GRAY_IRON_ORE.get())
                 .add(ModBlocks.RUBY_ORE.get())
-
+                .add(ModBlocks.GRAY_BLOCK.get())
+                .add(ModBlocks.CLOUD_PATTERNED_BRONZE_BLOCK.get())
         ;
         //需要钻石镐
         tag(BlockTags.NEEDS_DIAMOND_TOOL)
@@ -73,7 +81,12 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(ModBlocks.LIANDANLU5.get())
                 .add(ModBlocks.LIANDANLU6.get())
                 .add(ModBlocks.POLAR_ICE_PORTAL_BLOCK.get())
+                .add(ModBlocks.RED_FIRE_BLOCK.get())
+                .add(ModBlocks.SUNKEN_SILVER_BLOCK.get())
+                .add(ModBlocks.COLD_HEARTED_STEEL_BLOCK.get())
+                .add(ModBlocks.RINSEI_BLOCK.get())
         ;
+
         tag(Tags.Blocks.NEEDS_NETHERITE_TOOL)
                 .add(ModBlocks.THUNDER_REALM_PORTAL_BLOCK.get())
                 .add(ModBlocks.AMETHYST_ORE.get())

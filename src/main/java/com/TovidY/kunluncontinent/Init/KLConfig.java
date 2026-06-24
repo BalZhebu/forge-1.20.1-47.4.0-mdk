@@ -34,10 +34,10 @@ public class KLConfig {
         builder.push("kunluncontinent_settings");
 
         ENABLE_HUNHUAN_PROBABILITY = builder
-                .comment("是否启用基于年限的魂环概率生成")
+                .comment("是否启用基于年限的魂环概率生成(本功能供开发测试用，私自修改导致存档问题不予解决！)")
                 .define("enableHunhuanProbability", true);
 
-        hungupingheng = builder.comment("是否开启魂骨爆率平衡(默认为true：增加魂骨爆率。false时保持原爆率)")
+        hungupingheng = builder.comment("是否开启魂骨爆率平衡(默认为true：增加魂骨爆率。false时保持原爆率)(本功能供开发测试用，私自修改导致存档问题不予解决！)")
                 .define("hungu_balance", true);
 
         // 各阶段概率配置

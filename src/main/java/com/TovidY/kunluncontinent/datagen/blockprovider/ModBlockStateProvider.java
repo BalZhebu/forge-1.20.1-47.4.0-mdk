@@ -16,6 +16,8 @@ import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
     //方块模型生成例如blockstates文件之类的
+
+
     public class ModBlockStateProvider extends BlockStateProvider {
         public ModBlockStateProvider(PackOutput output, ExistingFileHelper exFileHelper) {
             super(output,KlMain.MOD_ID, exFileHelper);
@@ -29,15 +31,18 @@ import net.minecraftforge.common.data.ExistingFileHelper;
             simpleBlockWithItem(ModBlocks.RED_FIRE_ORE.get(), cubeAll(ModBlocks.RED_FIRE_ORE.get()));
             simpleBlockWithItem(ModBlocks.SUNKEN_SILVER_ORE.get(), cubeAll(ModBlocks.SUNKEN_SILVER_ORE.get()));
             simpleBlockWithItem(ModBlocks.COLD_HEARTED_STEEL_ORE.get(), cubeAll(ModBlocks.COLD_HEARTED_STEEL_ORE.get()));
+            //矿石块
+            simpleBlockWithItem(ModBlocks.GRAY_BLOCK.get(), cubeAll(ModBlocks.GRAY_BLOCK.get()));
+            simpleBlockWithItem(ModBlocks.CLOUD_PATTERNED_BRONZE_BLOCK.get(), cubeAll(ModBlocks.CLOUD_PATTERNED_BRONZE_BLOCK.get()));
+            simpleBlockWithItem(ModBlocks.RED_FIRE_BLOCK.get(), cubeAll(ModBlocks.RED_FIRE_BLOCK.get()));
+            simpleBlockWithItem(ModBlocks.SUNKEN_SILVER_BLOCK.get(), cubeAll(ModBlocks.SUNKEN_SILVER_BLOCK.get()));
+            simpleBlockWithItem(ModBlocks.COLD_HEARTED_STEEL_BLOCK.get(), cubeAll(ModBlocks.COLD_HEARTED_STEEL_BLOCK.get()));
+            simpleBlockWithItem(ModBlocks.RINSEI_BLOCK.get(), cubeAll(ModBlocks.RINSEI_BLOCK.get()));
             //宝石矿
             simpleBlockWithItem(ModBlocks.RUBY_ORE.get(), cubeAll(ModBlocks.RUBY_ORE.get()));
             simpleBlockWithItem(ModBlocks.AMETHYST_ORE.get(), cubeAll(ModBlocks.AMETHYST_ORE.get()));
             simpleBlockWithItem(ModBlocks.SAPPHIRE_ORE.get(), cubeAll(ModBlocks.SAPPHIRE_ORE.get()));
             simpleBlockWithItem(ModBlocks.STARLIGHT_STONE_ORE.get(), cubeAll(ModBlocks.STARLIGHT_STONE_ORE.get()));
-            //石碑
-            simpleBlockWithItem(ModBlocks.STONE_STAMP.get(), cubeAll(ModBlocks.STONE_STAMP.get()));
-            //召唤塔
-            simpleBlockWithItem(ModBlocks.SUMMON_TOWER.get(), cubeAll(ModBlocks.SUMMON_TOWER.get()));
             //丹渣块
             simpleBlockWithItem(ModBlocks.DROSS_BLOCK.get(), cubeAll(ModBlocks.DROSS_BLOCK.get()));
             //传送门方块
@@ -150,6 +155,18 @@ import net.minecraftforge.common.data.ExistingFileHelper;
                     new ResourceLocation(KlMain.MOD_ID, "block/putuan_block")));
             itemModels().withExistingParent("putuan_block",
                     new ResourceLocation(KlMain.MOD_ID, "block/putuan_block"));
+
+            Block stonestamp = ModBlocks.STONE_STAMP.get();
+            horizontalBlock(stonestamp, new ModelFile.UncheckedModelFile(
+                    new ResourceLocation(KlMain.MOD_ID, "block/stone_stamp")));
+            itemModels().withExistingParent("stone_stamp",
+                    new ResourceLocation(KlMain.MOD_ID, "block/stone_stamp"));
+
+            Block summonstone = ModBlocks.SUMMON_TOWER.get();
+            simpleBlock(summonstone, new ModelFile.UncheckedModelFile(
+                    new ResourceLocation(KlMain.MOD_ID, "block/summon_tower")));
+            itemModels().withExistingParent("summon_tower",
+                    new ResourceLocation(KlMain.MOD_ID, "block/summon_tower"));
 
             Block underwater = ModBlocks.UNDERWATER_ALTAR.get();
             simpleBlock(underwater, new ModelFile.UncheckedModelFile(

@@ -69,6 +69,7 @@ public class ModCreativeModelTab {
                                         ModItems.MODSTONE.stream(),
                                         ModItems.EQUIPMENT.stream(),
                                         ModItems.TOOL.stream(),
+                                        ModBlocks.BLOCKLIST.stream(),
                                         ModItems.SPAWNEGGLIST.stream()
 
                                 )

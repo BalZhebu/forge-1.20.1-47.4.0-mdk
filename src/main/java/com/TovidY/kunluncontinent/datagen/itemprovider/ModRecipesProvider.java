@@ -328,6 +328,50 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .unlockedBy("has_polar_ice_portal_block_peifang)", has(ModItems.EXTREME_COLD.get()))
                 .save(pWriter);
 
+        //挑战石碑
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.STONE_STAMP.get())
+                .pattern(" X ")
+                .pattern("XWX")
+                .pattern("ZIZ")
+                .define('X', ModBlocks.GRAY_BLOCK.get())
+                .define('Z', ModBlocks.CLOUD_PATTERNED_BRONZE_BLOCK.get())
+                .define('W', ModBlocks.SUNKEN_SILVER_BLOCK.get())
+                .define('I', Items.STONE_BRICKS)
+                .unlockedBy("has_stone_stamp", has(ModBlocks.GRAY_BLOCK.get()))
+                .save(pWriter);
+
+        // 一行代码搞定：自动生成
+        //灰铁
+        nineBlockStorageRecipes(pWriter,
+                RecipeCategory.MISC, ModItems.GRAY_IRON_INGOT.get(),
+                RecipeCategory.BUILDING_BLOCKS, ModBlocks.GRAY_BLOCK.get()
+        );
+        //云纹铜
+        nineBlockStorageRecipes(pWriter,
+                RecipeCategory.MISC, ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get(),
+                RecipeCategory.BUILDING_BLOCKS, ModBlocks.CLOUD_PATTERNED_BRONZE_BLOCK.get()
+        );
+        //红火
+        nineBlockStorageRecipes(pWriter,
+                RecipeCategory.MISC, ModItems.RED_FIRE_INGOT.get(),
+                RecipeCategory.BUILDING_BLOCKS, ModBlocks.RED_FIRE_BLOCK.get()
+        );
+        //沉银
+        nineBlockStorageRecipes(pWriter,
+                RecipeCategory.MISC, ModItems.SUNKEN_SILVER_INGOT.get(),
+                RecipeCategory.BUILDING_BLOCKS, ModBlocks.SUNKEN_SILVER_BLOCK.get()
+        );
+        //冷心钢
+        nineBlockStorageRecipes(pWriter,
+                RecipeCategory.MISC, ModItems.COLD_HEARTED_STEEL_INGOT.get(),
+                RecipeCategory.BUILDING_BLOCKS, ModBlocks.COLD_HEARTED_STEEL_BLOCK.get()
+        );
+        //凛晶
+        nineBlockStorageRecipes(pWriter,
+                RecipeCategory.MISC, ModItems.RINSEI_INGOT.get(),
+                RecipeCategory.BUILDING_BLOCKS, ModBlocks.RINSEI_BLOCK.get()
+        );
+
         //低阶魂环存储核心
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.LOW_HUNHUAN_STORAGE_CORE.get())
                 .pattern(" R ")

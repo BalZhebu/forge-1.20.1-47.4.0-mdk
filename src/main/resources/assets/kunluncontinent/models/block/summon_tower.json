@@ -1,0 +1,98 @@
+{
+	"format_version": "1.9.0",
+	"credit": "Made with Blockbench",
+	"texture_size": [64, 64],
+	"textures": {
+		"0": "kunluncontinent:block/summon_tower",
+		"particle": "kunluncontinent:block/summon_tower"
+
+	},
+	"elements": [
+		{
+			"name": "base",
+			"from": [1, 0, 2],
+			"to": [15, 8, 14],
+			"faces": {
+				"north": {"uv": [0, 8, 3.5, 16], "texture": "#0"},
+				"east": {"uv": [12, 8, 15.5, 16], "texture": "#0"},
+				"south": {"uv": [4, 8, 7.5, 16], "texture": "#0"},
+				"west": {"uv": [12, 8, 15.5, 16], "texture": "#0"},
+				"up": {"uv": [0, 8, 3.5, 8], "texture": "#0"},
+				"down": {"uv": [0, 8, 3.5, 8], "texture": "#0"}
+			}
+		},
+		{
+			"name": "body",
+			"from": [3, 8, 4],
+			"to": [13, 26, 12],
+			"faces": {
+				"north": {"uv": [0, 2, 2.5, 8], "texture": "#0"},
+				"east": {"uv": [12, 2, 14, 8], "texture": "#0"},
+				"south": {"uv": [4, 2, 6.5, 8], "texture": "#0"},
+				"west": {"uv": [12, 2, 14, 8], "texture": "#0"},
+				"up": {"uv": [0, 2, 2.5, 2], "texture": "#0"},
+				"down": {"uv": [0, 2, 2.5, 2], "texture": "#0"}
+			}
+		},
+		{
+			"name": "top",
+			"from": [2, 26, 3],
+			"to": [14, 32, 13],
+			"faces": {
+				"north": {"uv": [0, 0, 3, 1.5], "texture": "#0"},
+				"east": {"uv": [11.5, 0, 14, 1.5], "texture": "#0"},
+				"south": {"uv": [4, 0, 7, 1.5], "texture": "#0"},
+				"west": {"uv": [12, 0, 14.5, 1.5], "texture": "#0"},
+				"up": {"uv": [0, 0, 3, 2.5], "texture": "#0"},
+				"down": {"uv": [0, 0, 3, 2.5], "texture": "#0"}
+			}
+		}
+	],
+	"display": {
+		"thirdperson_righthand": {
+			"translation": [0, 2.5, 0],
+			"scale": [0.36914, 0.37305, 0.43555]
+		},
+		"thirdperson_lefthand": {
+			"translation": [0, 2.5, 0],
+			"scale": [0.36914, 0.37305, 0.43555]
+		},
+		"firstperson_righthand": {
+			"translation": [0, 2.5, 0],
+			"scale": [0.36914, 0.37305, 0.43555]
+		},
+		"firstperson_lefthand": {
+			"translation": [0, 2.5, 0],
+			"scale": [0.36914, 0.37305, 0.43555]
+		},
+		"ground": {
+			"translation": [0, 2.5, 0],
+			"scale": [0.36914, 0.37305, 0.43555]
+		},
+		"gui": {
+			"translation": [0, -2.5, 0],
+			"scale": [0.36914, 0.37305, 0.43555]
+		},
+		"head": {
+			"translation": [0, 14.25, 0]
+		},
+		"fixed": {
+			"translation": [0, -1.75, 0],
+			"scale": [0.36914, 0.37305, 0.43555]
+		},
+		"on_shelf": {
+			"translation": [0, 2.5, 0],
+			"scale": [0.36914, 0.37305, 0.43555]
+		}
+	},
+	"groups": [
+		{
+			"name": "challenge_stele",
+			"origin": [8, 16, 5],
+			"scope": 0,
+			"color": 0,
+			"shade": false,
+			"children": [0, 1, 2]
+		}
+	]
+}

@@ -18,8 +18,15 @@ public class ModZhCnLangProvider extends LanguageProvider {
     protected void addTranslations() {
 
         //方块类
-        add(ModBlocks.STONE_STAMP.get(), "石碑");
-        add(ModBlocks.SUMMON_TOWER.get(), "召唤塔");
+        add(ModBlocks.STONE_STAMP.get(), "挑战石碑");
+        add(ModBlocks.SUMMON_TOWER.get(), "战斗石碑");
+
+        add(ModBlocks.GRAY_BLOCK.get(), "§7灰铁块");
+        add(ModBlocks.CLOUD_PATTERNED_BRONZE_BLOCK.get(), "§5云纹铜块");
+        add(ModBlocks.RED_FIRE_BLOCK.get(),"§c赤火块");
+        add(ModBlocks.SUNKEN_SILVER_BLOCK.get(), "§f沉银块");
+        add(ModBlocks.COLD_HEARTED_STEEL_BLOCK.get(), "§9寒心钢块");
+        add(ModBlocks.RINSEI_BLOCK.get(), "§b凛晶块");
 
         //别忘了写分配技能的类
         //技能代码
@@ -129,7 +136,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
                 "\n§l年限生成系统：§r玩家距离世界坐标越远，生成高年限的生物概率越高，最远10000格以外，，到达一万格后，这个值将会到达极限。" +
                 "\n§l魂骨系统：§r玩家在击杀生物时有极低概率掉落魂骨（击杀生物年限在1000万年以上时魂骨百分百掉落），魂骨是词条制，最低为1词条，最高为10词条。词条越多，概率越低。" +
                 "\n§l蒲团修炼系统：§r玩家在前期难以修炼时可以用蒲团修炼，玩家在前期时修满一个周期（10分钟）可直升两级，修炼时玩家有10分钟修炼时间，时间结束后就会被强制停止修炼，可通过除不修炼的任何情况下都可以恢复这个修炼时间，提示：若玩家修炼时间已经结束，但仍然可以修炼，但这次修炼只会恢复精神力，而不会增加修为。" +
-                "\n§l飞行系统：§r当玩家的最大精神力到达5000以上时，玩家将解锁飞行能力，飞行时精神力消耗加快，等级越高消耗越慢。" +
+                "\n§l飞行系统：§r当玩家的最大精神力到达5000以上时，玩家将解锁飞行能力，飞行时精神力消耗加快，等级越高消耗越慢。注意！玩家若处于飞行状态则伤害削弱40%,但玩家等级超过70级时，这个限制会逐渐递减，最低可到10%" +
                 "\n§l进阶维度系统：§r根据某些特殊生物掉落的物品可合成传送门框架，请查看传送门框架描述来搭建传送门结构，可前往生成高年限生物的维度。" +
                 "\n§l特殊攻击系统：§r玩家攻击生物时有低概率触发特殊效果，例如撕裂、燃烧、震撼、湮灭、等特殊效果，特殊效果可增加玩家对生物造成的那次伤害并附加debuff，注意：怪物也可以对你造成这些特殊效果。" +
                 "\n§l维度特色讲解：" +

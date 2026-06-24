@@ -171,7 +171,42 @@ public class ModBlocks {
 
     //召唤塔
     public static final RegistryObject<Block> SUMMON_TOWER = registerBlock("summon_tower", () ->
-            new SummonTowerBlock(BlockBehaviour.Properties.copy(Blocks.STONE).noOcclusion().noLootTable()));
+            new SummonTowerBlock(BlockBehaviour.Properties.copy(Blocks.BEDROCK).noOcclusion().noLootTable()));
+
+    //灰铁块
+    public static final RegistryObject<Block> GRAY_BLOCK = registerBlock("gray_block", () ->
+            new Block(BlockBehaviour.Properties.copy(Blocks.COAL_BLOCK)));
+
+    //云纹铜块
+    public static final RegistryObject<Block> CLOUD_PATTERNED_BRONZE_BLOCK = registerBlock("cloud_patterned_bronze_block", () ->
+            new Block(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK)));
+
+    //赤火块
+    public static final RegistryObject<Block> RED_FIRE_BLOCK = registerBlock("red_fire_block", () ->
+            new Block(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK)));
+
+    //沉银块
+    public static final RegistryObject<Block> SUNKEN_SILVER_BLOCK = registerBlock("sunken_silver_block", () ->
+            new Block(BlockBehaviour.Properties.copy(Blocks.DIAMOND_BLOCK)));
+
+    //寒心钢块
+    public static final RegistryObject<Block> COLD_HEARTED_STEEL_BLOCK = registerBlock("cold_hearterd_steel_block", () ->
+            new Block(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK)));
+
+    //凛晶块
+    public static final RegistryObject<Block> RINSEI_BLOCK = registerBlock("rinsei_block", () ->
+            new Block(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK)));
+
+    //块
+    public static ArrayList<RegistryObject<Block>> BLOCKLIST = new ArrayList<>();
+    static{
+        BLOCKLIST.add(GRAY_BLOCK);
+        BLOCKLIST.add(CLOUD_PATTERNED_BRONZE_BLOCK);
+        BLOCKLIST.add(RED_FIRE_BLOCK);
+        BLOCKLIST.add(SUNKEN_SILVER_BLOCK);
+        BLOCKLIST.add(COLD_HEARTED_STEEL_BLOCK);
+        BLOCKLIST.add(RINSEI_BLOCK);
+    }
 
     //炼丹炉
     public static ArrayList<RegistryObject<Block>> LIANDANLULIST = new ArrayList<>();

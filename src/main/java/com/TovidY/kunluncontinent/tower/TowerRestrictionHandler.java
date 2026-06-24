@@ -19,6 +19,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 //幻境法则
+
 @Mod.EventBusSubscriber(modid = "kunluncontinent", bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class TowerRestrictionHandler {
 
@@ -160,6 +161,22 @@ public class TowerRestrictionHandler {
                 attr.setTowerLastActiveTick(0);
             });
             NetworkHandler.sendToClient(new PacketSyncTowerTimer(0, false), player);
+        }
+    }
+
+    /**
+     * 5. 禁止丢弃物品
+     */
+    @SubscribeEvent
+    public static void onItemToss(net.minecraftforge.event.entity.item.ItemTossEvent event) {
+        if (event.getPlayer() instanceof ServerPlayer player) {
+            if (player.level().dimension().equals(ModDimensions.TOWER_REALM_LEVEL_KEY) && !player.isCreative()) {
+                event.setCanceled(true);
+                if (!player.getInventory().add(event.getEntity().getItem())) {
+                    player.drop(event.getEntity().getItem(), false);
+                }
+                player.sendSystemMessage(Component.literal("§c[幻境法则] 历练重地，不可乱丢杂物，专心应敌！"), true);
+            }
         }
     }
 

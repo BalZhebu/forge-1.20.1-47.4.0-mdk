@@ -5,6 +5,7 @@ import com.TovidY.kunluncontinent.tower.TowerPreBuilder;
 import com.TovidY.kunluncontinent.tower.TowerStateManager;
 import com.TovidY.kunluncontinent.worldgen.ModDimensions;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
@@ -13,15 +14,62 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
+import java.util.stream.Stream;
 
 public class StoneStampBlock extends Block {
+
+    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+
     public StoneStampBlock(Properties properties) {
         super(properties);
+
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
+    }
+
+    protected static final VoxelShape NORTH_SOUTH_SHAPE = Stream.of(
+            Block.box(0.0D, 0.0D, 4.0D, 16.0D, 6.0D, 12.0D),
+            Block.box(1.0D, 6.0D, 6.0D, 15.0D, 30.0D, 10.0D),
+            Block.box(2.0D, 30.0D, 6.0D, 14.0D, 32.0D, 10.0D)
+    ).reduce(Shapes::or).get();
+
+    protected static final VoxelShape EAST_WEST_SHAPE = Stream.of(
+            Block.box(4.0D, 0.0D, 0.0D, 12.0D, 6.0D, 16.0D),
+            Block.box(6.0D, 6.0D, 1.0D, 10.0D, 30.0D, 15.0D),
+            Block.box(6.0D, 30.0D, 2.0D, 10.0D, 32.0D, 14.0D)
+    ).reduce(Shapes::or).get();
+
+    @Override
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        Direction facing = state.getValue(FACING);
+        if (facing == Direction.EAST || facing == Direction.WEST) {
+            return EAST_WEST_SHAPE;
+        }
+        return NORTH_SOUTH_SHAPE;
+    }
+
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(FACING);
     }
 
     @Override
@@ -33,17 +81,12 @@ public class StoneStampBlock extends Block {
             ResourceKey<Level> currentDimension = level.dimension();
 
             if (currentDimension.equals(ModDimensions.TOWER_REALM_LEVEL_KEY)) {
-
-                // === 【新增：挑战中离场判定失败】 ===
                 serverPlayer.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(attr -> {
                     if (attr.isTowerChallenging()) {
                         attr.setTowerChallenging(false);
                         int currentFloor = attr.getCurrentTowerFloor();
                         attr.setCurrentTowerFloor(Math.max(0, currentFloor - 1));
                         serverPlayer.sendSystemMessage(Component.literal("§c[幻境法则] 临阵脱逃，道心受损！历练判定失败，层数出现跌落！"));
-
-                        // TODO: 如果你后续有清理全场怪物的逻辑，也可以在这里调用：
-                        // TowerStateManager.clearTowerMonsters(serverPlayer);
                     }
                     attr.setTowerLastActiveTick(0);
                 });
@@ -52,7 +95,7 @@ public class StoneStampBlock extends Block {
                 ResourceKey<Level> respawnDim = serverPlayer.getRespawnDimension();
                 ServerLevel respawnLevel = server.getLevel(respawnDim != null ? respawnDim : Level.OVERWORLD);
                 if (respawnLevel == null) {
-                    respawnLevel = server.overworld(); // 绝对安全的兜底：直接抓原版主世界
+                    respawnLevel = server.overworld();
                 }
                 BlockPos respawnPos = serverPlayer.getRespawnPosition();
                 double targetX, targetY, targetZ;
@@ -124,4 +167,10 @@ public class StoneStampBlock extends Block {
         }
         return InteractionResult.sidedSuccess(level.isClientSide());
     }
+
+    @Override
+    public int getLightBlock(BlockState state, BlockGetter level, BlockPos pos) {
+        return 0;
+    }
+
 }

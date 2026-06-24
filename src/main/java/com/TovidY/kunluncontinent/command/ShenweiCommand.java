@@ -4,6 +4,7 @@ import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCap
 import com.TovidY.kunluncontinent.godclass.GodRegistry;
 import com.TovidY.kunluncontinent.godclass.interfac.GodInfo;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
+import com.TovidY.kunluncontinent.network.SynsAPI;
 import com.TovidY.kunluncontinent.network.client.PacketSyncGodData;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -13,13 +14,27 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
+
 public class ShenweiCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("kunluncontinent")
-                .requires(source -> source.hasPermission(2)) // 需要管理员权限
+                .requires(source -> source.hasPermission(2))
                 .then(Commands.literal("shenwei")
                         .then(Commands.argument("target", EntityArgument.player())
+                                        .then(Commands.literal("reset")
+                                                .executes(context -> {
+                                                    ServerPlayer player = EntityArgument.getPlayer(context, "target");
+                                                    player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
+                                                        cap.resetGodSystem();
+                                                        NetworkHandler.sendToClient(new PacketSyncGodData(cap), player);
+                                                        SynsAPI.synsPlayerAttribute(player);
+                                                        context.getSource().sendSuccess(() ->
+                                                                Component.literal("§a[昆仑大陆] 成功调用 resetGodSystem，已彻底剥离修士 §e" + player.getScoreboardName() + " §a身上的所有神考数据！"), true);
+                                                    });
+                                                    return 1;
+                                                })
+                                        )
                                 .then(Commands.argument("godid", StringArgumentType.string())
                                         .suggests((context, builder) -> {
                                             GodRegistry.GODS.keySet().forEach(builder::suggest);
@@ -51,30 +66,30 @@ public class ShenweiCommand {
                 .then(Commands.literal("shenqi_test")
                         .requires(source -> source.hasPermission(2))
                         .then(Commands.argument("target", EntityArgument.player())
-                                        .then(Commands.argument("godid", StringArgumentType.string())
-                                                .suggests((context, builder) -> {
-                                                    GodRegistry.GODS.keySet().forEach(builder::suggest);
-                                                    return builder.buildFuture();
-                                                })
-                                                .executes(context -> {
-                                                    ServerPlayer player = EntityArgument.getPlayer(context, "target");
-                                                    String godId = StringArgumentType.getString(context, "godid");
-                                                    GodInfo godInfo = GodRegistry.GODS.get(godId);
+                                .then(Commands.argument("godid", StringArgumentType.string())
+                                        .suggests((context, builder) -> {
+                                            GodRegistry.GODS.keySet().forEach(builder::suggest);
+                                            return builder.buildFuture();
+                                        })
+                                        .executes(context -> {
+                                            ServerPlayer player = EntityArgument.getPlayer(context, "target");
+                                            String godId = StringArgumentType.getString(context, "godid");
+                                            GodInfo godInfo = GodRegistry.GODS.get(godId);
 
-                                                    if (godInfo == null) {
-                                                        context.getSource().sendFailure(Component.literal("§c错误：找不到神位 " + godId));
-                                                        return 0;
-                                                    }
+                                            if (godInfo == null) {
+                                                context.getSource().sendFailure(Component.literal("§c错误：找不到神位 " + godId));
+                                                return 0;
+                                            }
 
-                                                    godInfo.startAscensionAnimation(player);
+                                            godInfo.startAscensionAnimation(player);
 
-                                                    context.getSource().sendSuccess(() ->
-                                                            Component.literal("§d§l[测试] §f正在开启 §e" + godInfo.getName() + " §f的10秒成神仪式动画！"), true);
+                                            context.getSource().sendSuccess(() ->
+                                                    Component.literal("§d§l[测试] §f正在开启 §e" + godInfo.getName() + " §f的10秒成神仪式动画！"), true);
 
-                                                    return 1;
-                                                })
-                                        )
+                                            return 1;
+                                        })
                                 )
+                        )
                 )
         );
     }

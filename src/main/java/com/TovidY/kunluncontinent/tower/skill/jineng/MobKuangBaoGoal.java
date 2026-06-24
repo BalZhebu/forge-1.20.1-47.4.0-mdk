@@ -1,4 +1,4 @@
-package com.TovidY.kunluncontinent.tower.skill;
+package com.TovidY.kunluncontinent.tower.skill.jineng;
 
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapabilityProvider;
 import net.minecraft.world.entity.Mob;
@@ -77,7 +77,6 @@ public class MobKuangBaoGoal extends Goal {
         return isBuffed && durationTicks > 0;
     }
 
-    // 狂暴时间结束，无缝剥离属性，开始进入 30 秒 CD
     @Override
     public void stop() {
         if (isBuffed) {

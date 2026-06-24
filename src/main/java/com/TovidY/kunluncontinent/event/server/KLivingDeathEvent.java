@@ -40,6 +40,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
@@ -56,6 +57,15 @@ public class KLivingDeathEvent {
     private static final RandomSource RANDOM = RandomSource.create();
 
     @SubscribeEvent
+    public static void onMobDrops(LivingDropsEvent event) {
+        LivingEntity entity = event.getEntity();
+        if (entity == null || entity.level().isClientSide) return;
+        if (entity.getPersistentData().getBoolean("TowerSpawned")) {
+            event.getDrops().clear();
+        }
+    }
+
+    @SubscribeEvent
     public static void livingDeathEvent(LivingDeathEvent event) {
         LivingEntity entity = event.getEntity();
         if (entity == null || entity.level().isClientSide) return;
@@ -63,6 +73,10 @@ public class KLivingDeathEvent {
         towerSpawed(entity);
 
         playerDeach(entity);
+
+        if (entity.getPersistentData().getBoolean("TowerSpawned")) {
+            return;
+        }
 
         entity.getCapability(MobAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
             Entity sourceEntity = event.getSource().getEntity();
@@ -81,6 +95,8 @@ public class KLivingDeathEvent {
         });
     }
 
+
+
     private static void playerDeach(LivingEntity entity) {
         if (entity instanceof ServerPlayer player) {
             player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(attr -> {
@@ -98,7 +114,7 @@ public class KLivingDeathEvent {
                     SynsAPI.synsPlayerAttribute(player);
                 }
             });
-            return; // 死的既然是玩家自己，后面针对怪物的能力值和魂环掉落判定直接熔断拦截，不走后续逻辑
+            return;
         }
     }
 
@@ -153,9 +169,23 @@ public class KLivingDeathEvent {
                                     attr.setCurrentTowerFloor(oldFloor + 1);
                                     attr.setTowerChallenging(false);
                                     attr.setTowerLastActiveTick(0);
-
                                     towerPlayer.sendSystemMessage(Component.literal("§a§l[昆仑大陆] 历练成功！恭喜通关第 " + (oldFloor + 1) + " 层！已解锁下一层。"));
                                     NetworkHandler.sendToClient(new PacketSyncTowerTimer(0, false), towerPlayer);
+                                    if (attr.getGodName() == null || attr.getGodName().isEmpty()) {
+                                        double successChance = attr.debugForceSuccess ? 1.0 : (0.005 * (oldFloor + 1));
+                                        if (RANDOM.nextDouble() < successChance) {
+                                            String[][] godPool = {
+                                                    {"sea_god", "§b海神"},
+                                                    {"angel_god", "§e天使神"},
+                                                    {"asura_god", "§c修罗神"},
+                                            };
+                                            int randomIndex = RANDOM.nextInt(godPool.length);
+                                            String selectedGodId = godPool[randomIndex][0];
+                                            String selectedGodName = godPool[randomIndex][1];
+                                            triggerGodExam(towerPlayer, attr, selectedGodId, selectedGodName);
+                                            resetDebugStatus(attr);
+                                        }
+                                    }
                                     SynsAPI.synsPlayerAttribute(towerPlayer);
                                 }
                             });
@@ -280,8 +310,6 @@ public class KLivingDeathEvent {
     }
     private static void handleGodGlimpse(ServerPlayer player, LivingEntity victim) {
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
-            // 1. 基础互斥逻辑：如果已经有神位了，直接跳过判定
-            // 检查 godName 是否为空，确保玩家一次只能开启一个神考
             if (cap.getGodName() != null && !cap.getGodName().isEmpty()) {
                 return;
             }
@@ -316,7 +344,7 @@ public class KLivingDeathEvent {
                 // --- C. 修罗神获取逻辑 (攻击力 > 5W，击杀任意生物) ---
                 if (cap.getGongji() > 50000f) {
                     // 如果开启了 debugForceSuccess，概率为 100%，否则为 0.05%
-                    float chance = cap.debugForceSuccess ? 1.0f : 0.0005f;
+                    float chance = cap.debugForceSuccess ? 1.0f : 0.001f;
                     if (RANDOM.nextFloat() < chance) {
                         triggerGodExam(player, cap, "asura_god", "§c修罗神");
                         resetDebugStatus(cap);

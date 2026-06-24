@@ -33,11 +33,20 @@ public class ModBlockLootTablesProvider extends BlockLootSubProvider {
     protected void generate() {
         dropSelf(ModBlocks.CULTIVATION_PLATFORM.get());
 
+
         dropSelf(ModBlocks.GRAY_IRON_ORE.get());
         dropSelf(ModBlocks.CLOUD_PATTERNED_BRONZE_ORE.get());
         dropSelf(ModBlocks.RED_FIRE_ORE.get());
         dropSelf(ModBlocks.SUNKEN_SILVER_ORE.get());
         dropSelf(ModBlocks.COLD_HEARTED_STEEL_ORE.get());
+
+        //矿物块
+        dropSelf(ModBlocks.GRAY_BLOCK.get());
+        dropSelf(ModBlocks.CLOUD_PATTERNED_BRONZE_BLOCK.get());
+        dropSelf(ModBlocks.RED_FIRE_BLOCK.get());
+        dropSelf(ModBlocks.SUNKEN_SILVER_BLOCK.get());
+        dropSelf(ModBlocks.COLD_HEARTED_STEEL_BLOCK.get());
+        dropSelf(ModBlocks.RINSEI_BLOCK.get());
 
         //宝石矿
         dropSelf(ModBlocks.RUBY_ORE.get());

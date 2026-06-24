@@ -22,7 +22,9 @@ public class TowerPreBuilder {
 
     private static boolean isGenerating = false;
     private static int currentTargetTower = 0;
-    private static final int TOTAL_TOWERS = 100;
+
+    private static int TOTAL_TOWERS = 100;
+
     private static ServerLevel targetLevel = null;
     private static int tickCounter = 0;
 
@@ -48,8 +50,21 @@ public class TowerPreBuilder {
         currentTargetTower = 0;
         tickCounter = 0;
 
+        // ==================== 【全新核心：环境与性能优化拦截】 ====================
+        // FMLEnvironment.dist 会返回当前的物理运行环境：
+        // - net.minecraftforge.api.distmarker.Dist.DEDICATED_SERVER: 纯服务端核心（开服包）
+        // - net.minecraftforge.api.distmarker.Dist.CLIENT: 客户端（单人游戏或局域网联机）
+        if (net.minecraftforge.fml.loading.FMLEnvironment.dist == net.minecraftforge.api.distmarker.Dist.CLIENT) {
+            TOTAL_TOWERS = 15; // 客户端/局域网：只生成 20 座塔，大幅度减轻卡顿与硬盘开销
+            System.out.println("[昆仑大陆] 检测到当前运行于【客户端内置环境】，为优化本地性能，幻境塔总数缩减至: 15座");
+        } else {
+            TOTAL_TOWERS = 100; // 独立服务器：直接拉满 100 座
+            System.out.println("[昆仑大陆] 检测到当前运行于【独立服务器环境】，开启全量筑造，幻境塔总数: 100座");
+        }
+        // =====================================================================
+
         System.out.println("[昆仑大陆] === 检测到首次创世，开启【渐进式解压】预生成机制 ===");
-        System.out.println("[昆仑大陆] 100座幻境塔开始按计划筑造，请服主稍候...");
+        System.out.println("[昆仑大陆] " + TOTAL_TOWERS + "座幻境塔开始按计划筑造，请稍候...");
     }
 
     /**
@@ -79,18 +94,18 @@ public class TowerPreBuilder {
                 System.out.println("[昆仑大陆] 正在强行释放内存缓存并写入磁盘...");
                 targetLevel.save(null, true, false);
             }
+            System.out.println("[昆仑大陆] 幻境塔物理建造中... 当前进度: " + progress + "% (" + currentTargetTower + "/" + TOTAL_TOWERS + ")");
 
             if (currentTargetTower >= TOTAL_TOWERS) {
                 isGenerating = false;
                 TowerSaveData.get(targetLevel).setGenerated(true);
                 targetLevel.save(null, true, false);
 
-                // 完工通知
                 event.getServer().getPlayerList().getPlayers().forEach(player -> {
                     player.sendSystemMessage(Component.literal("§b[昆仑大陆] === 幻境全部生成完毕，游戏空间通道已稳定！ ==="));
                 });
 
-                System.out.println("[昆仑大陆] === 100座幻境塔全量安全预建完毕！ ===");
+                System.out.println("[昆仑大陆] === " + TOTAL_TOWERS + "座幻境塔全量安全预建完毕！ ===");
                 targetLevel = null;
             }
         }
@@ -142,6 +157,30 @@ public class TowerPreBuilder {
         } finally {
             targetLevel.setChunkForced(chunkPos.x, chunkPos.z, false);
         }
+    }
+
+    /**
+     * 外部扩容专用：无视心跳和渐进式机制，直接现场立刻盖一座塔
+     */
+    public static void buildSingleTowerDirectly(ServerLevel level, int towerId) {
+        // 临时把外部传入的维度关卡赋予上下文，供 buildSingleTower 内部使用
+        ServerLevel prevLevel = targetLevel;
+        targetLevel = level;
+
+        try {
+            buildSingleTower(towerId);
+            targetLevel.save(null, true, false);
+        } catch (Exception e) {
+            System.err.println("[昆仑大陆] 动态扩容塔 " + towerId + " 失败: " + e.getMessage());
+        } finally {
+            targetLevel = prevLevel;
+        }
+    }
+    /**
+     * 获取当前系统记录的最大塔总数（让账本类可以知道初始是 15 还是 100）
+     */
+    public static int getTotalTowers() {
+        return TOTAL_TOWERS;
     }
 
     // 外部接口：如果正在生成中，禁止玩家挑战或传送
