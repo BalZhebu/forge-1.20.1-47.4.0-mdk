@@ -18,7 +18,11 @@ import com.TovidY.kunluncontinent.item.neidanitems.NeidanDropHandler;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.SynsAPI;
 import com.TovidY.kunluncontinent.network.client.PacketSyncGodData;
+import com.TovidY.kunluncontinent.network.server.PacketPlayGodRitualEffect;
 import com.TovidY.kunluncontinent.network.server.PacketSyncTowerTimer;
+import com.TovidY.kunluncontinent.potion.ModEffects;
+import com.TovidY.kunluncontinent.tower.TowerSpawnerEngine;
+import com.TovidY.kunluncontinent.tower.TowerStateManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -49,6 +53,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static com.TovidY.kunluncontinent.tower.TowerRestrictionHandler.returnPlayerToSpawn;
 
 //玩家击杀生物事件
 
@@ -361,6 +367,7 @@ public class KLivingDeathEvent {
     }
 
     private static void triggerGodExam(ServerPlayer player, PlayerAttributeCapability cap, String godId, String godName) {
+        // [前面你原有的初始化、广播、音效代码全部保持不变...]
         cap.initializeGodExam(player, godId);
         MinecraftServer server = player.getServer();
         if (server != null) {
@@ -368,12 +375,35 @@ public class KLivingDeathEvent {
             server.getPlayerList().broadcastSystemMessage(msg, false);
         }
         player.playNotifySound(SoundEvents.END_PORTAL_SPAWN, SoundSource.PLAYERS, 1.0f, 0.5f);
-        com.TovidY.kunluncontinent.network.NetworkHandler.sendToClient(
-                new PacketSyncGodData(cap),
-                player
-        );
+        com.TovidY.kunluncontinent.network.NetworkHandler.sendToClient(new PacketSyncGodData(cap), player);
         SynsAPI.synsPlayerAttribute(player);
         resetDebugStatus(cap);
+
+        player.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                ModEffects.THE_GAZE_OF_GOD.get(), 310, 0, false, false
+        ));
+
+        com.TovidY.kunluncontinent.network.NetworkHandler.sendToClient(
+                new PacketPlayGodRitualEffect(300, godName),
+                player
+        );
+
+        if (server != null) {
+            java.util.Timer timer = new java.util.Timer();
+            timer.schedule(new java.util.TimerTask() {
+                @Override
+                public void run() {
+                    server.execute(() -> {
+                        if (player.isAlive()) {
+                            player.sendSystemMessage(Component.literal("§6§l[昆仑大陆] 传承完成！神位种子已彻底融入你的灵魂，退出幻境！"));
+                            returnPlayerToSpawn(player);
+                            TowerStateManager.releaseTower(player);
+                            TowerSpawnerEngine.clearTowerMonstersForPlayer(player);
+                        }
+                    });
+                }
+            }, 15000); // <-- 【已修改】：15000 毫秒 = 15秒后执行传送
+        }
     }
 
     private static double getHunhuanProb(long nianxian) {

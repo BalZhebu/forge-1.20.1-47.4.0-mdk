@@ -15,7 +15,7 @@ public class AlchemicalCalculator {
         if (hasDrossBlock) {
             double brokenWeight = weights[0];
             weights[0] = 0;
-            weights[1] += brokenWeight; // 转移给药散
+            weights[1] += brokenWeight;
         }
 
         double pressure = 0;

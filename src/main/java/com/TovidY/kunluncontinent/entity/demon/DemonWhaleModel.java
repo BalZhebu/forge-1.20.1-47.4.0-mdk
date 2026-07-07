@@ -12,11 +12,11 @@ import net.minecraft.resources.ResourceLocation;
 
 public class DemonWhaleModel<T extends DemonWhaleEntity> extends HierarchicalModel<T> {
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(KlMain.MOD_ID, "textures/entity/custommodel.png"), "main");
-	private final ModelPart root;
 	private final ModelPart All;
 	private final ModelPart Body;
 	private final ModelPart Back;
 	private final ModelPart Backfin;
+	private final ModelPart root;
 	private final ModelPart Tail;
 	private final ModelPart Tail2;
 	private final ModelPart Tail3;
@@ -28,8 +28,8 @@ public class DemonWhaleModel<T extends DemonWhaleEntity> extends HierarchicalMod
 	private final ModelPart Finleft;
 
 	public DemonWhaleModel(ModelPart root) {
-		this.root = root;
 		this.All = root.getChild("All");
+		this.root = root;
 		this.Body = this.All.getChild("Body");
 		this.Back = this.Body.getChild("Back");
 		this.Backfin = this.Back.getChild("Backfin");
@@ -39,7 +39,7 @@ public class DemonWhaleModel<T extends DemonWhaleEntity> extends HierarchicalMod
 		this.Tail4 = this.Tail3.getChild("Tail4");
 		this.Fin = this.Tail4.getChild("Fin");
 		this.Head = this.Body.getChild("Head");
-		this.Bottom = this.Head.getChild("Bottom");
+		this.Bottom = this.Body.getChild("Bottom");
 		this.Finright = this.Body.getChild("Finright");
 		this.Finleft = this.Body.getChild("Finleft");
 	}
@@ -121,7 +121,7 @@ public class DemonWhaleModel<T extends DemonWhaleEntity> extends HierarchicalMod
 
 		PartDefinition Head_r3 = Head.addOrReplaceChild("Head_r3", CubeListBuilder.create().texOffs(0, 113).addBox(0.0F, -4.0F, -23.0F, 8.0F, 8.0F, 23.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-7.0F, 4.0F, -13.0F, 0.0F, -0.0873F, 0.0F));
 
-		PartDefinition Bottom = Head.addOrReplaceChild("Bottom", CubeListBuilder.create().texOffs(92, 0).addBox(-6.0F, -2.0038F, -36.9128F, 12.0F, 8.0F, 22.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 9.602F, 0.7318F));
+		PartDefinition Bottom = Body.addOrReplaceChild("Bottom", CubeListBuilder.create().texOffs(92, 0).addBox(-6.0F, -2.0038F, -36.9128F, 12.0F, 8.0F, 22.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 1.6927F, -19.9429F));
 
 		PartDefinition Bottom_r1 = Bottom.addOrReplaceChild("Bottom_r1", CubeListBuilder.create().texOffs(62, 142).addBox(-8.0F, -9.0F, -15.0F, 16.0F, 9.0F, 15.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 8.3073F, -1.0571F, -0.0873F, 0.0F, 0.0F));
 
@@ -129,7 +129,7 @@ public class DemonWhaleModel<T extends DemonWhaleEntity> extends HierarchicalMod
 
 		PartDefinition Finright_r1 = Finright.addOrReplaceChild("Finright_r1", CubeListBuilder.create().texOffs(152, 79).addBox(1.5F, 0.0F, -4.5F, 22.5F, 0.0F, 7.5F, new CubeDeformation(0.02F)), PartPose.offsetAndRotation(-25.1163F, 16.8901F, 17.4898F, 0.0F, 0.3054F, -0.5672F));
 
-		PartDefinition Finright_r2 = Finright.addOrReplaceChild("Finright_r2", CubeListBuilder.create().texOffs(154, 51).addBox(0.0F, 0.0F, -7.5F, 10.5F, 0.0F, 7.5F, new CubeDeformation(-0.01F)), PartPose.offsetAndRotation(-5.0509F, 4.1071F, 13.134F, 0.0F, 0.7854F, -0.5672F));
+		PartDefinition Finright_r2 = Finright.addOrReplaceChild("Finright_r2", CubeListBuilder.create().texOffs(154, 51).addBox(0.0F, 0.0F, -7.5F, 10.5F, 0.0F, 7.5F, new CubeDeformation(-0.01F)), PartPose.offsetAndRotation(-5.0509F, 4.107F, 13.134F, 0.0F, 0.7854F, -0.5672F));
 
 		PartDefinition Finright_r3 = Finright.addOrReplaceChild("Finright_r3", CubeListBuilder.create().texOffs(188, 122).addBox(-7.5F, -0.75F, 0.0F, 7.5F, 1.5F, 6.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-27.4529F, 18.3787F, 12.1677F, 0.0F, 1.4399F, -0.5672F));
 
@@ -143,7 +143,7 @@ public class DemonWhaleModel<T extends DemonWhaleEntity> extends HierarchicalMod
 
 		PartDefinition Finleft_r2 = Finleft.addOrReplaceChild("Finleft_r2", CubeListBuilder.create().texOffs(188, 130).addBox(0.0F, -0.75F, 0.0F, 7.5F, 1.5F, 6.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(27.4529F, 18.1287F, 11.9177F, 0.0F, -1.4399F, 0.5672F));
 
-		PartDefinition Finleft_r3 = Finleft.addOrReplaceChild("Finleft_r3", CubeListBuilder.create().texOffs(180, 168).addBox(-10.5F, 0.0F, -7.5F, 10.5F, 0.0F, 7.5F, new CubeDeformation(-0.01F)), PartPose.offsetAndRotation(5.0509F, 3.8571F, 12.884F, 0.0F, -0.7854F, 0.5672F));
+		PartDefinition Finleft_r3 = Finleft.addOrReplaceChild("Finleft_r3", CubeListBuilder.create().texOffs(180, 168).addBox(-10.5F, 0.0F, -7.5F, 10.5F, 0.0F, 7.5F, new CubeDeformation(-0.01F)), PartPose.offsetAndRotation(5.0509F, 3.857F, 12.884F, 0.0F, -0.7854F, 0.5672F));
 
 		PartDefinition Finleft_r4 = Finleft.addOrReplaceChild("Finleft_r4", CubeListBuilder.create().texOffs(152, 87).addBox(-24.0F, 0.0F, -4.5F, 22.5F, 0.0F, 7.5F, new CubeDeformation(0.02F)), PartPose.offsetAndRotation(25.1163F, 16.6401F, 17.2398F, 0.0F, -0.3054F, 0.5672F));
 
@@ -156,6 +156,8 @@ public class DemonWhaleModel<T extends DemonWhaleEntity> extends HierarchicalMod
 	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 		this.root().getAllParts().forEach(ModelPart::resetPose);
 		this.animate(entity.walkAnimationState, DemonWhaleMove.move, ageInTicks);
+
+		this.animate(entity.attackAnimationState, DemonWhaleAacck.animationattack, ageInTicks);
 	}
 
 	@Override

@@ -54,6 +54,8 @@ public class NetworkHandler {
         register(PacketChangeDisplayMode.class,PacketChangeDisplayMode::encode,PacketChangeDisplayMode::decode,PacketChangeDisplayMode::handle);
         register(PacketToggleConfig.class, PacketToggleConfig::encode,PacketToggleConfig::decode,PacketToggleConfig::handle);
 
+        register(PacketPlayGodRitualEffect.class, PacketPlayGodRitualEffect::encode, PacketPlayGodRitualEffect::decode, PacketPlayGodRitualEffect::handle);
+
         register(PacketSyncTowerTimer.class, PacketSyncTowerTimer::encode, PacketSyncTowerTimer::decode, PacketSyncTowerTimer::handle);
 
         register(PacketUpdateUIOffset.class, PacketUpdateUIOffset::toBytes, PacketUpdateUIOffset::new, PacketUpdateUIOffset::handle);

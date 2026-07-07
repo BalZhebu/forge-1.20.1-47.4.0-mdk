@@ -146,8 +146,7 @@ public class ModItems {
     public static final RegistryObject<Item> EXTREME_COLD_SNOWFLAKE = ITEMS.register("extreme_cold_snowflake",()->new EngravingKnifeItem(new Item.Properties()){
         @Override
         public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
-            pTooltipComponents.add(Component.translatable("tooltip.kunluncontinent.extreme_co   ld_snowflake1").withStyle(ChatFormatting.DARK_GRAY));
-            pTooltipComponents.add(Component.translatable("tooltip.kunluncontinent.extreme_cold_snowflake2").withStyle(ChatFormatting.DARK_GRAY));
+            pTooltipComponents.add(Component.translatable("tooltip.kunluncontinent.extreme_cold_snowflake1").withStyle(ChatFormatting.DARK_GRAY));
         }
     });
 
@@ -155,7 +154,6 @@ public class ModItems {
         @Override
         public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
             pTooltipComponents.add(Component.translatable("tooltip.kunluncontinent.extreme_cold_snowflake1").withStyle(ChatFormatting.DARK_GRAY));
-            pTooltipComponents.add(Component.translatable("tooltip.kunluncontinent.extreme_cold_snowflake2").withStyle(ChatFormatting.DARK_GRAY));
         }
     });
 

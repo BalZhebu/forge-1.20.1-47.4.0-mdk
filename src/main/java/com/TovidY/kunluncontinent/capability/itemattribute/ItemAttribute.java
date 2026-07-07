@@ -12,7 +12,6 @@ public interface ItemAttribute {
                 if (attr.getSourceName() != null && !attr.getSourceName().isEmpty()) {
                     tooltip.add(Component.literal("魂骨来源: " + attr.getSourceName()).withStyle(ChatFormatting.GRAY));
                 }
-
                 tooltip.add(Component.literal("年限: " + attr.getNianxian() + "年").withStyle(ChatFormatting.GOLD));
                 List<String> active = attr.getActiveAttributes();
                 if (active.contains("maxshengming"))
@@ -47,6 +46,8 @@ public interface ItemAttribute {
 
                 if (active.contains("xixue"))
                     tooltip.add(Component.literal("吸血: +" + String.format("%.1f", attr.getXixue())).withStyle(ChatFormatting.BLUE));
+            }else{
+                tooltip.add(Component.literal("无年限").withStyle(ChatFormatting.GRAY));
             }
         });
     }

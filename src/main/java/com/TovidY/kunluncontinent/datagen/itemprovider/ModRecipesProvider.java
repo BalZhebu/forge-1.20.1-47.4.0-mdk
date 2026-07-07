@@ -65,32 +65,33 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .save(pWriter, KlMain.MOD_ID + ":bottle_refill");
 
         //丹药炼制代码
-        LiandanRecipeBuilder.create(ModItems.NEIDAN1.get(), ModItems.CHUYUAN_DAN.get(), 400)
+        LiandanRecipeBuilder.create(ModItems.NEIDAN1.get(), ModItems.CHUYUAN_DAN.get(), 400).energy(10) //2*5=10
                 .save(pWriter,new ResourceLocation(KlMain.MOD_ID, "chuyuan_dan_from_neidan1"));
-        LiandanRecipeBuilder.create(ModItems.NEIDAN2.get(), ModItems.BAICAOLING_DAN.get(), 400)
-                .save(pWriter,new ResourceLocation(KlMain.MOD_ID, "baicaoling_dan_from_neidan2"));
-        LiandanRecipeBuilder.create(ModItems.NEIDAN3.get(), ModItems.QIANHUABAO_DAN.get(), 400)
+        LiandanRecipeBuilder.create(ModItems.NEIDAN2.get(), ModItems.BAICAOLING_DAN.get(), 400).energy(15) //4*5=20
+               .save(pWriter,new ResourceLocation(KlMain.MOD_ID, "baicaoling_dan_from_neidan2"));
+        LiandanRecipeBuilder.create(ModItems.NEIDAN3.get(), ModItems.QIANHUABAO_DAN.get(), 400).energy(25) //6*5=30
                 .save(pWriter,new ResourceLocation(KlMain.MOD_ID, "qianhuabao_dan_from_neidan3"));
-        LiandanRecipeBuilder.create(ModItems.NEIDAN4.get(), ModItems.WANPOXUAN_DAN.get(), 400)
+        LiandanRecipeBuilder.create(ModItems.NEIDAN4.get(), ModItems.WANPOXUAN_DAN.get(), 400).energy(35) //8*5=40
                 .save(pWriter,new ResourceLocation(KlMain.MOD_ID, "wanpoxuan_dan_from_neidan4"));
-        LiandanRecipeBuilder.create(ModItems.NEIDAN5.get(), ModItems.SHIFANGJIE_DAN.get(), 400)
+        LiandanRecipeBuilder.create(ModItems.NEIDAN5.get(), ModItems.SHIFANGJIE_DAN.get(), 400).energy(50) //10*5=50
                 .save(pWriter,new ResourceLocation(KlMain.MOD_ID, "shifangjie_dan_from_neidan5"));
-        LiandanRecipeBuilder.create(ModItems.NEIDAN6.get(), ModItems.HUANYUANYIQI_DAN.get(), 400)
+        LiandanRecipeBuilder.create(ModItems.NEIDAN6.get(), ModItems.HUANYUANYIQI_DAN.get(), 400).energy(80) //12*5=60
                 .save(pWriter,new ResourceLocation(KlMain.MOD_ID, "huanyuanyiqi_dan_from_neidan6"));
-        LiandanRecipeBuilder.create(ModItems.NEIDAN7.get(), ModItems.TAIXUPOWANG_DAN.get(), 400)
+        LiandanRecipeBuilder.create(ModItems.NEIDAN7.get(), ModItems.TAIXUPOWANG_DAN.get(), 400).energy(100) //14*5=70
                 .save(pWriter,new ResourceLocation(KlMain.MOD_ID, "taixupowang_dan_from_neidan7"));
-        LiandanRecipeBuilder.create(ModItems.NEIDAN8.get(), ModItems.QIANWANXINGCHEN_DAN.get(), 400)
+        LiandanRecipeBuilder.create(ModItems.NEIDAN8.get(), ModItems.QIANWANXINGCHEN_DAN.get(), 400).energy(200) //16*5=80
                 .save(pWriter,new ResourceLocation(KlMain.MOD_ID, "qianwanxingchen_dan_from_neidan8"));
-        LiandanRecipeBuilder.create(ModItems.NEIDAN9.get(), ModItems.YIZAICHUANGSHENG_DAN.get(), 400)
+        LiandanRecipeBuilder.create(ModItems.NEIDAN9.get(), ModItems.YIZAICHUANGSHENG_DAN.get(), 400).energy(1000) //20*5=100
                 .save(pWriter,new ResourceLocation(KlMain.MOD_ID, "yizhaichuangsheng_dan_from_neidan9"));
 
-        LiandanRecipeBuilder.create(ModItems.GUYUANCAO_ITEM.get(), ModItems.GUYUAN_DAN.get(), 200)
+        LiandanRecipeBuilder.create(ModItems.GUYUANCAO_ITEM.get(), ModItems.GUYUAN_DAN.get(), 200).energy(50)
                 .special()
                 .save(pWriter,new ResourceLocation(KlMain.MOD_ID, "guyuan_dan_from"));
 
-        LiandanRecipeBuilder.create(ModItems.FANQICAO_ITEM.get(), ModItems.FANQI_DAN.get(), 150)
+        LiandanRecipeBuilder.create(ModItems.FANQICAO_ITEM.get(), ModItems.FANQI_DAN.get(), 150).energy(50)
                 .special()
                 .save(pWriter,new ResourceLocation(KlMain.MOD_ID, "fanqi_dan_from"));
+
         //雷域石
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.THUNDERREALM_SNOWFLAKE.get())
                 .pattern("XXX")

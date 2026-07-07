@@ -1,6 +1,7 @@
 package com.TovidY.kunluncontinent.block.blockentity;
 
 import com.TovidY.kunluncontinent.block.ModBlockEntities;
+import com.TovidY.kunluncontinent.item.tool.SoulGatheringBottleItem;
 import com.TovidY.kunluncontinent.recipe.ModRecipes;
 import com.TovidY.kunluncontinent.recipe.liandanlurecipe.AlchemicalCalculator;
 import com.TovidY.kunluncontinent.recipe.liandanlurecipe.LiandanRecipe;
@@ -8,7 +9,11 @@ import com.TovidY.kunluncontinent.screen.liandanlugui.LiandanluMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -38,6 +43,9 @@ public class LiandanluBlockEntity extends BlockEntity implements MenuProvider {
         @Override
         protected void onContentsChanged(int slot) {
             setChanged();
+            if (level != null && !level.isClientSide) {
+                level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+            }
         }
     };
 
@@ -49,6 +57,10 @@ public class LiandanluBlockEntity extends BlockEntity implements MenuProvider {
             return switch (index) {
                 case 0 -> LiandanluBlockEntity.this.progress;
                 case 1 -> LiandanluBlockEntity.this.maxProgress;
+                case 2 -> {
+                    ItemStack stack = LiandanluBlockEntity.this.itemHandler.getStackInSlot(18);
+                    yield stack.isEmpty() ? 0 : 1;
+                }
                 default -> 0;
             };
         }
@@ -60,7 +72,7 @@ public class LiandanluBlockEntity extends BlockEntity implements MenuProvider {
             }
         }
         @Override
-        public int getCount() { return 2; }
+        public int getCount() { return 3; }
     };
 
     public LiandanluBlockEntity(BlockPos pPos, BlockState pBlockState, int tier) {
@@ -69,25 +81,78 @@ public class LiandanluBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, LiandanluBlockEntity entity) {
+        // 1. 获取配方
         SimpleContainer container = new SimpleContainer(5);
-        for (int i = 0; i < 5; i++) {
-            container.setItem(i, entity.itemHandler.getStackInSlot(i));
-        }
+        for (int i = 0; i < 5; i++) container.setItem(i, entity.itemHandler.getStackInSlot(i));
+
         Optional<LiandanRecipe> recipeOptional = level.getRecipeManager()
                 .getRecipeFor(ModRecipes.LIANDAN_TYPE.get(), container, level);
+
         if (recipeOptional.isPresent()) {
             LiandanRecipe recipe = recipeOptional.get();
-            if (canInsertResult(entity.itemHandler)) {
+            ItemStack bottleStack = entity.itemHandler.getStackInSlot(18);
+
+            if (bottleStack.getItem() instanceof SoulGatheringBottleItem bottle &&
+                    bottle.getNengliang(null, bottleStack) >= recipe.getEnergyCost() &&
+                    canInsertResult(entity.itemHandler)) {
+
                 entity.maxProgress = entity.getAdjustedCookingTime(recipe);
                 entity.progress++;
+
                 if (entity.progress >= entity.maxProgress) {
-                    executeCraft(entity, recipe);
+                    executeCraft(entity, recipe, bottle, bottleStack);
                     entity.progress = 0;
                 }
             }
         } else {
             entity.progress = 0;
         }
+    }
+
+    // 在 LiandanluBlockEntity 类中添加
+    @Override
+    public void setChanged() {
+        super.setChanged();
+        if (level != null && !level.isClientSide) {
+            // 强制通知附近的所有观察者（包括打开界面的玩家）该方块数据已更新
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+        }
+    }
+
+    @Override
+    public CompoundTag getUpdateTag() {
+        return this.saveWithoutMetadata();
+    }
+
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
+        this.load(pkt.getTag());
+    }
+
+    private static void executeCraft(LiandanluBlockEntity entity, LiandanRecipe recipe, SoulGatheringBottleItem bottle, ItemStack bottleStack) {
+        if (bottle.getNengliang(null, bottleStack) < recipe.getEnergyCost()) return;
+
+        bottle.setNengliang(null, bottleStack, bottle.getNengliang(null, bottleStack) - recipe.getEnergyCost());
+
+        IItemHandlerModifiable handler = (IItemHandlerModifiable) entity.itemHandler;
+        int finalQuality = AlchemicalCalculator.calculateResultQuality(handler);
+        ItemStack resultStack = recipe.getResultItem(entity.level.registryAccess()).copy();
+        resultStack.getOrCreateTag().putInt("DanYaoQuality", finalQuality);
+
+        for (int i = 0; i < 5; i++) handler.extractItem(i, 1, false);
+        if (!handler.getStackInSlot(17).isEmpty()) handler.extractItem(17, 1, false);
+
+        ItemStack remaining = resultStack;
+        for (int i = 5; i <= 16; i++) {
+            remaining = handler.insertItem(i, remaining, false);
+            if (remaining.isEmpty()) break;
+        }
+        entity.setChanged(); // 确保数据持久化
     }
 
     private int getAdjustedCookingTime(LiandanRecipe recipe) {
@@ -116,26 +181,6 @@ public class LiandanluBlockEntity extends BlockEntity implements MenuProvider {
         return false;
     }
 
-    private static void executeCraft(LiandanluBlockEntity entity, LiandanRecipe recipe) {
-        IItemHandlerModifiable handler = (IItemHandlerModifiable) entity.itemHandler;
-        int finalQuality = AlchemicalCalculator.calculateResultQuality(handler);
-        if (recipe.isSpecial() && finalQuality == 0) {
-            finalQuality = 1;
-        }
-        ItemStack resultStack = recipe.getResultItem(entity.level.registryAccess()).copy();
-        resultStack.getOrCreateTag().putInt("DanYaoQuality", finalQuality);
-        for (int i = 0; i < 5; i++) {
-            handler.extractItem(i, 1, false);
-        }
-        if (!handler.getStackInSlot(17).isEmpty()) {
-            handler.extractItem(17, 1, false);
-        }
-        ItemStack remaining = resultStack;
-        for (int i = 5; i <= 16; i++) {
-            remaining = handler.insertItem(i, remaining, false);
-            if (remaining.isEmpty()) break;
-        }
-    }
 
     @Override public Component getDisplayName() { return Component.literal("炼丹炉"); }
     @Nullable @Override
@@ -154,7 +199,9 @@ public class LiandanluBlockEntity extends BlockEntity implements MenuProvider {
     @Override
     public void load(CompoundTag pTag) {
         super.load(pTag);
-        itemHandler.deserializeNBT(pTag.getCompound("inventory"));
+        if (pTag.contains("inventory")) {
+            this.itemHandler.deserializeNBT(pTag.getCompound("inventory"));
+        }
         this.progress = pTag.getInt("Progress");
     }
 
@@ -162,6 +209,11 @@ public class LiandanluBlockEntity extends BlockEntity implements MenuProvider {
     public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side) {
         if (cap == ForgeCapabilities.ITEM_HANDLER) return lazyItemHandler.cast();
         return super.getCapability(cap, side);
+    }
+
+    // 在 LiandanluBlockEntity.java
+    public ItemStackHandler getItemHandler() {
+        return this.itemHandler;
     }
 
 

@@ -20,7 +20,10 @@ public class LiandanRecipeSerializer implements RecipeSerializer<LiandanRecipe> 
         int cookTime = GsonHelper.getAsInt(pSerializedRecipe, "cookTime", 200);
         int recipeLevel = GsonHelper.getAsInt(pSerializedRecipe, "recipeLevel", 1);
         boolean isSpecial = GsonHelper.getAsBoolean(pSerializedRecipe, "isSpecial", false);
-        return new LiandanRecipe(pRecipeId, ingredient, result, cookTime, recipeLevel, isSpecial);
+
+        int energyCost = GsonHelper.getAsInt(pSerializedRecipe, "energyCost", 100);
+
+        return new LiandanRecipe(pRecipeId, ingredient, result,cookTime, recipeLevel, isSpecial, energyCost);
     }
 
     @Nullable
@@ -32,7 +35,9 @@ public class LiandanRecipeSerializer implements RecipeSerializer<LiandanRecipe> 
         int recipeLevel = pBuffer.readInt();
         boolean isSpecial = pBuffer.readBoolean();
 
-        return new LiandanRecipe(pRecipeId, ingredient, result, cookTime, recipeLevel, isSpecial);
+        int energyCost = pBuffer.readInt();
+
+        return new LiandanRecipe(pRecipeId, ingredient, result, cookTime, recipeLevel, isSpecial, energyCost);
     }
 
     @Override
@@ -42,5 +47,7 @@ public class LiandanRecipeSerializer implements RecipeSerializer<LiandanRecipe> 
         pBuffer.writeInt(pRecipe.getCookTime());
         pBuffer.writeInt(pRecipe.getRecipeLevel());
         pBuffer.writeBoolean(pRecipe.isSpecial());
+
+        pBuffer.writeInt(pRecipe.getEnergyCost());
     }
 }

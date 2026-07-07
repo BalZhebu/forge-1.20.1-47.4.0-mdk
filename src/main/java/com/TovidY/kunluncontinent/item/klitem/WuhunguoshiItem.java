@@ -48,7 +48,7 @@ public class WuhunguoshiItem extends Item {
         if (!level.isClientSide && livingEntity instanceof ServerPlayer serverPlayer) {
             serverPlayer.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
                 if (cap.getDengji() <= 0) {
-                    serverPlayer.sendSystemMessage(Component.literal("你的等级不足，无法承载武魂觉醒！").withStyle(ChatFormatting.RED));
+                    serverPlayer.sendSystemMessage(Component.literal("等级不足，无法承载武魂觉醒！").withStyle(ChatFormatting.RED));
                     return;
                 }
                 List<String> currentWuhuns = cap.getWuhunListsname();
@@ -57,7 +57,7 @@ public class WuhunguoshiItem extends Item {
                     return;
                 }
                 if (currentWuhuns.size() >= 3) {
-                    serverPlayer.sendSystemMessage(Component.literal("一个人的识海有限，最多只能承载 3 个武魂！").withStyle(ChatFormatting.DARK_RED));
+                    serverPlayer.sendSystemMessage(Component.literal("最多只能觉醒 3 个武魂！").withStyle(ChatFormatting.DARK_RED));
                     return;
                 }
                 PlayerHunhuanAPI.addWuHun(serverPlayer, this.getWuhunname());

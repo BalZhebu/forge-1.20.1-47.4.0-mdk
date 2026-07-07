@@ -110,7 +110,7 @@ public class StoneStampBlock extends Block {
                         targetY = safePos.get().y;
                         targetZ = safePos.get().z;
                     } else {
-                        serverPlayer.sendSystemMessage(Component.literal("§e[昆仑大陆] 你的本命法脉（床）已失效，正在遣送回初始出生点..."));
+                        serverPlayer.sendSystemMessage(Component.literal("§e[昆仑大陆] 你的出生点已失效，正在遣送回初始出生点..."));
                         BlockPos sharedSpawn = respawnLevel.getSharedSpawnPos();
                         targetX = sharedSpawn.getX() + 0.5;
                         targetY = sharedSpawn.getY();
@@ -160,7 +160,7 @@ public class StoneStampBlock extends Block {
                             serverPlayer.getXRot()
                     );
                 } else {
-                    serverPlayer.sendSystemMessage(Component.literal("§c[昆仑大陆] 错误：无法加载爬塔虚空维度，请检查世界配置！"));
+                    serverPlayer.sendSystemMessage(Component.literal("§c[昆仑大陆] 警告：无法加载爬塔虚空维度，请联系作者！"));
                     TowerStateManager.releaseTower(serverPlayer);
                 }
             }

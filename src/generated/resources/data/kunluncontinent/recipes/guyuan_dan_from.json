@@ -1,6 +1,7 @@
 {
   "type": "kunlun:liandan",
   "cookTime": 200,
+  "energyCost": 100,
   "ingredient": {
     "item": "kunluncontinent:guyuancao_item"
   },

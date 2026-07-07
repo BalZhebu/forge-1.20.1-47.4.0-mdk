@@ -181,7 +181,7 @@ public class ModUiRenderHandler {
 
             int centerTargetX2 = (BAR_X * 2) + BAR_W;
             guiGraphics.drawString(Minecraft.getInstance().font, healthInfo, centerTargetX2 - (textWidthH / 2), HEALTH_Y * 2, 0xFFFFFF, true);
-            guiGraphics.drawString(Minecraft.getInstance().font, foodInfo, centerTargetX2 - (textWidthF / 2), FOOD_Y * 2, 0xFF7D00, true);
+            guiGraphics.drawString(Minecraft.getInstance().font, foodInfo, centerTargetX2 - (textWidthF / 2), FOOD_Y * 2, 0xFFFFFF, true);
             guiGraphics.drawString(Minecraft.getInstance().font, jsInfo, centerTargetX2 - (textWidthJ / 2), JINGSHEN_Y * 2, 0x55FFFF, true);
             guiGraphics.drawString(Minecraft.getInstance().font, expInfo, centerTargetX2 - (textWidthE / 2), EXP_Y * 2, 0x00FF00, true);
             pose.popPose();

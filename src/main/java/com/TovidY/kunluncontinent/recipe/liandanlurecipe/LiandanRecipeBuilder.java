@@ -21,11 +21,17 @@ public class LiandanRecipeBuilder implements RecipeBuilder {
     private final Ingredient ingredient;
     private final int cookTime;
     private boolean isSpecial = false; // 新增字段
+    private int energyCost = 100;
 
     public LiandanRecipeBuilder(ItemLike ingredient, ItemLike result, int cookTime) {
         this.ingredient = Ingredient.of(ingredient);
         this.result = result.asItem();
         this.cookTime = cookTime;
+    }
+
+    public LiandanRecipeBuilder energy(int energy) {
+        this.energyCost = energy;
+        return this;
     }
 
     public static LiandanRecipeBuilder create(ItemLike ingredient, ItemLike result, int cookTime) {
@@ -48,6 +54,7 @@ public class LiandanRecipeBuilder implements RecipeBuilder {
                 json.add("result", resultObj);
                 json.addProperty("cookTime", cookTime);
                 json.addProperty("isSpecial", isSpecial); // 写入JSON
+                json.addProperty("energyCost", energyCost);
             }
             @Override public ResourceLocation getId() { return id; }
             @Override public RecipeSerializer<?> getType() { return ModRecipes.LIANDAN_SERIALIZER.get(); }

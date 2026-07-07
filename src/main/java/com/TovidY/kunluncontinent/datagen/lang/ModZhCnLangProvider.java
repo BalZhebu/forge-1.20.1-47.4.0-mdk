@@ -146,11 +146,9 @@ public class ModZhCnLangProvider extends LanguageProvider {
 
         add(ModItems.RED_SPIDER_LILY_POTION.get(), "§c《忘川渡·彼岸花》");
         add(ModItems.EYE_TRANSFORMATION.get(), "§5重修之眼");
-        add(ModItems.EXTREME_COLD.get(),"§b冰晶");
+        add(ModItems.EXTREME_COLD.get(),"§b雪晶");
 
         add(ModItems.DEMONWHALE_SPAWN_EGG.get(),"§c魔鲸刷怪蛋");
-
-
 
         add(ModItems.ATTRIBUTE_BUTTON.get(),"属性面板");
         add(ModItems.SOUL_BONE_BUTTON.get(),"魂骨面板");
@@ -523,6 +521,8 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModEffects.STONE_ARMOR.get(),"§c石铠");
         add(ModEffects.SUN_POWER.get(),"§e大日之威");
         add(ModEffects.POWER_OF_THE_MOON.get(),"§d邀月之华");
+
+        add(ModEffects.THE_GAZE_OF_GOD.get(), "§e神之凝视");
 
         add(ModEffects.POHUNQIANG.get(),"§c破魂真身");
         add(ModEffects.BHUANGJI.get(),"§c八荒真身");

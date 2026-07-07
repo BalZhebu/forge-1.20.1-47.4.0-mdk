@@ -1,7 +1,10 @@
 package com.TovidY.kunluncontinent.screen.liandanlugui;
 
 import com.TovidY.kunluncontinent.KlMain;
+import com.TovidY.kunluncontinent.block.blockentity.LiandanluBlockEntity;
+import com.TovidY.kunluncontinent.item.ModItems;
 import com.TovidY.kunluncontinent.item.neidanitems.NeidanItem;
+import com.TovidY.kunluncontinent.item.tool.SoulGatheringBottleItem;
 import com.TovidY.kunluncontinent.recipe.ModRecipes;
 import com.TovidY.kunluncontinent.recipe.liandanlurecipe.LiandanRecipe;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -11,9 +14,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.registries.RegistryObject;
 
 import java.util.Optional;
+
 public class LiandanluScreen extends AbstractContainerScreen<LiandanluMenu> {
     private static final ResourceLocation TEXTURE =
             new ResourceLocation(KlMain.MOD_ID, "textures/screens/liandanlu.png");
@@ -41,14 +47,12 @@ public class LiandanluScreen extends AbstractContainerScreen<LiandanluMenu> {
     private void updateRecipeCache() {
         if (this.minecraft == null || this.minecraft.level == null) return;
 
-        // 计算当前前5个槽位物品的简易Hash值
         int currentHash = 1;
         for (int i = 0; i < 5; i++) {
             ItemStack stack = this.menu.getSlot(i).getItem();
             currentHash = 31 * currentHash + stack.getItem().hashCode() + stack.getCount();
         }
 
-        // 如果Hash没变，说明材料没动，直接沿用缓存
         if (currentHash != lastSlotHash) {
             this.lastSlotHash = currentHash;
             for (int i = 0; i < 5; i++) {
@@ -57,6 +61,70 @@ public class LiandanluScreen extends AbstractContainerScreen<LiandanluMenu> {
             this.cachedRecipe = this.minecraft.level.getRecipeManager()
                     .getRecipeFor(ModRecipes.LIANDAN_TYPE.get(), this.lastContainer, this.minecraft.level);
         }
+    }
+
+    private void renderEnergyStatus(GuiGraphics guiGraphics) {
+        int hasBottle = this.menu.getData().get(2);
+        String statusText;
+        int color;
+
+        LiandanluBlockEntity be = (LiandanluBlockEntity) this.menu.blockEntity;
+
+        ItemStack bottleStack = be.getItemHandler().getStackInSlot(18);
+        if (bottleStack.isEmpty()) {
+            bottleStack = this.menu.getSlot(18).getItem();
+        }
+
+        if (hasBottle == 0) {
+            statusText = "缺少聚魂瓶";
+            color = 0xFF5555;
+        } else if (bottleStack.isEmpty()) {
+            // 只有两种来源都为空，才显示同步中
+            statusText = "同步中...";
+            color = 0xAAAAAA;
+        } else {
+            if (!hasAnyNeidan()) {
+                statusText = "请放入内丹...";
+                color = 0xFFCC00;
+            } else if (cachedRecipe.isEmpty()) {
+                statusText = "配方未匹配";
+                color = 0xFF5555;
+            } else {
+                // 使用你的 ModItems 列表进行对比
+                boolean isBottle = false;
+                for (RegistryObject<Item> bottleReg : ModItems.JUHUNPING) {
+                    if (bottleStack.is(bottleReg.get())) {
+                        isBottle = true;
+                        break;
+                    }
+                }
+
+                if (isBottle) {
+                    // 如果是瓶子，获取能量
+                    if (bottleStack.getItem() instanceof SoulGatheringBottleItem bottle) {
+                        int currentEnergy = bottle.getNengliang(null, bottleStack);
+                        int cost = cachedRecipe.get().getEnergyCost();
+                        statusText = (currentEnergy < cost) ? "能量不足，需: " + cost : "炼制消耗: " + cost + " 能量";
+                        color = (currentEnergy < cost) ? 0xFF5555 : 0x55FF55;
+                    } else {
+                        // 如果类匹配失败，这通常是因为热重载，尝试用注册表名转义
+                        statusText = "物品数据加载中...";
+                        color = 0xAAAAAA;
+                    }
+                } else {
+                    statusText = "槽位异常";
+                    color = 0xFF5555;
+                }
+            }
+        }
+        guiGraphics.drawString(this.font, statusText, this.leftPos + 8, this.topPos + 63, color, true);
+    }
+
+    private boolean hasAnyNeidan() {
+        for (int i = 0; i < 5; i++) {
+            if (!this.menu.getSlot(i).getItem().isEmpty()) return true;
+        }
+        return false;
     }
 
     @Override
@@ -71,6 +139,9 @@ public class LiandanluScreen extends AbstractContainerScreen<LiandanluMenu> {
     }
 
     private void renderAlchmenyInfo(GuiGraphics guiGraphics) {
+
+        renderEnergyStatus(guiGraphics);
+
         if (cachedRecipe.isPresent()) {
             LiandanRecipe recipe = cachedRecipe.get();
             ItemStack resultStack = recipe.getResultItem(this.minecraft.level.registryAccess());

@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.entity.demon;
 
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.item.ModItems;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -31,23 +32,34 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
-
 public class DemonWhaleEntity extends Monster {
 
     private int skillCooldown = 300;
 
     private static final EntityDataAccessor<Boolean> IS_CASTING = SynchedEntityData.defineId(DemonWhaleEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> IS_ATTACKING = SynchedEntityData.defineId(DemonWhaleEntity.class, EntityDataSerializers.BOOLEAN);
 
     private int castTimer = 0;
     private int pendingSkill = -1;
-
     private int waveTicks = 0;
+    private int attackTimer = 0;
+
+    private int waterCheckCooldown = 0;      // 智能扫描冷却 Tick
+    private BlockPos targetWaterPos = null;   // 锁定的安全大水域坐标
+    private int waterEscapeTimeout = 0;      // 撤退跑路超时保护
+
+    // 极致优化：物理防卡死计时器与历史坐标缓存
+    private int stuckCheckTimer = 0;
+    private double lastCheckX = 0.0D;
+    private double lastCheckY = 0.0D;
+    private double lastCheckZ = 0.0D;
 
     protected PathNavigation waterNav;
     protected PathNavigation groundNav;
@@ -56,6 +68,7 @@ public class DemonWhaleEntity extends Monster {
     protected final SmoothSwimmingMoveControl aquaticMoveControl;
 
     public final AnimationState walkAnimationState = new AnimationState();
+    public final AnimationState attackAnimationState = new AnimationState();
 
     private final ServerBossEvent bossEvent = (ServerBossEvent) (new ServerBossEvent(
             this.getDisplayName(),
@@ -68,94 +81,126 @@ public class DemonWhaleEntity extends Monster {
     public DemonWhaleEntity(EntityType<? extends Monster> type, Level level) {
         super(type, level);
         this.setPathfindingMalus(BlockPathTypes.WATER, 0.0F);
-        this.setPathfindingMalus(BlockPathTypes.WATER_BORDER, 16.0F);
+        this.setPathfindingMalus(BlockPathTypes.WATER_BORDER, 0.0F);
+
         this.landMoveControl = new MoveControl(this);
         this.aquaticMoveControl = new SmoothSwimmingMoveControl(this, 85, 10, 0.02F, 0.1F, true);
-
     }
 
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(IS_CASTING, false);
+        this.entityData.define(IS_ATTACKING, false);
     }
+
+    public boolean isCasting() { return this.entityData.get(IS_CASTING); }
+    public boolean isAttacking() { return this.entityData.get(IS_ATTACKING); }
 
     @Override
-    protected void dropCustomDeathLoot(DamageSource source, int lootingMultiplier, boolean killedByPlayer) {
-        super.dropCustomDeathLoot(source, lootingMultiplier, killedByPlayer);
-        if (killedByPlayer) {
-            ItemStack neidanStack = new ItemStack(ModItems.NEIDAN6.get());
-            int min = 5;
-            int max = 30;
-            int count = min + this.random.nextInt(max - min + 1);
-            neidanStack.setCount(count);
-            neidanStack.getOrCreateTag().putString("Quality", "ZHEN");
-            neidanStack.getOrCreateTag().putString("Source", "DemonWhale");
-            ItemEntity neidanEntity = this.spawnAtLocation(neidanStack);
-            if (neidanEntity != null) {
-                neidanEntity.setGlowingTag(true); // 开启实体发光轮廓
-            }
+    protected void registerGoals() {
+        // 如果正在顺利前往水域（targetWaterPos != null），切断物理平A，全速跑路
+        this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.2D, false) {
+            @Override
+            public boolean canUse() { return targetWaterPos == null && super.canUse(); }
+            @Override
+            public boolean canContinueToUse() { return targetWaterPos == null && super.canContinueToUse(); }
+        });
 
-            ItemStack huizhangStack = new ItemStack(ModItems.DEMON_WHALE_BADGE.get());
-            huizhangStack.setCount(1);
+        this.goalSelector.addGoal(3, new RandomSwimmingGoal(this, 1.0D, 40) {
+            @Override
+            public boolean canUse() { return mob.isInWater() && super.canUse(); }
+        });
 
-            ItemEntity badgeEntity = this.spawnAtLocation(huizhangStack);
-            if (badgeEntity != null) {
-                badgeEntity.setGlowingTag(true);
-            }
+        // 陆地随机行走：只有在非水域、且当前没有锁定水域逃跑时才触发
+        this.goalSelector.addGoal(4, new RandomStrollGoal(this, 0.8D, 60) {
+            @Override
+            public boolean canUse() { return !mob.isInWater() && targetWaterPos == null && super.canUse(); }
+        });
 
-            ItemStack kuangwuStack = new ItemStack(ModItems.COLD_HEARTED_STEEL_INGOT.get());
-            int kuangwumin = 3;
-            int kuangwumax = 10;
-            int count1 = kuangwumin + this.random.nextInt(kuangwumax - kuangwumin + 1);
-            kuangwuStack.setCount(count1);
+        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0F) {
+            @Override
+            public boolean canUse() { return targetWaterPos == null && super.canUse(); }
+        });
 
-            ItemEntity kuangwuEntity = this.spawnAtLocation(kuangwuStack);
-            if (kuangwuEntity != null) {
-                kuangwuEntity.setGlowingTag(true);
-            }
-
-
-            this.spawnAtLocation(kuangwuStack);
-        }
-    }
-    public boolean isCasting() {
-        return this.entityData.get(IS_CASTING);
-    }
-
-    @Override
-    public boolean doHurtTarget(Entity target) {
-        if (this.distanceToSqr(target) > this.getMeleeAttackRangeSqr((LivingEntity) target) * 1.5D) {
-            return false;
-        }
-
-        Vec3 originalMovement = target.getDeltaMovement();
-        boolean hurt = super.doHurtTarget(target);
-        if (hurt) {
-            target.setDeltaMovement(originalMovement);
-            target.hurtMarked = true;
-        }
-        return hurt;
-    }
-
-    @Override
-    public double getMeleeAttackRangeSqr(LivingEntity target) {
-        float f = this.getBbWidth() * 0.8F;
-        return (double)(f * f + target.getBbWidth());
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
     @Override
     public void aiStep() {
         super.aiStep();
         if (!this.level().isClientSide) {
-            if (this.isAlive() && this.getTarget() != null) {
+
+            if (this.isCasting()) {
+                this.getNavigation().stop();
+            }
+
+            if (!this.isInWater() && this.isAlive()) {
+
+                if (targetWaterPos != null) {
+                    waterEscapeTimeout--;
+                    if (this.tickCount % 10 == 0) {
+                        this.getNavigation().moveTo(targetWaterPos.getX(), targetWaterPos.getY(), targetWaterPos.getZ(), 1.5D);
+                    }
+                    stuckCheckTimer--;
+                    if (stuckCheckTimer <= 0) {
+                        stuckCheckTimer = 20;
+                        double dx = this.getX() - lastCheckX;
+                        double dy = this.getY() - lastCheckY;
+                        double dz = this.getZ() - lastCheckZ;
+                        double distanceSq = dx * dx + dy * dy + dz * dz;
+
+                        this.lastCheckX = this.getX();
+                        this.lastCheckY = this.getY();
+                        this.lastCheckZ = this.getZ();
+
+                        if (distanceSq < 0.04D) {
+                            this.targetWaterPos = null;
+                            this.getNavigation().stop();
+                            this.waterCheckCooldown = 200;
+                        }
+                    }
+
+                    if (targetWaterPos != null && (this.isInWater() || waterEscapeTimeout <= 0 || this.blockPosition().closerThan(targetWaterPos, 3.0D))) {
+                        targetWaterPos = null;
+                    }
+                }
+                // 如果目前没在跑路，判定是否启动扫描
+                else {
+                    if (waterCheckCooldown > 0) {
+                        waterCheckCooldown--;
+                    } else {
+                        waterCheckCooldown = 100;
+
+                        // 陆地上有玩家激怒时，才触发大水域逃跑策略
+                        if (this.getTarget() != null) {
+                            BlockPos foundWater = findMassiveWaterBody(this.blockPosition(), 100);
+                            if (foundWater != null) {
+                                this.targetWaterPos = foundWater;
+                                this.waterEscapeTimeout = 300;
+                                this.stuckCheckTimer = 20; // 重置卡死时钟
+                                this.lastCheckX = this.getX();
+                                this.lastCheckY = this.getY();
+                                this.lastCheckZ = this.getZ();
+                                this.getNavigation().stop();
+                            }
+                        }
+                    }
+                }
+            } else {
+                this.targetWaterPos = null; // 在水里时清空一切逃跑参数
+            }
+            // ========================================================================
+
+            // 只有当没有锁定逃跑水域时，Boss 才会正常在陆地上放技能
+            if (this.getTarget() != null && targetWaterPos == null) {
                 if (skillCooldown > 0 && !isCasting()) {
                     skillCooldown--;
-                }
-                else if (skillCooldown <= 0 && !isCasting()) {
+                } else if (skillCooldown <= 0 && !isCasting()) {
                     startCasting();
                 }
             }
+
             if (isCasting()) {
                 castTimer--;
                 if (castTimer <= 0) {
@@ -167,9 +212,17 @@ public class DemonWhaleEntity extends Monster {
                     skillCooldown = 300 + this.random.nextInt(301);
                 }
             }
+
             if (waveTicks > 0) {
                 handleWaterWave();
                 waveTicks--;
+            }
+
+            if (this.isAttacking()) {
+                this.attackTimer--;
+                if (this.attackTimer <= 0) {
+                    this.entityData.set(IS_ATTACKING, false);
+                }
             }
         } else {
             if (this.isCasting()) {
@@ -191,13 +244,60 @@ public class DemonWhaleEntity extends Monster {
         }
     }
 
-    private void startCasting() {
-        this.castTimer = 60; // 3秒蓄力
-        this.pendingSkill = this.random.nextInt(3); // 预选技能
-        this.entityData.set(IS_CASTING, true);
+    private @Nullable BlockPos findMassiveWaterBody(BlockPos center, int range) {
+        Level level = this.level();
+        int step = 6;
+        for (int r = step; r <= range; r += step) {
+            for (int i = -r; i <= r; i += step) {
+                if (checkIsMassiveWater(level, center.offset(i, -2, r))) return center.offset(i, -2, r);
+                if (checkIsMassiveWater(level, center.offset(i, -2, -r))) return center.offset(i, -2, -r);
+                if (checkIsMassiveWater(level, center.offset(r, -2, i))) return center.offset(r, -2, i);
+                if (checkIsMassiveWater(level, center.offset(-r, -2, i))) return center.offset(-r, -2, i);
+            }
+        }
+        return null;
+    }
 
-        this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
-                SoundEvents.ENDER_DRAGON_GROWL, this.getSoundSource(), 1.0F, 0.5F);
+    private boolean checkIsMassiveWater(Level level, BlockPos pos) {
+        if (!level.getBlockState(pos).is(Blocks.WATER)) return false;
+        return level.getBlockState(pos.east(3)).is(Blocks.WATER) &&
+                level.getBlockState(pos.west(3)).is(Blocks.WATER) &&
+                level.getBlockState(pos.south(3)).is(Blocks.WATER) &&
+                level.getBlockState(pos.north(3)).is(Blocks.WATER) &&
+                level.getBlockState(pos.offset(2, 0, 2)).is(Blocks.WATER);
+    }
+
+    @Override
+    public boolean doHurtTarget(Entity target) {
+        double actualDistance = this.getBoundingBox().distanceToSqr(target.getBoundingBox().getCenter());
+        if (actualDistance > 6.25D) {
+            return false;
+        }
+
+        if (!this.level().isClientSide) {
+            this.attackTimer = 16;
+            this.entityData.set(IS_ATTACKING, true);
+        }
+
+        Vec3 originalMovement = target.getDeltaMovement();
+        boolean hurt = super.doHurtTarget(target);
+        if (hurt) {
+            target.setDeltaMovement(originalMovement);
+            target.hurtMarked = true;
+        }
+        return hurt;
+    }
+
+    @Override
+    public double getMeleeAttackRangeSqr(LivingEntity target) {
+        return (double)(this.getBbWidth() * 0.5F + 2.0F);
+    }
+
+    private void startCasting() {
+        this.castTimer = 60;
+        this.pendingSkill = this.random.nextInt(3);
+        this.entityData.set(IS_CASTING, true);
+        this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.ENDER_DRAGON_GROWL, this.getSoundSource(), 1.0F, 0.5F);
     }
 
     private void triggerSkill(int type) {
@@ -208,7 +308,6 @@ public class DemonWhaleEntity extends Monster {
         }
     }
 
-    // --- 技能 1：雷暴 (Thunderstorm) ---
     private void executeThunderstorm() {
         List<Player> players = this.level().getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(50.0D));
         for (Player player : players) {
@@ -219,14 +318,13 @@ public class DemonWhaleEntity extends Monster {
                 player.hurt(this.damageSources().mobAttack(this), 12.0F);
             }
         }
-        // 特效：全场蓝色粒子
         ((ServerLevel)this.level()).sendParticles(ParticleTypes.SOUL_FIRE_FLAME, this.getX(), this.getY(), this.getZ(), 100, 5, 5, 5, 0.5D);
     }
 
     private void handleWaterWave() {
-        if (waveTicks % 10 == 0) { // 每0.5秒扩散一圈
-            float radius = (100 - waveTicks) * 0.2F + 2.0F; // 圈越大半径越大
-            for (int i = 0; i < 360; i += 5) { // 渲染圆形粒子圈
+        if (waveTicks % 10 == 0) {
+            float radius = (100 - waveTicks) * 0.2F + 2.0F;
+            for (int i = 0; i < 360; i += 5) {
                 double rad = Math.toRadians(i);
                 double px = this.getX() + Math.cos(rad) * radius;
                 double pz = this.getZ() + Math.sin(rad) * radius;
@@ -234,19 +332,13 @@ public class DemonWhaleEntity extends Monster {
                 ((ServerLevel)this.level()).sendParticles(ParticleTypes.BUBBLE, px, this.getY() + 0.5D, pz, 1, 0.1, 0.1, 0.1, 0.01D);
             }
             List<Player> targets = this.level().getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(radius));
-            for (Player p : targets) {
-                p.hurt(this.damageSources().mobAttack(this), 4.0F);
-            }
+            for (Player p : targets) { p.hurt(this.damageSources().mobAttack(this), 4.0F); }
         }
     }
 
-    // --- 技能 3：跃起 (Leap Attack) ---
     private void executeLeap() {
-
         this.setDeltaMovement(this.getDeltaMovement().add(0, 2.5D, 0));
-
         this.level().broadcastEntityEvent(this, (byte)60);
-
         this.level().getServer().tell(new TickTask(this.level().getServer().getTickCount() + 20, () -> {
             if (this.isAlive()) {
                 ((ServerLevel)this.level()).sendParticles(ParticleTypes.EXPLOSION_EMITTER, this.getX(), this.getY(), this.getZ(), 10, 3, 0.5, 3, 0.1D);
@@ -254,8 +346,7 @@ public class DemonWhaleEntity extends Monster {
                 List<Player> targets = this.level().getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(20.0D));
                 for (Player p : targets) {
                     p.hurt(this.damageSources().mobAttack(this), 15.0F);
-                    double dx = p.getX() - this.getX();
-                    double dz = p.getZ() - this.getZ();
+                    double dx = p.getX() - this.getX(); double dz = p.getZ() - this.getZ();
                     p.knockback(2.0D, -dx, -dz);
                 }
             }
@@ -267,8 +358,6 @@ public class DemonWhaleEntity extends Monster {
         super.tick();
         if (!this.level().isClientSide) {
             this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
-        }
-        if (!this.level().isClientSide) {
             float currentScale = getVisualScale();
             if (currentScale != lastScale) {
                 this.refreshDimensions();
@@ -281,40 +370,38 @@ public class DemonWhaleEntity extends Monster {
                 if (this.navigation != this.groundNav) this.navigation = this.groundNav;
                 if (this.moveControl != this.landMoveControl) this.moveControl = this.landMoveControl;
             }
-        }
-        if (this.level().isClientSide()) {
+        } else {
             setupAnimationStates();
         }
-    }
-
-    @Override
-    public EntityDimensions getDimensions(Pose pPose) {
-        float scale = getVisualScale();
-        return super.getDimensions(pPose).scale(scale);
     }
 
     private void setupAnimationStates() {
         if (this.level().isClientSide()) {
             this.walkAnimationState.startIfStopped(this.tickCount);
+            if (this.isAttacking()) this.attackAnimationState.startIfStopped(this.tickCount);
+            else this.attackAnimationState.stop();
         }
     }
 
     @Override
-    public void startSeenByPlayer(ServerPlayer player) {
-        super.startSeenByPlayer(player);
-        this.bossEvent.addPlayer(player);
+    public void baseTick() {
+        super.baseTick();
+        if (this.isAlive() && !this.isInWater()) { this.setAirSupply(300); }
+        if (!this.level().isClientSide) {
+            boolean inWater = this.isInWater();
+            if (inWater && this.navigation != this.waterNav) {
+                this.navigation.stop(); this.navigation = this.waterNav; this.moveControl = this.aquaticMoveControl;
+            } else if (!inWater && this.navigation != this.groundNav) {
+                this.navigation.stop(); this.navigation = this.groundNav; this.moveControl = this.landMoveControl;
+            }
+        }
     }
 
     @Override
-    public void stopSeenByPlayer(ServerPlayer player) {
-        super.stopSeenByPlayer(player);
-        this.bossEvent.removePlayer(player);
-    }
-
-    @Override
-    public void setCustomName(@Nullable Component name) {
-        super.setCustomName(name);
-        this.bossEvent.setName(this.getDisplayName());
+    protected PathNavigation createNavigation(Level level) {
+        this.waterNav = new WaterBoundPathNavigation(this, level);
+        this.groundNav = new GroundPathNavigation(this, level);
+        return this.groundNav;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -326,50 +413,28 @@ public class DemonWhaleEntity extends Monster {
     }
 
     @Override
-    protected void registerGoals() {
-        this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.2D, false));
-        this.goalSelector.addGoal(3, new RandomSwimmingGoal(this, 1.0D, 40));
-        this.goalSelector.addGoal(4, new RandomStrollGoal(this, 0.8D, 60));
-        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
-    }
+    protected void dropCustomDeathLoot(DamageSource source, int lootingMultiplier, boolean killedByPlayer) {
+        super.dropCustomDeathLoot(source, lootingMultiplier, killedByPlayer);
+        if (killedByPlayer) {
+            ItemStack neidanStack = new ItemStack(ModItems.NEIDAN6.get());
+            int min = 5; int max = 30;
+            int count = min + this.random.nextInt(max - min + 1);
+            neidanStack.setCount(count);
+            neidanStack.getOrCreateTag().putString("Quality", "ZHEN");
+            neidanStack.getOrCreateTag().putString("Source", "DemonWhale");
+            ItemEntity neidanEntity = this.spawnAtLocation(neidanStack);
+            if (neidanEntity != null) neidanEntity.setGlowingTag(true);
 
-    @Override
-    public boolean isSensitiveToWater() {
-        return false; // 对水不敏感
-    }
+            ItemStack huizhangStack = new ItemStack(ModItems.DEMON_WHALE_BADGE.get());
+            ItemEntity badgeEntity = this.spawnAtLocation(huizhangStack);
+            if (badgeEntity != null) badgeEntity.setGlowingTag(true);
 
-    @Override
-    protected PathNavigation createNavigation(Level level) {
-        this.waterNav = new WaterBoundPathNavigation(this, level);
-        this.groundNav = new GroundPathNavigation(this, level);
-        return this.groundNav;
-    }
-
-    @Override
-    public boolean canBreatheUnderwater() {
-        return true; // 水下呼吸
-    }
-
-    @Override
-    public void baseTick() {
-        int i = this.getAirSupply();
-        super.baseTick();
-        if (this.isAlive() && !this.isInWater()) {
-            this.setAirSupply(300);
-        }
-        if (!this.level().isClientSide) {
-            // 只有当状态真正改变且移动停止时才强制重置导航，减少抽搐
-            boolean inWater = this.isInWater();
-            if (inWater && this.navigation != this.waterNav) {
-                this.navigation.stop(); // 切换前先停下当前路径
-                this.navigation = this.waterNav;
-                this.moveControl = this.aquaticMoveControl;
-            } else if (!inWater && this.navigation != this.groundNav) {
-                this.navigation.stop();
-                this.navigation = this.groundNav;
-                this.moveControl = this.landMoveControl;
-            }
+            ItemStack kuangwuStack = new ItemStack(ModItems.COLD_HEARTED_STEEL_INGOT.get());
+            int kuangwumin = 3; int kuangwumax = 10;
+            int count1 = kuangwumin + this.random.nextInt(kuangwumax - kuangwumin + 1);
+            kuangwuStack.setCount(count1);
+            ItemEntity kuangwuEntity = this.spawnAtLocation(kuangwuStack);
+            if (kuangwuEntity != null) kuangwuEntity.setGlowingTag(true);
         }
     }
 
@@ -382,9 +447,19 @@ public class DemonWhaleEntity extends Monster {
     }
 
     @Override
-    public boolean isPushedByFluid() {
-        return false;
-    }
+    public EntityDimensions getDimensions(Pose pPose) { return super.getDimensions(pPose).scale(getVisualScale()); }
+    @Override
+    public void startSeenByPlayer(ServerPlayer player) { super.startSeenByPlayer(player); this.bossEvent.addPlayer(player); }
+    @Override
+    public void stopSeenByPlayer(ServerPlayer player) { super.stopSeenByPlayer(player); this.bossEvent.removePlayer(player); }
+    @Override
+    public void setCustomName(@Nullable Component name) { super.setCustomName(name); this.bossEvent.setName(this.getDisplayName()); }
+    @Override
+    public boolean isSensitiveToWater() { return false; }
+    @Override
+    public boolean canBreatheUnderwater() { return true; }
+    @Override
+    public boolean isPushedByFluid() { return false; }
 
     @Override
     public void travel(Vec3 travelVector) {

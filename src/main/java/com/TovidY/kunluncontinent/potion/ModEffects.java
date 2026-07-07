@@ -1,6 +1,7 @@
 package com.TovidY.kunluncontinent.potion;
 
 import com.TovidY.kunluncontinent.KlMain;
+import com.TovidY.kunluncontinent.potion.recipespotion.TheGazeOfGodEffect;
 import com.TovidY.kunluncontinent.potion.skilleffect.*;
 import com.TovidY.kunluncontinent.potion.skilleffect.wuhun.BhuanjiEffect;
 import com.TovidY.kunluncontinent.potion.skilleffect.wuhun.LiejinhuEffect;
@@ -37,6 +38,9 @@ public class ModEffects {
     public static final RegistryObject<MobEffect> BHUANGJI = REGISTER.register("bhuangji", BhuanjiEffect::new);
     public static final RegistryObject<MobEffect> LIEJINHU = REGISTER.register("liejinhu", LiejinhuEffect::new);
     public static final RegistryObject<MobEffect> PANSHIJUYUAN = REGISTER.register("panshijuyuan", PanshijuYuanEffect::new);
+
+    //神之凝视
+    public static final RegistryObject<MobEffect> THE_GAZE_OF_GOD = REGISTER.register("the_gaze_of_god", TheGazeOfGodEffect::new);
 
     public static void register(IEventBus eventBus) {
         REGISTER.register(eventBus);
