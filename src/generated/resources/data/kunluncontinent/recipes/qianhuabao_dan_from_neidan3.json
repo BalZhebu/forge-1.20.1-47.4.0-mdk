@@ -1,7 +1,7 @@
 {
   "type": "kunlun:liandan",
   "cookTime": 400,
-  "energyCost": 6,
+  "energyCost": 25,
   "ingredient": {
     "item": "kunluncontinent:neidan3"
   },

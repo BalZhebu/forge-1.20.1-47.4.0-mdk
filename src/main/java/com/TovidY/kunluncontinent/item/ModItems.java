@@ -366,6 +366,7 @@ public class ModItems {
     public static final RegistryObject<Item> HUNHUAN_STORAGE_FIVE = ITEMS.register("hunhuan_storage_five",
             () -> new HunHuanStorageItem(new Item.Properties().stacksTo(1).fireResistant(), 1, 120000000));
 
+
     //聚魂瓶
     public static final RegistryObject<Item> SOUL_GATHERING_BOTTLE_0 = ITEMS.register("soul_gathering_bottle_0",
             () -> new SoulGatheringBottleItem(new Item.Properties().stacksTo(1),1).setMaxnengliang(1024));

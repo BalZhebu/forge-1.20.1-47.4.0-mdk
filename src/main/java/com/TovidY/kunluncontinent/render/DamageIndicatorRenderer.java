@@ -12,13 +12,13 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.joml.Matrix4f;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
 public class DamageIndicatorRenderer {
-    private static final List<IndicatorInstance> INDICATORS = new ArrayList<>();
+    private static final List<IndicatorInstance> INDICATORS = new CopyOnWriteArrayList<>();
     public static class IndicatorInstance {
         public final String text;
         public final int color;

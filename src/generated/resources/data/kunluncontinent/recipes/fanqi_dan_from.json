@@ -1,7 +1,7 @@
 {
   "type": "kunlun:liandan",
   "cookTime": 150,
-  "energyCost": 100,
+  "energyCost": 50,
   "ingredient": {
     "item": "kunluncontinent:fanqicao_item"
   },

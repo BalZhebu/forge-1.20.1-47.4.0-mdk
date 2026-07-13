@@ -34,6 +34,9 @@ public class ModUiRenderHandler {
     private static final int BAR_X = 58;
     private static final int BAR_W = 87;
 
+    public static int TEST_X = 48;
+    public static int TEST_Y = 100;
+
     private static final int HEALTH_Y = 30;
     private static final int FOOD_Y = 42;
     private static final int JINGSHEN_Y = 53;
@@ -186,16 +189,20 @@ public class ModUiRenderHandler {
             guiGraphics.drawString(Minecraft.getInstance().font, expInfo, centerTargetX2 - (textWidthE / 2), EXP_Y * 2, 0x00FF00, true);
             pose.popPose();
 
-            // 等级圈内数字
+            // 等级渲染（最终精简版）
             pose.pushPose();
             float levelScale = 0.7f;
-            int screenWidth = event.getWindow().getGuiScaledWidth();
-            int screenHeight = event.getWindow().getGuiScaledHeight();
-            pose.translate((screenWidth / 2 - 12) + 10, (screenHeight - 48 - 2) + 10, 0);
             pose.scale(levelScale, levelScale, 1.0f);
-            guiGraphics.drawCenteredString(Minecraft.getInstance().font, String.valueOf(capability.getDengji()), -406, -316, 0xFFD700);
+            guiGraphics.drawCenteredString(
+                    Minecraft.getInstance().font,
+                    String.valueOf(capability.getDengji()),
+                    TEST_X,
+                    TEST_Y,
+                    0xFFD700
+            );
             pose.popPose();
         });
+
     }
 
     private static String formatBigNum(float value) {

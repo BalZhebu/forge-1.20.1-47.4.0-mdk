@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.compat.jei;
 
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.block.ModBlocks;
+import com.TovidY.kunluncontinent.item.ModItems;
 import com.TovidY.kunluncontinent.recipe.liandanlurecipe.LiandanRecipe;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -38,8 +39,8 @@ public class JEIKlCategory implements IRecipeCategory<LiandanRecipe> {
     private final IDrawableAnimated animatedFlame;
 
     public JEIKlCategory(IGuiHelper helper) {
-        this.background = helper.drawableBuilder(TEXTURE, 0, 0, 188, 80)
-                .setTextureSize(188, 80).build();
+        this.background = helper.drawableBuilder(TEXTURE, 0, 0, 188, 100)
+                .setTextureSize(188, 100).build();
 
         this.icon = helper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ModBlocks.LIANDANLU1.get()));
         this.staticFlame = helper.createDrawable(PROGRESS_EMPTY, 0, 0, 32, 32);
@@ -75,17 +76,28 @@ public class JEIKlCategory implements IRecipeCategory<LiandanRecipe> {
         int flameY = 30;
         this.staticFlame.draw(guiGraphics, flameX, flameY);
         this.animatedFlame.draw(guiGraphics, flameX, flameY);
-        guiGraphics.drawString(Minecraft.getInstance().font,Component.translatable("丹渣块降低丹药出现破碎的概率"),5,63,0xFFFFFF,true);
+
+        // 3. 渲染能量消耗信息 (原位)
+        String energyText = "本次炼制预计消耗: " + recipe.getEnergyCost() + " / 次";
+        guiGraphics.drawString(Minecraft.getInstance().font, energyText, 5, 66, 0xFFFF55, true);
+
+        // 4. 下移说明文字
+        guiGraphics.drawString(Minecraft.getInstance().font, Component.translatable("丹渣块降低丹药出现破碎的概率"), 5, 83, 0xFFFFFF, true);
     }
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, LiandanRecipe recipe, IFocusGroup focuses) {
+
         for (int i = 0; i < 5; i++) {
             builder.addSlot(RecipeIngredientRole.INPUT, 8 + (i * 18), 8)
                     .addIngredients(recipe.getIngredient());
         }
+
         builder.addSlot(RecipeIngredientRole.CATALYST, 9, 42)
                 .addItemStack(new ItemStack(ModBlocks.DROSS_BLOCK.get().asItem()));
+
+        builder.addSlot(RecipeIngredientRole.CATALYST, 35, 42)
+                .addIngredients(VanillaTypes.ITEM_STACK, ModItems.JUHUNPING.stream().map(reg -> new ItemStack(reg.get())).toList());
 
         builder.addSlot(RecipeIngredientRole.OUTPUT, 109, 9)
                 .addItemStack(recipe.getResultItem(Minecraft.getInstance().level.registryAccess()));

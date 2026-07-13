@@ -24,6 +24,8 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.lang.reflect.Field;
+
 // 注册能力提供者
 
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)  // 改为 FORGE 总线
@@ -97,6 +99,15 @@ public class CapabilityRegistryHandler {
                     else if (nianxian >= 100) colorPrefix = "§e";
                     Component newName = Component.literal(rawName + "-----" + colorPrefix + nianxian + "年");
                     entity.setCustomName(newName);
+
+                    try {
+                        Field persistenceField = Mob.class.getDeclaredField("persistenceRequired");
+                        persistenceField.setAccessible(true);
+                        persistenceField.set(entity, false);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
                 }
                 SynsAPI.synsEntityAttribute(entity);
             });
