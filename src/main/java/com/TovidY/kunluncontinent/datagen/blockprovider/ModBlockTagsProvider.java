@@ -52,6 +52,11 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(ModBlocks.LIANDANLU8.get())
                 .add(ModBlocks.LIANDANLU9.get())
                 .add(ModBlocks.STONE_STAMP.get())
+                .add(ModBlocks.SPIRIT_GATHERING_ALTAR.get())
+                .add(ModBlocks.SPIRIT_GATHERING_STONE.get())
+                .add(ModBlocks.SPIRIT_GATHERING_STONE_0.get())
+                .add(ModBlocks.SPIRIT_GATHERING_STONE_1.get())
+                .add(ModBlocks.SPIRIT_GATHERING_STONE_2.get())
                 //矿物块
                 .add(ModBlocks.GRAY_BLOCK.get())
                 .add(ModBlocks.CLOUD_PATTERNED_BRONZE_BLOCK.get())
@@ -85,6 +90,12 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(ModBlocks.SUNKEN_SILVER_BLOCK.get())
                 .add(ModBlocks.COLD_HEARTED_STEEL_BLOCK.get())
                 .add(ModBlocks.RINSEI_BLOCK.get())
+                .add(ModBlocks.SPIRIT_GATHERING_ALTAR.get())
+                .add(ModBlocks.SPIRIT_GATHERING_STONE.get())
+                .add(ModBlocks.SPIRIT_GATHERING_STONE_0.get())
+                .add(ModBlocks.SPIRIT_GATHERING_STONE_1.get())
+                .add(ModBlocks.SPIRIT_GATHERING_STONE_2.get())
+
         ;
 
         tag(Tags.Blocks.NEEDS_NETHERITE_TOOL)

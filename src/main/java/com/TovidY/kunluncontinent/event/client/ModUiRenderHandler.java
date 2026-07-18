@@ -47,6 +47,7 @@ public class ModUiRenderHandler {
         Player entity = Minecraft.getInstance().player;
         if (entity == null) return;
 
+        // 幻境剩余时间渲染（不随 UI 缩放平移）
         int seconds = ClientTimerManager.getRemainingSeconds();
         if (seconds > 0 && !Minecraft.getInstance().options.hideGui) {
             GuiGraphics guiGraphics = event.getGuiGraphics();
@@ -64,34 +65,35 @@ public class ModUiRenderHandler {
             guiGraphics.drawString(font, finalComponent, x, y, 0xFFFFFF, true);
         }
 
-        boolean[] isUiOpen = {true};
-        int[] offsetY = {0};
+        // 背景图标（tubza）渲染
         entity.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
-            isUiOpen[0] = cap.isConfigOpen(6);
-            offsetY[0] = cap.getUiOffsetY();
+            if (cap.isConfigOpen(6)) {
+                PoseStack pose = event.getGuiGraphics().pose();
+                pose.pushPose();
+
+                // 应用平移与缩放
+                pose.translate(0.0f, (float) cap.getUiOffsetY(), 0.0f);
+                float scale = cap.getUiScale();
+                pose.scale(scale, scale, 1.0f);
+
+                RenderSystem.disableDepthTest();
+                RenderSystem.depthMask(false);
+                RenderSystem.enableBlend();
+                RenderSystem.setShader(GameRenderer::getPositionTexShader);
+                RenderSystem.setShaderColor(1, 1, 1, 1);
+
+                event.getGuiGraphics().blit(tubza, 2, 1, 170, 104, 0, 0, 256, 128, 256, 128);
+
+                RenderSystem.depthMask(true);
+                RenderSystem.defaultBlendFunc();
+                RenderSystem.enableDepthTest();
+                RenderSystem.disableBlend();
+
+                pose.popPose();
+            }
         });
 
-        if (isUiOpen[0]) {
-            PoseStack pose = event.getGuiGraphics().pose();
-            pose.pushPose();
-            pose.translate(0.0f, (float) offsetY[0], 0.0f);
-
-            RenderSystem.disableDepthTest();
-            RenderSystem.depthMask(false);
-            RenderSystem.enableBlend();
-            RenderSystem.setShader(GameRenderer::getPositionTexShader);
-            RenderSystem.setShaderColor(1, 1, 1, 1);
-
-            event.getGuiGraphics().blit(tubza, 2, 1, 170, 104, 0, 0, 256, 128, 256, 128);
-
-            RenderSystem.depthMask(true);
-            RenderSystem.defaultBlendFunc();
-            RenderSystem.enableDepthTest();
-            RenderSystem.disableBlend();
-
-            pose.popPose();
-        }
-
+        // 打坐/修炼时间文本
         boolean isMeditating = entity.getVehicle() instanceof net.minecraft.world.entity.decoration.ArmorStand;
         if (isMeditating) {
             int x = event.getWindow().getGuiScaledWidth();
@@ -113,15 +115,21 @@ public class ModUiRenderHandler {
         NamedGuiOverlay overlay = event.getOverlay();
         String path = overlay.id().getPath();
 
-        // 兼容写法
+        // 替换原版血条/状态栏
         if (path.equals("player_health") || path.contains("health")) {
             event.setCanceled(true);
             player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
                 if (cap.isConfigOpen(6)) {
                     PoseStack pose = event.getGuiGraphics().pose();
                     pose.pushPose();
+
+                    // 应用平移与缩放
                     pose.translate(0.0f, (float) cap.getUiOffsetY(), 0.0f);
+                    float scale = cap.getUiScale();
+                    pose.scale(scale, scale, 1.0f);
+
                     renderPlayerHealth(event);
+
                     pose.popPose();
                 }
             });
@@ -169,7 +177,7 @@ public class ModUiRenderHandler {
             int uWidthE = (int) (127 * Math.min(1.0, expRatio));
             guiGraphics.blit(exp, BAR_X, EXP_Y, currentWidthE, 4, 0, 0, uWidthE, 4, 127, 4);
 
-            // 缩放文字
+            // 缩放文字（这里继承外部整体缩放的基础上再缩小一倍 0.5f）
             pose.pushPose();
             pose.scale(0.5f, 0.5f, 1.0f);
             String healthInfo = "生命：" + formatBigNum(player.getHealth()) + "/" + formatBigNum(player.getMaxHealth());
@@ -189,7 +197,7 @@ public class ModUiRenderHandler {
             guiGraphics.drawString(Minecraft.getInstance().font, expInfo, centerTargetX2 - (textWidthE / 2), EXP_Y * 2, 0x00FF00, true);
             pose.popPose();
 
-            // 等级渲染（最终精简版）
+            // 等级渲染
             pose.pushPose();
             float levelScale = 0.7f;
             pose.scale(levelScale, levelScale, 1.0f);
@@ -202,7 +210,6 @@ public class ModUiRenderHandler {
             );
             pose.popPose();
         });
-
     }
 
     private static String formatBigNum(float value) {

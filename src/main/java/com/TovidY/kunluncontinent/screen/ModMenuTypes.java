@@ -14,6 +14,8 @@ import com.TovidY.kunluncontinent.screen.guide.GuidBookScreen;
 import com.TovidY.kunluncontinent.screen.guide.GuideBookMenu;
 import com.TovidY.kunluncontinent.screen.liandanlugui.LiandanluMenu;
 import com.TovidY.kunluncontinent.screen.liandanlugui.LiandanluScreen;
+import com.TovidY.kunluncontinent.screen.spiritgatheringaltar.SpiritGatheringaltarMenu;
+import com.TovidY.kunluncontinent.screen.spiritgatheringaltar.SpiritGatheringaltarScreen;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
@@ -51,12 +53,16 @@ public class ModMenuTypes {
     public static final RegistryObject<MenuType<ShenkaoMenu>> SHENKAO_MENU =
             registerMenuType("shenkao_menu", ShenkaoMenu::new);
 
+    //配置代码
     public static final RegistryObject<MenuType<HunhuanMenu>> CONFIG_MENU =
             registerMenuType("config_menu", HunhuanMenu::new);
 
     //引导书
     public static final RegistryObject<MenuType<GuideBookMenu>> GUIDE_BOOK_MENU =
             registerMenuType("guide_book_menu", GuideBookMenu::new);
+
+    public static final RegistryObject<MenuType<SpiritGatheringaltarMenu>> SPIRITGATHERING_MENU =
+            registerMenuType("spiritgathering_menu",SpiritGatheringaltarMenu::new);
 
     private static <T extends AbstractContainerMenu> RegistryObject<MenuType<T>> registerMenuType(String name, IContainerFactory<T> factory) {
         return MENUS.register(name, () -> IForgeMenuType.create(factory));
@@ -78,6 +84,7 @@ public class ModMenuTypes {
             MenuScreens.register(ModMenuTypes.SHENKAO_MENU.get(), ShenkaoScreen::new);
 
             MenuScreens.register(ModMenuTypes.CONFIG_MENU.get(), ConfigScreen::new);
+            MenuScreens.register(ModMenuTypes.SPIRITGATHERING_MENU.get(), SpiritGatheringaltarScreen::new);
 
         }
     }

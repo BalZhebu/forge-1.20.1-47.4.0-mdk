@@ -20,6 +20,15 @@ public class ModZhCnLangProvider extends LanguageProvider {
         //方块类
         add(ModBlocks.STONE_STAMP.get(), "挑战石碑");
         add(ModBlocks.SUMMON_TOWER.get(), "战斗石碑");
+        add(ModBlocks.SPIRIT_GATHERING_ALTAR.get(),"§e聚灵台");
+        add(ModBlocks.SPIRIT_GATHERING_STONE.get(),"空的聚灵基柱" );
+        add(ModBlocks.SPIRIT_GATHERING_STONE_0.get(), "§5低阶聚灵基柱");
+        add(ModBlocks.SPIRIT_GATHERING_STONE_1.get(), "§c中阶聚灵基柱");
+        add(ModBlocks.SPIRIT_GATHERING_STONE_2.get(), "§e高阶聚灵基柱");
+
+        add("spirit_gathering_stone_0_mees","放在聚灵台半径2格内");
+        add("spirit_gathering_stone_1_mees","聚灵基柱出现粒子特效代表链接成功");
+        add("spirit_gathering_stone_2_mees","每种等阶的聚灵基柱拥有不同的强度增幅");
 
         add(ModBlocks.GRAY_BLOCK.get(), "§7灰铁块");
         add(ModBlocks.CLOUD_PATTERNED_BRONZE_BLOCK.get(), "§5云纹铜块");
@@ -130,6 +139,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
                 "\n§l魂核系统：§r魂核是魂环分解后或者魂环消失后生成的产物，，会随着时间流逝消失，可用聚魂瓶收集起来。" +
                 "\n§l重修&转世系统：§r玩家在主世界自然生成的地狱门遗迹可找到生成在地狱岩上的彼岸花，将彼岸花磨成粉可炼制忘川渡buff，喝下后找到重修遗迹，再自己身上有buff的情况下右键重修台就会遭受99道雷劫，但记住！雷劫不致命！请不要用任何手段恢复血量，因为重修需要玩家血量到达20以内才能成功转世，若99道天雷后你血量依旧健康，那么你的转世重修就会失败。重修会使玩家的武魂、魂环、属性、技能配置等全部重置，玩家拥有什么武魂就会给与对应的武魂果实。" +
                 "\n§l重修遗迹：§r通过重修之眼可找到重修遗迹，重修之眼使用方法和末影之眼一致。" +
+                "\n§l聚灵台阵：§r将聚灵台放置中心，半径2格也就是范围5*5*2的范围内放置聚魂基石柱可解锁其中的槽位，根据下方的强度达到每多少秒恢复能量值，最多可吃到8个聚魂基石柱的增幅，多余的根据等阶高的优先。" +
                 "\n§l武魂果实：§r武魂果实将在玩家转生后会根据玩家拥有的武魂将武魂果实给予给玩家，吃下武魂果实即可觉醒对应的武魂，玩家最多觉醒3个武魂。" +
                 "\n§l内丹系统：§r击杀不同年限的生物会掉落不同品质的内丹，内丹可以炼制经验丹药，不同等级的炼丹炉炼制速度不一样，例如1级炼丹炉炼制1级丹药需要10秒，而炼制9级丹药需要10秒的100倍的时间。" +
                 "\n§l丹药品级系统：§r不同品质的内丹炼制出的丹药品质不一样，使用时的倍率不一样，详情自己炼制查看。炼制时可能出现丹渣品质的丹药，放入合成台一个丹渣品质丹药可合成一个丹渣，丹渣9个合成一个丹渣块，可减少炼制丹药时丹渣的概率。" +
@@ -509,6 +519,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("阶段等级","§c请先升级到下一个等级阶段再吸收魂环（10的倍数）");
         add("等级不足","等级不足！当前等级无法承载更多魂环。");
         add("需要吸收魂环","需要吸收魂环才能继续突破");
+        add("成功吸收魂环","成功吸收魂环");
 
         //药水类
         add(ModEffects.ARMOR_PIERCING.get(),"§9破甲");

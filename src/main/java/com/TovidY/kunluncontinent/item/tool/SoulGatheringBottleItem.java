@@ -152,4 +152,10 @@ public class SoulGatheringBottleItem extends Item implements Nengliang {
         this.maxnengliang = maxnengliang;
         return this;
     }
+
+    public int getMaxnengliang(ItemStack stack) {
+        return this.maxnengliang;
+    }
+
+
 }

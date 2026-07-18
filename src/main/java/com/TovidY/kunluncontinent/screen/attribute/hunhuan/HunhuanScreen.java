@@ -21,7 +21,7 @@ import net.minecraft.world.item.ItemStack;
 public class HunhuanScreen extends AbstractContainerScreen<HunhuanMenu> {
     // 资源路径
     private static final ResourceLocation GUI_TEXTURE = new ResourceLocation(KlMain.MOD_ID, "textures/screens/hunhuan_gui.png");
-    private static final ResourceLocation HUNHUAN_ICON = new ResourceLocation(KlMain.MOD_ID, "textures/gui/hunhuan.png");
+    private static final ResourceLocation HUNHUAN_ICON = new ResourceLocation(KlMain.MOD_ID, "textures/picture/particletext.png");
 
     // 翻页逻辑变量
     private static final int HUNHUAN_PER_PAGE = 10;

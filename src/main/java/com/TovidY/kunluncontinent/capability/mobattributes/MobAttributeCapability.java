@@ -27,7 +27,7 @@ public class MobAttributeCapability extends CapabilityAttributeBase implements I
 
     private void updateAttributesByNianxian() {
         if (nianxian < 100) {
-            float g = 2 + (float) nianxian / 10 + RANDOM.nextInt(10);
+            float g = 2 + (float) nianxian / 7 + RANDOM.nextInt(10);
             float l = 5 + (float) nianxian / 20;
             applyBaseGrowth(g, l);
         } else if (nianxian < 1000) {

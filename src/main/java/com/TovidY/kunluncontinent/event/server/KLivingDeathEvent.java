@@ -314,6 +314,8 @@ public class KLivingDeathEvent {
             addHunhuanEntity(cap, level, pos);
         }
     }
+
+
     private static void handleGodGlimpse(ServerPlayer player, LivingEntity victim) {
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
             if (cap.getGodName() != null && !cap.getGodName().isEmpty()) {
@@ -402,7 +404,7 @@ public class KLivingDeathEvent {
                         }
                     });
                 }
-            }, 15000); // <-- 【已修改】：15000 毫秒 = 15秒后执行传送
+            }, 15000);
         }
     }
 
@@ -427,4 +429,5 @@ public class KLivingDeathEvent {
         });
         level.addFreshEntity(hunhuan);
     }
+
 }

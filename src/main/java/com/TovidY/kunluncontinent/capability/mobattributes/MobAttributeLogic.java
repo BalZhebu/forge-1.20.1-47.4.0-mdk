@@ -8,6 +8,7 @@ import net.minecraft.world.level.Level;
 import java.util.Random;
 
 //定义怪物生成年限的类
+
 public class MobAttributeLogic {
     private static final Random RANDOM = new Random();
     public static long calculateNianxian(Entity entity) {
@@ -29,13 +30,13 @@ public class MobAttributeLogic {
             maxNianxian = 150000;
         } else if (dimension == Level.END) {
             minNianxian = 1000;
-            maxNianxian = 300000;
+            maxNianxian = 500000;
         } else if (dimension.equals(ModDimensions.POLAR_ICE_REALM_LEVEL_KEY)) {
             minNianxian = 15000;
             maxNianxian = 999999;
         } else {
-            minNianxian = 1;
-            maxNianxian = 1000;
+            minNianxian = 30000;
+            maxNianxian = 990000;
         }
         long min = (long) (minNianxian + factor * ((maxNianxian - minNianxian) * 0.1));
         long max = (long) (minNianxian + factor * (maxNianxian - minNianxian));

@@ -5,6 +5,7 @@ import com.TovidY.kunluncontinent.Init.ModLootModifiers;
 import com.TovidY.kunluncontinent.advancement.ModTriggers;
 import com.TovidY.kunluncontinent.block.ModBlockEntities;
 import com.TovidY.kunluncontinent.block.ModBlocks;
+import com.TovidY.kunluncontinent.block.blockentity.SpiritGatheringAltarRenderer;
 import com.TovidY.kunluncontinent.block.blockentity.UnderwaterAltarRenderer;
 import com.TovidY.kunluncontinent.godclass.GodRegistry;
 import com.TovidY.kunluncontinent.item.tool.DecompositionItem;
@@ -24,9 +25,12 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Field;
 import java.util.Random;
@@ -35,6 +39,7 @@ import java.util.Random;
 public class KlMain {
     public static final String MOD_ID = "kunluncontinent";
     public static final Random random = new Random();
+
 
     public KlMain()
     {
@@ -51,7 +56,7 @@ public class KlMain {
 
         ModLootModifiers.register(modEventBus);
 
-        net.minecraftforge.fml.ModLoadingContext.get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.COMMON, KLConfig.CONFIG);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, KLConfig.CONFIG);
 
         ModMenuTypes.register(modEventBus);
 
@@ -84,6 +89,8 @@ public class KlMain {
         public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
             event.registerBlockEntityRenderer(ModBlockEntities.UNDERWATER_ALTAR_TILE.get(),
                     UnderwaterAltarRenderer::new);
+            event.registerBlockEntityRenderer(ModBlockEntities.SPIRIT_GATHERING_ALTAR_BE.get(),
+                    SpiritGatheringAltarRenderer::new);
         }
     }
 

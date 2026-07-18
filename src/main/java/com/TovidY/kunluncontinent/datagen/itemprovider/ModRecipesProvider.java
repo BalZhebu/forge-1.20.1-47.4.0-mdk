@@ -329,6 +329,64 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .unlockedBy("has_polar_ice_portal_block_peifang)", has(ModItems.EXTREME_COLD.get()))
                 .save(pWriter);
 
+        //聚灵台
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.SPIRIT_GATHERING_ALTAR.get())
+                .pattern("ZXZ")
+                .pattern("X X")
+                .pattern("XXX")
+                .define('X', ModBlocks.GRAY_BLOCK.get())
+                .define('Z', ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get())
+                .unlockedBy("has_spirit_gathering_altar", has(ModBlocks.SPIRIT_GATHERING_ALTAR.get()))
+                .save(pWriter);
+
+        //空的基石柱
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.SPIRIT_GATHERING_STONE.get())
+                .pattern("CVC")
+                .pattern("XZX")
+                .pattern("ZXZ")
+                .define('C', ModBlocks.RED_FIRE_BLOCK.get())
+                .define('X', ModBlocks.CLOUD_PATTERNED_BRONZE_BLOCK.get())
+                .define('Z', ModBlocks.GRAY_BLOCK.get())
+                .define('V', ModItems.LOW_HUNHUAN_STORAGE_CORE.get())
+                .unlockedBy("has_spirit_gathering_altar1", has(ModBlocks.SPIRIT_GATHERING_STONE.get()))
+                .save(pWriter);
+
+        //低阶基石柱
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.SPIRIT_GATHERING_STONE_0.get())
+                .pattern("CVC")
+                .pattern("CZC")
+                .pattern("CXC")
+                .define('Z', ModBlocks.SPIRIT_GATHERING_STONE.get())
+                .define('X', ModBlocks.CLOUD_PATTERNED_BRONZE_BLOCK.get())
+                .define('C', ModBlocks.GRAY_BLOCK.get())
+                .define('V', ModItems.MIDDLE_HUNHUAN_STORAGE_CORE.get())
+                .unlockedBy("has_spirit_gathering_altar2", has(ModBlocks.SPIRIT_GATHERING_STONE_0.get()))
+                .save(pWriter);
+
+        //中阶基石柱
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.SPIRIT_GATHERING_STONE_1.get())
+                .pattern("CVC")
+                .pattern("CZC")
+                .pattern("CXC")
+                .define('Z', ModBlocks.SPIRIT_GATHERING_STONE_0.get())
+                .define('C', ModBlocks.CLOUD_PATTERNED_BRONZE_BLOCK.get())
+                .define('X', ModBlocks.RED_FIRE_BLOCK.get())
+                .define('V', ModItems.HIGH_HUNHUAN_STORAGE_CORE.get())
+                .unlockedBy("has_spirit_gathering_altar3", has(ModBlocks.SPIRIT_GATHERING_STONE_1.get()))
+                .save(pWriter);
+
+        //高阶基石柱
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.SPIRIT_GATHERING_STONE_2.get())
+                .pattern("CVC")
+                .pattern("CZC")
+                .pattern("CXC")
+                .define('Z', ModBlocks.SPIRIT_GATHERING_STONE_1.get())
+                .define('X', ModBlocks.SUNKEN_SILVER_BLOCK.get())
+                .define('C', ModBlocks.RED_FIRE_BLOCK.get())
+                .define('V', ModItems.TOP_HUNHUAN_STORAGE_CORE.get())
+                .unlockedBy("has_spirit_gathering_altar4", has(ModBlocks.SPIRIT_GATHERING_STONE_2.get()))
+                .save(pWriter);
+
         //挑战石碑
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.STONE_STAMP.get())
                 .pattern(" X ")

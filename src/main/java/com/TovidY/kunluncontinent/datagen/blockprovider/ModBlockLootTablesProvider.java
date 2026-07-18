@@ -66,6 +66,13 @@ public class ModBlockLootTablesProvider extends BlockLootSubProvider {
         //丹渣
         dropSelf(ModBlocks.DROSS_BLOCK.get());
 
+        //聚灵祭坛
+        dropSelf(ModBlocks.SPIRIT_GATHERING_ALTAR.get());
+        dropSelf(ModBlocks.SPIRIT_GATHERING_STONE.get());
+        dropSelf(ModBlocks.SPIRIT_GATHERING_STONE_0.get());
+        dropSelf(ModBlocks.SPIRIT_GATHERING_STONE_1.get());
+        dropSelf(ModBlocks.SPIRIT_GATHERING_STONE_2.get());
+
         //炼丹炉
         dropSelf(ModBlocks.LIANDANLU1.get());
         dropSelf(ModBlocks.LIANDANLU2.get());

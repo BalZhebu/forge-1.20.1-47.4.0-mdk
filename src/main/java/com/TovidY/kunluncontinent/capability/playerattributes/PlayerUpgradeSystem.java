@@ -154,6 +154,9 @@ public class PlayerUpgradeSystem {
             talentLevel = random.nextInt(3) + 4;
             talentName = "优秀资质";
             color = ChatFormatting.GREEN;
+            bonusHP = 20.0f;
+            bonusAtk = 4.0f;
+            bonusDef = 2.0f;
         } else {
             talentLevel = random.nextInt(4);
             talentName = "废物资质";

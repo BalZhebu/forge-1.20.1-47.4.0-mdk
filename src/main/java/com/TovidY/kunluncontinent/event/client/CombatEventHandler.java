@@ -6,7 +6,6 @@ import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCap
 import com.TovidY.kunluncontinent.potion.ModEffects;
 import com.TovidY.kunluncontinent.render.DamageIndicatorRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -22,24 +21,31 @@ import java.util.Random;
 
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID)
 public class CombatEventHandler {
+
     private static final Random RANDOM = new Random();
 
-    /**
-     * 【全新核心方法】：动态计算玩家在飞行状态下的伤害乘数（也就是剩余伤害百分比）
-     */
-    private static float getFlyingDamageMultiplier(Player player) {
-        if (!player.getAbilities().flying) {
-            return 1.0f;
-        }
-        int level = player.experienceLevel;
+    // ---- 概率/系数常量集中管理，改起来不用满文件找魔法数字 ----
+    private static final float MIANSHANG_PROC_CHANCE = 0.10f;
+    private static final float THORNS_PROC_CHANCE = 0.10f;
+    private static final float THORNS_REFLECT_RATIO = 0.50f;
+    private static final float SPECIAL_EFFECT_CHANCE = 0.10f;
 
-        if (level < 70) {
-            return 0.6f;
-        } else if (level >= 90) {
-            return 0.9f;
-        } else {
-            return 0.6f + (level - 70) * 0.015f;
-        }
+    private static final float EFFECT_TEAR = 0.225f;      // 撕裂
+    private static final float EFFECT_ARMOR_PIERCE = 0.45f; // 破甲
+    private static final float EFFECT_SCORCH = 0.675f;    // 燃烧
+    private static final float EFFECT_DIZZY = 0.9f;       // 震荡
+    // 剩余区间 = 湮灭
+
+    private static float getFlyingDamageMultiplier(Player player) {
+        if (!player.getAbilities().flying) return 1.0f;
+        int level = player.experienceLevel;
+        if (level < 70) return 0.6f;
+        if (level >= 90) return 0.9f;
+        return 0.6f + (level - 70) * 0.015f;
+    }
+
+    private static String fmt(float v) {
+        return String.format("%.1f", v);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)
@@ -48,12 +54,13 @@ public class CombatEventHandler {
         LivingEntity target = event.getEntity();
         if (target == null || !target.isAlive()) return;
 
-        if (attacker instanceof Player player && target.getPersistentData().getBoolean("Skill_MianShang_Available")) {
-            if (RANDOM.nextFloat() < 0.10f) {
-                event.setCanceled(true);
-                processDisplay(player, target, null, "免疫", 0xFFFF0000);
-                return;
-            }
+        // ==================== 免伤判定 ====================
+        if (attacker instanceof Player player
+                && target.getPersistentData().getBoolean("Skill_MianShang_Available")
+                && RANDOM.nextFloat() < MIANSHANG_PROC_CHANCE) {
+            event.setCanceled(true);
+            processDisplay(player, target, null, "免疫", 0xFFFF0000);
+            return;
         }
 
         // ==================== 闪避判定 ====================
@@ -70,7 +77,7 @@ public class CombatEventHandler {
             return;
         }
 
-        // ==================== 伤害计算 ====================
+        // ==================== 基础伤害（飞行系数只在这里乘一次） ====================
         float gongji = ModAttributeAPI.getGongji(attacker);
         float wuchuan = ModAttributeAPI.getWuchuan(attacker);
         float fangyu = ModAttributeAPI.getEffectiveFangyu(target);
@@ -78,17 +85,22 @@ public class CombatEventHandler {
         float effectiveFangyu = Math.max(0, fangyu - wuchuan);
         float reductionFactor = 100f / (100f + effectiveFangyu);
         float baseDamage = (gongji + event.getAmount()) * reductionFactor;
+
+        if (attacker instanceof Player player) {
+            baseDamage *= getFlyingDamageMultiplier(player);
+        }
+
         float finalDamage = baseDamage;
-
         boolean isCrit = false;
-        boolean effectTriggered = false;
 
-        // ==================== 5大特殊特效判定 ====================
-        if (RANDOM.nextFloat() < 0.1f) {
-            effectTriggered = triggerSpecialEffects(attacker, target, baseDamage);
-            if (effectTriggered) {
-                finalDamage = calculateSpecialDamage(attacker, target, baseDamage);
-            }
+        // ==================== 特殊特效判定（返回真实伤害，不再二次计算） ====================
+        Float specialDamage = null;
+        if (RANDOM.nextFloat() < SPECIAL_EFFECT_CHANCE) {
+            specialDamage = triggerSpecialEffects(attacker, target, baseDamage);
+        }
+        boolean effectTriggered = specialDamage != null;
+        if (effectTriggered) {
+            finalDamage = specialDamage;
         }
 
         // ==================== 暴击判定 ====================
@@ -103,50 +115,29 @@ public class CombatEventHandler {
             }
         }
 
-        // ==================== 空战御空法则动态拦截 ====================
-        if (attacker instanceof Player player) {
-            // 乘以我们全新设计的动态等级过渡系数
-            finalDamage = finalDamage * getFlyingDamageMultiplier(player);
-        }
-
         finalDamage = Math.max(0.1f, finalDamage);
         event.setAmount(finalDamage);
         handleLifesteal(attacker, finalDamage);
 
-        // ==================== 普通/暴击伤害消息发送 ====================
-        if (attacker instanceof Player player) {
-            if (!effectTriggered) {
-                String dmgStr = String.format("%.1f", finalDamage);
-                if (isCrit) {
-                    Component msg = Component.literal("§c§l暴击！ §f对 §e" + target.getDisplayName().getString() + " §f造成 §6§l" + dmgStr + " 点伤害");
-                    processDisplay(player, target, msg, "暴击 " + dmgStr, 0xFFFF2222);
-                } else {
-                    Component msg = Component.literal("§7对 §e" + target.getDisplayName().getString() + " §f造成 §f" + dmgStr + " 点伤害");
-                    processDisplay(player, target, msg, dmgStr, 0xFFFFFFFF);
-                }
-            }
-        }
-
-        // ==================== 普通/暴击伤害消息发送 与 【荆棘之体】反伤判定 ====================
+        // ==================== 荆棘反伤 + 伤害飘字（合并为一处，不再重复） ====================
         if (attacker instanceof Player player) {
 
-            if (target.isAlive() && target.getPersistentData().getBoolean("Skill_JingJi_Available")) {
-                if (RANDOM.nextFloat() < 0.10f) {
-                    float reflectDamage = finalDamage * 0.50f;
-                    player.hurt(target.damageSources().mobAttack(target), reflectDamage);
-                    String reflectStr = String.format("%.1f", reflectDamage);
-                    net.minecraft.world.phys.Vec3 playerPos = new net.minecraft.world.phys.Vec3(player.getX(), player.getY() + player.getBbHeight() + 0.2D, player.getZ());
-                    DamageIndicatorRenderer.addIndicator("反伤 " + reflectStr, 0xFFFF2222, playerPos);
-                }
+            if (target.getPersistentData().getBoolean("Skill_JingJi_Available")
+                    && RANDOM.nextFloat() < THORNS_PROC_CHANCE) {
+                float reflectDamage = finalDamage * THORNS_REFLECT_RATIO;
+                player.hurt(target.damageSources().mobAttack(target), reflectDamage);
+                Vec3 playerPos = new Vec3(player.getX(), player.getY() + player.getBbHeight() + 0.2D, player.getZ());
+                DamageIndicatorRenderer.addIndicator("反伤 " + fmt(reflectDamage), 0xFFFF2222, playerPos);
             }
 
             if (!effectTriggered) {
-                String dmgStr = String.format("%.1f", finalDamage);
+                String dmgStr = fmt(finalDamage);
+                String targetName = target.getDisplayName().getString();
                 if (isCrit) {
-                    Component msg = Component.literal("§c§l暴击！ §f对 §e" + target.getDisplayName().getString() + " §f造成 §6§l" + dmgStr + " 点伤害");
+                    Component msg = Component.literal("§c§l暴击！ §f对 §e" + targetName + " §f造成 §6§l" + dmgStr + " 点伤害");
                     processDisplay(player, target, msg, "暴击 " + dmgStr, 0xFFFF2222);
                 } else {
-                    Component msg = Component.literal("§7对 §e" + target.getDisplayName().getString() + " §f造成 §f" + dmgStr + " 点伤害");
+                    Component msg = Component.literal("§7对 §e" + targetName + " §f造成 §f" + dmgStr + " 点伤害");
                     processDisplay(player, target, msg, dmgStr, 0xFFFFFFFF);
                 }
             }
@@ -162,70 +153,59 @@ public class CombatEventHandler {
     }
 
     /**
-     * 特效触发逻辑（同步适配了全新的等级动态飞行削弱）
+     * 返回本次特效造成的“真实最终伤害”；未触发任何特效则返回 null。
+     * 注意：不再在此处直接调用 target.hurt()，避免在当前事件处理未结束时
+     * 对同一目标触发新的 LivingHurtEvent（有递归/双重扣血风险）。
      */
-    private static boolean triggerSpecialEffects(LivingEntity attacker, LivingEntity target, float baseDamage) {
+    private static Float triggerSpecialEffects(LivingEntity attacker, LivingEntity target, float baseDamage) {
         float roll = RANDOM.nextFloat();
         String name = target.getDisplayName().getString();
 
-        // 获取飞行削弱乘数（如果攻击者不是玩家，则返回 1.0f 不影响正常怪物伤害）
-        float flyMultiplier = attacker instanceof Player p ? getFlyingDamageMultiplier(p) : 1.0f;
-
-        if (roll <= 0.225f) { // 1. 撕裂
-            float dmg = baseDamage * 1.5f * flyMultiplier;
-            showEffectMsg(attacker, target, "§7§l撕裂！", name, dmg, "撕裂 " + String.format("%.1f", dmg), 0xFF999999);
-            return true;
-        } else if (roll <= 0.45f) { // 2. 破甲
+        if (roll <= EFFECT_TEAR) {
+            float dmg = baseDamage * 1.5f;
+            showEffectMsg(attacker, target, "§7§l撕裂！", name, dmg, "撕裂 " + fmt(dmg), 0xFF999999);
+            return dmg;
+        } else if (roll <= EFFECT_ARMOR_PIERCE) {
             target.addEffect(new MobEffectInstance(ModEffects.ARMOR_PIERCING.get(), 60, 1));
-            float dmg = baseDamage * 1.4f * flyMultiplier;
-            showEffectMsg(attacker, target, "§9§l破甲！", name, dmg, "破甲 " + String.format("%.1f", dmg), 0xFF5555FF);
-            return true;
-        } else if (roll <= 0.675f) { // 3. 燃烧
+            float dmg = baseDamage * 1.4f;
+            showEffectMsg(attacker, target, "§9§l破甲！", name, dmg, "破甲 " + fmt(dmg), 0xFF5555FF);
+            return dmg;
+        } else if (roll <= EFFECT_SCORCH) {
             target.addEffect(new MobEffectInstance(ModEffects.SCORCHING.get(), 200, 1));
-            float dmg = baseDamage * 1.2f * flyMultiplier;
-            showEffectMsg(attacker, target, "§4§l燃烧！", name, dmg, "燃烧 " + String.format("%.1f", dmg), 0xFFFF5555);
-            return true;
-        } else if (roll <= 0.9f) { // 4. 震荡
+            float dmg = baseDamage * 1.2f;
+            showEffectMsg(attacker, target, "§4§l燃烧！", name, dmg, "燃烧 " + fmt(dmg), 0xFFFF5555);
+            return dmg;
+        } else if (roll <= EFFECT_DIZZY) {
             target.addEffect(new MobEffectInstance(ModEffects.DIZZINESS.get(), 60, 5));
-            float dmg = baseDamage * 1.2f * flyMultiplier;
-            showEffectMsg(attacker, target, "§6§l震荡！", name, dmg, "震荡 " + String.format("%.1f", dmg), 0xFFFFAA00);
-            return true;
-        } else { // 5. 湮灭
+            float dmg = baseDamage * 1.2f;
+            showEffectMsg(attacker, target, "§6§l震荡！", name, dmg, "震荡 " + fmt(dmg), 0xFFFFAA00);
+            return dmg;
+        } else {
+            // 湮灭：不再手动 hurt()，真实伤害交给外层 event.setAmount 统一生效
             float trueDamage = target.getMaxHealth() * 0.2f;
-            DamageSource source = attacker instanceof Player p ? target.damageSources().playerAttack(p) : target.damageSources().mobAttack(attacker);
-            target.hurt(source, trueDamage);
-            showEffectMsg(attacker, target, "§5§l湮灭！", name, trueDamage, "湮灭 " + String.format("%.1f", trueDamage), 0xFFAA00AA);
-            return true;
+            showEffectMsg(attacker, target, "§5§l湮灭！", name, trueDamage, "湮灭 " + fmt(trueDamage), 0xFFAA00AA);
+            return trueDamage;
         }
     }
 
-    private static float calculateSpecialDamage(LivingEntity attacker, LivingEntity target, float base) {
-        return base * 1.3f;
-    }
-
-    private static void showEffectMsg(LivingEntity attacker, LivingEntity target, String prefix, String targetName, float dmg, String indicatorText, int color) {
+    private static void showEffectMsg(LivingEntity attacker, LivingEntity target, String prefix,
+                                      String targetName, float dmg, String indicatorText, int color) {
         if (attacker instanceof Player player) {
-            Component msg = Component.literal(prefix + " §f对 §e" + targetName + " §f造成 §6§l" + String.format("%.1f", dmg) + " 点伤害");
+            Component msg = Component.literal(prefix + " §f对 §e" + targetName + " §f造成 §6§l" + fmt(dmg) + " 点伤害");
             processDisplay(player, target, msg, indicatorText, color);
         }
     }
 
     private static void processDisplay(Player player, LivingEntity target, Component msg, String indicatorText, int color) {
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
-            int mode = cap.getDamageDisplayMode();
-            switch (mode) {
-                case 0:
-                    player.displayClientMessage(msg, true);
-                    break;
-                case 1:
-                    player.displayClientMessage(msg, false);
-                    break;
-                case 2:
+            switch (cap.getDamageDisplayMode()) {
+                case 0 -> player.displayClientMessage(msg, true);
+                case 1 -> player.displayClientMessage(msg, false);
+                case 2 -> {
                     Vec3 spawnPos = new Vec3(target.getX(), target.getY() + target.getBbHeight() + 0.2D, target.getZ());
                     DamageIndicatorRenderer.addIndicator(indicatorText, color, spawnPos);
-                    break;
-                case 3:
-                    break;
+                }
+                default -> { /* 3: 不显示 */ }
             }
         });
     }

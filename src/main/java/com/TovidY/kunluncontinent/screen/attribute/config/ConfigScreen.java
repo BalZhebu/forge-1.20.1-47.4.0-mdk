@@ -16,6 +16,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import org.checkerframework.checker.units.qual.C;
 
 import java.util.List;
 
@@ -39,7 +40,8 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
             new ConfigItem("魂环实体显示", 4),
             new ConfigItem("魂核实体显示", 5),
             new ConfigItem("屏幕UI显示", 6),
-            new ConfigItem("屏幕UI位置", 7)
+            new ConfigItem("屏幕UI位置", 7),
+            new ConfigItem("聚灵物品渲染", 8)
     );
 
     public ConfigScreen(HunhuanMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
@@ -58,36 +60,70 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
         int btnWidth = 100;
         int btnHeight = 20;
 
-        // ==================== 子页面布局逻辑 ====================
+// ==================== 子页面布局逻辑 ====================
         if (this.isOffsetSubPage) {
             this.minecraft.player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
-                int inputWidth = 50;
+                int inputWidth = 40;
                 int elementGap = 4;
-                int subPageY = this.topPos + 65;
+
+                // 将起始 Y 坐标往上拉，留出两行调整按钮的空间
+                int subPageY = this.topPos + 42;
                 int totalRowWidth = (btnWidth * 2) + inputWidth + (elementGap * 2);
                 int subPageStartX = this.leftPos + (this.imageWidth - totalRowWidth) / 2;
+
+                // ----------------- 第一行：上下平移控制 -----------------
                 this.addRenderableWidget(Button.builder(Component.literal("向上平移"), b -> {
                     int val = getInputValue();
-                    NetworkHandler.INSTANCE.sendToServer(new PacketUpdateUIOffset(-val, false));
+                    NetworkHandler.INSTANCE.sendToServer(new PacketUpdateUIOffset(-val));
                     cap.setUiOffsetY(cap.getUiOffsetY() - val);
                 }).bounds(subPageStartX, subPageY, btnWidth, btnHeight).build());
+
                 this.offsetEditBox = new EditBox(this.font, subPageStartX + btnWidth + elementGap, subPageY, inputWidth, btnHeight, Component.literal("偏移值"));
-                this.offsetEditBox.setValue("");
+                this.offsetEditBox.setValue("5"); // 默认步进填 5
                 this.offsetEditBox.setFilter(s -> s.matches("\\d*"));
                 this.addRenderableWidget(this.offsetEditBox);
+
                 this.addRenderableWidget(Button.builder(Component.literal("向下平移"), b -> {
                     int val = getInputValue();
-                    NetworkHandler.INSTANCE.sendToServer(new PacketUpdateUIOffset(val, false));
+                    NetworkHandler.INSTANCE.sendToServer(new PacketUpdateUIOffset(val));
                     cap.setUiOffsetY(cap.getUiOffsetY() + val);
                 }).bounds(subPageStartX + btnWidth + inputWidth + (elementGap * 2), subPageY, btnWidth, btnHeight).build());
 
-                int resetBtnW = 80;
+                // ----------------- 第二行：UI 缩放控制 -----------------
+                int scaleRowY = subPageY + btnHeight + 6;
+
+                // 缩小 (-0.1)
+                this.addRenderableWidget(Button.builder(Component.literal("缩小 UI (-0.1)"), b -> {
+                    float newScale = Math.max(0.2f, (float) (Math.round((cap.getUiScale() - 0.1f) * 10.0) / 10.0));
+                    cap.setUiScale(newScale);
+                    NetworkHandler.INSTANCE.sendToServer(new PacketUpdateUIOffset(newScale));
+                }).bounds(subPageStartX, scaleRowY, btnWidth, btnHeight).build());
+
+                // 重置缩放 1.0x
+                this.addRenderableWidget(Button.builder(Component.literal("重置缩放"), b -> {
+                    cap.setUiScale(1.0f);
+                    NetworkHandler.INSTANCE.sendToServer(new PacketUpdateUIOffset(1.0f));
+                }).bounds(subPageStartX + btnWidth + elementGap, scaleRowY, inputWidth, btnHeight).build());
+
+                // 放大 (+0.1)
+                this.addRenderableWidget(Button.builder(Component.literal("放大 UI (+0.1)"), b -> {
+                    float newScale = Math.min(3.0f, (float) (Math.round((cap.getUiScale() + 0.1f) * 10.0) / 10.0));
+                    cap.setUiScale(newScale);
+                    NetworkHandler.INSTANCE.sendToServer(new PacketUpdateUIOffset(newScale));
+                }).bounds(subPageStartX + btnWidth + inputWidth + (elementGap * 2), scaleRowY, btnWidth, btnHeight).build());
+
+                // ----------------- 第三行：重置与返回 -----------------
+                int resetBtnW = 100;
                 int resetX = this.leftPos + (this.imageWidth - resetBtnW) / 2;
-                this.addRenderableWidget(Button.builder(Component.literal("§c重置位置"), b -> {
+
+                // 一键重置（重置位置与缩放）
+                this.addRenderableWidget(Button.builder(Component.literal("§c重置位置与缩放"), b -> {
                     NetworkHandler.INSTANCE.sendToServer(new PacketUpdateUIOffset(0, true));
                     cap.setUiOffsetY(0);
-                }).bounds(resetX, subPageY + btnHeight + 12, resetBtnW, btnHeight).build());
+                    cap.setUiScale(1.0f);
+                }).bounds(resetX, scaleRowY + btnHeight + 8, resetBtnW, btnHeight).build());
 
+                // 返回菜单
                 this.addRenderableWidget(Button.builder(Component.literal("返回菜单"), b -> {
                     this.isOffsetSubPage = false;
                     this.init();
@@ -155,11 +191,10 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
         super.render(gui, mouseX, mouseY, partialTick);
 
         if (this.isOffsetSubPage) {
-            String subTitle = "§6屏幕UI位置变更§7（只支持修改上下位置）";
+            String subTitle = "§6屏幕UI位置变更§7（只支持修改上下位置和缩放大小）";
             int titleX = this.leftPos + (this.imageWidth - this.font.width(subTitle)) / 2;
             gui.drawString(this.font, subTitle, titleX, this.topPos + 30, 0xFFFFFF, true);
 
-            // 【界面内同步监视器】：实时把当前偏移量渲染在按钮下方，方便玩家参考
             this.minecraft.player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
                 String curOffsetStr = "§7当前累计平移值: §e" + cap.getUiOffsetY() + " §7像素";
                 int curX = this.leftPos + (this.imageWidth - this.font.width(curOffsetStr)) / 2;

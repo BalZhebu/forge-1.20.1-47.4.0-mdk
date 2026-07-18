@@ -8,6 +8,7 @@ import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.level.Level;
 
 //怪物属性生成器API
+
 public interface MonsterCapabilityAPI {
 
     public static MobAttributeCapability genMonsterCapability(Entity entity) {

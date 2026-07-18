@@ -40,6 +40,8 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
     private int requiredCastTick = 0;
     private BaseSkillItem currentCastingSkill = null;
 
+    private float uiScale = 1.0f;
+
     private String godName = "";        // 当前进行的神位ID (如 "sea_god")，为空代表无神考
     private int currentStage = 1;       // 当前神考阶段 (1-9)
     private int taskProgress = 0;       // 当前任务的数值进度 (如杀怪数、提交数)
@@ -157,6 +159,8 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         tag.putLong("configFlags", configFlags);
 
         tag.putInt("UiOffsetY", this.uiOffsetY);
+
+        tag.putFloat("UiScale", this.uiScale);
 
         // 保存神祇系统数据
         tag.putString("GodName", godName);
@@ -283,6 +287,12 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
                 assignedCounts[i+1] = entry.getInt("count");
                 assignedTypes[i+1] = entry.getString("type");
             }
+        }
+
+        if (nbt.contains("UiScale")) {
+            this.uiScale = nbt.getFloat("UiScale");
+        } else {
+            this.uiScale = 1.0f;
         }
 
         if (nbt.contains("HunguSlots")) {
@@ -645,6 +655,15 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         String currentWuhun = getWuhunName();
         if (currentWuhun == null) return 0;
         return selectedSkillIndexMap.getOrDefault(currentWuhun, 0);
+    }
+
+    public float getUiScale() {
+        return this.uiScale;
+    }
+
+    public void setUiScale(float scale) {
+        // 限制在 0.1 ~ 5.0 之间，防止太小看不到或太大爆屏
+        this.uiScale = Math.max(0.1f, Math.min(5.0f, scale));
     }
 
     public void setSelectedSkillSlot(int slot) {

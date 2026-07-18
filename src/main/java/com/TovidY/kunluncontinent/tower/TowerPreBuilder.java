@@ -55,11 +55,11 @@ public class TowerPreBuilder {
         // - net.minecraftforge.api.distmarker.Dist.DEDICATED_SERVER: 纯服务端核心（开服包）
         // - net.minecraftforge.api.distmarker.Dist.CLIENT: 客户端（单人游戏或局域网联机）
         if (net.minecraftforge.fml.loading.FMLEnvironment.dist == net.minecraftforge.api.distmarker.Dist.CLIENT) {
-            TOTAL_TOWERS = 15; // 客户端/局域网：只生成 20 座塔，大幅度减轻卡顿与硬盘开销
-            System.out.println("[昆仑大陆] 检测到当前运行于【客户端内置环境】，为优化本地性能，幻境塔总数缩减至: 15座");
+            TOTAL_TOWERS = 10; // 客户端/局域网：只生成 10 座塔，大幅度减轻卡顿与硬盘开销
+            System.out.println("[昆仑大陆] 检测到当前运行于【客户端内置环境】，幻境塔总数缩减至: 10座");
         } else {
-            TOTAL_TOWERS = 100; // 独立服务器：直接拉满 100 座
-            System.out.println("[昆仑大陆] 检测到当前运行于【独立服务器环境】，开启全量筑造，幻境塔总数: 100座");
+            TOTAL_TOWERS = 50; // 独立服务器：直接拉满 100 座
+            System.out.println("[昆仑大陆] 检测到当前运行于【独立服务器环境】，开启全量筑造，幻境塔总数: 50座");
         }
         // =====================================================================
 
@@ -149,7 +149,7 @@ public class TowerPreBuilder {
 
                 template.placeInWorld(targetLevel, centerPos, centerPos, settings, targetLevel.random, 2);
             } else {
-                System.err.println("[昆仑大陆] 严重错误：未能在 structures 文件夹中找到 tower.nbt 文件！");
+                System.err.println("[昆仑大陆] 严重错误：请联系作者！");
             }
 
         } catch (Exception e) {

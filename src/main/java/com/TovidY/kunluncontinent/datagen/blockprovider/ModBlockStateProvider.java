@@ -168,6 +168,36 @@ import net.minecraftforge.common.data.ExistingFileHelper;
             itemModels().withExistingParent("summon_tower",
                     new ResourceLocation(KlMain.MOD_ID, "block/summon_tower"));
 
+            Block spirit = ModBlocks.SPIRIT_GATHERING_ALTAR.get();
+            simpleBlock(spirit, new ModelFile.UncheckedModelFile(
+                    new ResourceLocation(KlMain.MOD_ID, "block/spirit_gathering_altar")));
+            itemModels().withExistingParent("spirit_gathering_altar",
+                    new ResourceLocation(KlMain.MOD_ID, "block/spirit_gathering_altar"));
+
+            Block stone = ModBlocks.SPIRIT_GATHERING_STONE.get();
+            simpleBlock(stone, new ModelFile.UncheckedModelFile(
+                    new ResourceLocation(KlMain.MOD_ID, "block/spirit_gathering_stone")));
+            itemModels().withExistingParent("spirit_gathering_stone",
+                    new ResourceLocation(KlMain.MOD_ID, "block/spirit_gathering_stone"));
+
+            Block stone1 = ModBlocks.SPIRIT_GATHERING_STONE_0.get();
+            simpleBlock(stone1, new ModelFile.UncheckedModelFile(
+                    new ResourceLocation(KlMain.MOD_ID, "block/spirit_gathering_stone_0")));
+            itemModels().withExistingParent("spirit_gathering_stone_0",
+                    new ResourceLocation(KlMain.MOD_ID, "block/spirit_gathering_stone_0"));
+
+            Block stone2 = ModBlocks.SPIRIT_GATHERING_STONE_1.get();
+            simpleBlock(stone2, new ModelFile.UncheckedModelFile(
+                    new ResourceLocation(KlMain.MOD_ID, "block/spirit_gathering_stone_1")));
+            itemModels().withExistingParent("spirit_gathering_stone_1",
+                    new ResourceLocation(KlMain.MOD_ID, "block/spirit_gathering_stone_1"));
+
+            Block stone3 = ModBlocks.SPIRIT_GATHERING_STONE_2.get();
+            simpleBlock(stone3, new ModelFile.UncheckedModelFile(
+                    new ResourceLocation(KlMain.MOD_ID, "block/spirit_gathering_stone_2")));
+            itemModels().withExistingParent("spirit_gathering_stone_2",
+                    new ResourceLocation(KlMain.MOD_ID, "block/spirit_gathering_stone_2"));
+
             Block underwater = ModBlocks.UNDERWATER_ALTAR.get();
             simpleBlock(underwater, new ModelFile.UncheckedModelFile(
                     new ResourceLocation(KlMain.MOD_ID, "block/underwater_alta")));

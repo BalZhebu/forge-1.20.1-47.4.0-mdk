@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.block;
 
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.block.blockentity.LiandanluBlockEntity;
+import com.TovidY.kunluncontinent.block.blockentity.SpiritGatheringAltherBlockEntity;
 import com.TovidY.kunluncontinent.block.blockentity.UnderwaterAltarTile;
 import com.TovidY.kunluncontinent.block.klblock.LiandanluBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -13,6 +14,13 @@ import net.minecraftforge.registries.RegistryObject;
 public class ModBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
             DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, KlMain.MOD_ID);
+
+    // 注册聚灵祭坛 BlockEntity
+    public static final RegistryObject<BlockEntityType<SpiritGatheringAltherBlockEntity>> SPIRIT_GATHERING_ALTAR_BE =
+            BLOCK_ENTITIES.register("spirit_gathering_altar_be", () ->
+                    BlockEntityType.Builder.of(SpiritGatheringAltherBlockEntity::new,
+                            ModBlocks.SPIRIT_GATHERING_ALTAR.get()
+                    ).build(null));
 
     // 注册炼丹炉
     public static final RegistryObject<BlockEntityType<LiandanluBlockEntity>> LIANDANLU_BE =

@@ -50,7 +50,7 @@ public class HunhuanEntity extends Entity {
             super(entityType, level);
         }
 
-        public static final ResourceLocation HUNHUAN =new ResourceLocation(KlMain.MOD_ID, "textures/gui/hunhuan.png");
+        public static final ResourceLocation HUNHUAN =new ResourceLocation(KlMain.MOD_ID, "textures/picture/particletext.png");
 
         @Override
         public void tick() {

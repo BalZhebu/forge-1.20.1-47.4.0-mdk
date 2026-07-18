@@ -27,37 +27,35 @@ import net.minecraftforge.fml.common.Mod;
 import java.lang.reflect.Field;
 
 // 注册能力提供者
-
-@Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)  // 改为 FORGE 总线
+@Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class CapabilityRegistryHandler {
+
     @SubscribeEvent
     public static void onAttachCapabilities(AttachCapabilitiesEvent<Entity> event) {
         Entity entity = event.getObject();
-        //玩家附加属性
-        if (event.getObject() instanceof Player) {
+        // 1. 玩家附加属性
+        if (entity instanceof Player) {
             PlayerAttributeCapabilityProvider provider = new PlayerAttributeCapabilityProvider();
             event.addCapability(new ResourceLocation(KlMain.MOD_ID, "player_attribute"), provider);
         }
-        // 为怪物附加属性
+        // 2. 为怪物附加属性 (只附加能力，移除 monsterJoin 的过早调用)
         if (entity instanceof Mob || entity instanceof HunhuanEntity) {
             MobAttributeCapabilityProvider provider = new MobAttributeCapabilityProvider();
             event.addCapability(new ResourceLocation(KlMain.MOD_ID, "mob_attribute"), provider);
-            if (entity instanceof Mob mob) {
-                monsterJoin(mob);
-            }
         }
     }
 
     @SubscribeEvent
     public static void onEntityJoin(EntityJoinLevelEvent event){
         Entity entity = event.getEntity();
-        if(entity==null)return;
-        //魂环属性赋予
-        if(entity instanceof HunhuanEntity hunhuan){
+        if (entity == null) return;
+
+        // 魂环属性赋予
+        if (entity instanceof HunhuanEntity hunhuan) {
             hunhuanJoin(hunhuan);
         }
-        //怪物属性赋予
-        if (entity instanceof Mob monsterentity ) {
+        // 怪物属性赋予
+        if (entity instanceof Mob monsterentity) {
             monsterJoin(monsterentity);
         }
     }
@@ -75,19 +73,23 @@ public class CapabilityRegistryHandler {
         }
     }
 
-    //怪物加入世界时赋予属性
-    public static void monsterJoin(Mob entity){
-
-        if(!entity.level().isClientSide){
+    // 怪物加入世界时赋予属性
+    public static void monsterJoin(Mob entity) {
+        if (!entity.level().isClientSide) {
             LazyOptional<MobAttributeCapability> capability = entity.getCapability(MobAttributeCapabilityProvider.CAPABILITY);
             capability.ifPresent(playerCapability -> {
-                if(playerCapability.getNianxian()==0){
+                if (playerCapability.getNianxian() == 0) {
                     MobAttributeCapability monsterAttributeCapability = MonsterCapabilityAPI.genMonsterCapability(entity);
                     playerCapability.deserializeNBT(monsterAttributeCapability.serializeNBT());
                     float maxshengming = playerCapability.getMaxshengming();
-                    entity.getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxshengming);
-                    entity.setHealth(maxshengming);
+
+                    var attributeInstance = entity.getAttribute(Attributes.MAX_HEALTH);
+                    if (attributeInstance != null) {
+                        attributeInstance.setBaseValue(maxshengming);
+                        entity.setHealth(maxshengming);
+                    }
                 }
+
                 long nianxian = playerCapability.getNianxian();
                 if (nianxian > 0) {
                     String rawName = entity.getType().getDescription().getString();
@@ -100,20 +102,23 @@ public class CapabilityRegistryHandler {
                     Component newName = Component.literal(rawName + "-----" + colorPrefix + nianxian + "年");
                     entity.setCustomName(newName);
 
+                    // 使用 Forge 官方工具类进行安全反射，自动处理全版本混淆名
                     try {
-                        Field persistenceField = Mob.class.getDeclaredField("persistenceRequired");
-                        persistenceField.setAccessible(true);
-                        persistenceField.set(entity, false);
+                        // "f_21356_" 是 Mob 类中 persistenceRequired 的 SRG 混淆名
+                        net.minecraftforge.fml.util.ObfuscationReflectionHelper.setPrivateValue(
+                                Mob.class, entity, false, "persistenceRequired"
+                        );
                     } catch (Exception e) {
+                        // 即使极端情况下反射再次失败，也仅记录日志，绝对不让玩家客户端崩溃
+                        System.out.println("无法反射设置怪物的 persistenceRequired 属性，看到这条日志请联系作者并发送崩溃日志");
                         e.printStackTrace();
                     }
-
                 }
                 SynsAPI.synsEntityAttribute(entity);
             });
-        }else {
+        } else {
             CompoundTag compoundTag = SPacketEntityAttribute.monsterHashMapCapability.get(entity.getId());
-            if(compoundTag!=null){
+            if (compoundTag != null) {
                 entity.getCapability(MobAttributeCapabilityProvider.CAPABILITY).ifPresent(capability -> {
                     capability.deserializeNBT(compoundTag);
                 });
@@ -121,27 +126,24 @@ public class CapabilityRegistryHandler {
         }
     }
 
-    //魂环加入世界时赋予属性
-    public static void hunhuanJoin(HunhuanEntity entity){
-        if(!entity.level().isClientSide){
-            LazyOptional<MobAttributeCapability> capability = entity.getCapability(MobAttributeCapabilityProvider.CAPABILITY);
-            capability.ifPresent(monsterentity -> {
+    // 魂环加入世界时赋予属性
+    public static void hunhuanJoin(HunhuanEntity entity) {
+        if (!entity.level().isClientSide) {
+            entity.getCapability(MobAttributeCapabilityProvider.CAPABILITY).ifPresent(monsterentity -> {
                 SynsAPI.synsEntityAttribute(entity);
-
             });
-        }else {
+        } else {
             CompoundTag compoundTag = SPacketEntityAttribute.monsterHashMapCapability.get(entity.getId());
-            if(compoundTag!=null){
+            if (compoundTag != null) {
                 entity.getCapability(MobAttributeCapabilityProvider.CAPABILITY).ifPresent(capability -> {
                     capability.deserializeNBT(compoundTag);
-
                     SPacketEntityAttribute.monsterHashMapCapability.remove(entity.getId());
                 });
             }
         }
     }
 
-    //玩家的同步属性
+    // 玩家数据同步：涵盖开始追踪、玩家自己刷出来、切换维度等全场景
     @SubscribeEvent
     public static void onStartTracking(PlayerEvent.StartTracking event) {
         Entity target = event.getTarget();
@@ -152,4 +154,12 @@ public class CapabilityRegistryHandler {
         }
     }
 
+    // 补全玩家自身跨维度或死后复活时的属性同步（非常重要）
+    @SubscribeEvent
+    public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
+        Player player = event.getEntity();
+        if (!player.level().isClientSide) {
+            SynsAPI.synsEntityAttribute(player);
+        }
+    }
 }

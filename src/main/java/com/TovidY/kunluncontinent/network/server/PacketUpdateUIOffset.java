@@ -9,31 +9,54 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Supplier;
 
 public class PacketUpdateUIOffset {
-    private final int amount;
-    private final boolean isReset;
+    // 操作类型定义
+    public static final int TYPE_OFFSET = 0; // 修改平移
+    public static final int TYPE_SCALE  = 1; // 修改缩放
+    public static final int TYPE_RESET  = 2; // 重置全部
 
-    // 常规调整构造器
+    private final int type;
+    private final int amount;    // 平移增量
+    private final float scale;   // 目标缩放比例
+
+    // 1. 修改平移用的构造器
     public PacketUpdateUIOffset(int amount) {
+        this.type = TYPE_OFFSET;
         this.amount = amount;
-        this.isReset = false;
+        this.scale = 1.0f;
     }
 
-    // 重置或特殊指定构造器
+    // 2. 修改缩放/重置用的构造器
     public PacketUpdateUIOffset(int amount, boolean isReset) {
-        this.amount = amount;
-        this.isReset = isReset;
+        if (isReset) {
+            this.type = TYPE_RESET;
+            this.amount = 0;
+            this.scale = 1.0f;
+        } else {
+            this.type = TYPE_OFFSET;
+            this.amount = amount;
+            this.scale = 1.0f;
+        }
+    }
+
+    // 3. 专门修改缩放比例用的构造器
+    public PacketUpdateUIOffset(float scale) {
+        this.type = TYPE_SCALE;
+        this.amount = 0;
+        this.scale = scale;
     }
 
     // 解码器（从网络流读取）
     public PacketUpdateUIOffset(FriendlyByteBuf buf) {
+        this.type = buf.readInt();
         this.amount = buf.readInt();
-        this.isReset = buf.readBoolean();
+        this.scale = buf.readFloat();
     }
 
     // 编码器（写入网络流）
     public void toBytes(FriendlyByteBuf buf) {
+        buf.writeInt(this.type);
         buf.writeInt(this.amount);
-        buf.writeBoolean(this.isReset);
+        buf.writeFloat(this.scale);
     }
 
     // 核心处理逻辑
@@ -43,13 +66,21 @@ public class PacketUpdateUIOffset {
             ServerPlayer player = context.getSender();
             if (player != null) {
                 player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
-                    if (this.isReset) {
-                        cap.setUiOffsetY(0);
-                    } else {
-                        int newOffset = cap.getUiOffsetY() + this.amount;
-                        cap.setUiOffsetY(newOffset);
+                    switch (this.type) {
+                        case TYPE_OFFSET -> {
+                            int newOffset = cap.getUiOffsetY() + this.amount;
+                            cap.setUiOffsetY(newOffset);
+                        }
+                        case TYPE_SCALE -> {
+                            cap.setUiScale(this.scale);
+                        }
+                        case TYPE_RESET -> {
+                            cap.setUiOffsetY(0);
+                            cap.setUiScale(1.0f);
+                        }
                     }
-                       SynsAPI.synsPlayerAttribute(player);
+                    // 调用你的数据同步接口
+                    SynsAPI.synsPlayerAttribute(player);
                 });
             }
         });

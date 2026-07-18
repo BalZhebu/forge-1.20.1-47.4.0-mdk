@@ -8,6 +8,7 @@ import com.TovidY.kunluncontinent.item.ModItems;
 import com.TovidY.kunluncontinent.tower.block.StoneStampBlock;
 import com.TovidY.kunluncontinent.tower.block.SummonTowerBlock;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -16,7 +17,12 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SpreadingSnowyDirtBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -27,6 +33,7 @@ import org.stringtemplate.v4.ST;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 //方块注册类
 public class ModBlocks {
@@ -57,6 +64,29 @@ public class ModBlocks {
             registerBlock("cold_hearterd_steel_ore",()->
                     new Block(BlockBehaviour.Properties.copy(Blocks.NETHER_GOLD_ORE)));
 
+    public static final RegistryObject<Block> SPIRIT_GATHERING_ALTAR =
+            registerBlock("spirit_gathering_altar",()->
+                    new SpiritGatheringAltherBlock(BlockBehaviour.Properties.copy(Blocks.NETHER_GOLD_ORE).noOcclusion()));
+
+    public static final RegistryObject<Block> SPIRIT_GATHERING_STONE =
+            registerBlock("spirit_gathering_stone",()->
+                    new Block(BlockBehaviour.Properties.copy(Blocks.NETHER_GOLD_ORE).noOcclusion()){
+                protected static final VoxelShape SHAPE = Stream.of(Block.box(1.0D, 0.0D, 1.0D, 15.0D, 2.0D, 15.0D), Block.box(5.0D, 2.0D, 5.0D, 11.0D, 14.0D, 11.0D), Block.box(4.0D, 14.0D, 2.0D, 12.0D, 15.0D, 4.0D), Block.box(4.0D, 14.0D, 12.0D, 12.0D, 15.0D, 14.0D), Block.box(2.0D, 14.0D, 4.0D, 4.0D, 15.0D, 12.0D), Block.box(12.0D, 14.0D, 4.0D, 14.0D, 15.0D, 12.0D))
+                        .reduce(Shapes::or).get();
+                @Override public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext)
+                {return SHAPE;}});
+
+    public static final RegistryObject<Block> SPIRIT_GATHERING_STONE_0 =
+            registerBlock("spirit_gathering_stone_0",()->
+                    new SpiritGatheringStoneBlock(BlockBehaviour.Properties.copy(Blocks.NETHER_GOLD_ORE).noOcclusion(),0));
+
+    public static final RegistryObject<Block> SPIRIT_GATHERING_STONE_1 =
+            registerBlock("spirit_gathering_stone_1",()->
+                    new SpiritGatheringStoneBlock(BlockBehaviour.Properties.copy(Blocks.NETHER_GOLD_ORE).noOcclusion(),1));
+
+    public static final RegistryObject<Block> SPIRIT_GATHERING_STONE_2 =
+            registerBlock("spirit_gathering_stone_2",()->
+                    new SpiritGatheringStoneBlock(BlockBehaviour.Properties.copy(Blocks.NETHER_GOLD_ORE).noOcclusion(),2));
 
     public static final RegistryObject<Block> RUBY_ORE =
             registerBlock("ruby_ore",()->
@@ -242,6 +272,11 @@ public class ModBlocks {
     static {
         MODBLOCKS.add(CULTIVATION_PLATFORM);
         MODBLOCKS.add(PUTUAN_BLOCK);
+        MODBLOCKS.add(SPIRIT_GATHERING_ALTAR);
+        MODBLOCKS.add(SPIRIT_GATHERING_STONE);
+        MODBLOCKS.add(SPIRIT_GATHERING_STONE_0);
+        MODBLOCKS.add(SPIRIT_GATHERING_STONE_1);
+        MODBLOCKS.add(SPIRIT_GATHERING_STONE_2);
         MODBLOCKS.add(DROSS_BLOCK);
         MODBLOCKS.add(SOUL_SOIL);
     }
