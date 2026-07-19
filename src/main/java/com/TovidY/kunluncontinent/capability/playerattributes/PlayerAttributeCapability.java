@@ -299,7 +299,7 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
             hunguInventory.deserializeNBT(nbt.getCompound("HunguSlots"));
         }
 
-        if (nbt.contains("WuhunOrderList") || nbt.contains("iswuhun" + wuhunListsnameall.get(0))) {
+        if (nbt.contains("WuhunOrderList") || (!wuhunListsnameall.isEmpty() && nbt.contains("iswuhun" + wuhunListsnameall.get(0)))) {
             List<String> tempNames = new ArrayList<>();
             Map<String, List<MobAttributeCapability>> tempMonsters = new HashMap<>();
             if (nbt.contains("WuhunOrderList")) {

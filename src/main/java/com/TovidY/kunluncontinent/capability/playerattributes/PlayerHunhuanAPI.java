@@ -4,9 +4,7 @@ import com.TovidY.kunluncontinent.capability.mobattributes.HunhuanWeakener;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapability;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanEntity;
-import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.SynsAPI;
-import com.TovidY.kunluncontinent.network.client.PacketSyncGodData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -19,33 +17,43 @@ import net.minecraftforge.network.PacketDistributor;
 
 import java.util.*;
 
-import static com.TovidY.kunluncontinent.KlMain.random;
-import static com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability.wuhunListsnameall;
-import static com.TovidY.kunluncontinent.capability.playerattributes.PlayerUpgradeSystem.performUpgrade;
-
 //各个方法的调用与使用
+
 public class PlayerHunhuanAPI {
 
     private static final Random random = new Random();
-    public static List<String> wuhunListsnameall = new ArrayList<>();
+
+    private static List<String> getGlobalWuhunList() {
+        return PlayerAttributeCapability.wuhunListsnameall;
+    }
 
     static void addWuHun(Player player) {
+        List<String> globalList = getGlobalWuhunList();
+        if (globalList == null || globalList.isEmpty()) {
+            player.sendSystemMessage(Component.literal("§c[错误] 全局武魂池未初始化！请联系作者！"));
+            return;
+        }
+
         LazyOptional<PlayerAttributeCapability> capability1 = player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY);
         if(capability1.isPresent()){
             PlayerAttributeCapability capability = capability1.orElseThrow(RuntimeException::new);
-            Object[] array = wuhunListsnameall.toArray();
+
+            Object[] array = globalList.toArray();
             boolean b = true;
-            while (b){
+
+            int attempts = 0;
+            while (b && attempts < 100){
+                attempts++;
                 String s = (String) array[random.nextInt(array.length)];
                 List<MobAttributeCapability> monsterAttributeCapabilities = capability.getMonsterCapabilityLists().get(s);
-                if(monsterAttributeCapabilities ==null) {
-                    capability.getMonsterCapabilityLists().put(s,new ArrayList<>());
+                if(monsterAttributeCapabilities == null) {
+                    capability.getMonsterCapabilityLists().put(s, new ArrayList<>());
                     capability.getWuhunSkillsMap().remove(s);
                     capability.getWuhunListsname().add(s);
                     capability.setHunhuankuaiguan(capability.getMonsterCapabilityLists().size()-1);
                     player.sendSystemMessage(Component.literal("成功觉醒武魂: " + s));
                     ((ServerPlayer)player).connection.send(new ClientboundSetTitleTextPacket(Component.literal("成功觉醒武魂: " + s)));
-                    b=!b;
+                    b = !b;
                     if(random.nextInt(5) == 0){
                         juexingShuangsheng(player);
                     }
@@ -57,12 +65,17 @@ public class PlayerHunhuanAPI {
     }
 
     static void juexingShuangsheng(Player player) {
+        List<String> globalList = getGlobalWuhunList();
+        if (globalList == null || globalList.isEmpty()) return;
+
         LazyOptional<PlayerAttributeCapability> capability1 = player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY);
         if(capability1.isPresent()){
             PlayerAttributeCapability capability = capability1.orElseThrow(RuntimeException::new);
-            Object[] array = wuhunListsnameall.toArray();
+
+            // 【修改点】改用 globalList
+            Object[] array = globalList.toArray();
             String s = (String) array[random.nextInt(array.length)];
-            addWuHun(player,s);
+            addWuHun(player, s);
         }
     }
 
