@@ -159,6 +159,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.EXTREME_COLD.get(),"§b雪晶");
 
         add(ModItems.DEMONWHALE_SPAWN_EGG.get(),"§c魔鲸刷怪蛋");
+        add(ModItems.NPCSOUL_SPAWN_EGG.get(),"NPC刷怪蛋");
 
         add(ModItems.ATTRIBUTE_BUTTON.get(),"属性面板");
         add(ModItems.SOUL_BONE_BUTTON.get(),"魂骨面板");
@@ -415,6 +416,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(EntityInit.ICE_SHARD.get(), "§b冰凌");
         add(EntityInit.SNOW_DEMON.get(),"§b雪魔");
         add(EntityInit.DEMON_WHALE.get(), "§c魔鲸");
+        add(EntityInit.PLAYER_NPC.get(),"Steve");
 
         //装备类
         add(ModItems.GRAY_IRON_HELMET.get(),"§8灰铁头盔");
@@ -532,6 +534,8 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModEffects.STONE_ARMOR.get(),"§c石铠");
         add(ModEffects.SUN_POWER.get(),"§e大日之威");
         add(ModEffects.POWER_OF_THE_MOON.get(),"§d邀月之华");
+
+        add(ModEffects.STRONG_SOUL.get(),"§e强魄");
 
         add(ModEffects.THE_GAZE_OF_GOD.get(), "§e神之凝视");
 

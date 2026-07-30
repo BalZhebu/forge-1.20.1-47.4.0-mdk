@@ -1,4 +1,4 @@
-// 1.20.1	2026-04-27T17:07:32.5300871	Item Models: kunluncontinent
+// 1.20.1	2026-07-28T22:49:36.5372123	Item Models: kunluncontinent
 f32644d7d62d87d0d3f109d31b9e62ec09229906 assets/kunluncontinent/models/item/amethyst.json
 f4c6955cbdbd17da9ddf02bb007f099e05afbc04 assets/kunluncontinent/models/item/attribute_button.json
 5c2f20ad8bfe9952d95e9c87b9d654a99f8cbefa assets/kunluncontinent/models/item/baicaoling_dan.json
@@ -97,6 +97,7 @@ e1b3461d55dc0db389389c1194a6ccb178fbe305 assets/kunluncontinent/models/item/neid
 60e7472c578540341d9e0f2fd6af03a11686522d assets/kunluncontinent/models/item/neidan7.json
 79c6e9c69016f408ef41ac01cba1ef346583b297 assets/kunluncontinent/models/item/neidan8.json
 0eba7428d7d4efab75528b03a60f4b9fdd2193a1 assets/kunluncontinent/models/item/neidan9.json
+63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/kunluncontinent/models/item/npcsoul_spawn_egg.json
 90b5c5316be6de54c6054b195895e103eae14ab9 assets/kunluncontinent/models/item/qianhuabao_dan.json
 5c2e0d43fa3420b88d522c05988a2123d57874fc assets/kunluncontinent/models/item/qianwanxingchen_dan.json
 efb0d28afa05202408ec9178ed57a9dcd686e228 assets/kunluncontinent/models/item/red_fire_axe.json

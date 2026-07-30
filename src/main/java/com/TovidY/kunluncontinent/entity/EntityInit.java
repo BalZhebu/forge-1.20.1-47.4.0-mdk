@@ -13,6 +13,8 @@ import com.TovidY.kunluncontinent.entity.hunhe.HunheEntity;
 import com.TovidY.kunluncontinent.entity.hunhe.HunheRender;
 import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanEntity;
 import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanRender;
+import com.TovidY.kunluncontinent.entity.playernpc.PlayerNpcEntity;
+import com.TovidY.kunluncontinent.entity.playernpc.PlayerNpcRenderer;
 import com.TovidY.kunluncontinent.entity.snowdemon.SnowDemonEntity;
 import com.TovidY.kunluncontinent.entity.snowdemon.SnowDemonModel;
 import com.TovidY.kunluncontinent.entity.snowdemon.SnowDemonRenderer;
@@ -60,6 +62,13 @@ public class EntityInit {
                     .updateInterval(10)
                     .build("ice_shard"));
 
+    // ------------------ 【新增: 玩家 NPC 实体注册】 ------------------
+    public static final RegistryObject<EntityType<PlayerNpcEntity>> PLAYER_NPC =
+            ENTITY_TYPES.register("player_npc", () -> EntityType.Builder.of(PlayerNpcEntity::new, MobCategory.CREATURE)
+                    .sized(0.6F, 1.8F) // 玩家体型大小
+                    .clientTrackingRange(10)
+                    .build("player_npc"));
+
     public static final RegistryObject<EntityType<EyeTransformationEntity>> EYE_TRANSFORMATION_ENTITY =
             ENTITY_TYPES.register("eye_transformation_entity",
                     () -> EntityType.Builder.<EyeTransformationEntity>of(EyeTransformationEntity::new, MobCategory.MISC)
@@ -95,6 +104,8 @@ public class EntityInit {
             EntityRenderers.register(EntityInit.SNOW_DEMON.get(), SnowDemonRenderer::new);
 
             EntityRenderers.register(EntityInit.DEMON_WHALE.get(), DemonWhaleRenderer::new);
+
+            EntityRenderers.register(EntityInit.PLAYER_NPC.get(), PlayerNpcRenderer::new);
         }
 
         @SubscribeEvent
@@ -111,6 +122,8 @@ public class EntityInit {
             event.put(EntityInit.ICE_CRYSTAL.get(), IceCrystalEntity.createAttributes().build());
             event.put(EntityInit.SNOW_DEMON.get(), SnowDemonEntity.createAttributes().build());
             event.put(EntityInit.DEMON_WHALE.get(), DemonWhaleEntity.createAttributes().build());
+
+            event.put(EntityInit.PLAYER_NPC.get(), PlayerNpcEntity.createAttributes().build());
         }
     }
 

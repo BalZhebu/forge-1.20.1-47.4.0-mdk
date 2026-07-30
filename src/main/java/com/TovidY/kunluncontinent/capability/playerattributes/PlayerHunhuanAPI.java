@@ -209,14 +209,14 @@ public class PlayerHunhuanAPI {
     public static void addJingyan(ServerPlayer player, float value) {
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(capability -> {
             capability.setJingyan(capability.getJingyan() + value);
-            if (capability.getJingyan() >= capability.getMaxjingyan()) {
-                // performUpgrade(player, capability);
-            }
+//            if (capability.getJingyan() >= capability.getMaxjingyan()) {
+//                // performUpgrade(player, capability);
+//            }
             if (capability.isConfigOpen(3)) {
                 String formattedValue = String.format("%.2f", value);
                 int currentExp = (int) capability.getJingyan();
                 int maxExp = (int) capability.getMaxjingyan();
-                player.sendSystemMessage(Component.literal("吸收经验成功: " + formattedValue + " §e当前经验:" + currentExp + "/" + maxExp));
+                player.sendSystemMessage(Component.literal("吸收经验成功: " + formattedValue + " 当前经验:§e" + currentExp + "/" + maxExp));
             }
         });
     }

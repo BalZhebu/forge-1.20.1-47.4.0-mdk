@@ -12,6 +12,7 @@ import com.TovidY.kunluncontinent.capability.playerattributes.PlayerHunhuanAPI;
 import com.TovidY.kunluncontinent.command.HunguAdminStatus;
 import com.TovidY.kunluncontinent.entity.EntityInit;
 import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanEntity;
+import com.TovidY.kunluncontinent.entity.playernpc.PlayerNpcEntity;
 import com.TovidY.kunluncontinent.godclass.interfac.GodTaskType;
 import com.TovidY.kunluncontinent.item.ModItems;
 import com.TovidY.kunluncontinent.item.neidanitems.NeidanDropHandler;
@@ -81,6 +82,10 @@ public class KLivingDeathEvent {
         playerDeach(entity);
 
         if (entity.getPersistentData().getBoolean("TowerSpawned")) {
+            return;
+        }
+
+        if (entity instanceof PlayerNpcEntity) {
             return;
         }
 

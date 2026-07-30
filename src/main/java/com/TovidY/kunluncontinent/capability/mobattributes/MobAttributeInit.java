@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.capability.mobattributes;
 
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.entity.EntityInit;
+import com.TovidY.kunluncontinent.entity.playernpc.PlayerNpcEntity;
 import com.TovidY.kunluncontinent.network.SynsAPI;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
@@ -26,6 +27,11 @@ public class MobAttributeInit {
     public static void onMobSpawn(MobSpawnEvent.FinalizeSpawn event) {
         Mob mob = event.getEntity();
 
+        if (mob instanceof PlayerNpcEntity npc) {
+            return;
+        }
+
+        // 1. 马匹特殊逻辑
         if (mob instanceof net.minecraft.world.entity.animal.horse.AbstractHorse) {
             mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY).ifPresent(attr -> {
                 attr.setNianxian(20);
@@ -36,10 +42,11 @@ public class MobAttributeInit {
             return;
         }
 
+        // 2. 普通魂兽逻辑
         mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY).ifPresent(attr -> {
-                    if (attr.getNianxian() == 0) {
-                        long nianxian = MobAttributeLogic.calculateNianxian(mob);
-                        attr.initNianxian(nianxian);
+            if (attr.getNianxian() == 0) {
+                long nianxian = MobAttributeLogic.calculateNianxian(mob);
+                attr.initNianxian(nianxian);
             }
             applyAttributesToEntity(mob, attr);
         });

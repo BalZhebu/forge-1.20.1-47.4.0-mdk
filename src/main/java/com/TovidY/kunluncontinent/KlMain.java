@@ -30,6 +30,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Field;
@@ -40,6 +41,7 @@ public class KlMain {
     public static final String MOD_ID = "kunluncontinent";
     public static final Random random = new Random();
 
+    public static final Logger LOGGER = LogManager.getLogger();
 
     public KlMain()
     {

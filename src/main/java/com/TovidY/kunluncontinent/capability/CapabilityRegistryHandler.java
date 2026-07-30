@@ -3,9 +3,11 @@ package com.TovidY.kunluncontinent.capability;
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapability;
 import com.TovidY.kunluncontinent.capability.mobattributes.MonsterCapabilityAPI;
+import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanEntity;
+import com.TovidY.kunluncontinent.entity.playernpc.PlayerNpcEntity;
 import com.TovidY.kunluncontinent.network.SynsAPI;
 import com.TovidY.kunluncontinent.network.server.SPacketEntityAttribute;
 import net.minecraft.nbt.CompoundTag;
@@ -73,9 +75,80 @@ public class CapabilityRegistryHandler {
         }
     }
 
-    // 怪物加入世界时赋予属性
+    // 怪物/NPC 加入世界时赋予属性与头顶标签
     public static void monsterJoin(Mob entity) {
+
         if (!entity.level().isClientSide) {
+            if (entity instanceof PlayerNpcEntity npc) {
+                PlayerAttributeCapability npcCap = npc.getSoulCapability();
+                if (npcCap != null) {
+                    int level = npcCap.getDengji(); // 获取 NPC 等级
+                    String wuhun = npcCap.getWuhunName(); // 获取 NPC 当前武魂
+
+                    // 1. 设置头顶称号
+                    if (wuhun != null) {
+                        String title = getNpcTitleByLevel(level);
+                        String colorPrefix = getNpcTitleColorPrefix(level);
+                        String npcBaseName = npc.getName().getString();
+                        Component newName = Component.literal(
+                                npcBaseName + " [" + wuhun + "]-----" + colorPrefix + level + "级" + title
+                        );
+                        npc.setCustomName(newName);
+                        npc.setCustomNameVisible(true);
+                    }
+
+                    // 2. 【核心修正】：从 npcCap 正确提取各项专属属性，防止全部错填为攻击力！
+                    float npcHp = npcCap.getMaxshengming();
+                    float npcAtk = npcCap.getGongji();
+                    float npcDef = npcCap.getFangyu();
+                    float npcBaojilv = npcCap.getBaojilv();
+                    float npcBaojishanghai = npcCap.getBaojishanghai();
+                    float npcKangbao = npcCap.getKangbao();
+                    float npcXixue = npcCap.getXixue();
+                    float npcMingzhong = npcCap.getMingzhong();
+                    float npcShanbi = npcCap.getShanbi();
+                    float npcWuchuan = npcCap.getWuchuan();
+                    float npcShengmingHuifu = npcCap.getShengmingHuifu();
+
+                    npc.getCapability(MobAttributeCapabilityProvider.CAPABILITY).ifPresent(mobCap -> {
+                        // 2.1 血量与当前血量拉满
+                        mobCap.setMaxshengming(npcHp);
+                        mobCap.setShengming(npcHp); // 修正：设置当前血量为最大血量，不留 20 血漏洞
+
+                        // 2.2 攻防数据正确映射
+                        mobCap.setWugong(npcAtk);
+                        mobCap.setfangyu(npcDef); // 修正：使用真实防御 (npcDef)
+
+                        // 2.3 副属性一一对应赋值
+                        mobCap.setBaojilv(npcBaojilv);             // 修正：暴击率
+                        mobCap.setBaojishanghai(npcBaojishanghai); // 修正：暴击伤害
+                        mobCap.setKangbao(npcKangbao);             // 修正：抗暴
+                        mobCap.setXixue(npcXixue);                 // 修正：吸血
+                        mobCap.setMingzhong(npcMingzhong);         // 修正：命中
+                        mobCap.setShanbi(npcShanbi);               // 修正：闪避
+                        mobCap.setWuchuan(npcWuchuan);             // 修正：武穿
+                        mobCap.setShengminghuifu(npcShengmingHuifu); // 修正：生命恢复
+                    });
+
+                    // 3. 应用到 原生 MC 属性控制系统
+                    var hpAttr = npc.getAttribute(Attributes.MAX_HEALTH);
+                    if (hpAttr != null && npcHp > 0) {
+                        hpAttr.setBaseValue(npcHp);
+                        npc.setHealth(npcHp); // 实体真实血量拉满
+                    }
+
+                    var atkAttr = npc.getAttribute(Attributes.ATTACK_DAMAGE);
+                    if (atkAttr != null && npcAtk > 0) {
+                        atkAttr.setBaseValue(npcAtk);
+                    }
+                }
+
+                // 4. 同步数据给客户端渲染
+                SynsAPI.synsEntityAttribute(entity);
+                return;
+            }
+
+            // ==================== 普通怪物处理逻辑 ====================
             LazyOptional<MobAttributeCapability> capability = entity.getCapability(MobAttributeCapabilityProvider.CAPABILITY);
             capability.ifPresent(playerCapability -> {
                 if (playerCapability.getNianxian() == 0) {
@@ -102,15 +175,12 @@ public class CapabilityRegistryHandler {
                     Component newName = Component.literal(rawName + "-----" + colorPrefix + nianxian + "年");
                     entity.setCustomName(newName);
 
-                    // 使用 Forge 官方工具类进行安全反射，自动处理全版本混淆名
                     try {
-                        // "f_21356_" 是 Mob 类中 persistenceRequired 的 SRG 混淆名
                         net.minecraftforge.fml.util.ObfuscationReflectionHelper.setPrivateValue(
                                 Mob.class, entity, false, "persistenceRequired"
                         );
                     } catch (Exception e) {
-                        // 即使极端情况下反射再次失败，也仅记录日志，绝对不让玩家客户端崩溃
-                        System.out.println("无法反射设置怪物的 persistenceRequired 属性，看到这条日志请联系作者并发送崩溃日志");
+                        System.out.println("无法反射设置怪物的 persistenceRequired 属性");
                         e.printStackTrace();
                     }
                 }
@@ -124,6 +194,36 @@ public class CapabilityRegistryHandler {
                 });
             }
         }
+    }
+
+    /**
+     * 根据等级返回斗罗大陆对应的魂师称号
+     */
+    public static String getNpcTitleByLevel(int level) {
+        if (level >= 99) return "极限斗罗";
+        if (level >= 90) return "封号斗罗";
+        if (level >= 80) return "魂斗罗";
+        if (level >= 70) return "魂圣";
+        if (level >= 60) return "魂帝";
+        if (level >= 50) return "魂王";
+        if (level >= 40) return "魂宗";
+        if (level >= 30) return "魂尊";
+        if (level >= 20) return "大魂师";
+        if (level >= 10) return "魂师";
+        return "魂士";
+    }
+
+    /**
+     * 根据等级段展示不同稀有度的颜色代码
+     */
+    public static String getNpcTitleColorPrefix(int level) {
+        if (level >= 99) return "§6§l"; // 金色加粗 (极限斗罗)
+        if (level >= 90) return "§c§l"; // 红色加粗 (封号斗罗)
+        if (level >= 70) return "§c";   // 红色 (魂圣/魂斗罗)
+        if (level >= 50) return "§5";   // 紫色 (魂王/魂帝)
+        if (level >= 30) return "§9";   // 蓝色 (魂尊/魂宗)
+        if (level >= 10) return "§e";   // 黄色 (魂师/大魂师)
+        return "§f";                    // 白色 (魂士)
     }
 
     // 魂环加入世界时赋予属性

@@ -1,6 +1,7 @@
 package com.TovidY.kunluncontinent.potion;
 
 import com.TovidY.kunluncontinent.KlMain;
+import com.TovidY.kunluncontinent.potion.bal.StrongSoulEffect;
 import com.TovidY.kunluncontinent.potion.recipespotion.TheGazeOfGodEffect;
 import com.TovidY.kunluncontinent.potion.skilleffect.*;
 import com.TovidY.kunluncontinent.potion.skilleffect.wuhun.BhuanjiEffect;
@@ -13,6 +14,7 @@ import com.TovidY.kunluncontinent.potion.specialeffects.RedSpiderEffect;
 import com.TovidY.kunluncontinent.potion.specialeffects.ScorchingEffect;
 import com.TovidY.kunluncontinent.potion.specialeffects.coldeffect.ExtremeColdEffect;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -32,6 +34,10 @@ public class ModEffects {
     public static final RegistryObject<MobEffect> STONE_ARMOR = REGISTER.register("stone_armor", StoneArmorEffect::new);
     public static final RegistryObject<MobEffect> SUN_POWER = REGISTER.register("sun_power", SunPowerEffect::new);
     public static final RegistryObject<MobEffect> POWER_OF_THE_MOON = REGISTER.register("power_of_the_moon", PowerOfTheMoonEffect::new);
+
+    // 注册强魂 Buff (参数 1: 属性类别 Beneficial=正面/Harmful=负面/Neutral=中性, 参数 2: 颜色 16进制RGB)
+    public static final RegistryObject<MobEffect> STRONG_SOUL = REGISTER.register("strong_soul",
+            () -> new StrongSoulEffect(MobEffectCategory.BENEFICIAL, 0x9933FF));
 
     //武魂真身
     public static final RegistryObject<MobEffect> POHUNQIANG = REGISTER.register("pohunqiang", PohunEffect::new);

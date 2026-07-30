@@ -3,6 +3,7 @@ package com.TovidY.kunluncontinent.event.client;
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
+import com.TovidY.kunluncontinent.entity.playernpc.PlayerNpcEntity;
 import com.TovidY.kunluncontinent.render.KLRenderApi;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
@@ -32,8 +33,13 @@ public class PWRenderLivingEvent {
         if (!isOpen) return;
 
         LivingEntity entity = event.getEntity();
-        if(entity == null) return;
+        if (entity == null) return;
         if (entity.tickCount < 1 || !entity.isAlive()) return;
+
+        if (entity instanceof PlayerNpcEntity) {
+            return;
+        }
+
         entity.getCapability(MobAttributeCapabilityProvider.CAPABILITY).ifPresent(capability -> {
             if (capability.getNianxian() > 0) {
                 renderHunhuan(entity, event.getPartialTick(), event.getPoseStack(), (int) capability.getNianxian(), 0);

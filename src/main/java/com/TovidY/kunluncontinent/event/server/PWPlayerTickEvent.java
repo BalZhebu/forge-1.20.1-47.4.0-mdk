@@ -7,9 +7,12 @@ import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCap
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerUpgradeSystem;
 import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanEntity;
+import com.TovidY.kunluncontinent.entity.playernpc.PlayerNpcEntity;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import com.TovidY.kunluncontinent.item.klitem.ZhuanShengTestItem;
+import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.SynsAPI;
+import com.TovidY.kunluncontinent.network.server.SyncNpcWuhunPacket;
 import com.TovidY.kunluncontinent.worldgen.ModDimensions;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -36,12 +39,16 @@ import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.network.PacketDistributor;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static com.TovidY.kunluncontinent.event.client.PWRenderPlayerEvent.scanCompoundForNianxian;
 import static com.TovidY.kunluncontinent.item.ModItems.THUNDER_PROTECTION_LIST;
 
 // 玩家每Tick触发
@@ -87,6 +94,31 @@ public class PWPlayerTickEvent {
 
                 handleMeditationLogic(serverPlayer, capability, gameTime);
             });
+        }
+    }
+
+    @SubscribeEvent
+    public static void onStartTracking(PlayerEvent.StartTracking event) {
+        if (event.getTarget() instanceof PlayerNpcEntity npc && !event.getEntity().level().isClientSide) {
+            ServerPlayer player = (ServerPlayer) event.getEntity();
+            List<Integer> nianxianList = new ArrayList<>();
+            PlayerAttributeCapability npcCap = npc.getSoulCapability();
+            if (npcCap != null && npcCap.getWuhunList() != null) {
+                for (MobAttributeCapability wuhun : npcCap.getWuhunList()) {
+                    if (wuhun != null && wuhun.getNianxian() > 0) {
+                        nianxianList.add((int) wuhun.getNianxian());
+                    }
+                }
+            }
+            if (nianxianList.isEmpty()) {
+                scanCompoundForNianxian(npc.getPersistentData(), nianxianList);
+            }
+            if (!nianxianList.isEmpty()) {
+                NetworkHandler.INSTANCE.send(
+                        PacketDistributor.PLAYER.with(() -> player),
+                        new SyncNpcWuhunPacket(npc.getId(), nianxianList)
+                );
+            }
         }
     }
 

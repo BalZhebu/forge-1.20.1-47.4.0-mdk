@@ -1,12 +1,18 @@
 package com.TovidY.kunluncontinent.entity.hunhe;
 
+import com.TovidY.kunluncontinent.capability.playerattributes.PlayerHunhuanAPI;
 import com.TovidY.kunluncontinent.entity.EntityInit;
+import com.TovidY.kunluncontinent.network.SynsAPI;
+import com.TovidY.kunluncontinent.potion.ModEffects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
@@ -21,6 +27,8 @@ import net.minecraft.world.phys.Vec3;
 public class HunheEntity extends Entity {
     private Player player;
     private int livetime;
+    private int contacttime = 20; // 接触倒计时（20 刻 = 1 秒）
+
     private static final EntityDataAccessor<Float> VALUE =
             SynchedEntityData.defineId(HunheEntity.class, EntityDataSerializers.FLOAT);
 
@@ -57,31 +65,45 @@ public class HunheEntity extends Entity {
         this.setDeltaMovement(Vec3.ZERO);
         this.move(MoverType.SELF, this.getDeltaMovement());
 
-        if(livetime >= 1200){
+        if (livetime >= 1200) {
             this.discard();
         }
         livetime++;
     }
 
-    /**
-     * 关键重写 1：阻止水流、活塞等任何液体和物理推力
-     */
+    @Override
+    public void playerTouch(Player player) {
+        if (player instanceof ServerPlayer serverPlayer) {
+            MobEffect requiredEffect = ModEffects.STRONG_SOUL.get();
+            if (!serverPlayer.hasEffect(requiredEffect)) {
+                return;
+            }
+            if (player != this.player) {
+                this.player = player;
+                this.contacttime = 20;
+            } else {
+                this.contacttime--;
+            }
+            if (this.contacttime <= 0) {
+                float weakenedValue = this.getValue() * 0.3f;
+                PlayerHunhuanAPI.addJingyan(serverPlayer, weakenedValue);
+                SynsAPI.synsPlayerAttribute(serverPlayer);
+                this.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 1.1F, (this.random.nextFloat() - this.random.nextFloat()) * 0.35F + 0.9F);
+                this.discard();
+            }
+        }
+    }
+
     @Override
     public boolean isPushedByFluid() {
         return false; // 不受水流推动
     }
 
-    /**
-     * 关键重写 2：阻止实体被其他生物/玩家推挤
-     */
     @Override
     public boolean isPushable() {
         return false; // 不能被推动
     }
 
-    /**
-     * 关键重写 3：禁止被活塞推掉或移动
-     */
     @Override
     public boolean canBeCollidedWith() {
         return false;

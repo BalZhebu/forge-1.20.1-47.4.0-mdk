@@ -6,9 +6,13 @@ public class HunhuanWeakener {
     private static final Random RANDOM = new Random();
 
     /**
-     * 单个年限档位：年限低于 maxNianxian（不含）时，保留比例落在 [ratioMin, ratioMax] 区间内随机取值。
-     * 每个属性的档位表都是完全独立的数组实例，互不共享、互不引用。
+     * NPC 魂环的专属属性增强倍率（整体调低削弱）。
+     * 1.0 表示与玩家效果一致。
+     * 1.3 表示 NPC 保留的属性比例在基础削弱结果上再提升 30%（例如原本只保留 50% 属性，乘以 1.3 后保留 65%）。
+     * 如果你想让 NPC 完全不削弱，甚至可以直接设为 2.0 或更高！
      */
+    private static final double NPC_RATIO_MULTIPLIER = 1.50;
+
     private record Tier(long maxNianxian, double ratioMin, double ratioMax) {}
 
     // ==========================================
@@ -152,10 +156,11 @@ public class HunhuanWeakener {
     };
 
     /**
-     * 对魂环属性进行精细化、多维度的削弱
+     * 【核心改动】：重载 weaken 方法，支持传入 isNpc 标识
+     * @param original 原始魂环属性
+     * @param isNpc 是否为 NPC 的魂环
      */
-    public static MobAttributeCapability weaken(MobAttributeCapability original) {
-        // 创建深拷贝新实例，不影响实体本身
+    public static MobAttributeCapability weaken(MobAttributeCapability original, boolean isNpc) {
         MobAttributeCapability weakened = new MobAttributeCapability();
         weakened.deserializeNBT(original.serializeNBT());
 
@@ -166,33 +171,44 @@ public class HunhuanWeakener {
 
         long nianxian = original.getNianxian();
 
-        // ==================== 各个属性独立削弱计算（各用各的表，互不干扰） ====================
-        weakened.setWugong(applyTier(original.getGongji(), nianxian, WUGONG_TIERS));
-        weakened.setWufang(applyTier(original.getFangyu(), nianxian, WUFANG_TIERS));
+        // 如果是 NPC，应用 NPC 专属的系数（减少削弱，保留更多属性）；玩家则保持 1.0 原始倍率
+        double multiplier = isNpc ? NPC_RATIO_MULTIPLIER : 1.0;
 
-        float weakenedMaxHp = applyTier(original.getMaxshengming(), nianxian, MAX_SHENGMING_TIERS);
+        // ==================== 各个属性独立削弱计算 ====================
+        weakened.setWugong(applyTier(original.getGongji(), nianxian, WUGONG_TIERS, multiplier));
+        weakened.setWufang(applyTier(original.getFangyu(), nianxian, WUFANG_TIERS, multiplier));
+
+        float weakenedMaxHp = applyTier(original.getMaxshengming(), nianxian, MAX_SHENGMING_TIERS, multiplier);
         weakened.setMaxshengming(weakenedMaxHp);
 
-        weakened.setBaojilv(applyTier(original.getBaojilv(), nianxian, BAOJILV_TIERS));
-        weakened.setBaojishanghai(applyTier(original.getBaojishanghai(), nianxian, BAOJISHANGHAI_TIERS));
-        weakened.setKangbao(applyTier(original.getKangbao(), nianxian, KANGBAO_TIERS));
+        weakened.setBaojilv(applyTier(original.getBaojilv(), nianxian, BAOJILV_TIERS, multiplier));
+        weakened.setBaojishanghai(applyTier(original.getBaojishanghai(), nianxian, BAOJISHANGHAI_TIERS, multiplier));
+        weakened.setKangbao(applyTier(original.getKangbao(), nianxian, KANGBAO_TIERS, multiplier));
 
-        weakened.setXixue(applyTier(original.getXixue(), nianxian, XIXUE_TIERS));
-        weakened.setMingzhong(applyTier(original.getMingzhong(), nianxian, MINGZHONG_TIERS));
-        weakened.setShanbi(applyTier(original.getShanbi(), nianxian, SHANBI_TIERS));
-        weakened.setWuchuan(applyTier(original.getWuchuan(), nianxian, WUCHUAN_TIERS));
+        weakened.setXixue(applyTier(original.getXixue(), nianxian, XIXUE_TIERS, multiplier));
+        weakened.setMingzhong(applyTier(original.getMingzhong(), nianxian, MINGZHONG_TIERS, multiplier));
+        weakened.setShanbi(applyTier(original.getShanbi(), nianxian, SHANBI_TIERS, multiplier));
+        weakened.setWuchuan(applyTier(original.getWuchuan(), nianxian, WUCHUAN_TIERS, multiplier));
 
         return weakened;
     }
 
     /**
-     * 纯粹的“按年限查找档位区间”流程，不包含任何属性专属数值。
-     * 每次调用传入哪张表，就完全按哪张表计算，表与表之间没有任何关联。
+     * 保持原有接口兼容性（默认 isNpc = false，给玩家使用）
      */
-    private static float applyTier(float originalVal, long nianxian, Tier[] tiers) {
+    public static MobAttributeCapability weaken(MobAttributeCapability original) {
+        return weaken(original, false);
+    }
+
+    /**
+     * 按年限查找档位区间，并根据 multiplier 增强保留比例
+     */
+    private static float applyTier(float originalVal, long nianxian, Tier[] tiers, double multiplier) {
         for (Tier tier : tiers) {
             if (nianxian < tier.maxNianxian()) {
-                return (float) (originalVal * getRandomRatio(tier.ratioMin(), tier.ratioMax()));
+                // 计算随机保留比例并乘上 NPC 加成倍率，最高不超过 1.0 (即 100% 原始属性)
+                double finalRatio = Math.min(1.0, getRandomRatio(tier.ratioMin(), tier.ratioMax()) * multiplier);
+                return (float) (originalVal * finalRatio);
             }
         }
         return originalVal;

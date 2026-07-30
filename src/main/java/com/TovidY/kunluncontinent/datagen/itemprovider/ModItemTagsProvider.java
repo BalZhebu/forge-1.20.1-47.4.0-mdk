@@ -28,7 +28,9 @@ public class ModItemTagsProvider extends ItemTagsProvider {
                 .add(ModItems.HUANYUANYIQI_DAN.get())
                 .add(ModItems.TAIXUPOWANG_DAN.get())
                 .add(ModItems.QIANWANXINGCHEN_DAN.get())
-                .add(ModItems.YIZAICHUANGSHENG_DAN.get());
+                .add(ModItems.YIZAICHUANGSHENG_DAN.get())
+                .add(ModItems.GUYUAN_DAN.get())
+                .add(ModItems.FANQI_DAN.get());
         this.tag(ModTags.Items.ENGRAVING_KNIFE)
                 .add(ModItems.IRON_ENGRAVING_KNIFE.get())
                 .add(ModItems.DIAMOND_ENGRAVING_KNIFE.get());

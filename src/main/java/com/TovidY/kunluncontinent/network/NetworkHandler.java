@@ -47,6 +47,10 @@ public class NetworkHandler {
 
         INSTANCE.registerMessage(99, PacketChangeCamera.class, PacketChangeCamera::toBytes, PacketChangeCamera::new, PacketChangeCamera::handle);
 
+
+        register(C2SNpcDialogActionPacket.class,C2SNpcDialogActionPacket::encode,C2SNpcDialogActionPacket::new , C2SNpcDialogActionPacket::handle);
+        register(SyncNpcWuhunPacket.class,SyncNpcWuhunPacket::encode,SyncNpcWuhunPacket::decode, SyncNpcWuhunPacket::handle);
+        register(S2COpenNpcDialogPacket.class,S2COpenNpcDialogPacket::encode,S2COpenNpcDialogPacket::new , S2COpenNpcDialogPacket::handle);
         //服务端
         register(PacketSyncPage.class, PacketSyncPage::encode, PacketSyncPage::decode, PacketSyncPage::handle);
         register(SPacketEntityAttribute.class, SPacketEntityAttribute::encode, SPacketEntityAttribute::decode, SPacketEntityAttribute::handle);

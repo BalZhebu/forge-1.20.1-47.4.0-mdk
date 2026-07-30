@@ -14,6 +14,7 @@ import com.TovidY.kunluncontinent.screen.guide.GuidBookScreen;
 import com.TovidY.kunluncontinent.screen.guide.GuideBookMenu;
 import com.TovidY.kunluncontinent.screen.liandanlugui.LiandanluMenu;
 import com.TovidY.kunluncontinent.screen.liandanlugui.LiandanluScreen;
+import com.TovidY.kunluncontinent.screen.playernpc.NpcDialogScreen;
 import com.TovidY.kunluncontinent.screen.spiritgatheringaltar.SpiritGatheringaltarMenu;
 import com.TovidY.kunluncontinent.screen.spiritgatheringaltar.SpiritGatheringaltarScreen;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -85,8 +86,7 @@ public class ModMenuTypes {
 
             MenuScreens.register(ModMenuTypes.CONFIG_MENU.get(), ConfigScreen::new);
             MenuScreens.register(ModMenuTypes.SPIRITGATHERING_MENU.get(), SpiritGatheringaltarScreen::new);
-
         }
-    }
 
+    }
 }
