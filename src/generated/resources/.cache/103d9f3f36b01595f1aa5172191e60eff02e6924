@@ -1,4 +1,4 @@
-// 1.20.1	2026-06-12T19:03:29.6437511	Registries
+// 1.20.1	2026-08-01T16:24:55.3523973	Registries
 0bf76e948db0397a2f7123c42461a147fced2728 data/kunluncontinent/damage_type/extreme_cold.json
 23283fcfd27839701e8f30a07df05828c30dd4d2 data/kunluncontinent/dimension/polar_ice_realm.json
 f23d8ee88f5855849158a9a7ebd4c5173140c5c8 data/kunluncontinent/dimension/thunder_realm.json
@@ -13,6 +13,9 @@ ea3d8a29646a5207df8354d0bfb73d9a10a1f6be data/kunluncontinent/forge/biome_modifi
 3773dcbbf8ddc583b5c813129973c0a9015dd731 data/kunluncontinent/forge/biome_modifier/add_ice_crystal_ice.json
 d7096d424f26b262c8f38e7294802bf4b5998d60 data/kunluncontinent/forge/biome_modifier/add_ice_crystal_snowy.json
 ec1dc64627ae9df1706330e20bb739380f3bdd05 data/kunluncontinent/forge/biome_modifier/add_ice_crystal_spikes.json
+af8661f93ffc8ede3c80e619c31aedca213031bb data/kunluncontinent/forge/biome_modifier/add_npc_end.json
+12a9476190663f6fa5f6f68888b830ecd2200efb data/kunluncontinent/forge/biome_modifier/add_npc_nether.json
+355a8254f9f9ee3fc0577843aff97b3990d93814 data/kunluncontinent/forge/biome_modifier/add_npc_overworld.json
 336fb901cbc42ea93afa765a7dfe76bde90b14bf data/kunluncontinent/forge/biome_modifier/add_red_fire_ore.json
 7bbbdc51c998389b3f50c831056f0b17f6b570dc data/kunluncontinent/forge/biome_modifier/add_red_spider_lily.json
 7c872688b9380d5b621d3b1b279b937033d089d5 data/kunluncontinent/forge/biome_modifier/add_ruby_ore.json

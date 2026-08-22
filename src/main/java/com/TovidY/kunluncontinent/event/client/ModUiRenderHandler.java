@@ -7,13 +7,20 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.MerchantScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.MerchantMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.trading.MerchantOffer;
+import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGuiEvent;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
+import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.client.gui.overlay.NamedGuiOverlay;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -21,6 +28,9 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
+
+import java.lang.reflect.Field;
 
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class ModUiRenderHandler {
@@ -105,6 +115,83 @@ public class ModUiRenderHandler {
                 event.getGuiGraphics().drawCenteredString(Minecraft.getInstance().font, timerText, x / 2, y - 100, color);
             });
         }
+    }
+
+    @SubscribeEvent
+    public static void onGuiRender(ScreenEvent.Render.Post event) {
+        if (event.getScreen() instanceof MerchantScreen merchantScreen) {
+            GuiGraphics guiGraphics = event.getGuiGraphics();
+            MerchantMenu menu = merchantScreen.getMenu();
+            MerchantOffers offers = menu.getOffers();
+            if (offers == null || offers.isEmpty()) return;
+            int guiLeft = merchantScreen.getGuiLeft();
+            int guiTop = merchantScreen.getGuiTop();
+            int listStartX = guiLeft + 5;      // 列表左边缘
+            int listStartY = guiTop + 16 + 3;  // 列表上边缘 (匹配原版 init() 里的 k 坐标)
+            int itemWidth = 88;               // 交易条目宽度
+            int itemHeight = 20;              // 单个条目高度
+            int visibleCount = 7;             // 一页最多显示 7 个条目
+            int scrollOff = 0;
+
+            try {
+                Integer val = ObfuscationReflectionHelper.getPrivateValue(MerchantScreen.class, merchantScreen, "f_99119_");
+                if (val != null) {
+                    scrollOff = val;
+                }
+            } catch (Exception e) {
+                try {
+                    Field field = MerchantScreen.class.getDeclaredField("scrollOff");
+                    field.setAccessible(true);
+                    scrollOff = field.getInt(merchantScreen);
+                } catch (Exception ignored) {}
+            }
+
+            int totalOffers = offers.size();
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().translate(0, 0, 200.0F);
+            RenderSystem.enableBlend();
+            RenderSystem.defaultBlendFunc();
+
+            int finalScrollOff = scrollOff;
+
+            Minecraft.getInstance().player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
+                boolean useStyleB = cap.isConfigOpen(9);
+                for (int i = 0; i < visibleCount; i++) {
+                    int offerIndex = i + finalScrollOff;
+                    if (offerIndex >= totalOffers) break;
+                    MerchantOffer offer = offers.get(offerIndex);
+                    ItemStack resultStack = offer.getResult();
+                    if (resultStack.hasTag() && resultStack.getTag().contains("KlNpcQuality")) {
+                        String qualityName = resultStack.getTag().getString("KlNpcQuality");
+                        int color = getQualityColorByName(qualityName);
+                        if (color != 0) {
+                            int currentY = listStartY + (i * itemHeight);
+                            if (useStyleB) {
+                                int bgAlphaColor = (color & 0x00FFFFFF) | 0x40000000;
+                                guiGraphics.fill(listStartX, currentY, listStartX + itemWidth, currentY + itemHeight - 2, bgAlphaColor);
+                            } else {
+                                guiGraphics.fill(listStartX, currentY, listStartX + 3, currentY + itemHeight - 2, color | 0xFF000000);
+                            }
+                        }
+                    }
+                }
+            });
+
+            RenderSystem.disableBlend();
+            guiGraphics.pose().popPose();
+        }
+    }
+
+    private static int getQualityColorByName(String name) {
+        return switch (name) {
+            case "白" -> 0x55FFFFFF; // 半透明白
+            case "蓝" -> 0x555555FF; // 半透明蓝
+            case "紫" -> 0x55AA44FF; // 半透明紫
+            case "黑" -> 0x77222222; // 半透明黑
+            case "红" -> 0x55FF2222; // 半透明红
+            case "金" -> 0x55FFCC00; // 半透明金
+            default -> 0x00000000;
+        };
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)

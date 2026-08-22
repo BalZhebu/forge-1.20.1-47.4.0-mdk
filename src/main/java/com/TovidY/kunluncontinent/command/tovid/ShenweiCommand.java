@@ -1,4 +1,4 @@
-package com.TovidY.kunluncontinent.command;
+package com.TovidY.kunluncontinent.command.tovid;
 
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.godclass.GodRegistry;

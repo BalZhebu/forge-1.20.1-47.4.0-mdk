@@ -7,6 +7,7 @@ import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCap
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
 public class NpcSoulGenerator {
 
     private static final Random RANDOM = new Random();

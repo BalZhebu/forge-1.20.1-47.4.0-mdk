@@ -37,7 +37,7 @@ public class InstantKillSwordItem extends SwordItem {
                 }
             }
             if (attacker instanceof Player player) {
-                player.displayClientMessage(Component.literal("§8[§4审判§8] §f已抹除：")
+                player.displayClientMessage(Component.literal("§c已抹除：")
                         .append(target.getDisplayName()), true);
             }
         }

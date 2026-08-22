@@ -105,6 +105,7 @@ public class ModItems {
                 @Override
                 public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
                     pTooltip.add(Component.translatable("item.guyuancao_seeds.tooltip").withStyle(ChatFormatting.GRAY));
+                    pTooltip.add(Component.translatable("item.guyuancao_seeds.tooltip1").withStyle(ChatFormatting.GRAY));
                     pTooltip.add(Component.translatable("item.guyuancao_seeds.tooltip2").withStyle(ChatFormatting.GRAY));
                 }
             });
@@ -115,6 +116,7 @@ public class ModItems {
                 @Override
                 public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
                     pTooltip.add(Component.translatable("item.guyuancao_seeds.tooltip").withStyle(ChatFormatting.GRAY));
+                    pTooltip.add(Component.translatable("item.fanqicao_seeds.tooltip").withStyle(ChatFormatting.GRAY));
                     pTooltip.add(Component.translatable("item.guyuancao_seeds.tooltip2").withStyle(ChatFormatting.GRAY));
                 }
             });
@@ -455,6 +457,34 @@ public class ModItems {
     public static final RegistryObject<Item> SOUL_BONE_BUTTON = ITEMS.register("soul_bone_button",()->new Item(new Item.Properties()));
     public static final RegistryObject<Item> HUNHUAN_BUTTON = ITEMS.register("hunhuan_button",()->new Item(new Item.Properties()));
     public static final RegistryObject<Item> SHENKAO_BUTTON = ITEMS.register("shenkao_button",()->new Item(new Item.Properties()));
+
+    //硬币
+    public static final RegistryObject<Item> GOLDEN_SOUL_COIN = ITEMS.register("golden_soul_coin",()->new Item(new Item.Properties()));
+    public static final RegistryObject<Item> SILVER_SOUL_COIN = ITEMS.register("silver_soul_coin",()->new Item(new Item.Properties()));
+    public static final RegistryObject<Item> COPPER_SOUL_COIN = ITEMS.register("copper_soul_coin",()->new Item(new Item.Properties()));
+
+    //钱袋
+    public static final RegistryObject<Item> SMALL_MONEY_BAG = ITEMS.register("small_money_bag",
+            () -> new MoneyBagItem(new Item.Properties().stacksTo(64), MoneyBagLootTable.BagType.SMALL));
+    public static final RegistryObject<Item> MIDDLE_MONEY_BAG = ITEMS.register("middle_money_bag",
+            () -> new MoneyBagItem(new Item.Properties().stacksTo(64), MoneyBagLootTable.BagType.MIDDLE));
+    public static final RegistryObject<Item> BIG_MONEY_BAG = ITEMS.register("big_money_bag",
+            () -> new MoneyBagItem(new Item.Properties().stacksTo(64), MoneyBagLootTable.BagType.BIG));
+
+
+    public static ArrayList<RegistryObject<Item>> BAGLIST = new ArrayList<>();
+    static {
+        BAGLIST.add(SMALL_MONEY_BAG);
+        BAGLIST.add(MIDDLE_MONEY_BAG);
+        BAGLIST.add(BIG_MONEY_BAG);
+    }
+
+    public static ArrayList<RegistryObject<Item>> COINLIST = new ArrayList<>();
+    static {
+        COINLIST.add(GOLDEN_SOUL_COIN);
+        COINLIST.add(SILVER_SOUL_COIN);
+        COINLIST.add(COPPER_SOUL_COIN);
+    }
 
     public static ArrayList<RegistryObject<Item>> KLBUTTON = new ArrayList<>();
     static {

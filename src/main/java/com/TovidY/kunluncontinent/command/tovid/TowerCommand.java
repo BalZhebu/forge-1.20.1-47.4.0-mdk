@@ -1,4 +1,4 @@
-package com.TovidY.kunluncontinent.command; // 对齐你的包名
+package com.TovidY.kunluncontinent.command.tovid; // 对齐你的包名
 
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.mojang.brigadier.CommandDispatcher;

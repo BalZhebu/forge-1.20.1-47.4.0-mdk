@@ -24,48 +24,71 @@ public class PohunqiangItem extends SwordItem {
 
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        if (!level.isClientSide && entity instanceof Player player) {
-            CompoundTag nbt = stack.getOrCreateTag();
-            if (!nbt.contains("OwnerUUID")) {
-                nbt.putUUID("OwnerUUID", player.getUUID());
-                nbt.putString("OwnerName", player.getScoreboardName());
-            }
-            if (!nbt.getUUID("OwnerUUID").equals(player.getUUID())) {
+        if (level.isClientSide || !(entity instanceof Player player)) {
+            return;
+        }
+
+        CompoundTag nbt = stack.getOrCreateTag();
+
+        // 1. 绑定所有者逻辑
+        if (!nbt.contains("OwnerUUID")) {
+            nbt.putUUID("OwnerUUID", player.getUUID());
+            nbt.putString("OwnerName", player.getScoreboardName());
+        }
+
+        // 2. 非所有者使用校验：清除加成并销毁
+        if (!nbt.getUUID("OwnerUUID").equals(player.getUUID())) {
+            player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
+                removeBonus(cap, nbt, player);
+            });
+            stack.setCount(0);
+            return;
+        }
+
+        boolean inHand = player.getMainHandItem() == stack || player.getOffhandItem() == stack;
+
+        player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
+            // 3. 精神力不足校验
+            if (cap.getJingshenli() < 20.0f) {
+                removeBonus(cap, nbt, player);
                 stack.setCount(0);
+                player.sendSystemMessage(Component.literal("§c精神力不足，武魂本体溃散了！"));
                 return;
             }
-            boolean inHand = player.getMainHandItem() == stack || player.getOffhandItem() == stack;
-            player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
-                if (cap.getJingshenli() < 20.0f) {
-                    removeBonus(cap, nbt, player);
-                    stack.setCount(0);
-                    player.sendSystemMessage(Component.literal("§c精神力不足，武魂本体溃散了！"));
-                    return;
+
+            // 4. 手持逻辑处理
+            if (inHand) {
+                // 每 3 秒 (60 ticks) 扣除精神力
+                if (player.tickCount % 60 == 0) {
+                    cap.setJingshenli(Math.max(0, cap.getJingshenli() - 1.0f));
+                    SynsAPI.synsPlayerAttribute(player);
                 }
-                if (inHand) {
-                    if (player.tickCount % 60 == 0) {
-                        cap.setJingshenli(Math.max(0, cap.getJingshenli() - 1.0f));
-                        SynsAPI.synsPlayerAttribute(player);
-                    }
+
+                // 限制更新属性加成的频率，防止每 Tick 计算与网络发包（每 10 Ticks 检查一次）
+                if (player.tickCount % 10 == 0) {
                     float multiplier = 1.2f + (player.experienceLevel * 0.001f);
                     multiplier = Math.min(multiplier, 3.0f);
+
                     float currentGongji = cap.getGongji();
                     float lastBonus = nbt.getFloat("PohunBonusValue");
                     float rawGongji = currentGongji - lastBonus;
                     float expectedTotal = rawGongji * multiplier;
                     float newBonus = expectedTotal - rawGongji;
 
-                    if (Math.abs(newBonus - lastBonus) > 0.01f) {
+                    // 只有当增益变化大于 0.1 时才更新并发包，降低高频同步消耗
+                    if (Math.abs(newBonus - lastBonus) > 0.1f) {
                         cap.setGongji(rawGongji + newBonus);
                         nbt.putFloat("PohunBonusValue", newBonus);
                         SynsAPI.synsPlayerAttribute(player);
                     }
-                } else {
-                    removeBonus(cap, nbt, player);
                 }
-            });
-        }
+            } else {
+                // 不在手持状态（仅在背包中）时移除加成
+                removeBonus(cap, nbt, player);
+            }
+        });
     }
+
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
         CompoundTag nbt = stack.getTag();
@@ -82,7 +105,7 @@ public class PohunqiangItem extends SwordItem {
     private void removeBonus(PlayerAttributeCapability cap, CompoundTag nbt, Player player) {
         float lastBonus = nbt.getFloat("PohunBonusValue");
         if (lastBonus > 0) {
-            cap.setGongji(cap.getGongji() - lastBonus);
+            cap.setGongji(Math.max(0, cap.getGongji() - lastBonus));
             nbt.putFloat("PohunBonusValue", 0.0f);
             SynsAPI.synsPlayerAttribute(player);
         }
@@ -90,10 +113,11 @@ public class PohunqiangItem extends SwordItem {
 
     @Override
     public boolean onDroppedByPlayer(ItemStack item, Player player) {
-        item.setCount(0);
+        // 按 Q 丢弃时立刻销毁并清除增益
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
             removeBonus(cap, item.getOrCreateTag(), player);
         });
+        item.setCount(0);
         return false;
     }
 }

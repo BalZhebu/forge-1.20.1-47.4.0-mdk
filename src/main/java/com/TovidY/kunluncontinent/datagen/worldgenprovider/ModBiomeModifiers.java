@@ -36,6 +36,20 @@ public class ModBiomeModifiers {
             new ResourceLocation(KlMain.MOD_ID, "add_ice_crystal_ice")
     );
 
+    // ── PlayerNPC 生成配置 ─────────────────────────
+    public static final ResourceKey<BiomeModifier> ADD_NPC_OVERWORLD = ResourceKey.create(
+            ForgeRegistries.Keys.BIOME_MODIFIERS,
+            new ResourceLocation(KlMain.MOD_ID, "add_npc_overworld")
+    );
+    public static final ResourceKey<BiomeModifier> ADD_NPC_NETHER = ResourceKey.create(
+            ForgeRegistries.Keys.BIOME_MODIFIERS,
+            new ResourceLocation(KlMain.MOD_ID, "add_npc_nether")
+    );
+    public static final ResourceKey<BiomeModifier> ADD_NPC_END = ResourceKey.create(
+            ForgeRegistries.Keys.BIOME_MODIFIERS,
+            new ResourceLocation(KlMain.MOD_ID, "add_npc_end")
+    );
+
     public static void bootstrap(BootstapContext<BiomeModifier> context) {
         var biomes = context.lookup(Registries.BIOME);
         // 1. 基础配置：覆盖所有雪狐出现的群系（权重 10）
@@ -62,6 +76,23 @@ public class ModBiomeModifiers {
                         //苦力怕
                         new MobSpawnSettings.SpawnerData(EntityType.CREEPER, 10, 1, 1)
                 )
+        ));
+
+        // ── PlayerNPC 自然生成 ───────────────────────
+        // 权重 3：主世界普通群系，等级由 getSpawnLevel 控制（1-40级，5%稀有出高50-99级）
+        context.register(ADD_NPC_OVERWORLD, new ForgeBiomeModifiers.AddSpawnsBiomeModifier(
+                biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
+                List.of(new MobSpawnSettings.SpawnerData(EntityInit.PLAYER_NPC.get(), 4, 1, 1))
+        ));
+        // 权重 3：下界，等级 30-70，5%稀有出80-99级
+        context.register(ADD_NPC_NETHER, new ForgeBiomeModifiers.AddSpawnsBiomeModifier(
+                biomes.getOrThrow(BiomeTags.IS_NETHER),
+                List.of(new MobSpawnSettings.SpawnerData(EntityInit.PLAYER_NPC.get(), 3, 1, 1))
+        ));
+        // 权重 3：末地，等级 50-99
+        context.register(ADD_NPC_END, new ForgeBiomeModifiers.AddSpawnsBiomeModifier(
+                biomes.getOrThrow(BiomeTags.IS_END),
+                List.of(new MobSpawnSettings.SpawnerData(EntityInit.PLAYER_NPC.get(), 3, 1, 1))
         ));
     }
 }

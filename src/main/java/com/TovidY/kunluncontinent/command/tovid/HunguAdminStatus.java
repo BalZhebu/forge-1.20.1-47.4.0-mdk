@@ -1,4 +1,4 @@
-package com.TovidY.kunluncontinent.command;
+package com.TovidY.kunluncontinent.command.tovid;
 
 import net.minecraft.world.entity.player.Player;
 

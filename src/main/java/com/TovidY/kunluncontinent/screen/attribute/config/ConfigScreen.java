@@ -41,7 +41,9 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
             new ConfigItem("魂核实体显示", 5),
             new ConfigItem("屏幕UI显示", 6),
             new ConfigItem("屏幕UI位置", 7),
-            new ConfigItem("聚灵物品渲染", 8)
+            new ConfigItem("聚灵物品渲染", 8),
+            new ConfigItem("NPC交易品级", 9),
+            new ConfigItem("粒子特效优化", 10)
     );
 
     public ConfigScreen(HunhuanMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
@@ -60,13 +62,12 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
         int btnWidth = 100;
         int btnHeight = 20;
 
-// ==================== 子页面布局逻辑 ====================
+        // ==================== 子页面布局逻辑 ====================
         if (this.isOffsetSubPage) {
             this.minecraft.player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
                 int inputWidth = 40;
                 int elementGap = 4;
 
-                // 将起始 Y 坐标往上拉，留出两行调整按钮的空间
                 int subPageY = this.topPos + 42;
                 int totalRowWidth = (btnWidth * 2) + inputWidth + (elementGap * 2);
                 int subPageStartX = this.leftPos + (this.imageWidth - totalRowWidth) / 2;
@@ -79,7 +80,7 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
                 }).bounds(subPageStartX, subPageY, btnWidth, btnHeight).build());
 
                 this.offsetEditBox = new EditBox(this.font, subPageStartX + btnWidth + elementGap, subPageY, inputWidth, btnHeight, Component.literal("偏移值"));
-                this.offsetEditBox.setValue("5"); // 默认步进填 5
+                this.offsetEditBox.setValue("5");
                 this.offsetEditBox.setFilter(s -> s.matches("\\d*"));
                 this.addRenderableWidget(this.offsetEditBox);
 
@@ -92,20 +93,17 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
                 // ----------------- 第二行：UI 缩放控制 -----------------
                 int scaleRowY = subPageY + btnHeight + 6;
 
-                // 缩小 (-0.1)
                 this.addRenderableWidget(Button.builder(Component.literal("缩小 UI (-0.1)"), b -> {
                     float newScale = Math.max(0.2f, (float) (Math.round((cap.getUiScale() - 0.1f) * 10.0) / 10.0));
                     cap.setUiScale(newScale);
                     NetworkHandler.INSTANCE.sendToServer(new PacketUpdateUIOffset(newScale));
                 }).bounds(subPageStartX, scaleRowY, btnWidth, btnHeight).build());
 
-                // 重置缩放 1.0x
                 this.addRenderableWidget(Button.builder(Component.literal("重置缩放"), b -> {
                     cap.setUiScale(1.0f);
                     NetworkHandler.INSTANCE.sendToServer(new PacketUpdateUIOffset(1.0f));
                 }).bounds(subPageStartX + btnWidth + elementGap, scaleRowY, inputWidth, btnHeight).build());
 
-                // 放大 (+0.1)
                 this.addRenderableWidget(Button.builder(Component.literal("放大 UI (+0.1)"), b -> {
                     float newScale = Math.min(3.0f, (float) (Math.round((cap.getUiScale() + 0.1f) * 10.0) / 10.0));
                     cap.setUiScale(newScale);
@@ -116,14 +114,12 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
                 int resetBtnW = 100;
                 int resetX = this.leftPos + (this.imageWidth - resetBtnW) / 2;
 
-                // 一键重置（重置位置与缩放）
                 this.addRenderableWidget(Button.builder(Component.literal("§c重置位置与缩放"), b -> {
                     NetworkHandler.INSTANCE.sendToServer(new PacketUpdateUIOffset(0, true));
                     cap.setUiOffsetY(0);
                     cap.setUiScale(1.0f);
                 }).bounds(resetX, scaleRowY + btnHeight + 8, resetBtnW, btnHeight).build());
 
-                // 返回菜单
                 this.addRenderableWidget(Button.builder(Component.literal("返回菜单"), b -> {
                     this.isOffsetSubPage = false;
                     this.init();
@@ -220,14 +216,18 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
     }
 
     private Button createToggleButton(int x, int y, int w, int h, String name, int index, PlayerAttributeCapability cap) {
-        return Button.builder(getToggleMsg(name, cap.isConfigOpen(index)), b -> {
+        return Button.builder(getToggleMsg(name, index, cap), b -> {
             cap.toggleConfig(index);
             NetworkHandler.INSTANCE.sendToServer(new PacketToggleConfig(index));
-            b.setMessage(getToggleMsg(name, cap.isConfigOpen(index)));
+            b.setMessage(getToggleMsg(name, index, cap));
         }).bounds(x, y, w, h).build();
     }
 
-    private Component getToggleMsg(String name, boolean isOpen) {
+    private Component getToggleMsg(String name, int index, PlayerAttributeCapability cap) {
+        boolean isOpen = cap.isConfigOpen(index);
+        if (index == 9) {
+            return Component.literal("§6" + name + ": " + (isOpen ? "§b样式 B" : "§a样式 A"));
+        }
         return Component.literal("§6" + name + (isOpen ? ": §a开启" : ": §c关闭"));
     }
 

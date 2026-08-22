@@ -1,7 +1,9 @@
 package com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.one;
 
+import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.item.ModItems;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
+import com.TovidY.kunluncontinent.network.SynsAPI;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -33,12 +35,19 @@ public class SkillPohun1 extends BaseSkillItem {
     public void executeEffect(Level level, Player player, float powerMultiplier, float finalDamage) {
         if (!level.isClientSide) {
             ServerLevel serverLevel = (ServerLevel) level;
+
+            // 1. 发动技能前，检查并清除玩家身上的旧破魂枪及残留加成
+            checkAndRemoveOldPohunqiang(player);
+
+            // 2. 创建并配置新破魂枪
             ItemStack spear = new ItemStack(ModItems.POHUNQIANG.get());
             CompoundTag nbt = spear.getOrCreateTag();
             nbt.putUUID("OwnerUUID", player.getUUID());
             nbt.putString("OwnerName", player.getScoreboardName());
             spear.setHoverName(Component.literal("§6" + player.getName().getString() + "的破魂枪")
                     .withStyle(ChatFormatting.BOLD));
+
+            // 3. 优先放入副手，副手有东西则放入背包；背包满则不给（或按原逻辑掉落/清掉）
             if (player.getOffhandItem().isEmpty()) {
                 player.setItemInHand(InteractionHand.OFF_HAND, spear);
             } else {
@@ -46,6 +55,8 @@ public class SkillPohun1 extends BaseSkillItem {
                     player.drop(spear, false);
                 }
             }
+
+            // 4. 技能效果提示与音效粒子
             player.displayClientMessage(Component.literal("§c§l破魂枪，现！"), true);
 
             serverLevel.sendParticles(ParticleTypes.SOUL,
@@ -53,6 +64,30 @@ public class SkillPohun1 extends BaseSkillItem {
                     15, 0.2, 0.5, 0.2, 0.05);
             level.playSound(null, player.getX(), player.getY(), player.getZ(),
                     SoundEvents.TRIDENT_THROW, SoundSource.PLAYERS, 1.0f, 0.8f);
+        }
+    }
+
+    /**
+     * 检查并清除玩家身上的旧破魂枪，同时重置加成属性
+     */
+    private void checkAndRemoveOldPohunqiang(Player player) {
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            ItemStack stack = player.getInventory().getItem(i);
+            if (!stack.isEmpty() && stack.getItem() instanceof PohunqiangItem) {
+                CompoundTag nbt = stack.getTag();
+                if (nbt == null || !nbt.contains("OwnerUUID") || nbt.getUUID("OwnerUUID").equals(player.getUUID())) {
+                    if (nbt != null && nbt.contains("PohunBonusValue")) {
+                        float lastBonus = nbt.getFloat("PohunBonusValue");
+                        if (lastBonus > 0) {
+                            player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
+                                cap.setGongji(Math.max(0, cap.getGongji() - lastBonus));
+                                SynsAPI.synsPlayerAttribute(player);
+                            });
+                        }
+                    }
+                    stack.setCount(0);
+                }
+            }
         }
     }
 }

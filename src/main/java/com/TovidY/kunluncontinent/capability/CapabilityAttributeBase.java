@@ -88,20 +88,20 @@ public class CapabilityAttributeBase implements INBTSerializable<CompoundTag> {
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        this.gongji = nbt.getFloat("wugong");
-        this.fangyu = nbt.getFloat("wufang");
-        this.baojishanghai = nbt.getFloat("baojishanghai");
-        this.baojilv = nbt.getFloat("baojilv");
-        this.kangbao = nbt.getFloat("kangbao");
-        this.xixue = nbt.getFloat("xixue");
-        this.mingzhong = nbt.getFloat("minghzong");
-        this.shanbi = nbt.getFloat("shanbi");
-        this.shengming = nbt.getFloat("shengming");
-        this.maxshengming = nbt.getFloat("maxshengming");
-        this.jingshenli = nbt.getFloat("jingshenli");
-        this.maxjingshenli = nbt.getFloat("maxjingshenli");
-        this.wuchuan = nbt.getFloat("wuchuan");
-        this.shengminghuifu = nbt.getFloat("shengminghuifu");
+        if (nbt.contains("wugong")) this.gongji = nbt.getFloat("wugong");
+        if (nbt.contains("wufang")) this.fangyu = nbt.getFloat("wufang");
+        if (nbt.contains("baojishanghai")) this.baojishanghai = nbt.getFloat("baojishanghai");
+        if (nbt.contains("baojilv")) this.baojilv = nbt.getFloat("baojilv");
+        if (nbt.contains("kangbao")) this.kangbao = nbt.getFloat("kangbao");
+        if (nbt.contains("xixue")) this.xixue = nbt.getFloat("xixue");
+        if (nbt.contains("minghzong")) this.mingzhong = nbt.getFloat("minghzong");
+        if (nbt.contains("shanbi")) this.shanbi = nbt.getFloat("shanbi");
+        if (nbt.contains("shengming")) this.shengming = nbt.getFloat("shengming");
+        if (nbt.contains("maxshengming")) this.maxshengming = nbt.getFloat("maxshengming");
+        if (nbt.contains("jingshenli")) this.jingshenli = nbt.getFloat("jingshenli");
+        if (nbt.contains("maxjingshenli")) this.maxjingshenli = nbt.getFloat("maxjingshenli");
+        if (nbt.contains("wuchuan")) this.wuchuan = nbt.getFloat("wuchuan");
+        if (nbt.contains("shengminghuifu")) this.shengminghuifu = nbt.getFloat("shengminghuifu");
     }
 
     public float getShengminghuifu() {

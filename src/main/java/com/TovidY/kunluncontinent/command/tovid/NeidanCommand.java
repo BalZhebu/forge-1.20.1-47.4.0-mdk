@@ -1,4 +1,4 @@
-package com.TovidY.kunluncontinent.command;
+package com.TovidY.kunluncontinent.command.tovid;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;

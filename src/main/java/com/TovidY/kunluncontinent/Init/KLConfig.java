@@ -1,9 +1,10 @@
 package com.TovidY.kunluncontinent.Init;
 
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.config.ModConfig;
 
 //配置信息生成类
-
 public class KLConfig {
 
     public static final ForgeConfigSpec.BooleanValue hungupingheng;
@@ -27,11 +28,20 @@ public class KLConfig {
     public static final ForgeConfigSpec.DoubleValue dropChanceTier6; // 1000000-9999999年
     public static final ForgeConfigSpec.DoubleValue dropChanceTier7; // 10000000+年
 
+    // ================= 新增：版本检查与更新日志记录配置 =================
+    public static final ForgeConfigSpec.ConfigValue<String> LAST_SEEN_VERSION;
 
-    static{
+    public static final ForgeConfigSpec CONFIG;
+
+    static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
 
         builder.push("kunluncontinent_settings");
+
+        // 记录上次运行 MOD 的版本号
+        LAST_SEEN_VERSION = builder
+                .comment("记录上次运行 MOD 时的版本号，用于检测玩家是否为刚更新 MOD 后的首次登录")
+                .define("last_seen_version", "0.0.0");
 
         ENABLE_HUNHUAN_PROBABILITY = builder
                 .comment("是否启用基于年限的魂环概率生成(本功能供开发测试用，私自修改导致存档问题不予解决！)")
@@ -66,7 +76,7 @@ public class KLConfig {
         // 新增爆率配置项
         builder.push("魂骨爆率配置").comment("这些配置只在魂骨平衡为true时生效(本功能供开发测试用，私自修改导致存档问题不予解决！)");
         baseDropChance = builder.comment("基础爆率(当魂骨平衡为false时使用)")
-                .defineInRange("baseDropChance", 1.0/16, 0.0, 1.0);
+                .defineInRange("baseDropChance", 1.0 / 16.0, 0.0, 1.0);
         dropChanceTier1 = builder.comment("10-99年魂兽的魂骨爆率")
                 .defineInRange("tier1", 0.001, 0.0, 1.0);
         dropChanceTier2 = builder.comment("100-999年魂兽的魂骨爆率")
@@ -82,10 +92,16 @@ public class KLConfig {
         dropChanceTier7 = builder.comment("10000000年魂兽的魂骨爆率")
                 .defineInRange("tier7", 1.0, 0.0, 1.0);
 
-        builder.pop();
+        builder.pop(); // 弹出 "魂骨爆率配置"
+        builder.pop(); // 弹出 "kunluncontinent_settings"
+
         CONFIG = builder.build();
     }
 
-    public static final ForgeConfigSpec CONFIG;
-
+    /**
+     * 向 Forge 注册配置项（在 KlMain 主类构造函数中调用此方法）
+     */
+    public static void register() {
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CONFIG);
+    }
 }

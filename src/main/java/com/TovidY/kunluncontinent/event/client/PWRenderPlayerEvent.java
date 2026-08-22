@@ -42,9 +42,6 @@ public class PWRenderPlayerEvent {
     private static final ResourceLocation SHENHUAN = new ResourceLocation(KlMain.MOD_ID, "textures/picture/shenhuan.png");
     private static final ResourceLocation HUNHUAN = new ResourceLocation(KlMain.MOD_ID, "textures/picture/particletext.png");
 
-    // ==========================================
-    // 预解析 RGBA 颜色数据结构（内存占用极低）
-    // ==========================================
     public static class HunhuanRenderData {
         public final float r, g, b, a;
         public final int nianxian;

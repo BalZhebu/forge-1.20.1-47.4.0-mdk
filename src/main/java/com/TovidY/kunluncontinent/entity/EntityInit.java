@@ -62,10 +62,9 @@ public class EntityInit {
                     .updateInterval(10)
                     .build("ice_shard"));
 
-    // ------------------ 【新增: 玩家 NPC 实体注册】 ------------------
     public static final RegistryObject<EntityType<PlayerNpcEntity>> PLAYER_NPC =
             ENTITY_TYPES.register("player_npc", () -> EntityType.Builder.of(PlayerNpcEntity::new, MobCategory.CREATURE)
-                    .sized(0.6F, 1.8F) // 玩家体型大小
+                    .sized(0.6F, 1.8F)
                     .clientTrackingRange(10)
                     .build("player_npc"));
 

@@ -84,6 +84,16 @@ public class ModItemModelsProvider extends ItemModelProvider {
             basicItem(itemRegistry.get());
         }
 
+        //魂币
+        for (RegistryObject<Item> itemRegistryObject : ModItems.COINLIST){
+            basicItem(itemRegistryObject.get());
+        }
+
+        //钱包
+        for (RegistryObject<Item> itemRegistry : ModItems.BAGLIST){
+            basicItem(itemRegistry.get());
+        }
+
         //核心类
         for (RegistryObject<Item> itemRegistry : ModItems.HEXIN){
             basicItem(itemRegistry.get());

@@ -1,5 +1,6 @@
 package com.TovidY.kunluncontinent;
 
+import com.TovidY.kunluncontinent.Init.AddSeedsLootModifier;
 import com.TovidY.kunluncontinent.Init.KLConfig;
 import com.TovidY.kunluncontinent.Init.ModLootModifiers;
 import com.TovidY.kunluncontinent.advancement.ModTriggers;
@@ -53,6 +54,8 @@ public class KlMain {
         ModBlocks.register(modEventBus);
 
         GodRegistry.init();
+
+        AddSeedsLootModifier.LOOT_MODIFIER_SERIALIZERS.register(FMLJavaModLoadingContext.get().getModEventBus());
 
         ModTriggers.register();
 

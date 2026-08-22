@@ -45,7 +45,7 @@ public interface MonsterCapabilityAPI {
             }
             index += genjvli(entity, random);
             if (((Mob) entity).getMaxHealth() > 60) {
-                int healthBoost = (int) (1 + 1000000 * Math.log10(((Mob) entity).getMaxHealth()));
+                int healthBoost = (int) (1 + 370511 * Math.log10(((Mob) entity).getMaxHealth()));
                 index = Math.max(index, healthBoost);
             }
         } else {

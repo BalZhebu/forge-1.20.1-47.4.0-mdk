@@ -1,12 +1,23 @@
 package com.TovidY.kunluncontinent.item.baseskillist;
 
 import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
+import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
+import com.TovidY.kunluncontinent.entity.playernpc.PlayerNpcEntity;
 import com.TovidY.kunluncontinent.network.SynsAPI;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.util.FakePlayerFactory;
+
+import java.util.List;
 
 public abstract class BaseSkillItem extends Item {
     public BaseSkillItem() {
@@ -25,6 +36,21 @@ public abstract class BaseSkillItem extends Item {
 
             this.executeEffect(level, player, powerMultiplier, finalDamage);
         }
+    }
+
+    /**
+     * NPC 释放技能专属入口（利用 FakePlayer 完美兼容现有 27 个技能类）
+     */
+    public void executeEffectForNpc(ServerLevel serverLevel, PlayerNpcEntity npc, float powerMultiplier, float finalDamage) {
+        var fakePlayer = FakePlayerFactory.getMinecraft(serverLevel);
+        fakePlayer.setPos(npc.getX(), npc.getY(), npc.getZ());
+        fakePlayer.setXRot(npc.getXRot());
+        fakePlayer.setYRot(npc.getYRot());
+        var atkAttr = fakePlayer.getAttribute(Attributes.ATTACK_DAMAGE);
+        if (atkAttr != null) {
+            atkAttr.setBaseValue(npc.getAttributeValue(Attributes.ATTACK_DAMAGE));
+        }
+        this.executeEffect(serverLevel, fakePlayer, powerMultiplier, finalDamage);
     }
 
     public void executeEffect(Level level, Player player, float powerMultiplier, float finalDamage) {

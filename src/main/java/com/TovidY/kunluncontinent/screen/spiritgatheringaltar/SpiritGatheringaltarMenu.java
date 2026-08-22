@@ -44,17 +44,13 @@ public class SpiritGatheringaltarMenu extends AbstractContainerMenu {
         this.entity = inv.player;
         this.world = inv.player.level();
 
-        // 默认初始化数据通道
         this.containerData = new SimpleContainerData(3);
-
-        // 默认初始化为虚拟容器保底，如果绑定成功，会被方块实体的容器覆盖
         this.internal = new VirtualItemStackHandler(3);
 
         if (extraData != null) {
             BlockPos pos = extraData.readBlockPos();
             this.access = ContainerLevelAccess.create(world, pos);
 
-            // ✨ 【核心修复】不依赖未知的字节数残留，直接通过获取到的方块实体安全转正
             this.boundBlockEntity = this.world.getBlockEntity(pos);
 
             if (this.boundBlockEntity instanceof SpiritGatheringAltherBlockEntity altarBe) {
@@ -91,7 +87,7 @@ public class SpiritGatheringaltarMenu extends AbstractContainerMenu {
         // 【核心代码】向 Menu 注册数据同步插槽
         this.addDataSlots(this.containerData);
 
-// 【核心修改】添加本面板的 3 个自定义槽位 (0, 1, 2)，并附加强度锁限制
+        // 【核心修改】添加本面板的 3 个自定义槽位 (0, 1, 2)，并附加强度锁限制
         this.addSlot(new SlotItemHandler(internal, 0, 27, 15) {
             @Override
             public boolean mayPlace(ItemStack stack) {

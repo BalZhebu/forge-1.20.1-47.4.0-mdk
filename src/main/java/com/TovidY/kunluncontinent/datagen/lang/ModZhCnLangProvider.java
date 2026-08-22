@@ -161,6 +161,16 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.DEMONWHALE_SPAWN_EGG.get(),"§c魔鲸刷怪蛋");
         add(ModItems.NPCSOUL_SPAWN_EGG.get(),"NPC刷怪蛋");
 
+        //魂币
+        add(ModItems.GOLDEN_SOUL_COIN.get(),"§e金魂币");
+        add(ModItems.SILVER_SOUL_COIN.get(),"§f银魂币");
+        add(ModItems.COPPER_SOUL_COIN.get(),"§6铜魂币");
+
+        //钱袋
+        add(ModItems.SMALL_MONEY_BAG.get(),"§e小钱袋");
+        add(ModItems.MIDDLE_MONEY_BAG.get(),"§e中钱袋");
+        add(ModItems.BIG_MONEY_BAG.get(),"§e大钱袋");
+
         add(ModItems.ATTRIBUTE_BUTTON.get(),"属性面板");
         add(ModItems.SOUL_BONE_BUTTON.get(),"魂骨面板");
         add(ModItems.HUNHUAN_BUTTON.get(),"魂环面板");
@@ -170,7 +180,10 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("item.kunluncontinent.guide_book.tooltip1","§7请务必认真仔细查看");
         add("item.kunluncontinent.guide_book.tooltip2","§7建议不要弄丢");
 
+        add("item.fanqicao_seeds.tooltip","可通过击杀500年以上的生物低概率掉落");
+
         add("item.guyuancao_seeds.tooltip","会生成在大部分奖励箱中");
+        add("item.guyuancao_seeds.tooltip1","打草有低概率掉落");
         add("tooltip.kunluncontinent.polar_ice_portal_block","需摆出地狱传送门的样式");
 
         //成就类

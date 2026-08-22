@@ -76,13 +76,9 @@ public class JEIKlCategory implements IRecipeCategory<LiandanRecipe> {
         int flameY = 30;
         this.staticFlame.draw(guiGraphics, flameX, flameY);
         this.animatedFlame.draw(guiGraphics, flameX, flameY);
-
-        // 3. 渲染能量消耗信息 (原位)
         String energyText = "本次炼制预计消耗: " + recipe.getEnergyCost() + " / 次";
         guiGraphics.drawString(Minecraft.getInstance().font, energyText, 5, 66, 0xFFFF55, true);
-
-        // 4. 下移说明文字
-        guiGraphics.drawString(Minecraft.getInstance().font, Component.translatable("丹渣块降低丹药出现破碎的概率"), 5, 83, 0xFFFFFF, true);
+        guiGraphics.drawString(Minecraft.getInstance().font, Component.translatable("丹渣块降低丹药出现破碎品质的概率"), 5, 83, 0xFFFFFF, true);
     }
 
     @Override

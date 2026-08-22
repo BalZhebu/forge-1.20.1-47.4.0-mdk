@@ -30,6 +30,7 @@ public class PlayerCloneEventListener {
                 newAttrs.deserializeNBT(oldAttrs.serializeNBT());
                 if (event.isWasDeath()) {
                     float maxHp = newAttrs.getMaxshengming();
+                    //重生后恢复50%的血量
                     float spawnHp = maxHp * 0.5f;
                     newAttrs.setShengming(spawnHp);
                     if (newPlayer instanceof ServerPlayer serverPlayer) {

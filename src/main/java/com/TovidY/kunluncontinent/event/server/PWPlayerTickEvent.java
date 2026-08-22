@@ -206,10 +206,16 @@ public class PWPlayerTickEvent {
         if (timer >= 30) {
             ServerLevel level = player.serverLevel();
             float damage = nbt.getFloat("Bahuang9_Damage");
+            PlayerAttributeCapability cap = player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).orElse(null);
+            boolean particleOpt = cap != null && cap.isConfigOpen(10);
 
-            for (int deg = 0; deg < 360; deg += 5) {
+            // 粒子优化：步长加倍，360度只需一半的粒子环（72→36圈，半径采样也减半）
+            double step = particleOpt ? 10 : 5;
+            for (int deg = 0; deg < 360; deg += (int) step) {
                 double rad = Math.toRadians(deg);
-                for (double r = 1; r < 20; r += 4) {
+                double maxR = particleOpt ? 13 : 20;
+                double rStep = particleOpt ? 5 : 4;
+                for (double r = 1; r < maxR; r += rStep) {
                     level.sendParticles(ParticleTypes.END_ROD,
                             player.getX() + Math.cos(rad) * r, player.getY() + 0.1,
                             player.getZ() + Math.sin(rad) * r, 1, 0, 0.1, 0, 0);
@@ -227,7 +233,6 @@ public class PWPlayerTickEvent {
 
             remaining--;
             if (remaining <= 0) {
-                // 清理全部相关 NBT key
                 nbt.remove("Bahuang9_Active");
                 nbt.remove("Bahuang9_Timer");
                 nbt.remove("Bahuang9_Remaining");
@@ -290,6 +295,8 @@ public class PWPlayerTickEvent {
         float damage = nbt.getFloat("Liejinhu8_Damage");
         ServerLevel level = player.serverLevel();
         timer++;
+        PlayerAttributeCapability cap = player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).orElse(null);
+        boolean particleOpt = cap != null && cap.isConfigOpen(10);
 
         if (timer >= 10) {
             List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class,
@@ -298,12 +305,16 @@ public class PWPlayerTickEvent {
                 target.invulnerableTime = 0;
                 target.hurt(player.damageSources().playerAttack(player), damage);
                 level.sendParticles(ParticleTypes.SWEEP_ATTACK,
-                        target.getX(), target.getY() + 1, target.getZ(), 5, 0.3, 0.3, 0.3, 0.1);
+                        target.getX(), target.getY() + 1, target.getZ(),
+                        particleOpt ? 3 : 5, 0.3, 0.3, 0.3, 0.1);
                 level.sendParticles(ParticleTypes.CRIT,
-                        target.getX(), target.getY() + 1, target.getZ(), 10, 0.5, 0.5, 0.5, 0.2);
+                        target.getX(), target.getY() + 1, target.getZ(),
+                        particleOpt ? 5 : 10, 0.5, 0.5, 0.5, 0.2);
             }
-            level.sendParticles(ParticleTypes.FLASH,
-                    player.getX(), player.getY() + 1, player.getZ(), 1, 0, 0, 0, 0);
+            if (!particleOpt) {
+                level.sendParticles(ParticleTypes.FLASH,
+                        player.getX(), player.getY() + 1, player.getZ(), 1, 0, 0, 0, 0);
+            }
             level.playSound(null, player.getX(), player.getY(), player.getZ(),
                     SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.PLAYERS, 1.5f, 0.5f + (remaining * 0.1f));
 
@@ -320,9 +331,13 @@ public class PWPlayerTickEvent {
             }
         } else {
             nbt.putInt("Liejinhu8_Timer", timer);
-            if (timer % 2 == 0) {
+            // 优化：每 4 tick 发一次，原来每 2 tick
+            if (!particleOpt && timer % 2 == 0) {
                 level.sendParticles(ParticleTypes.END_ROD,
                         player.getX(), player.getY() + 1, player.getZ(), 2, 0.5, 0.5, 0.5, 0.01);
+            } else if (particleOpt && timer % 4 == 0) {
+                level.sendParticles(ParticleTypes.END_ROD,
+                        player.getX(), player.getY() + 1, player.getZ(), 1, 0.5, 0.5, 0.5, 0.01);
             }
         }
     }
@@ -336,6 +351,8 @@ public class PWPlayerTickEvent {
         int timeLeft = nbt.getInt("SuiXingTimer");
         float damage = nbt.getFloat("SuiXingDamage");
         ServerLevel level = player.serverLevel();
+        PlayerAttributeCapability cap = player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).orElse(null);
+        boolean particleOpt = cap != null && cap.isConfigOpen(10);
 
         if (timeLeft % 20 == 0) {
             AABB area = player.getBoundingBox().inflate(15.0);
@@ -344,17 +361,22 @@ public class PWPlayerTickEvent {
             for (LivingEntity target : targets) {
                 target.hurt(level.damageSources().indirectMagic(player, player), damage);
                 level.sendParticles(ParticleTypes.END_ROD,
-                        target.getX(), target.getY() + 4.0, target.getZ(), 20, 0.5, 0.5, 0.5, 0.2);
+                        target.getX(), target.getY() + 4.0, target.getZ(),
+                        particleOpt ? 10 : 20, 0.5, 0.5, 0.5, 0.2);
                 level.sendParticles(ParticleTypes.EXPLOSION,
-                        target.getX(), target.getY(), target.getZ(), 2, 0.1, 0.1, 0.1, 0.0);
-                level.sendParticles(ParticleTypes.FLASH,
-                        target.getX(), target.getY() + 1.0, target.getZ(), 1, 0, 0, 0, 0);
+                        target.getX(), target.getY(), target.getZ(),
+                        particleOpt ? 1 : 2, 0.1, 0.1, 0.1, 0.0);
+                if (!particleOpt) {
+                    level.sendParticles(ParticleTypes.FLASH,
+                            target.getX(), target.getY() + 1.0, target.getZ(), 1, 0, 0, 0, 0);
+                }
             }
             level.playSound(null, player.getX(), player.getY(), player.getZ(),
                     SoundEvents.END_PORTAL_SPAWN, SoundSource.PLAYERS, 1.0f, 0.5f);
         }
 
-        if (gameTime % 2 == 0) {
+        // 粒子优化：每 4 tick 而非每 2 tick 发送轨道粒子，频率减半
+        if (gameTime % (particleOpt ? 4 : 2) == 0) {
             double angle = gameTime * 0.2;
             for (int i = 0; i < 4; i++) {
                 double rad = angle + (i * Math.PI / 2);
@@ -364,7 +386,8 @@ public class PWPlayerTickEvent {
                 level.sendParticles(ParticleTypes.WITCH, px, player.getY() + 0.5, pz, 1, 0.1, 0.5, 0.1, 0.01);
             }
             level.sendParticles(ParticleTypes.ENCHANTED_HIT,
-                    player.getX(), player.getY() + 0.1, player.getZ(), 5, 0.5, 0, 0.5, 0.02);
+                    player.getX(), player.getY() + 0.1, player.getZ(),
+                    particleOpt ? 3 : 5, 0.5, 0, 0.5, 0.02);
         }
 
         timeLeft--;

@@ -41,19 +41,15 @@ public class SpiritGatheringaltarScreen extends AbstractContainerScreen<SpiritGa
 
         guiGraphics.blit(TEXTURE, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
 
-        // ✨【新加：槽位未解锁的红叉遮罩渲染】
         int score = this.menu.getStoneScore();
-        int[] slotX = {27, 82, 135}; // 对应 Menu 里注册的 3 个槽位的 X 坐标
-        int[] slotY = {15, 15, 15};   // 对应 Menu 里注册的 3 个槽位的 Y 坐标
-        int[] limits = {5, 140, 300}; // 解锁要求阈值
+        int[] slotX = {27, 82, 135};
+        int[] slotY = {15, 15, 15};
+        int[] limits = {5, 140, 300};
 
         for (int i = 0; i < 3; i++) {
             if (score <= limits[i]) {
-                // 1. 在对应的 16x16 槽位上覆盖一层半透明的暗红色（0x55 表现为 33% 左右不刺眼的透明度）
                 guiGraphics.fill(this.leftPos + slotX[i], this.topPos + slotY[i],
                         this.leftPos + slotX[i] + 16, this.topPos + slotY[i] + 16, 0x55FF0000);
-
-                // 2. 在格子正中间画一个小巧的白红色“×”，极度省地方而且一眼就能看出被锁了
                 guiGraphics.drawString(this.font, "×", this.leftPos + slotX[i] + 6, this.topPos + slotY[i] + 4, 0xAAFF3333, false);
             }
         }

@@ -31,7 +31,7 @@ public class ThunderRealmPortalBlock extends Block {
         super(BlockBehaviour.Properties.of()
                 .noCollission()
                 .strength(-1.0F)
-                .lightLevel((state) -> 15) // 雷电门稍微亮一点
+                .lightLevel((state) -> 15)
                 .noLootTable()
                 .pushReaction(PushReaction.BLOCK)
                 .noOcclusion());
@@ -55,7 +55,7 @@ public class ThunderRealmPortalBlock extends Block {
                     SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.BLOCKS, 0.2F,
                     random.nextFloat() * 0.4F + 0.8F, false);
         }
-        for (int i = 0; i < 2; ++i) { // 闪电粒子不需要太多，否则闪瞎眼
+        for (int i = 0; i < 2; ++i) {
             double x = pos.getX() + random.nextDouble();
             double y = pos.getY() + random.nextDouble();
             double z = pos.getZ() + random.nextDouble();
@@ -71,10 +71,8 @@ public class ThunderRealmPortalBlock extends Block {
                 entity.setPortalCooldown();
                 return;
             }
-            // 维度切换判断逻辑
             ResourceKey<Level> destination = level.dimension() == ModDimensions.THUNDER_REALM_LEVEL_KEY
                     ? Level.OVERWORLD : ModDimensions.THUNDER_REALM_LEVEL_KEY;
-
             ServerLevel destWorld = serverLevel.getServer().getLevel(destination);
             if (destWorld != null) {
                 entity.setPortalCooldown();

@@ -40,6 +40,8 @@ public class ModCreativeModelTab {
                                         Stream.of(ModItems.POHUNQIANG, ModItems.BAHUANGJI),
 
                                         ModItems.WUHUNGUOSHI.stream(),
+                                        ModItems.COINLIST.stream(),
+                                        ModItems.BAGLIST.stream(),
                                         ModItems.CAOYAOLIST.stream(),
                                         ModItems.SEEDSLIST.stream(),
 

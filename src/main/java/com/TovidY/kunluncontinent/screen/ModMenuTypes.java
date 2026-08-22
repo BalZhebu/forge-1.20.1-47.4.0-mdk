@@ -14,7 +14,6 @@ import com.TovidY.kunluncontinent.screen.guide.GuidBookScreen;
 import com.TovidY.kunluncontinent.screen.guide.GuideBookMenu;
 import com.TovidY.kunluncontinent.screen.liandanlugui.LiandanluMenu;
 import com.TovidY.kunluncontinent.screen.liandanlugui.LiandanluScreen;
-import com.TovidY.kunluncontinent.screen.playernpc.NpcDialogScreen;
 import com.TovidY.kunluncontinent.screen.spiritgatheringaltar.SpiritGatheringaltarMenu;
 import com.TovidY.kunluncontinent.screen.spiritgatheringaltar.SpiritGatheringaltarScreen;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -31,14 +30,10 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
-//该类用于写入menu
-//面板注册
-
 public class ModMenuTypes {
     public static final DeferredRegister<MenuType<?>> MENUS =
             DeferredRegister.create(ForgeRegistries.MENU_TYPES, KlMain.MOD_ID);
 
-    //常量字段
     public static final RegistryObject<MenuType<AttributeMenu>> ATTRUBUTE_MENU =
             registerMenuType("attrubute_menu", AttributeMenu::new);
 
@@ -54,19 +49,17 @@ public class ModMenuTypes {
     public static final RegistryObject<MenuType<ShenkaoMenu>> SHENKAO_MENU =
             registerMenuType("shenkao_menu", ShenkaoMenu::new);
 
-    //配置代码
     public static final RegistryObject<MenuType<HunhuanMenu>> CONFIG_MENU =
             registerMenuType("config_menu", HunhuanMenu::new);
 
-    //引导书
     public static final RegistryObject<MenuType<GuideBookMenu>> GUIDE_BOOK_MENU =
             registerMenuType("guide_book_menu", GuideBookMenu::new);
 
     public static final RegistryObject<MenuType<SpiritGatheringaltarMenu>> SPIRITGATHERING_MENU =
-            registerMenuType("spiritgathering_menu",SpiritGatheringaltarMenu::new);
+            registerMenuType("spiritgathering_menu", SpiritGatheringaltarMenu::new);
 
     private static <T extends AbstractContainerMenu> RegistryObject<MenuType<T>> registerMenuType(String name, IContainerFactory<T> factory) {
-        return MENUS.register(name, () -> IForgeMenuType.create(factory));
+        return MENUS.register(name, () -> net.minecraftforge.common.extensions.IForgeMenuType.create(factory));
     }
 
     public static void register(IEventBus eventBus) {
@@ -77,16 +70,14 @@ public class ModMenuTypes {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
-            MenuScreens.register(ModMenuTypes.ATTRUBUTE_MENU.get(), AttributeScreen::new);
-            MenuScreens.register(ModMenuTypes.LIANDANLU_MENU.get(), LiandanluScreen::new);
-            MenuScreens.register(ModMenuTypes.HUNGU_MENU.get(), HunguScreen::new);
-            MenuScreens.register(ModMenuTypes.GUIDE_BOOK_MENU.get(), GuidBookScreen::new);
-            MenuScreens.register(ModMenuTypes.HUNHUAN_MENU.get(), HunhuanScreen::new);
-            MenuScreens.register(ModMenuTypes.SHENKAO_MENU.get(), ShenkaoScreen::new);
-
-            MenuScreens.register(ModMenuTypes.CONFIG_MENU.get(), ConfigScreen::new);
-            MenuScreens.register(ModMenuTypes.SPIRITGATHERING_MENU.get(), SpiritGatheringaltarScreen::new);
+            MenuScreens.register(ATTRUBUTE_MENU.get(), AttributeScreen::new);
+            MenuScreens.register(LIANDANLU_MENU.get(), LiandanluScreen::new);
+            MenuScreens.register(HUNGU_MENU.get(), HunguScreen::new);
+            MenuScreens.register(GUIDE_BOOK_MENU.get(), GuidBookScreen::new);
+            MenuScreens.register(HUNHUAN_MENU.get(), HunhuanScreen::new);
+            MenuScreens.register(SHENKAO_MENU.get(), ShenkaoScreen::new);
+            MenuScreens.register(CONFIG_MENU.get(), ConfigScreen::new);
+            MenuScreens.register(SPIRITGATHERING_MENU.get(), SpiritGatheringaltarScreen::new);
         }
-
     }
 }

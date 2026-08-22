@@ -1,6 +1,7 @@
 package com.TovidY.kunluncontinent.command;
 
 import com.TovidY.kunluncontinent.KlMain;
+import com.TovidY.kunluncontinent.command.tovid.*;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -19,5 +20,7 @@ public class ModCommands {
         ShenweiCommand.register(event.getDispatcher());
         com.TovidY.kunluncontinent.command.shenkao.ShenweiCommand.register(event.getDispatcher());
         TowerCommand.register(event.getDispatcher());
+        CoinDropCommand.register(event.getDispatcher());
+        NpcSpawnCommand.register(event.getDispatcher());
     }
 }

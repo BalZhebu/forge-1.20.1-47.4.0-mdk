@@ -9,10 +9,11 @@ import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapabilit
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerHunhuanAPI;
-import com.TovidY.kunluncontinent.command.HunguAdminStatus;
+import com.TovidY.kunluncontinent.command.tovid.HunguAdminStatus;
 import com.TovidY.kunluncontinent.entity.EntityInit;
 import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanEntity;
 import com.TovidY.kunluncontinent.entity.playernpc.PlayerNpcEntity;
+import com.TovidY.kunluncontinent.event.client.CoinDropHandler;
 import com.TovidY.kunluncontinent.godclass.interfac.GodTaskType;
 import com.TovidY.kunluncontinent.item.ModItems;
 import com.TovidY.kunluncontinent.item.neidanitems.NeidanDropHandler;
@@ -48,7 +49,6 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
@@ -97,6 +97,10 @@ public class KLivingDeathEvent {
 
             handleGodGlimpse((ServerPlayer) player,entity);
 
+            CoinDropHandler.tryDropCoins(entity, cap.getNianxian(),player);
+
+            handleFanqicaoSeedDrop(entity, cap.getNianxian());
+
             NeidanDropHandler.tryDropNeidan(entity, cap, player);
             handleExperience(player, cap);
             tryGenerateHunhuan(cap, entity.level(), entity.getOnPos());
@@ -107,6 +111,24 @@ public class KLivingDeathEvent {
     }
 
 
+    /**
+     * 返气草种子掉落逻辑
+     * @param entity 被击杀的魂兽/怪物
+     * @param nianxian 怪物年限
+     * 可击杀500年以上的生物掉落
+     */
+
+    private static void handleFanqicaoSeedDrop(LivingEntity entity, long nianxian) {
+        if (nianxian < 500) return;
+        double baseChance = 0.01;
+        double extraChance = (nianxian - 500) / 1000.0 * 0.001;
+        double finalChance = Math.min(0.08, baseChance + extraChance);
+        if (RANDOM.nextDouble() < finalChance) {
+            int dropCount = RANDOM.nextInt(5) + 1;
+            ItemStack seedStack = new ItemStack(ModItems.FANQICAO_SEEDS.get(), dropCount);
+            entity.spawnAtLocation(seedStack);
+        }
+    }
 
     private static void playerDeach(LivingEntity entity) {
         if (entity instanceof ServerPlayer player) {
@@ -326,9 +348,12 @@ public class KLivingDeathEvent {
             if (cap.getGodName() != null && !cap.getGodName().isEmpty()) {
                 return;
             }
-            // 2. 门槛判定逻辑
-            // 如果开启了 debugIgnoreTianfu (由指令控制)，则跳过等级和天赋检查
-            // 否则，必须满足：等级 > 75 且 先天天赋 >= 7
+
+            /* 2. 门槛判定逻辑
+             如果开启了 debugIgnoreTianfu (由指令控制)，则跳过等级和天赋检查
+            否则，必须满足：等级 > 75 且 先天天赋 >= 7
+            */
+
             boolean isQualified = cap.debugIgnoreTianfu || (cap.getDengji() > 75 && cap.getXiantianTalent() >= 7);
 
             if (isQualified) {
@@ -346,7 +371,7 @@ public class KLivingDeathEvent {
                 // --- B. 天使神获取逻辑 (击杀亡灵生物) ---
                 if (victim.getMobType() == MobType.UNDEAD) {
                     // 如果开启了 debugForceSuccess，概率为 100%，否则为 0.2%
-                    float chance = cap.debugForceSuccess ? 1.0f : 0.002f;
+                    float chance = cap.debugForceSuccess ? 1.0f : 0.005f;
                     if (RANDOM.nextFloat() < chance) {
                         triggerGodExam(player, cap, "angel_god", "§e天使神");
                         resetDebugStatus(cap);
@@ -356,8 +381,8 @@ public class KLivingDeathEvent {
 
                 // --- C. 修罗神获取逻辑 (攻击力 > 5W，击杀任意生物) ---
                 if (cap.getGongji() > 50000f) {
-                    // 如果开启了 debugForceSuccess，概率为 100%，否则为 0.05%
-                    float chance = cap.debugForceSuccess ? 1.0f : 0.001f;
+                    // 如果开启了 debugForceSuccess，概率为 100%，否则为 0.8%
+                    float chance = cap.debugForceSuccess ? 1.0f : 0.0055f;
                     if (RANDOM.nextFloat() < chance) {
                         triggerGodExam(player, cap, "asura_god", "§c修罗神");
                         resetDebugStatus(cap);
@@ -374,7 +399,6 @@ public class KLivingDeathEvent {
     }
 
     private static void triggerGodExam(ServerPlayer player, PlayerAttributeCapability cap, String godId, String godName) {
-        // [前面你原有的初始化、广播、音效代码全部保持不变...]
         cap.initializeGodExam(player, godId);
         MinecraftServer server = player.getServer();
         if (server != null) {

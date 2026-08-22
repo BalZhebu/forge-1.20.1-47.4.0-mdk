@@ -8,6 +8,7 @@ import com.TovidY.kunluncontinent.render.DamageIndicatorRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -62,7 +63,6 @@ public class CombatEventHandler {
             processDisplay(player, target, null, "免疫", 0xFFFF0000);
             return;
         }
-
         // ==================== 闪避判定 ====================
         float shanbi = ModAttributeAPI.getShanbi(target);
         float mingzhong = ModAttributeAPI.getMingzhong(attacker);
@@ -198,14 +198,15 @@ public class CombatEventHandler {
 
     private static void processDisplay(Player player, LivingEntity target, Component msg, String indicatorText, int color) {
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
-            switch (cap.getDamageDisplayMode()) {
+            int mode = cap.getDamageDisplayMode();
+            if (mode == 3) return; // 快速返回：配置为隐藏时不构造任何对象
+            switch (mode) {
                 case 0 -> player.displayClientMessage(msg, true);
                 case 1 -> player.displayClientMessage(msg, false);
                 case 2 -> {
                     Vec3 spawnPos = new Vec3(target.getX(), target.getY() + target.getBbHeight() + 0.2D, target.getZ());
                     DamageIndicatorRenderer.addIndicator(indicatorText, color, spawnPos);
                 }
-                default -> { /* 3: 不显示 */ }
             }
         });
     }

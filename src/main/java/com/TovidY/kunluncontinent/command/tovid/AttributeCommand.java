@@ -1,4 +1,4 @@
-package com.TovidY.kunluncontinent.command;
+package com.TovidY.kunluncontinent.command.tovid;
 
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
@@ -21,8 +21,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 //指令格式/kunluncontinent attribute <属性名称> <增加/减少> <值> <玩家>

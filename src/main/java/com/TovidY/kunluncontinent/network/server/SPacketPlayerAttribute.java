@@ -1,14 +1,11 @@
 package com.TovidY.kunluncontinent.network.server;
 
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.util.Collections;
 import java.util.function.Supplier;
 
 // 同步玩家属性数据的网络包
@@ -32,14 +29,11 @@ public class SPacketPlayerAttribute {
 
     public static void handle(SPacketPlayerAttribute msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            ClientLevel level = Minecraft.getInstance().level;
-            if (level != null) {
-                Entity entity = level.getEntity(msg.entityId);
-                if (entity != null) {
-                    entity.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
-                        cap.deserializeNBT(msg.nbt);
-                    });
-                }
+            ServerPlayer player = ctx.get().getSender();
+            if (player != null && !player.level().isClientSide) {
+                player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
+                    cap.deserializeNBT(msg.nbt);
+                });
             }
         });
         ctx.get().setPacketHandled(true);

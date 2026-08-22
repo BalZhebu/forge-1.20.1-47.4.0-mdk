@@ -24,32 +24,48 @@ public class BahuangjiItem extends SwordItem {
 
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        if (!level.isClientSide && entity instanceof Player player) {
-            CompoundTag nbt = stack.getOrCreateTag();
-            if (!nbt.contains("OwnerUUID")) {
-                nbt.putUUID("OwnerUUID", player.getUUID());
-                nbt.putString("OwnerName", player.getScoreboardName());
-            }
-            if (!nbt.getUUID("OwnerUUID").equals(player.getUUID())) {
+        if (level.isClientSide || !(entity instanceof Player player)) {
+            return;
+        }
+
+        CompoundTag nbt = stack.getOrCreateTag();
+
+        // 1. 自动绑定所有者
+        if (!nbt.contains("OwnerUUID")) {
+            nbt.putUUID("OwnerUUID", player.getUUID());
+            nbt.putString("OwnerName", player.getScoreboardName());
+        }
+
+        // 2. 非所有者使用校验：清理加成并直接销毁
+        if (!nbt.getUUID("OwnerUUID").equals(player.getUUID())) {
+            player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
+                removeBonus(cap, nbt, player);
+            });
+            stack.setCount(0);
+            return;
+        }
+
+        boolean inHand = player.getMainHandItem() == stack || player.getOffhandItem() == stack;
+
+        player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
+            // 3. 精神力不足校验
+            if (cap.getJingshenli() < 20.0f) {
+                removeBonus(cap, nbt, player);
                 stack.setCount(0);
+                player.sendSystemMessage(Component.literal("§c精神力不足，八荒戟本体溃散了！"));
                 return;
             }
 
-            boolean inHand = player.getMainHandItem() == stack || player.getOffhandItem() == stack;
-            player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
-                if (cap.getJingshenli() < 20.0f) {
-                    removeBonus(cap, nbt, player);
-                    stack.setCount(0);
-                    player.sendSystemMessage(Component.literal("§c精神力不足，八荒戟本体溃散了！"));
-                    return;
+            // 4. 手持逻辑处理
+            if (inHand) {
+                // 每 3 秒 (60 Ticks) 扣除 1 点精神力
+                if (player.tickCount % 60 == 0) {
+                    cap.setJingshenli(Math.max(0, cap.getJingshenli() - 1.0f));
+                    SynsAPI.synsPlayerAttribute(player);
                 }
-                if (inHand) {
-                    if (player.tickCount % 60 == 0) {
-                        cap.setJingshenli(Math.max(0, cap.getJingshenli() - 1.0f));
-                        SynsAPI.synsPlayerAttribute(player);
-                    }
 
-                    // 八荒戟加成逻辑：基础 1.2x，随等级增长，上限 3.0x
+                // 每 10 Ticks 检查与计算攻击力加成，降低服务器频繁同步的开销
+                if (player.tickCount % 10 == 0) {
                     float multiplier = 1.2f + (player.experienceLevel * 0.001f);
                     multiplier = Math.min(multiplier, 3.0f);
 
@@ -59,16 +75,18 @@ public class BahuangjiItem extends SwordItem {
                     float expectedTotal = rawGongji * multiplier;
                     float newBonus = expectedTotal - rawGongji;
 
-                    if (Math.abs(newBonus - lastBonus) > 0.01f) {
+                    // 变化大于 0.1f 时才更新并同步发包
+                    if (Math.abs(newBonus - lastBonus) > 0.1f) {
                         cap.setGongji(rawGongji + newBonus);
                         nbt.putFloat("BahuangBonusValue", newBonus);
                         SynsAPI.synsPlayerAttribute(player);
                     }
-                } else {
-                    removeBonus(cap, nbt, player);
                 }
-            });
-        }
+            } else {
+                // 没握在手上（在背包里）时清除加成
+                removeBonus(cap, nbt, player);
+            }
+        });
     }
 
     @Override
@@ -87,7 +105,7 @@ public class BahuangjiItem extends SwordItem {
     private void removeBonus(PlayerAttributeCapability cap, CompoundTag nbt, Player player) {
         float lastBonus = nbt.getFloat("BahuangBonusValue");
         if (lastBonus > 0) {
-            cap.setGongji(cap.getGongji() - lastBonus);
+            cap.setGongji(Math.max(0, cap.getGongji() - lastBonus));
             nbt.putFloat("BahuangBonusValue", 0.0f);
             SynsAPI.synsPlayerAttribute(player);
         }
@@ -95,11 +113,10 @@ public class BahuangjiItem extends SwordItem {
 
     @Override
     public boolean onDroppedByPlayer(ItemStack item, Player player) {
-        // 武魂不可主动丢弃，丢弃即消失
-        item.setCount(0);
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
             removeBonus(cap, item.getOrCreateTag(), player);
         });
+        item.setCount(0);
         return false;
     }
 }

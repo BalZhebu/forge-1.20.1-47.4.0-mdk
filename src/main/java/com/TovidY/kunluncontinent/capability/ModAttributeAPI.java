@@ -20,6 +20,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import java.util.Map;
 
 import static com.TovidY.kunluncontinent.capability.hunhuanattributes.HunhuanAttributeHelper.getWuhunBonus;
+import static com.TovidY.kunluncontinent.item.armor.ModArmorBaseItem.getLowTaozhuang;
 
 /**
  * 统一属性 API，用于获取任何实体的属性
@@ -43,14 +44,6 @@ public class ModAttributeAPI {
         if (entity instanceof Mob mob) {
             value += mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY)
                     .map(MobAttributeCapability::getShengming).orElse(0f);
-        }
-        
-        if (entity instanceof LivingEntity livingEntity) {
-            // 考虑药水效果
-            Map<MobEffect, MobEffectInstance> activeEffectsMap = livingEntity.getActiveEffectsMap();
-            for (Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry : activeEffectsMap.entrySet()) {
-                // 在这里可以添加对自定义药水效果的处理
-            }
         }
         return value;
     }
@@ -88,7 +81,7 @@ public class ModAttributeAPI {
                     }
                 }
                 if (istaozhuang) {
-                    ItemStack itemBySlot = ModArmorBaseItem.getLowTaozhuang(armorSlots);
+                    ItemStack itemBySlot = getLowTaozhuang(armorSlots);
                     if (!itemBySlot.isEmpty() && itemBySlot.getItem() instanceof ModArmorBaseItem shArmorBaseItem) {
                         value += shArmorBaseItem.setMaxshengmingTaozhuang(itemBySlot, value);
                     }
@@ -138,38 +131,62 @@ public class ModAttributeAPI {
 
         if (living instanceof Player player) {
             baseFangyu = player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
-                    .map(PlayerAttributeCapability::getFangyu).orElse(0f);
+                    .map(PlayerAttributeCapability::getFangyu)
+                    .orElse(0f);
+
             baseFangyu += getWuhunBonus(player, MobAttributeCapability::getFangyu);
             baseFangyu += getBoneBonus(player, "fangyu");
+
         } else if (living instanceof Mob mob) {
             baseFangyu = mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY)
-                    .map(MobAttributeCapability::getFangyu).orElse(0f);
+                    .map(MobAttributeCapability::getFangyu)
+                    .orElse(0f);
         }
+
         if (living.hasEffect(ModEffects.ARMOR_PIERCING.get())) {
             baseFangyu *= 0.7f;
         }
-        if(entity instanceof LivingEntity livingEntity){
-            Map<MobEffect, MobEffectInstance> activeEffectsMap = livingEntity.getActiveEffectsMap();
-            for (Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry : activeEffectsMap.entrySet()) {
-                if(mobEffectMobEffectInstanceEntry.getKey() instanceof PotionAttribute potionAttribute){
-                    baseFangyu += potionAttribute.getWufang(livingEntity,mobEffectMobEffectInstanceEntry,baseFangyu);
+
+        Map<MobEffect, MobEffectInstance> activeEffectsMap =
+                living.getActiveEffectsMap();
+
+        for (Map.Entry<MobEffect, MobEffectInstance> entry
+                : activeEffectsMap.entrySet()) {
+
+            if (entry.getKey() instanceof PotionAttribute potionAttribute) {
+                baseFangyu += potionAttribute.getWufang(
+                        living,
+                        entry,
+                        baseFangyu
+                );
+            }
+        }
+
+        Iterable<ItemStack> armorSlots = living.getArmorSlots();
+
+        if (armorSlots != null) {
+            boolean isFullArmor = true;
+
+            for (ItemStack armorSlot : armorSlots) {
+                if (armorSlot.isEmpty()
+                        || !(armorSlot.getItem() instanceof ModArmorBaseItem)
+                        || armorSlot.getMaxDamage() - armorSlot.getDamageValue() <= 1) {
+
+                    isFullArmor = false;
+                    break;
                 }
             }
-            Iterable<ItemStack> armorSlots = livingEntity.getArmorSlots();
-            if(armorSlots!=null){
-                Boolean istaozhuang = true;
-                for (ItemStack armorSlot : armorSlots) {
-                    if(!armorSlot.isEmpty() && armorSlot.getItem() instanceof ModArmorBaseItem shArmorBaseItem && armorSlot.getMaxDamage()-armorSlot.getDamageValue()>1){
-                        baseFangyu +=shArmorBaseItem.setWufang(armorSlot , baseFangyu);
-                    }else {
-                        istaozhuang = false;
-                    }
-                }
-                if(istaozhuang){
-                    ItemStack itemBySlot = ModArmorBaseItem.getLowTaozhuang(armorSlots);
-                    if(!itemBySlot.isEmpty() && itemBySlot.getItem() instanceof ModArmorBaseItem shArmorBaseItem){
-                        baseFangyu +=shArmorBaseItem.setWufangTaozhuang(itemBySlot , baseFangyu);
-                    }
+
+            if (isFullArmor) {
+                ItemStack lowArmor = getLowTaozhuang(armorSlots);
+
+                if (!lowArmor.isEmpty()
+                        && lowArmor.getItem() instanceof ModArmorBaseItem shArmorBaseItem) {
+
+                    baseFangyu += shArmorBaseItem.setWufangTaozhuang(
+                            lowArmor,
+                            baseFangyu
+                    );
                 }
             }
         }
@@ -202,7 +219,7 @@ public class ModAttributeAPI {
                     }
                 }
                 if(istaozhuang){
-                    ItemStack itemBySlot = ModArmorBaseItem.getLowTaozhuang(armorSlots);
+                    ItemStack itemBySlot = getLowTaozhuang(armorSlots);
                     if(!itemBySlot.isEmpty() && itemBySlot.getItem() instanceof ModArmorBaseItem shArmorBaseItem){
                         value +=shArmorBaseItem.setShengminghuifuTaozhuang(itemBySlot , value);
                     }
@@ -215,20 +232,11 @@ public class ModAttributeAPI {
 
 
     public static float getJingshenli(Entity entity) {
-        float value = 0;
         if (entity instanceof Player player) {
-            value += player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
+            return player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
                     .map(PlayerAttributeCapability::getJingshenli).orElse(0f);
         }
-        
-        if (entity instanceof LivingEntity livingEntity) {
-            // 考虑药水效果
-            Map<MobEffect, MobEffectInstance> activeEffectsMap = livingEntity.getActiveEffectsMap();
-            for (Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry : activeEffectsMap.entrySet()) {
-                // 在这里可以添加对自定义药水效果的处理
-            }
-        }
-        return value;
+        return 0f;
     }
 
     public static float getMaxjingshenli(Player player) {
@@ -286,10 +294,11 @@ public class ModAttributeAPI {
         }
         
         if (entity instanceof LivingEntity livingEntity) {
-            // 考虑药水效果
             Map<MobEffect, MobEffectInstance> activeEffectsMap = livingEntity.getActiveEffectsMap();
-            for (Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry : activeEffectsMap.entrySet()) {
-                // 在这里可以添加对自定义药水效果的处理
+            for (Map.Entry<MobEffect, MobEffectInstance> entry : activeEffectsMap.entrySet()) {
+                if (entry.getKey() instanceof PotionAttribute potionAttr) {
+                    value += potionAttr.getBaojilv(livingEntity, entry, value);
+                }
             }
         }
         return value;
@@ -383,10 +392,11 @@ public class ModAttributeAPI {
         }
 
         if (entity instanceof LivingEntity livingEntity) {
-            // 考虑药水效果
             Map<MobEffect, MobEffectInstance> activeEffectsMap = livingEntity.getActiveEffectsMap();
-            for (Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry : activeEffectsMap.entrySet()) {
-                // 在这里可以添加对自定义药水效果的处理
+            for (Map.Entry<MobEffect, MobEffectInstance> entry : activeEffectsMap.entrySet()) {
+                if (entry.getKey() instanceof PotionAttribute potionAttr) {
+                    value += potionAttr.getWuchuan(livingEntity, entry, value);
+                }
             }
         }
         return value;
@@ -427,10 +437,11 @@ public class ModAttributeAPI {
         }
         
         if (entity instanceof LivingEntity livingEntity) {
-            // 考虑药水效果
             Map<MobEffect, MobEffectInstance> activeEffectsMap = livingEntity.getActiveEffectsMap();
-            for (Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry : activeEffectsMap.entrySet()) {
-                // 在这里可以添加对自定义药水效果的处理
+            for (Map.Entry<MobEffect, MobEffectInstance> entry : activeEffectsMap.entrySet()) {
+                if (entry.getKey() instanceof PotionAttribute potionAttr) {
+                    value += potionAttr.getKangbao(livingEntity, entry, value);
+                }
             }
         }
         return value;
@@ -486,10 +497,6 @@ public class ModAttributeAPI {
      * @return 有效防御力
      */
     public static float getEffectiveFangyu(LivingEntity entity) {
-        float baseFangyu = getFangyu(entity);
-        if (entity.hasEffect(ModEffects.ARMOR_PIERCING.get())) {
-            return baseFangyu * 0.7f;
-        }
-        return baseFangyu;
+        return getFangyu(entity);
     }
 }
