@@ -490,53 +490,76 @@ public class PWPlayerTickEvent {
         }
     }
 
-    // ==================== 冥想 / 修炼 ====================
-
     private static void handleMeditationLogic(ServerPlayer player, PlayerAttributeCapability cap, long gameTime) {
         boolean isMeditating = player.getVehicle() != null
                 && player.getVehicle().getTags().contains("putuan_seat");
+        CompoundTag nbt = player.getPersistentData();
 
         if (isMeditating) {
             if (gameTime % 20 == 0) {
                 boolean needSync = false;
-
-                // 精神力恢复
                 float currentJs = cap.getJingshenli();
                 float maxJs = cap.getMaxjingshenli();
+
                 if (currentJs < maxJs) {
                     cap.setJingshenli(Math.min(maxJs, currentJs + maxJs * 0.02f + 5.0f));
                     needSync = true;
                 }
 
-                // 修炼时间 + 经验增长
                 int currentTime = cap.getXiulianTime();
                 if (currentTime > 0) {
                     cap.setXiulianTime(currentTime - 1);
                     int lvl = cap.getDengji();
-                    float minutesToLevel = lvl <= 30 ? 5f : lvl <= 89 ? 7f : 10f;
-                    cap.setJingyan(cap.getJingyan() + cap.getMaxjingyan() / (minutesToLevel * 60f));
+
+                    float expGained;
+                    if (lvl <= 30) {
+                        expGained = cap.getMaxjingyan() / (5f * 60f);
+                    } else if (lvl <= 70) {
+                        expGained = cap.getMaxjingyan() / (7f * 60f);
+                    } else {
+                        float baseMinutes = 10f;
+                        float penaltyFactor = 1.0f + (lvl - 70) * 0.08f;
+                        float effectiveMinutes = baseMinutes * penaltyFactor;
+
+                        expGained = cap.getMaxjingyan() / (effectiveMinutes * 60f);
+                    }
+
+                    cap.setJingyan(cap.getJingyan() + expGained);
                     PlayerUpgradeSystem.checkAndProcessUpgrade(player, cap);
                     needSync = true;
 
                     if (currentTime - 1 <= 0) {
                         cap.setUsingAll(true);
-                        player.sendSystemMessage(Component.translatable("putuan.xiulian.finish"));
-                        player.stopRiding();
+                        player.sendSystemMessage(Component.literal("§c【修炼结束】你的修炼时间已耗尽！进入 3 分钟回复冷却。"));
+                        nbt.putInt("XiulianCooldown", 3600);
                     }
                 }
 
                 if (needSync) SynsAPI.synsPlayerAttribute(player);
             }
         } else {
-            int recoverTickRate = cap.isUsingAll() ? 87 : 100;
-            if (gameTime % recoverTickRate == 0) {
-                if (cap.getXiulianTime() < 600) {
-                    cap.setXiulianTime(cap.getXiulianTime() + 1);
-                    if (cap.getXiulianTime() >= 600) cap.setUsingAll(false);
+            if (nbt.contains("XiulianCooldown")) {
+                int cd = nbt.getInt("XiulianCooldown");
+                if (cd > 0) {
+                    nbt.putInt("XiulianCooldown", cd - 1);
+                } else {
+                    nbt.remove("XiulianCooldown");
+                    player.sendSystemMessage(Component.literal("§a【冥想调息】你的修炼时间恢复冷却已结束，开始逐渐恢复修炼时间。"));
+                }
+            } else {
+                int recoverTickRate = cap.isUsingAll() ? 87 : 100;
+                if (gameTime % recoverTickRate == 0) {
+                    if (cap.getXiulianTime() < 600) { // 最大 10 分钟 (600秒)
+                        cap.setXiulianTime(cap.getXiulianTime() + 1);
+                        if (cap.getXiulianTime() >= 600) {
+                            cap.setUsingAll(false);
+                        }
+                    }
                 }
             }
         }
     }
+
 
     // ==================== 玩家受伤事件 ====================
 

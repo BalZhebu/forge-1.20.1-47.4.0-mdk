@@ -5,14 +5,19 @@ import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapabilit
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.entity.playernpc.PlayerNpcEntity;
 import com.TovidY.kunluncontinent.render.KLRenderApi;
+import com.TovidY.kunluncontinent.screen.playernpc.shoumai.SellPriceRegistry;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderLivingEvent;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.joml.Matrix4f;
@@ -23,6 +28,32 @@ import static com.TovidY.kunluncontinent.entity.hunhuan.HunhuanEntity.HUNHUAN;
 
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class PWRenderLivingEvent {
+
+    @SubscribeEvent
+    public static void onItemTooltip(ItemTooltipEvent event) {
+        ItemStack stack = event.getItemStack();
+        if (stack.isEmpty()) return;
+
+        SellPriceRegistry.PriceEntry entry = SellPriceRegistry.getPrice(stack.getItem());
+        if (entry == null) return;
+
+        int count = stack.getCount();
+        event.getToolTip().add(
+                Component.literal("单价: ").withStyle(ChatFormatting.GRAY)
+                        .append(Component.literal(SellPriceRegistry.formatPrice(entry)).withStyle(ChatFormatting.GOLD))
+        );
+        if (count > 1) {
+            SellPriceRegistry.PriceEntry totalPrice = new SellPriceRegistry.PriceEntry(
+                    entry.copper * count,
+                    entry.silver * count,
+                    entry.gold * count
+            );
+            event.getToolTip().add(
+                    Component.literal("总计: ").withStyle(ChatFormatting.GRAY)
+                            .append(Component.literal(SellPriceRegistry.formatPrice(totalPrice)).withStyle(ChatFormatting.YELLOW))
+            );
+        }
+    }
 
     @SubscribeEvent
     public static void renderLivingEventPost(RenderLivingEvent.Post event){

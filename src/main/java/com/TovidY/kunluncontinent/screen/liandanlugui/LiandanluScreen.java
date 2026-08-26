@@ -7,6 +7,7 @@ import com.TovidY.kunluncontinent.item.neidanitems.NeidanItem;
 import com.TovidY.kunluncontinent.item.tool.SoulGatheringBottleItem;
 import com.TovidY.kunluncontinent.recipe.ModRecipes;
 import com.TovidY.kunluncontinent.recipe.liandanlurecipe.LiandanRecipe;
+import com.TovidY.kunluncontinent.screen.KunlunGuiHelper;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -14,6 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.RegistryObject;
@@ -21,8 +23,7 @@ import net.minecraftforge.registries.RegistryObject;
 import java.util.Optional;
 
 public class LiandanluScreen extends AbstractContainerScreen<LiandanluMenu> {
-    private static final ResourceLocation TEXTURE =
-            new ResourceLocation(KlMain.MOD_ID, "textures/screens/liandanlu.png");
+
     private static final ResourceLocation FLAME_EMPTY =
             new ResourceLocation(KlMain.MOD_ID, "textures/screens/huoyan.png");
     private static final ResourceLocation FLAME_FULL =
@@ -63,6 +64,86 @@ public class LiandanluScreen extends AbstractContainerScreen<LiandanluMenu> {
         }
     }
 
+    @Override
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        updateRecipeCache();
+        this.renderBackground(guiGraphics);
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
+        renderAlchmenyInfo(guiGraphics);
+        this.renderTooltip(guiGraphics, mouseX, mouseY);
+    }
+
+    @Override
+    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
+        // 1. 渲染古风通用手绘背景主面板
+        KunlunGuiHelper.renderKunlunBackground(guiGraphics, this.leftPos, this.topPos, this.imageWidth, this.imageHeight);
+
+        // 2. 统一手绘 Slot 衬底
+        for (Slot slot : this.menu.slots) {
+            int slotX = this.leftPos + slot.x - 1;
+            int slotY = this.topPos + slot.y - 1;
+
+            // 判定逻辑修改：只要不属于玩家背包/快捷栏（Y < 80 区域），全部渲染统一金色边框！
+            // 只有下方的玩家背包区域 (Y >= 80) 才渲染深色标准槽位
+            boolean isMachineSlot = slot.y < 80;
+
+            KunlunGuiHelper.renderSlotBackground(guiGraphics, slotX, slotY, isMachineSlot);
+        }
+
+        // 3. 渲染炼丹火焰进度条
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.enableBlend();
+
+        int flameX = this.leftPos + 98;
+        int flameY = this.topPos + 28;
+
+        guiGraphics.blit(FLAME_EMPTY, flameX, flameY, DISPLAY_FLAME_SIZE, DISPLAY_FLAME_SIZE, 0, 0, ORIGINAL_FLAME_SIZE, ORIGINAL_FLAME_SIZE, ORIGINAL_FLAME_SIZE, ORIGINAL_FLAME_SIZE);
+
+        int progress = this.menu.getProgress();
+        int maxProgress = this.menu.getMaxProgress();
+
+        if (maxProgress > 0 && progress > 0) {
+            float ratio = Math.min(1.0F, (float) progress / maxProgress);
+
+            int scaledSourceHeight = (int)(ratio * ORIGINAL_FLAME_SIZE);
+            int scaledDisplayHeight = scaledSourceHeight * FLAME_SCALE;
+
+            if (scaledSourceHeight > 0) {
+                int textureVOffset = ORIGINAL_FLAME_SIZE - scaledSourceHeight;
+                int screenYOffset = DISPLAY_FLAME_SIZE - scaledDisplayHeight;
+
+                guiGraphics.blit(FLAME_FULL,
+                        flameX,
+                        flameY + screenYOffset,
+                        DISPLAY_FLAME_SIZE,
+                        scaledDisplayHeight,
+                        0,
+                        (float) textureVOffset,
+                        ORIGINAL_FLAME_SIZE,
+                        scaledSourceHeight,
+                        ORIGINAL_FLAME_SIZE,
+                        ORIGINAL_FLAME_SIZE
+                );
+            }
+        }
+        RenderSystem.disableBlend();
+    }
+
+    private void renderAlchmenyInfo(GuiGraphics guiGraphics) {
+        renderEnergyStatus(guiGraphics);
+
+        if (cachedRecipe.isPresent()) {
+            LiandanRecipe recipe = cachedRecipe.get();
+            ItemStack resultStack = recipe.getResultItem(this.minecraft.level.registryAccess());
+            Component resultName = Component.literal("预测：").append(resultStack.getHoverName());
+            guiGraphics.drawString(this.font, resultName, this.leftPos + 8, this.topPos + 28, 0xFFD700, true);
+
+            renderProbabilities(guiGraphics, recipe);
+        } else {
+            guiGraphics.drawString(this.font, "等待投放材料...", this.leftPos + 8, this.topPos + 28, 0xAAAAAA, true);
+        }
+    }
+
     private void renderEnergyStatus(GuiGraphics guiGraphics) {
         int hasBottle = this.menu.getData().get(2);
         String statusText;
@@ -79,7 +160,6 @@ public class LiandanluScreen extends AbstractContainerScreen<LiandanluMenu> {
             statusText = "缺少聚魂瓶";
             color = 0xFF5555;
         } else if (bottleStack.isEmpty()) {
-            // 只有两种来源都为空，才显示同步中
             statusText = "同步中...";
             color = 0xAAAAAA;
         } else {
@@ -90,7 +170,6 @@ public class LiandanluScreen extends AbstractContainerScreen<LiandanluMenu> {
                 statusText = "配方未匹配";
                 color = 0xFF5555;
             } else {
-                // 使用你的 ModItems 列表进行对比
                 boolean isBottle = false;
                 for (RegistryObject<Item> bottleReg : ModItems.JUHUNPING) {
                     if (bottleStack.is(bottleReg.get())) {
@@ -100,15 +179,13 @@ public class LiandanluScreen extends AbstractContainerScreen<LiandanluMenu> {
                 }
 
                 if (isBottle) {
-                    // 如果是瓶子，获取能量
                     if (bottleStack.getItem() instanceof SoulGatheringBottleItem bottle) {
                         int currentEnergy = bottle.getNengliang(null, bottleStack);
                         int cost = cachedRecipe.get().getEnergyCost();
-                        statusText = (currentEnergy < cost) ? "能量不足，需: " + cost : "炼制消耗: " + cost + " 能量";
+                        statusText = (currentEnergy < cost) ? "能量不足: " + cost : "消耗能量: " + cost;
                         color = (currentEnergy < cost) ? 0xFF5555 : 0x55FF55;
                     } else {
-                        // 如果类匹配失败，这通常是因为热重载，尝试用注册表名转义
-                        statusText = "物品数据加载中...";
+                        statusText = "加载中...";
                         color = 0xAAAAAA;
                     }
                 } else {
@@ -117,7 +194,7 @@ public class LiandanluScreen extends AbstractContainerScreen<LiandanluMenu> {
                 }
             }
         }
-        guiGraphics.drawString(this.font, statusText, this.leftPos + 8, this.topPos + 63, color, true);
+        guiGraphics.drawString(this.font, statusText, this.leftPos + 8, this.topPos + 62, color, true);
     }
 
     private boolean hasAnyNeidan() {
@@ -125,34 +202,6 @@ public class LiandanluScreen extends AbstractContainerScreen<LiandanluMenu> {
             if (!this.menu.getSlot(i).getItem().isEmpty()) return true;
         }
         return false;
-    }
-
-    @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        // 每帧渲染先更新一次配方缓存
-        updateRecipeCache();
-
-        this.renderBackground(guiGraphics);
-        super.render(guiGraphics, mouseX, mouseY, partialTicks);
-        renderAlchmenyInfo(guiGraphics);
-        this.renderTooltip(guiGraphics, mouseX, mouseY);
-    }
-
-    private void renderAlchmenyInfo(GuiGraphics guiGraphics) {
-
-        renderEnergyStatus(guiGraphics);
-
-        if (cachedRecipe.isPresent()) {
-            LiandanRecipe recipe = cachedRecipe.get();
-            ItemStack resultStack = recipe.getResultItem(this.minecraft.level.registryAccess());
-            Component resultName = Component.literal("预测产出：").append(resultStack.getHoverName());
-            guiGraphics.drawString(this.font, resultName, this.leftPos + 8, this.topPos + 28, 0xFFD700, true);
-
-            // 渲染概率
-            renderProbabilities(guiGraphics, recipe);
-        } else {
-            guiGraphics.drawString(this.font, "等待投放材料...", this.leftPos + 8, this.topPos + 28, 0xAAAAAA, true);
-        }
     }
 
     private void renderProbabilities(GuiGraphics guiGraphics, LiandanRecipe recipe) {
@@ -184,9 +233,10 @@ public class LiandanluScreen extends AbstractContainerScreen<LiandanluMenu> {
     private void drawWeights(GuiGraphics guiGraphics, String[] labels, int[] colors, double[] weights) {
         double totalWeight = 0;
         for (double w : weights) totalWeight += w;
-        int startX = this.leftPos + 10;
-        int yPos = this.topPos + 75;
+        int startX = this.leftPos + 8;
+        int yPos = this.topPos + 73;
         int horizontalSpacing = 33;
+
         for (int i = 0; i < labels.length; i++) {
             double chance = (weights[i] / totalWeight) * 100;
             int currentX = startX + (i * horizontalSpacing);
@@ -198,7 +248,7 @@ public class LiandanluScreen extends AbstractContainerScreen<LiandanluMenu> {
         }
 
         if (!this.menu.getSlot(17).getItem().isEmpty()) {
-            guiGraphics.drawString(this.font, "✔药渣加持", this.leftPos + 145, yPos - 12, 0x55FF55, true);
+            guiGraphics.drawString(this.font, "✔药渣", this.leftPos + 130, yPos - 12, 0x55FF55, true);
         }
     }
 
@@ -247,52 +297,6 @@ public class LiandanluScreen extends AbstractContainerScreen<LiandanluMenu> {
         }
 
         return weights;
-    }
-
-    @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        // 开启混合模式，防止火焰边缘及半透明部分出现黑边或像素闪烁
-        RenderSystem.enableBlend();
-
-        guiGraphics.blit(TEXTURE, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
-
-        int flameX = this.leftPos + 95;
-        int flameY = this.topPos + 30;
-
-        // 渲染底色暗火焰
-        guiGraphics.blit(FLAME_EMPTY, flameX, flameY, DISPLAY_FLAME_SIZE, DISPLAY_FLAME_SIZE, 0, 0, ORIGINAL_FLAME_SIZE, ORIGINAL_FLAME_SIZE, ORIGINAL_FLAME_SIZE, ORIGINAL_FLAME_SIZE);
-
-        int progress = this.menu.getProgress();
-        int maxProgress = this.menu.getMaxProgress();
-
-        if (maxProgress > 0 && progress > 0) {
-            float ratio = Math.min(1.0F, (float) progress / maxProgress);
-
-            // 【核心防抖修改】：用浮点数运算加最终向下取整，避免中间态因四舍五入产生的 1px 坐标漂移
-            int scaledSourceHeight = (int)(ratio * ORIGINAL_FLAME_SIZE);
-            int scaledDisplayHeight = scaledSourceHeight * FLAME_SCALE;
-
-            if (scaledSourceHeight > 0) {
-                // 计算高亮满火焰切片偏移
-                int textureVOffset = ORIGINAL_FLAME_SIZE - scaledSourceHeight;
-                int screenYOffset = DISPLAY_FLAME_SIZE - scaledDisplayHeight;
-
-                guiGraphics.blit(FLAME_FULL,
-                        flameX,
-                        flameY + screenYOffset,
-                        DISPLAY_FLAME_SIZE,
-                        scaledDisplayHeight,
-                        0,
-                        (float) textureVOffset,
-                        ORIGINAL_FLAME_SIZE,
-                        scaledSourceHeight,
-                        ORIGINAL_FLAME_SIZE,
-                        ORIGINAL_FLAME_SIZE
-                );
-            }
-        }
-        RenderSystem.disableBlend();
     }
 
     @Override

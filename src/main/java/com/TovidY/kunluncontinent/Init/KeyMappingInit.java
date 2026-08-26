@@ -24,18 +24,13 @@ import org.lwjgl.glfw.GLFW;
 public class KeyMappingInit {
     private static int rKeyDownTicks = 0;
 
-    //常量字段
     public static final KeyMapping ATTRIBUTE_MAPPING = new KeyMapping("attribute_mapping", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_O, KlMain.MOD_ID);
-
     public static final KeyMapping KAIGUAN_MAPPING = new KeyMapping("kaiguan_mapping", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_K, KlMain.MOD_ID);
-
     public static final KeyMapping SKILL_WHEEL = new KeyMapping("key.kunlun.skill_wheel", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, KlMain.MOD_ID);
-
     public static final KeyMapping RELEASE_SKILL = new KeyMapping("key.kunlun.release_skill", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_V, KlMain.MOD_ID);
 
     @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class RegisterBindings {
-        //用于注册按键
         @SubscribeEvent
         public static void registerBindings(RegisterKeyMappingsEvent event) {
             event.register(ATTRIBUTE_MAPPING);
@@ -46,30 +41,12 @@ public class KeyMappingInit {
     }
 
     @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
-    public static class OnClientTick {
-
-        @SubscribeEvent
-        public static void onKeyPressed(InputEvent.Key event) {
-            if (event.getAction() == InputConstants.PRESS && !isPlayerInChat()) {
-                if (ATTRIBUTE_MAPPING.getKey().getValue() == event.getKey()) {
-                    NetworkHandler.INSTANCE.sendToServer(new CPacketOpenAttrubuteGUI());
-                }
-            }
-        }
-        private static boolean isPlayerInChat() {
-            return Minecraft.getInstance().screen instanceof ChatScreen;
-        }
-    }
-
-
-    @Mod.EventBusSubscriber({Dist.CLIENT})
     public static class KeyEventListener {
         @SubscribeEvent
         public static void onClientTick(TickEvent.ClientTickEvent event) {
             if (event.phase != TickEvent.Phase.END) return;
             Minecraft mc = Minecraft.getInstance();
-            if (mc.player == null) return;
-
+            if (mc.player == null || mc.level == null) return;
             if (SKILL_WHEEL.isDown()) {
                 rKeyDownTicks++;
                 if (rKeyDownTicks == 6 && mc.screen == null) {
@@ -83,25 +60,20 @@ public class KeyMappingInit {
                 }
                 rKeyDownTicks = 0;
             }
+
             while (RELEASE_SKILL.consumeClick()) {
                 NetworkHandler.INSTANCE.sendToServer(new CPacketReleaseSkill());
             }
+
+            // 2. 只有当玩家未打开任何界面 (mc.screen == null) 时，才响应 O 键与 K 键
             if (mc.screen == null) {
-                if (ATTRIBUTE_MAPPING.consumeClick()) {
+                while (ATTRIBUTE_MAPPING.consumeClick()) {
                     NetworkHandler.INSTANCE.sendToServer(new CPacketOpenAttrubuteGUI());
                 }
-                if (KAIGUAN_MAPPING.consumeClick()) {
+                while (KAIGUAN_MAPPING.consumeClick()) {
                     NetworkHandler.INSTANCE.sendToServer(new CPacketQiehuanWuhun());
                 }
             }
-            if (Minecraft.getInstance().screen == null) {
-                ATTRIBUTE_MAPPING.consumeClick();
-            }
-            if (KAIGUAN_MAPPING.consumeClick()) {
-                NetworkHandler.INSTANCE.sendToServer(new CPacketQiehuanWuhun());
-            }
         }
     }
-
-
 }

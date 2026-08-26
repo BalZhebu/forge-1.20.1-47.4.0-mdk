@@ -16,17 +16,17 @@ public class PohunEffect  extends MobEffect implements PotionAttribute {
 
     @Override
     public float getWugong(LivingEntity livingEntity, Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry, float value) {
-        return value * 0.8f;
+        return value * 0.4f;
     }
 
     @Override
     public float getWufang(LivingEntity livingEntity, Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry, float value) {
-        return value * 0.6f;
+        return value * 0.4f;
     }
 
     @Override
     public float getBaojishanghai(LivingEntity livingEntity, Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry, float value) {
-        return value * 0.3f;
+        return value * 0.15f;
     }
 
     @Override
@@ -71,6 +71,6 @@ public class PohunEffect  extends MobEffect implements PotionAttribute {
 
     @Override
     public float getMaxshengming(LivingEntity livingEntity, Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry, float value) {
-        return value * 0.5f;
+        return value * 0.4f;
     }
 }

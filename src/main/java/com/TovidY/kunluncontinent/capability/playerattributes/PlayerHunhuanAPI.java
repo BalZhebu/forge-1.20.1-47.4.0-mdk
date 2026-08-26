@@ -17,6 +17,8 @@ import net.minecraftforge.network.PacketDistributor;
 
 import java.util.*;
 
+import static com.TovidY.kunluncontinent.capability.playerattributes.PlayerUpgradeSystem.performUpgrade;
+
 //各个方法的调用与使用
 
 public class PlayerHunhuanAPI {
@@ -209,9 +211,9 @@ public class PlayerHunhuanAPI {
     public static void addJingyan(ServerPlayer player, float value) {
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(capability -> {
             capability.setJingyan(capability.getJingyan() + value);
-//            if (capability.getJingyan() >= capability.getMaxjingyan()) {
-//                // performUpgrade(player, capability);
-//            }
+            if (capability.getJingyan() >= capability.getMaxjingyan()) {
+                 performUpgrade(player, capability);
+            }
             if (capability.isConfigOpen(3)) {
                 String formattedValue = String.format("%.2f", value);
                 int currentExp = (int) capability.getJingyan();

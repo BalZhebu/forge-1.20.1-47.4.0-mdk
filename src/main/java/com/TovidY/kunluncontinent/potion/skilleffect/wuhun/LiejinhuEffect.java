@@ -16,12 +16,12 @@ public class LiejinhuEffect  extends MobEffect implements PotionAttribute {
 
     @Override
     public float getWugong(LivingEntity livingEntity, Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry, float value) {
-        return value * 0.8f;
+        return value * 0.65f;
     }
 
     @Override
     public float getWufang(LivingEntity livingEntity, Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry, float value) {
-        return value * 0.2f;
+        return value * 0.1f;
     }
 
     @Override
@@ -71,6 +71,6 @@ public class LiejinhuEffect  extends MobEffect implements PotionAttribute {
 
     @Override
     public float getMaxshengming(LivingEntity livingEntity, Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry, float value) {
-        return value * 0.5f;
+        return value * 0.3f;
     }
 }

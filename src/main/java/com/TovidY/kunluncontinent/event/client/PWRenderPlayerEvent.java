@@ -33,6 +33,7 @@ import org.joml.Matrix4f;
 import java.util.*;
 
 //玩家的魂环渲染
+
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class PWRenderPlayerEvent {
 
@@ -107,21 +108,18 @@ public class PWRenderPlayerEvent {
         }
     }
 
-    // ==========================================
-    // 1. 渲染入口（集成距离剔除与高性能直接读取）
-    // ==========================================
-
     @SubscribeEvent
     public static void renderNpcHunhuan(RenderLivingEvent.Post<?, ?> event) {
         if (!(event.getEntity() instanceof PlayerNpcEntity npc) || !npc.isAlive() || npc.tickCount < 1) return;
         Player localPlayer = Minecraft.getInstance().player;
         if (localPlayer == null) return;
 
-        // 基础距离剔除：超过 48 格直接跳过渲染
-        if (localPlayer.distanceToSqr(npc) > 2304) return;
+        boolean isOpen = localPlayer.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
+                .map(cap -> cap.isConfigOpen(11)).orElse(true);
+        if (!isOpen) return;
 
+        if (localPlayer.distanceToSqr(npc) > 2304) return;
         EntityWuhunCache cache = entityWuhunCacheMap.get(npc.getUUID());
-        // 如果缓存为空，进行首次懒加载填充
         if (cache == null) {
             List<Integer> nianxians = getNpcRingNianxians(npc);
             if (nianxians.isEmpty()) return;
@@ -245,84 +243,91 @@ public class PWRenderPlayerEvent {
         }
     }
 
-    // ==========================================
-    // 3. 极速渲染管线（零对象创建与零条件计算）
-    // ==========================================
-
     public static void renderHunhuanFast(Entity entity, float partialTick, PoseStack poseStack, HunhuanRenderData data, int count, EntityWuhunCache cache) {
-        KLRenderApi.renderStart(HUNHUAN, poseStack);
-        Matrix4f matrix4f = poseStack.last().pose();
+        poseStack.pushPose();
+
+        float heightOffset = 0.25f + (count * 0.02f);
+        poseStack.translate(0.0D, heightOffset, 0.0D);
 
         float progress = 1f;
         if (cache.isPlayingAnimation && entity instanceof Player) {
             progress = getAnimationProgressFast(cache, count, 9);
         }
-
-        matrix4f.translate(0, 0.25f + (count * 0.01f), 0);
+        float currentScale = (0.28f + (count * 0.11f)) * progress;
+        poseStack.scale(currentScale, currentScale, currentScale);
 
         float time = entity.level().getGameTime() + partialTick;
-        float rotationAngle = (float) Math.PI * 0.005f * time * (count % 2 == 0 ? -1 : 1);
-        matrix4f.rotate(rotationAngle, 0.0F, 1.0F, 0.0F);
+        float rotationDegrees = (time * 1.2f) * (count % 2 == 0 ? -1f : 1f);
+        poseStack.mulPose(Axis.YP.rotationDegrees(rotationDegrees));
 
-        float currentScale = (0.28f + (count * 0.11f)) * progress;
-        matrix4f.scale(currentScale, 1.0f, currentScale);
+        KLRenderApi.renderStart(HUNHUAN, poseStack);
+        Matrix4f matrix4f = poseStack.last().pose();
 
-        // 直接采用缓存计算好的 RGBA 颜色，免去 if 判断
         RenderSystem.setShaderColor(data.r, data.g, data.b, data.a);
 
         BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
         bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        float s = 6.0f;
-        bufferbuilder.vertex(matrix4f, -s, 0, -s).uv(0, 0).endVertex();
-        bufferbuilder.vertex(matrix4f, -s, 0, s).uv(0, 1).endVertex();
-        bufferbuilder.vertex(matrix4f, s, 0, s).uv(1, 1).endVertex();
-        bufferbuilder.vertex(matrix4f, s, 0, -s).uv(1, 0).endVertex();
+
+        float s = 5.0f;
+        bufferbuilder.vertex(matrix4f, -s, 0.0f, -s).uv(0.0f, 0.0f).endVertex();
+        bufferbuilder.vertex(matrix4f, -s, 0.0f,  s).uv(0.0f, 1.0f).endVertex();
+        bufferbuilder.vertex(matrix4f,  s, 0.0f,  s).uv(1.0f, 1.0f).endVertex();
+        bufferbuilder.vertex(matrix4f,  s, 0.0f, -s).uv(1.0f, 0.0f).endVertex();
 
         BufferUploader.drawWithShader(bufferbuilder.end());
+
         KLRenderApi.renderEnd(poseStack);
+        poseStack.popPose();
     }
 
     private static void renderShenhuanFast(Entity entity, float partialTick, PoseStack poseStack, HunhuanRenderData data, int count, int totalRingCount, EntityWuhunCache cache) {
         poseStack.pushPose();
-        KLRenderApi.renderStart(SHENHUAN, poseStack);
 
         float progress = 1f;
         if (cache.isPlayingAnimation && entity instanceof Player) {
             progress = getAnimationProgressFast(cache, count, totalRingCount);
         }
 
+        // 1. 获取玩家身体朝向并校准
         float bodyYaw = entity.getYRot();
-        float yawRad = (float) Math.toRadians(bodyYaw);
-        float zOffset = 0.6f + (count - 9) * 0.15f;
 
-        poseStack.translate(Mth.sin(yawRad) * zOffset * progress, 1.0f, -Mth.cos(yawRad) * zOffset * progress);
-        poseStack.mulPose(Axis.YP.rotationDegrees(-bodyYaw + 180f));
-        poseStack.mulPose(Axis.XP.rotationDegrees(90));
+        // 2. 统一先平移到背后相对位置（使用局部坐标系，无需手动计算 sin/cos 避免精度误差偏移）
+        poseStack.mulPose(Axis.YP.rotationDegrees(-bodyYaw + 180f)); // 对齐玩家背部视角
 
-        float rotationAngle = (entity.level().getGameTime() + partialTick) * 0.6f;
-        poseStack.mulPose(Axis.YP.rotationDegrees(rotationAngle));
+        float zOffset = -0.6f - (count - 9) * 0.15f; // 背部深度
+        float yOffset = 1.2f; // 背部高度（约胸口/翅膀位置）
+        poseStack.translate(0.0D, yOffset, zOffset * progress);
 
+        float rotationAngle = (entity.level().getGameTime() + partialTick) * 0.8f;
+        poseStack.mulPose(Axis.ZP.rotationDegrees(rotationAngle));
+        poseStack.mulPose(Axis.XP.rotationDegrees(90f));
+
+        // 4. 缩放与呼吸脉冲
         float scale = 0.22f * progress;
+        if (progress >= 1f) {
+            scale *= (0.4f + count * 0.12f);
+            float pulse = 1.0f + (float) Math.sin((entity.level().getGameTime() + partialTick) * 0.05f) * 0.08f;
+            scale *= pulse;
+        }
         poseStack.scale(scale, scale, scale);
+
+        KLRenderApi.renderStart(SHENHUAN, poseStack);
         Matrix4f matrix4f = poseStack.last().pose();
 
-        if (progress >= 1f) {
-            matrix4f.scale(0.4f + count * 0.12f, 1, 0.4f + count * 0.12f);
-            float pulse = 1.0f + (float) Math.sin((entity.level().getGameTime() + partialTick) * 0.01f) * 0.15f;
-            matrix4f.scale(pulse, 1, pulse);
-        }
-
-        // 直接采用缓存好的 RGBA 颜色
         RenderSystem.setShaderColor(data.r, data.g, data.b, data.a);
 
         BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
         bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        bufferbuilder.vertex(matrix4f, -5f, 0.1f, -5f).uv(0, 0).endVertex();
-        bufferbuilder.vertex(matrix4f, -5f, 0.1f, 5f).uv(0, 1).endVertex();
-        bufferbuilder.vertex(matrix4f, 5f, 0.1f, 5f).uv(1, 1).endVertex();
-        bufferbuilder.vertex(matrix4f, 5f, 0.1f, -5f).uv(1, 0).endVertex();
+
+        // 【关键修复】：中心对称映射
+        float s = 4.5f;
+        bufferbuilder.vertex(matrix4f, -s, 0.0f, -s).uv(0.0f, 0.0f).endVertex();
+        bufferbuilder.vertex(matrix4f, -s, 0.0f,  s).uv(0.0f, 1.0f).endVertex();
+        bufferbuilder.vertex(matrix4f,  s, 0.0f,  s).uv(1.0f, 1.0f).endVertex();
+        bufferbuilder.vertex(matrix4f,  s, 0.0f, -s).uv(1.0f, 0.0f).endVertex();
 
         BufferUploader.drawWithShader(bufferbuilder.end());
+
         KLRenderApi.renderEnd(poseStack);
         poseStack.popPose();
     }

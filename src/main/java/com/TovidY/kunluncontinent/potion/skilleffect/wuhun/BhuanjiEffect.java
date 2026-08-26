@@ -16,7 +16,7 @@ public class BhuanjiEffect  extends MobEffect implements PotionAttribute {
 
     @Override
     public float getWugong(LivingEntity livingEntity, Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry, float value) {
-        return value * 0.6f;
+        return value * 0.7f;
     }
 
     @Override
@@ -26,7 +26,7 @@ public class BhuanjiEffect  extends MobEffect implements PotionAttribute {
 
     @Override
     public float getBaojishanghai(LivingEntity livingEntity, Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry, float value) {
-        return value * 0.4f;
+        return value * 0.3f;
     }
 
     @Override
@@ -71,6 +71,6 @@ public class BhuanjiEffect  extends MobEffect implements PotionAttribute {
 
     @Override
     public float getMaxshengming(LivingEntity livingEntity, Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry, float value) {
-        return value * 0.25f;
+        return value * 0.1f;
     }
 }

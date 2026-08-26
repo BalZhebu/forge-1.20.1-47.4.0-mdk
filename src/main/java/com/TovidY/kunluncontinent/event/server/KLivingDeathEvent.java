@@ -247,6 +247,7 @@ public class KLivingDeathEvent {
                     godCap.checkTaskCompletion(serverPlayer);
                 }
                 NetworkHandler.sendToClient(new PacketSyncGodData(godCap), serverPlayer);
+                SynsAPI.synsPlayerAttribute(serverPlayer);
             }
         });
     }

@@ -74,13 +74,12 @@ public class LiandanluMenu extends AbstractContainerMenu {
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 4; col++) {
                 int index = 5 + (row * 4) + col;
-                this.addSlot(new SlotItemHandler(internal, index, 135 + col * 17, 8 + row * 17) {
+                this.addSlot(new SlotItemHandler(internal, index, 131 + col * 18, 12 + row * 18) {
                     @Override
                     public boolean mayPlace(ItemStack stack) { return false; }
                 });
             }
         }
-
 
         addPlayerInventory(inv);
     }
@@ -142,9 +141,9 @@ public class LiandanluMenu extends AbstractContainerMenu {
     private void addPlayerInventory(Inventory inv) {
         for (int i = 0; i < 3; ++i)
             for (int j = 0; j < 9; ++j)
-                this.addSlot(new Slot(inv, j + (i + 1) * 9, 26 + j * 18, 86 + i * 18));
+                this.addSlot(new Slot(inv, j + (i + 1) * 9, 25 + j * 18, 86 + i * 18));
         for (int i = 0; i < 9; ++i)
-            this.addSlot(new Slot(inv, i, 26 + i * 18, 144));
+            this.addSlot(new Slot(inv, i, 25 + i * 18, 144));
     }
 
     public boolean hasDrossBlock() {

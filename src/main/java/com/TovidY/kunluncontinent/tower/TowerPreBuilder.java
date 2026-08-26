@@ -84,11 +84,11 @@ public class TowerPreBuilder {
             currentTargetTower++;
 
             int progress = (int) (((float) currentTargetTower / TOTAL_TOWERS) * 100);
-            String progressMsg = "§6[昆仑大陆] §f正在筑造幻境乾坤（游戏卡顿为正常现象）... §a" + progress + "% " + getProgressBar(progress    );
+            String progressMsg = "§6[昆仑大陆] §f正在进行初始化（游戏卡顿为正常现象）... §a" + progress + "% " + getProgressBar(progress    );
             event.getServer().getPlayerList().getPlayers().forEach(player -> {
                 player.displayClientMessage(Component.literal(progressMsg), true);
             });
-            System.out.println("[昆仑大陆] 幻境塔物理建造中... 当前进度: " + progress + "% (" + currentTargetTower + "/" + TOTAL_TOWERS + ")");
+            System.out.println("[昆仑大陆] 初始化中... 当前进度: " + progress + "% (" + currentTargetTower + "/" + TOTAL_TOWERS + ")");
 
             if (currentTargetTower % 10 == 0) {
                 System.out.println("[昆仑大陆] 正在强行释放内存缓存并写入磁盘...");
@@ -102,7 +102,7 @@ public class TowerPreBuilder {
                 targetLevel.save(null, true, false);
 
                 event.getServer().getPlayerList().getPlayers().forEach(player -> {
-                    player.sendSystemMessage(Component.literal("§b[昆仑大陆] === 幻境全部生成完毕，游戏空间通道已稳定！ ==="));
+                    player.sendSystemMessage(Component.literal("§b[昆仑大陆] 初始化已完成"));
                 });
 
                 System.out.println("[昆仑大陆] === " + TOTAL_TOWERS + "座幻境塔全量安全预建完毕！ ===");

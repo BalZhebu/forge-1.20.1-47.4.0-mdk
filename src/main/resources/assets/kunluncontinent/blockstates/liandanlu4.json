@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "kunluncontinent:block/liandanlu4" },
+    "facing=south": { "model": "kunluncontinent:block/liandanlu4", "y": 180 },
+    "facing=west":  { "model": "kunluncontinent:block/liandanlu4", "y": 270 },
+    "facing=east":  { "model": "kunluncontinent:block/liandanlu4", "y": 90 }
+  }
+}

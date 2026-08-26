@@ -15,6 +15,7 @@ import com.TovidY.kunluncontinent.entity.EntityInit;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.recipe.ModRecipes;
 import com.TovidY.kunluncontinent.screen.ModMenuTypes;
+import com.TovidY.kunluncontinent.screen.playernpc.shoumai.SellPriceRegistry;
 import com.TovidY.kunluncontinent.Init.ModCreativeModelTab;
 import com.TovidY.kunluncontinent.item.ModItems;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -30,6 +31,7 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,18 +46,21 @@ public class KlMain {
 
     public static final Logger LOGGER = LogManager.getLogger();
 
-    public KlMain()
-    {
+    public KlMain() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         MinecraftForge.EVENT_BUS.register(this);
 
+        // 1. 先绑定通用生命周期事件
+        modEventBus.addListener(this::commonSetup);
+
+        // 2. 注册各类 Forge 动态注册项
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
 
         GodRegistry.init();
 
-        AddSeedsLootModifier.LOOT_MODIFIER_SERIALIZERS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        AddSeedsLootModifier.LOOT_MODIFIER_SERIALIZERS.register(modEventBus);
 
         ModTriggers.register();
 
@@ -78,7 +83,13 @@ public class KlMain {
         ModBlockEntities.register(modEventBus);
 
         ModEffects.register(modEventBus);
+    }
 
+    /**
+     * 通用 Setup 事件：此时 Forge 注册表已填充完毕，在此处初始化依赖物品/方块的具体逻辑
+     */
+    private void commonSetup(final FMLCommonSetupEvent event) {
+        event.enqueueWork(SellPriceRegistry::init);
     }
 
     @SubscribeEvent
@@ -90,6 +101,7 @@ public class KlMain {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
         }
+
         @SubscribeEvent
         public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
             event.registerBlockEntityRenderer(ModBlockEntities.UNDERWATER_ALTAR_TILE.get(),
@@ -116,5 +128,4 @@ public class KlMain {
             throw new RuntimeException(e);
         }
     }
-
 }

@@ -86,6 +86,12 @@ public class HunhuanEntity extends Entity {
                 return;
             }
             player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(playerCap -> {
+
+                if (playerCap.getDengji() == 0) {
+                    player.sendSystemMessage(Component.literal("§c请先升级的等级觉醒武魂后再吸收魂环！"));
+                    return;
+                }
+
                 if (playerCap.getWuhunList() == null) {
                     player.sendSystemMessage(Component.translatable("请开启武魂"));
                     return;

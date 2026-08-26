@@ -16,6 +16,8 @@ import com.TovidY.kunluncontinent.screen.liandanlugui.LiandanluMenu;
 import com.TovidY.kunluncontinent.screen.liandanlugui.LiandanluScreen;
 import com.TovidY.kunluncontinent.screen.spiritgatheringaltar.SpiritGatheringaltarMenu;
 import com.TovidY.kunluncontinent.screen.spiritgatheringaltar.SpiritGatheringaltarScreen;
+import com.TovidY.kunluncontinent.screen.playernpc.shoumai.SellMenu;
+import com.TovidY.kunluncontinent.screen.playernpc.shoumai.SellScreen;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
@@ -58,6 +60,9 @@ public class ModMenuTypes {
     public static final RegistryObject<MenuType<SpiritGatheringaltarMenu>> SPIRITGATHERING_MENU =
             registerMenuType("spiritgathering_menu", SpiritGatheringaltarMenu::new);
 
+    public static final RegistryObject<MenuType<SellMenu>> SELL_MENU =
+            registerMenuType("sell_menu", SellMenu::new);
+
     private static <T extends AbstractContainerMenu> RegistryObject<MenuType<T>> registerMenuType(String name, IContainerFactory<T> factory) {
         return MENUS.register(name, () -> net.minecraftforge.common.extensions.IForgeMenuType.create(factory));
     }
@@ -78,6 +83,7 @@ public class ModMenuTypes {
             MenuScreens.register(SHENKAO_MENU.get(), ShenkaoScreen::new);
             MenuScreens.register(CONFIG_MENU.get(), ConfigScreen::new);
             MenuScreens.register(SPIRITGATHERING_MENU.get(), SpiritGatheringaltarScreen::new);
+            MenuScreens.register(SELL_MENU.get(), SellScreen::new);
         }
     }
 }

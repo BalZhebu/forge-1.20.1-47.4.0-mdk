@@ -3,7 +3,6 @@ package com.TovidY.kunluncontinent.event.client;
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.item.ModItems;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -12,7 +11,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -20,24 +18,33 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.TovidY.kunluncontinent.worldgen.ModDimensions.POLAR_ICE_REALM_TYPE;
 
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class UltraOptimizedLightningEvent {
 
-    // ---- 触发概率与判定参数集中管理 ----
-    private static final int CHANCE_DENOMINATOR = 200;   // 每 20 tick 有 1/200 概率触发判定
-    private static final int SEARCH_RADIUS = 20;         // 以玩家为中心的物品搜索半径
-    private static final int MIN_TRIGGER_HEIGHT = 210;   // 只有高于此 Y 坐标的临星铁锭才会被雷劈中
-
-    // 避雷针搜索范围（以掉落物为中心的偏移量）
-    private static final Vec3i LIGHTNING_ROD_SEARCH_MIN = new Vec3i(-2, -2, -2);
-    private static final Vec3i LIGHTNING_ROD_SEARCH_MAX = new Vec3i(2, 1, 2);
+    private static final int CHANCE_DENOMINATOR = 200;
+    private static final int SEARCH_RADIUS = 20;
+    private static final int MIN_TRIGGER_HEIGHT = 210;
+    // 原 ±2,±2,±2 范围，曼哈顿距离上限 = 6
+    private static final int ROD_SEARCH_MANHATTAN = 6;
 
     private static final float LIGHTNING_SOUND_VOLUME = 2.0F;
     private static final float LIGHTNING_SOUND_PITCH = 1.0F;
+
+    /**
+     * chunkKey -> 该 chunk 内的避雷针坐标列表（持久内存缓存，建一次永久有效）
+     */
+    private static final Map<Long, List<BlockPos>> ROD_CACHE = new HashMap<>();
+    /** 本 tick 已处理的铁锭位置，防止同一物品被多次触发 */
+    private static final Map<BlockPos, Long> RECENTLY_PROCESSED = new HashMap<>();
+    /** 是否已完成全图避雷针扫描（只执行一次） */
+    private static volatile boolean cacheInitialized = false;
 
     @SubscribeEvent
     public static void onLevelTick(TickEvent.LevelTickEvent event) {
@@ -49,51 +56,119 @@ public class UltraOptimizedLightningEvent {
 
         ServerLevel level = (ServerLevel) event.level;
         if (!level.dimensionTypeId().equals(POLAR_ICE_REALM_TYPE)) return;
+
+        // 首次进入维度时扫描全图避雷针写入缓存（之后每次 tick 只做内存查找）
+        if (!cacheInitialized) {
+            buildFullCache(level);
+            cacheInitialized = true;
+        }
+
         if (level.random.nextInt(CHANCE_DENOMINATOR) != 0) return;
+
+        // 清理超过 100 tick（约 5 秒）的处理记录，防止 Map 无限增长
+        long cutoff = level.getGameTime() - 100;
+        RECENTLY_PROCESSED.entrySet().removeIf(e -> e.getValue() < cutoff);
 
         for (ServerPlayer player : level.players()) {
             if (tryStrikeNearPlayer(level, player)) {
-                // 保留原逻辑：一次判定全局只触发一次雷击
-                return;
+                return; // 一次判定全局只触发一次
             }
         }
     }
 
     /**
-     * 尝试在指定玩家周围寻找“临星铁锭掉落物 + 附近避雷针”的组合并触发雷击。
-     * @return 是否成功触发了一次雷击
+     * 按需扫描玩家周围 chunk 内的避雷针，写入内存缓存。
+     * 使用 getChunkNow() 获取已加载的 chunk，不会触发异步加载。
      */
+    private static void buildFullCache(ServerLevel level) {
+        int radiusChunks = (SEARCH_RADIUS / 16) + 1;
+        for (ServerPlayer player : level.players()) {
+            int px = player.blockPosition().getX();
+            int pz = player.blockPosition().getZ();
+            int baseChunkX = px >> 4;
+            int baseChunkZ = pz >> 4;
+            for (int dx = -radiusChunks; dx <= radiusChunks; dx++) {
+                for (int dz = -radiusChunks; dz <= radiusChunks; dz++) {
+                    int cx = baseChunkX + dx;
+                    int cz = baseChunkZ + dz;
+                    long key = packChunkKey(cx, cz);
+                    if (ROD_CACHE.containsKey(key)) continue;
+                    net.minecraft.world.level.chunk.LevelChunk chunk = level.getChunkSource().getChunkNow(cx, cz);
+                    if (chunk == null) continue;
+                    List<BlockPos> rods = new ArrayList<>();
+                    net.minecraft.world.level.chunk.LevelChunkSection[] sections = chunk.getSections();
+                    if (sections == null) continue;
+                    for (int sx = 0; sx < sections.length; sx++) {
+                        var section = sections[sx];
+                        if (section == null) continue;
+                        for (int x = 0; x < 16; x++) {
+                            for (int y = 0; y < 16; y++) {
+                                for (int z = 0; z < 16; z++) {
+                                    if (section.getBlockState(x, y, z).is(Blocks.LIGHTNING_ROD)) {
+                                        int worldY = sx * 16 + y;
+                                        rods.add(new BlockPos(cx * 16 + x, worldY, cz * 16 + z));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (!rods.isEmpty()) {
+                        ROD_CACHE.put(key, rods);
+                    }
+                }
+            }
+        }
+    }
+
     private static boolean tryStrikeNearPlayer(ServerLevel level, ServerPlayer player) {
         BlockPos playerPos = player.blockPosition();
         AABB searchArea = new AABB(playerPos).inflate(SEARCH_RADIUS);
 
-        List<ItemEntity> targetIngots = level.getEntitiesOfClass(ItemEntity.class, searchArea,
-                item -> item.getItem().is(ModItems.RINSEI_INGOT.get()) && item.getY() > MIN_TRIGGER_HEIGHT
-        );
+        // 筛选符合条件的临星铁锭（含防重复检查）
+        List<ItemEntity> targetIngots = level.getEntitiesOfClass(ItemEntity.class, searchArea, item -> {
+            if (!item.getItem().is(ModItems.RINSEI_INGOT.get())) return false;
+            if (item.getY() <= MIN_TRIGGER_HEIGHT) return false;
+            return !RECENTLY_PROCESSED.containsKey(item.blockPosition());
+        });
+
         if (targetIngots.isEmpty()) return false;
 
         for (ItemEntity ingot : targetIngots) {
-            BlockPos ingotPos = ingot.blockPosition();
-            Iterable<BlockPos> lightningRodSearchArea = BlockPos.betweenClosed(
-                    ingotPos.offset(LIGHTNING_ROD_SEARCH_MIN.getX(), LIGHTNING_ROD_SEARCH_MIN.getY(), LIGHTNING_ROD_SEARCH_MIN.getZ()),
-                    ingotPos.offset(LIGHTNING_ROD_SEARCH_MAX.getX(), LIGHTNING_ROD_SEARCH_MAX.getY(), LIGHTNING_ROD_SEARCH_MAX.getZ())
-            );
+            if (hasNearbyLightningRod(ingot.blockPosition())) {
+                triggerLightning(level, ingot);
+                return true;
+            }
+        }
+        return false;
+    }
 
-            for (BlockPos rodPos : lightningRodSearchArea) {
-                if (level.getBlockState(rodPos).is(Blocks.LIGHTNING_ROD)) {
-                    triggerLightning(level, rodPos, ingot);
-                    return true;
+    /**
+     * 检查物品附近是否有避雷针——纯内存查找，不查方块状态。
+     * 检查物品所在 chunk 及周边 1 格（共 9 个 chunk）内的缓存列表。
+     */
+    private static boolean hasNearbyLightningRod(BlockPos ingotPos) {
+        int cx = ingotPos.getX() >> 4;
+        int cz = ingotPos.getZ() >> 4;
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                List<BlockPos> rods = ROD_CACHE.get(packChunkKey(cx + dx, cz + dz));
+                if (rods == null) continue;
+                for (BlockPos rod : rods) {
+                    if (rod.distManhattan(ingotPos) <= ROD_SEARCH_MANHATTAN) {
+                        return true;
+                    }
                 }
             }
         }
         return false;
     }
 
-    private static void triggerLightning(ServerLevel level, BlockPos pos, ItemEntity ingot) {
+    private static void triggerLightning(ServerLevel level, ItemEntity ingot) {
+        BlockPos strikePos = ingot.blockPosition().above();
+
         LightningBolt lightning = EntityType.LIGHTNING_BOLT.create(level);
         if (lightning == null) return;
-
-        lightning.moveTo(Vec3.atBottomCenterOf(pos));
+        lightning.moveTo(Vec3.atBottomCenterOf(strikePos));
         lightning.setVisualOnly(false);
         level.addFreshEntity(lightning);
 
@@ -106,8 +181,14 @@ public class UltraOptimizedLightningEvent {
         level.addFreshEntity(fragment);
 
         ingot.discard();
+        // 标记已处理，防止本 tick 内重复触发
+        RECENTLY_PROCESSED.put(ingot.blockPosition(), level.getGameTime());
 
-        level.playSound(null, pos, SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS,
+        level.playSound(null, strikePos, SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS,
                 LIGHTNING_SOUND_VOLUME, LIGHTNING_SOUND_PITCH);
+    }
+
+    private static long packChunkKey(int x, int z) {
+        return (((long) x) << 32) | (z & 0xffffffffL);
     }
 }

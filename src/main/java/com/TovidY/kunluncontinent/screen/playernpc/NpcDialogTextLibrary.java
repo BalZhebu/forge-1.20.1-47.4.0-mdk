@@ -11,7 +11,6 @@ public class NpcDialogTextLibrary {
 
     private static final Random RANDOM = new Random();
 
-    // 默认/通用随机台词列表（每项可包含多行文本，用 \n 换行）
     private static final List<String> GENERAL_DIALOGS = Arrays.asList(
             "阁下光临，有何贵干？\n切磋点到为止，切勿伤了和气。",
             "昆仑山下藏龙卧虎，阁下行事还需多加小心。\n不知今日找我有何要事？",
@@ -22,17 +21,14 @@ public class NpcDialogTextLibrary {
     );
 
     /**
-     * 从通用文本库中随机获取一条台词
+     * 【一键解决】获取随机台词，并自动按 \n 拆分成多行列表
      */
-    public static String getRandomGeneralDialog() {
-        return GENERAL_DIALOGS.get(RANDOM.nextInt(GENERAL_DIALOGS.size()));
+    public static List<String> getRandomGeneralDialogLines() {
+        String rawText = GENERAL_DIALOGS.get(RANDOM.nextInt(GENERAL_DIALOGS.size()));
+        return Arrays.asList(rawText.split("\n"));
     }
 
-    /**
-     * 如果你以后想根据 NPC 类型/皮肤等获取特定台词，可以扩展此方法
-     */
-    public static String getRandomDialogForNpc(int skinIndex) {
-        // 预留扩展入口，目前默认返回通用台词
-        return getRandomGeneralDialog();
+    public static String getRandomGeneralDialog() {
+        return GENERAL_DIALOGS.get(RANDOM.nextInt(GENERAL_DIALOGS.size()));
     }
 }
