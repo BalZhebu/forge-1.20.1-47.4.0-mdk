@@ -48,9 +48,12 @@ public class NpcTradeCatalog {
             new TradeEntry(ModItems.COPPER_SOUL_COIN.get(), 12, ModItems.GRAY_IRON_INGOT.get().asItem(),                  8),
             new TradeEntry(ModItems.COPPER_SOUL_COIN.get(), 20, ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get().asItem(),      5),
             new TradeEntry(ModItems.COPPER_SOUL_COIN.get(), 5, ModItems.DROSS.get().asItem(),                             1),
+            new TradeEntry(ModItems.COPPER_SOUL_COIN.get(), 10, ModItems.RUBY.get().asItem(),                            1),
             new TradeEntry(ModItems.SILVER_SOUL_COIN.get(), 15, ModItems.AMETHYST.get().asItem(),                          1),
             new TradeEntry(ModItems.COPPER_SOUL_COIN.get(), 10, ModItems.SAPPHIRE.get().asItem(),                          2),
-            new TradeEntry(ModItems.COPPER_SOUL_COIN.get(), 8, ModBlocks.PUTUAN_BLOCK.get().asItem(),                  1)
+            new TradeEntry(ModItems.COPPER_SOUL_COIN.get(), 64, ModItems.STRONG_POTION.get().asItem(),                          1),
+            new TradeEntry(ModItems.COPPER_SOUL_COIN.get(), 8, ModBlocks.PUTUAN_BLOCK.get().asItem(), 1)
+
     ));
 
     /** 蓝：10 级起可出现 */
@@ -64,6 +67,7 @@ public class NpcTradeCatalog {
             new TradeEntry(ModItems.COPPER_SOUL_COIN.get(), 10, ModItems.NEIDAN1.get().asItem(),                           10),
             new TradeEntry(ModItems.COPPER_SOUL_COIN.get(), 10, ModItems.NEIDAN2.get().asItem(),                           5),
             new TradeEntry(ModItems.COPPER_SOUL_COIN.get(), 10, ModItems.NEIDAN3.get().asItem(),                           1),
+            new TradeEntry(ModItems.SILVER_SOUL_COIN.get(), 10, ModItems.STRONG_POTION.get().asItem(),                          1),
             new TradeEntry(ModItems.COPPER_SOUL_COIN.get(), 15, ModItems.NEIDAN4.get().asItem(),                           1)
 
     ));
@@ -76,6 +80,7 @@ public class NpcTradeCatalog {
             new TradeEntry(ModItems.SILVER_SOUL_COIN.get(), 15, ModItems.RED_FIRE_BOOTS.get().asItem(),       1),
             new TradeEntry(ModItems.SILVER_SOUL_COIN.get(), 1, ModItems.NEIDAN1.get().asItem(),                           20),
             new TradeEntry(ModItems.SILVER_SOUL_COIN.get(), 1, ModItems.NEIDAN2.get().asItem(),                           10),
+            new TradeEntry(ModItems.SILVER_SOUL_COIN.get(), 5, ModItems.STRONG_POTION.get().asItem(),                          1),
             new TradeEntry(ModItems.SILVER_SOUL_COIN.get(), 1, ModItems.NEIDAN3.get().asItem(),                           5),
             new TradeEntry(ModItems.SILVER_SOUL_COIN.get(), 1, ModItems.NEIDAN4.get().asItem(),                           1),
             new TradeEntry(ModItems.SILVER_SOUL_COIN.get(), 50, ModItems.LIGHTNING_FRAGMENTS.get().asItem(),               1),
@@ -122,7 +127,6 @@ public class NpcTradeCatalog {
             new TradeEntry(ModItems.GOLDEN_SOUL_COIN.get(), 30, ModItems.COLD_HEARTED_STEEL_LEGGINGS.get().asItem(),     1),
             new TradeEntry(ModItems.GOLDEN_SOUL_COIN.get(), 18, ModItems.COLD_HEARTED_STEEL_BOOTS.get().asItem(),        1),
 
-            new TradeEntry(ModItems.COPPER_SOUL_COIN.get(), 10, ModItems.RUBY.get().asItem(),                            1),
             new TradeEntry(ModItems.GOLDEN_SOUL_COIN.get(), 20, ModItems.STARLIGHT_STONE.get().asItem(),                 1),
 
             new TradeEntry(ModItems.GOLDEN_SOUL_COIN.get(), 20, ModItems.RINSEI_FORGING_TEMPLATE.get().asItem(),         1),

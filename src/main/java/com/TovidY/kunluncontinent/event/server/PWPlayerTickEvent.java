@@ -8,6 +8,7 @@ import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCap
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerUpgradeSystem;
 import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanEntity;
 import com.TovidY.kunluncontinent.entity.playernpc.PlayerNpcEntity;
+import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import com.TovidY.kunluncontinent.item.klitem.ZhuanShengTestItem;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
@@ -209,17 +210,18 @@ public class PWPlayerTickEvent {
             PlayerAttributeCapability cap = player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).orElse(null);
             boolean particleOpt = cap != null && cap.isConfigOpen(10);
 
-            // 粒子优化：步长加倍，360度只需一半的粒子环（72→36圈，半径采样也减半）
-            double step = particleOpt ? 10 : 5;
-            for (int deg = 0; deg < 360; deg += (int) step) {
-                double rad = Math.toRadians(deg);
-                double maxR = particleOpt ? 13 : 20;
-                double rStep = particleOpt ? 5 : 4;
-                for (double r = 1; r < maxR; r += rStep) {
-                    level.sendParticles(ParticleTypes.END_ROD,
-                            player.getX() + Math.cos(rad) * r, player.getY() + 0.1,
-                            player.getZ() + Math.sin(rad) * r, 1, 0, 0.1, 0, 0);
-                }
+            // 特效：每次脉冲重绘半径二十格的“寂灭地阵”，由内向外旋转
+            ParticleFx fx = ParticleFx.of(level);
+            if (fx != null) {
+                fx.lod(particleOpt ? 0.5 : 1.0).budget(particleOpt ? 1100 : 2600);
+                Vec3 base = player.position();
+                double rot = level.getGameTime() * 0.22;
+
+                fx.polygon(ParticleTypes.END_ROD, base.add(0, 0.12, 0), ParticleFx.Axis.Y, 20.0, 24, rot, 0.0);
+                fx.polygon(ParticleTypes.SOUL_FIRE_FLAME, base.add(0, 0.18, 0), ParticleFx.Axis.Y, 13.0, 12, -rot, 0.05);
+                fx.dashedRing(ParticleTypes.LAVA, base.add(0, 0.24, 0), ParticleFx.Axis.Y, 6.5, 12, 0.5, rot * 1.5, 0.08);
+                fx.pillars(ParticleTypes.END_ROD, base, 20.0, particleOpt ? 12 : 24, 3.0, rot);
+                fx.burst(ParticleTypes.FLAME, base.add(0, 0.5, 0), particleOpt ? 20 : 40, 1.5, true);
             }
 
             level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(20.0),
@@ -276,9 +278,16 @@ public class PWPlayerTickEvent {
                     entity.hurt(level.damageSources().magic(), damage);
                 }
                 if (level instanceof ServerLevel serverLevel) {
-                    serverLevel.sendParticles(ParticleTypes.REVERSE_PORTAL,
-                            entity.getX(), entity.getY() + 1, entity.getZ(),
-                            5, 0.2, 0.2, 0.2, 0.01);
+                    // 虚空侵蚀：目标脚下浮现反向封印环 + 被撕碎的暗物质
+                    ParticleFx vf = ParticleFx.of(serverLevel);
+                    if (vf != null) {
+                        Vec3 vp = entity.position();
+                        double vrot = serverLevel.getGameTime() * 0.35;
+                        vf.budget(120).lod(0.6);
+                        vf.dashedRing(ParticleTypes.REVERSE_PORTAL, vp.add(0, 0.1, 0), ParticleFx.Axis.Y, 1.0, 8, 0.45, vrot, 0.05);
+                        vf.dashedRing(ParticleTypes.SCULK_SOUL, vp.add(0, 0.9, 0), ParticleFx.Axis.Z, 0.85, 8, 0.45, -vrot, 0.05);
+                        vf.bloom(ParticleTypes.REVERSE_PORTAL, entity.getEyePosition(), 5, 0.25, 0.02);
+                    }
                 }
             }
         }
@@ -299,21 +308,34 @@ public class PWPlayerTickEvent {
         boolean particleOpt = cap != null && cap.isConfigOpen(10);
 
         if (timer >= 10) {
+            ParticleFx fx = ParticleFx.of(level);
+            if (fx != null) {
+                fx.lod(particleOpt ? 0.5 : 1.0).budget(particleOpt ? 800 : 1800);
+            }
+            double rot = level.getGameTime() * 0.4;
+
             List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class,
                     player.getBoundingBox().inflate(20.0), e -> e != player && e.isAlive());
             for (LivingEntity target : targets) {
                 target.invulnerableTime = 0;
                 target.hurt(player.damageSources().playerAttack(player), damage);
-                level.sendParticles(ParticleTypes.SWEEP_ATTACK,
-                        target.getX(), target.getY() + 1, target.getZ(),
-                        particleOpt ? 3 : 5, 0.3, 0.3, 0.3, 0.1);
-                level.sendParticles(ParticleTypes.CRIT,
-                        target.getX(), target.getY() + 1, target.getZ(),
-                        particleOpt ? 5 : 10, 0.5, 0.5, 0.5, 0.2);
+                if (fx != null) {
+                    // 每名敌人身上炸开一记金色裂天爪痕
+                    Vec3 hp = target.position().add(0, target.getBbHeight() * 0.5, 0);
+                    Vec3 to = hp.subtract(player.position()).normalize();
+                    Vec3 side = ParticleFx.ortho(to);
+                    fx.crossSlash(ParticleTypes.SWEEP_ATTACK, hp, to, side, 1.3, 170, particleOpt ? 1 : 2);
+                    fx.burst(ParticleTypes.CRIT, hp, particleOpt ? 6 : 12, 0.4, true);
+                }
             }
-            if (!particleOpt) {
-                level.sendParticles(ParticleTypes.FLASH,
-                        player.getX(), player.getY() + 1, player.getZ(), 1, 0, 0, 0, 0);
+            if (fx != null) {
+                // 以自身为中心的金色裂天光环
+                Vec3 base = player.position();
+                fx.dashedRing(ParticleTypes.CRIT, base.add(0, 0.2, 0), ParticleFx.Axis.Y, 6.0, 14, 0.5, rot, 0.08);
+                fx.star(ParticleTypes.GLOW, base.add(0, 0.15, 0), ParticleFx.Axis.Y, 4.4, 1.8, 6, -rot, 0.06);
+                if (!particleOpt) {
+                    fx.dot(ParticleTypes.FLASH, base.add(0, 1.0, 0));
+                }
             }
             level.playSound(null, player.getX(), player.getY(), player.getZ(),
                     SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.PLAYERS, 1.5f, 0.5f + (remaining * 0.1f));
@@ -358,36 +380,44 @@ public class PWPlayerTickEvent {
             AABB area = player.getBoundingBox().inflate(15.0);
             List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class, area,
                     e -> e != player && e.isAlive());
+            ParticleFx pulse = ParticleFx.of(level);
+            if (pulse != null) {
+                pulse.lod(particleOpt ? 0.5 : 1.0).budget(particleOpt ? 1000 : 2400);
+            }
             for (LivingEntity target : targets) {
                 target.hurt(level.damageSources().indirectMagic(player, player), damage);
-                level.sendParticles(ParticleTypes.END_ROD,
-                        target.getX(), target.getY() + 4.0, target.getZ(),
-                        particleOpt ? 10 : 20, 0.5, 0.5, 0.5, 0.2);
-                level.sendParticles(ParticleTypes.EXPLOSION,
-                        target.getX(), target.getY(), target.getZ(),
-                        particleOpt ? 1 : 2, 0.1, 0.1, 0.1, 0.0);
-                if (!particleOpt) {
-                    level.sendParticles(ParticleTypes.FLASH,
-                            target.getX(), target.getY() + 1.0, target.getZ(), 1, 0, 0, 0, 0);
+                if (pulse != null) {
+                    Vec3 tp = target.position();
+                    // 星辰陨落：头顶垂落的光柱 + 顶点爆发
+                    pulse.column(ParticleTypes.END_ROD, ParticleTypes.SOUL, target.position(), 0.6, 4.0, 3, gameTime * 0.1, ParticleFx.TAU, 0.4);
+                    pulse.dashedRing(ParticleTypes.WITCH, tp.add(0, 0.15, 0), ParticleFx.Axis.Y, 1.6, 8, 0.5, -gameTime * 0.12, 0.06);
+                    pulse.burst(ParticleTypes.END_ROD, tp.add(0, 4.0, 0), particleOpt ? 10 : 22, 0.9, true);
                 }
             }
             level.playSound(null, player.getX(), player.getY(), player.getZ(),
                     SoundEvents.END_PORTAL_SPAWN, SoundSource.PLAYERS, 1.0f, 0.5f);
         }
 
-        // 粒子优化：每 4 tick 而非每 2 tick 发送轨道粒子，频率减半
+        // 领域边界：每 2/4 tick 重绘双层旋转断环 + 六芒 + 四道环绕星轨
         if (gameTime % (particleOpt ? 4 : 2) == 0) {
-            double angle = gameTime * 0.2;
-            for (int i = 0; i < 4; i++) {
-                double rad = angle + (i * Math.PI / 2);
-                double px = player.getX() + Math.cos(rad) * 15;
-                double pz = player.getZ() + Math.sin(rad) * 15;
-                level.sendParticles(ParticleTypes.SOUL, px, player.getY(), pz, 1, 0, 0.1, 0, 0.02);
-                level.sendParticles(ParticleTypes.WITCH, px, player.getY() + 0.5, pz, 1, 0.1, 0.5, 0.1, 0.01);
+            ParticleFx orbit = ParticleFx.of(level);
+            if (orbit != null) {
+                orbit.lod(particleOpt ? 0.5 : 1.0).budget(particleOpt ? 260 : 600);
+                Vec3 base = player.position();
+                double rot = gameTime * 0.14;
+
+                orbit.dashedRing(ParticleTypes.SOUL, base.add(0, 0.25, 0), ParticleFx.Axis.Y, 15.0, 16, 0.4, rot, 0.1);
+                orbit.dashedRing(ParticleTypes.WITCH, base.add(0, 0.6, 0), ParticleFx.Axis.Y, 15.0, 16, 0.4, -rot * 1.3, 0.1);
+                orbit.star(ParticleTypes.END_ROD, base.add(0, 0.4, 0), ParticleFx.Axis.Y, 15.0, 6.0, 6, rot * 0.8, 0.05);
+                // 四道环绕上升的星轨
+                for (int i = 0; i < 4; i++) {
+                    double a = rot * 1.6 + ParticleFx.TAU * i / 4;
+                    orbit.dot(ParticleTypes.SOUL, base.add(Math.cos(a) * 15.0, 0.2, Math.sin(a) * 15.0));
+                    orbit.dot(ParticleTypes.WITCH, base.add(Math.cos(a) * 15.0, 0.9, Math.sin(a) * 15.0));
+                    orbit.dot(ParticleTypes.END_ROD, base.add(Math.cos(a) * 15.0, 1.7, Math.sin(a) * 15.0));
+                }
+                orbit.bloom(ParticleTypes.ENCHANTED_HIT, base.add(0, 0.5, 0), particleOpt ? 4 : 8, 0.6, 0.02);
             }
-            level.sendParticles(ParticleTypes.ENCHANTED_HIT,
-                    player.getX(), player.getY() + 0.1, player.getZ(),
-                    particleOpt ? 3 : 5, 0.5, 0, 0.5, 0.02);
         }
 
         timeLeft--;
@@ -408,6 +438,10 @@ public class PWPlayerTickEvent {
         ServerLevel level = player.serverLevel();
         double verticalMomentum = player.getDeltaMovement().y;
 
+        PlayerAttributeCapability landCap = player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).orElse(null);
+        boolean landOpt = landCap != null && landCap.isConfigOpen(10);
+        double landLod = landOpt ? 0.5 : 1.0;
+
         if (nbt.contains("BuZhouQing_Active") && player.onGround() && verticalMomentum <= 0) {
             float dmg = nbt.getFloat("BuZhouQing_Damage");
             List<LivingEntity> bzTargets = level.getEntitiesOfClass(LivingEntity.class,
@@ -419,10 +453,26 @@ public class PWPlayerTickEvent {
                 target.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 300, 1));
                 target.addEffect(new MobEffectInstance(MobEffects.HUNGER, 300, 1));
             }
-            level.sendParticles(ParticleTypes.SONIC_BOOM,
-                    player.getX(), player.getY(), player.getZ(), 15, 3, 0.5, 3, 0.2);
-            level.sendParticles(ParticleTypes.EXPLOSION_EMITTER,
-                    player.getX(), player.getY(), player.getZ(), 8, 2, 2, 2, 0);
+
+            // ---- 不周倾落地：不周山倾塌 —— 半径二十格地阵 + 三圈扩散冲击环 + 八方地柱 ----
+            ParticleFx fx = ParticleFx.of(level);
+            if (fx != null) {
+                fx.lod(landLod).budget(landOpt ? 1600 : 3600);
+                Vec3 base = player.position();
+                double rot = level.getGameTime() * 0.2;
+
+                fx.polygon(ParticleTypes.CAMPFIRE_COSY_SMOKE, base.add(0, 0.12, 0), ParticleFx.Axis.Y, 20.0, 24, rot, 0.3);
+                fx.polygon(ParticleTypes.SOUL_FIRE_FLAME, base.add(0, 0.2, 0), ParticleFx.Axis.Y, 14.0, 16, -rot, 0.1);
+                fx.magicCircle(ParticleTypes.LAVA, ParticleTypes.WHITE_ASH, base.add(0, 0.1, 0), ParticleFx.Axis.Y, 7.0, rot * 1.6);
+                fx.shockRing(ParticleTypes.LARGE_SMOKE, base.add(0, 0.05, 0), 10.0, 2.5, 48);
+                fx.shockRing(ParticleTypes.LARGE_SMOKE, base.add(0, 0.1, 0), 20.0, 2.0, 52);
+                fx.shockRing(ParticleTypes.WHITE_ASH, base.add(0, 0.15, 0), 30.0, 1.5, 56);
+                fx.pillars(ParticleTypes.SOUL_FIRE_FLAME, base, 20.0, landOpt ? 12 : 24, 4.0, rot);
+                fx.column(ParticleTypes.CAMPFIRE_COSY_SMOKE, ParticleTypes.LAVA, base, 1.6, 10.0, 4, rot, ParticleFx.TAU * 0.8, 0.5);
+                fx.burst(ParticleTypes.SOUL_FIRE_FLAME, base.add(0, 0.6, 0), landOpt ? 26 : 56, 2.4, true);
+                fx.bloom(ParticleTypes.WHITE_ASH, base.add(0, 1.2, 0), landOpt ? 24 : 48, 4.0, 0.25);
+            }
+
             level.playSound(null, player.getX(), player.getY(), player.getZ(),
                     SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 4.0f, 0.5f);
             level.playSound(null, player.getX(), player.getY(), player.getZ(),
@@ -439,16 +489,31 @@ public class PWPlayerTickEvent {
                 target.hurt(player.damageSources().playerAttack(player), finalDamage);
                 target.push(0, 0.8, 0);
             }
-            for (int i = 0; i < 60; i++) {
-                double rx = (level.random.nextDouble() - 0.5) * 30;
-                double rz = (level.random.nextDouble() - 0.5) * 30;
-                level.sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE,
-                        player.getX() + rx, player.getY(), player.getZ() + rz, 1, 0, 0.1, 0, 0.02);
-                if (i % 6 == 0) {
-                    level.sendParticles(ParticleTypes.SONIC_BOOM,
-                            player.getX() + rx / 2, player.getY(), player.getZ() + rz / 2, 1, 0, 0, 0, 0);
+
+            // ---- 裂地落地：大地龟裂 —— 十二道放射裂纹 + 三重冲击环 + 尘柱 ----
+            ParticleFx fx = ParticleFx.of(level);
+            if (fx != null) {
+                fx.lod(landLod).budget(landOpt ? 1300 : 3000);
+                Vec3 base = player.position();
+                double rot = level.getGameTime() * 0.22;
+
+                // 十二道放射裂纹（自定义长度，营造龟裂感）
+                int cracks = landOpt ? 8 : 12;
+                for (int i = 0; i < cracks; i++) {
+                    double a = rot + ParticleFx.TAU * i / cracks;
+                    Vec3 dir = new Vec3(Math.cos(a), 0, Math.sin(a));
+                    fx.lightning(ParticleTypes.CAMPFIRE_COSY_SMOKE, base, base.add(dir.scale(15.0)), 14, 1.4, a);
+                    fx.line(ParticleTypes.SOUL_FIRE_FLAME, base, base.add(dir.scale(15.0)), 1.1, 0.35, 0.0, Vec3.ZERO);
                 }
+                fx.polygon(ParticleTypes.LARGE_SMOKE, base.add(0, 0.12, 0), ParticleFx.Axis.Y, 10.0, 12, -rot, 0.3);
+                fx.shockRing(ParticleTypes.LARGE_SMOKE, base.add(0, 0.05, 0), 6.0, 2.5, 42);
+                fx.shockRing(ParticleTypes.LARGE_SMOKE, base.add(0, 0.1, 0), 12.0, 2.0, 46);
+                fx.shockRing(ParticleTypes.WHITE_ASH, base.add(0, 0.15, 0), 18.0, 1.5, 50);
+                fx.column(ParticleTypes.CAMPFIRE_COSY_SMOKE, ParticleTypes.SOUL_FIRE_FLAME, base, 1.1, 8.0, 4, rot, ParticleFx.TAU, 0.5);
+                fx.burst(ParticleTypes.SOUL_FIRE_FLAME, base.add(0, 0.5, 0), landOpt ? 22 : 44, 1.8, true);
+                fx.bloom(ParticleTypes.WHITE_ASH, base.add(0, 1.0, 0), landOpt ? 20 : 40, 3.0, 0.2);
             }
+
             level.playSound(null, player.getX(), player.getY(), player.getZ(),
                     SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 2.0f, 0.5f);
             level.playSound(null, player.getX(), player.getY(), player.getZ(),
@@ -467,8 +532,16 @@ public class PWPlayerTickEvent {
         cap.setCastingTick(cap.getCastingTick() + 1);
 
         if (gameTime % 5 == 0) {
-            player.serverLevel().sendParticles(ParticleTypes.ENCHANT,
-                    player.getX(), player.getY() + 2.2, player.getZ(), 3, 0.2, 0.2, 0.2, 0.0);
+            // 吟唱中的蓄力法阵：脚下旋转断环 + 身周上升的附魔光点
+            ParticleFx castFx = ParticleFx.of(player.serverLevel());
+            if (castFx != null) {
+                Vec3 base = player.position();
+                double rot = gameTime * 0.2;
+                castFx.budget(240).lod(0.6);
+                castFx.dashedRing(ParticleTypes.ENCHANT, base.add(0, 0.15, 0), ParticleFx.Axis.Y, 1.6, 8, 0.4, rot, 0.06);
+                castFx.spiral(ParticleTypes.ENCHANT, base.add(0, 0.2, 0), ParticleFx.Axis.Y, 1.5, 0.3, 2.6, 1.6, -rot, 30, 0.06);
+                castFx.bloom(ParticleTypes.ENCHANT, base.add(0, 2.2, 0), 4, 0.2, 0.0);
+            }
         }
 
         if (cap.getCastingTick() >= cap.getRequiredCastTick()) {

@@ -49,6 +49,7 @@ public class ModCreativeModelTab {
                                                 ModBlocks.POLAR_ICE_PORTAL_BLOCK,
                                                 ModBlocks.THUNDER_REALM_PORTAL_BLOCK,
                                                 ModItems.RED_SPIDER_LILY_POTION,
+                                                ModItems.STRONG_POTION,
                                                 ModBlocks.STONE_STAMP,
                                                 ModBlocks.SUMMON_TOWER),
 

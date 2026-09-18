@@ -1,7 +1,7 @@
 package com.TovidY.kunluncontinent.item.baseskillist.bahuangji.one;
 
-
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
+import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.ModItems;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import com.TovidY.kunluncontinent.network.SynsAPI;
@@ -16,6 +16,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 public class SkillBahuang1 extends BaseSkillItem {
 
@@ -66,13 +67,24 @@ public class SkillBahuang1 extends BaseSkillItem {
                 }
             }
 
-            // 3. 视觉特效
-            serverLevel.sendParticles(ParticleTypes.LARGE_SMOKE,
-                    player.getX(), player.getY() + 1, player.getZ(),
-                    20, 0.3, 0.8, 0.3, 0.05);
-            serverLevel.sendParticles(ParticleTypes.FLAME,
-                    player.getX(), player.getY() + 1, player.getZ(),
-                    10, 0.5, 0.5, 0.5, 0.1);
+            // 3. 视觉特效：八荒星阵 + 岩浆戟柱 + 八方光柱
+            ParticleFx fx = ParticleFx.of(level, player);
+            if (fx != null) {
+                Vec3 base = player.position();
+                double rot = serverLevel.getGameTime() * 0.3;
+
+                fx.budget(1700);
+                // 八角星阵（“八荒”的视觉母题）
+                fx.star(ParticleTypes.LAVA, base.add(0, 0.15, 0), ParticleFx.Axis.Y, 3.4, 1.4, 8, rot, 0.02);
+                fx.magicCircle(ParticleTypes.FLAME, ParticleTypes.SOUL_FIRE_FLAME, base.add(0, 0.1, 0), ParticleFx.Axis.Y, 2.7, -rot);
+                fx.dashedRing(ParticleTypes.CAMPFIRE_COSY_SMOKE, base.add(0, 0.3, 0), ParticleFx.Axis.Y, 4.0, 8, 0.5, rot * 1.4, 0.06);
+                // 中心岩浆戟柱
+                fx.column(ParticleTypes.LAVA, ParticleTypes.FLAME, base, 0.45, 3.2, 4, rot, ParticleFx.TAU * 1.2, 0.55);
+                // 八方顶点升起光柱
+                fx.pillars(ParticleTypes.SOUL_FIRE_FLAME, base, 3.4, 8, 2.8, rot);
+                fx.burst(ParticleTypes.FLAME, base.add(0, 0.6, 0), 26, 0.6, true);
+                fx.shockRing(ParticleTypes.LARGE_SMOKE, base.add(0, 0.05, 0), 4.5, 2.0, 40);
+            }
 
             // 4. 提示信息
             player.displayClientMessage(Component.literal("§4§l[第一魂技] §c八荒戟，出！"), true);

@@ -29,6 +29,7 @@ import net.minecraftforge.fml.common.Mod;
 import java.lang.reflect.Field;
 
 // 注册能力提供者
+
 @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class CapabilityRegistryHandler {
 
@@ -82,10 +83,9 @@ public class CapabilityRegistryHandler {
             if (entity instanceof PlayerNpcEntity npc) {
                 PlayerAttributeCapability npcCap = npc.getSoulCapability();
                 if (npcCap != null) {
-                    int level = npcCap.getDengji(); // 获取 NPC 等级
-                    String wuhun = npcCap.getWuhunName(); // 获取 NPC 当前武魂
+                    int level = npcCap.getDengji();
+                    String wuhun = npcCap.getWuhunName();
 
-                    // 1. 设置头顶称号
                     if (wuhun != null) {
                         String title = getNpcTitleByLevel(level);
                         String colorPrefix = getNpcTitleColorPrefix(level);
@@ -97,7 +97,6 @@ public class CapabilityRegistryHandler {
                         npc.setCustomNameVisible(true);
                     }
 
-                    // 2. 【核心修正】：从 npcCap 正确提取各项专属属性，防止全部错填为攻击力！
                     float npcHp = npcCap.getMaxshengming();
                     float npcAtk = npcCap.getGongji();
                     float npcDef = npcCap.getFangyu();

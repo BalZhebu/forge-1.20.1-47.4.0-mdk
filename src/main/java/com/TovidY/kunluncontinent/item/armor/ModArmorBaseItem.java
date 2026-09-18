@@ -1,10 +1,15 @@
 package com.TovidY.kunluncontinent.item.armor;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
@@ -24,9 +29,9 @@ import java.util.function.Consumer;
 //装备属性
 public class ModArmorBaseItem extends ArmorItem {
 
-    // 1. 定义一个配置类，把每种材质的所有数值集中管理
+    // 1. 配置类：管理材质基础数值
     private record ArmorSetProperty(
-            int tier,               // 材质等级/代号
+            int tier,               // 材质等级
             float hpBonusPct,       // 生命加成比例
             float defBonusPct,      // 防御加成比例
             float regenValue,       // 生命恢复数值
@@ -35,7 +40,7 @@ public class ModArmorBaseItem extends ArmorItem {
             boolean hasFireRes      // 是否有火抗
     ) {}
 
-    // 2. 用一个只读的 Map 代替所有的 if-else 判断
+    // 2. 材质属性配置 Map
     private static final Map<ArmorMaterial, ArmorSetProperty> SET_PROPERTIES = Map.of(
             ModArmorMaterials.GRAY_IRON,              new ArmorSetProperty(1, 0.10f, 0.20f, 4f,  "10%", "20%",  false),
             ModArmorMaterials.CLOUD_PATTERNED_BRONZE, new ArmorSetProperty(2, 0.15f, 0.30f, 8f,  "15%", "30%",  false),
@@ -58,21 +63,18 @@ public class ModArmorBaseItem extends ArmorItem {
         return prop != null ? prop.tier() : 0;
     }
 
-    public static ItemStack getLowTaozhuang(Iterable<ItemStack> armorSlots) {
-        ItemStack lowestStack = ItemStack.EMPTY;
-        int minTier = 7;
-        for (ItemStack slot : armorSlots) {
-            if (slot.isEmpty() || !(slot.getItem() instanceof ModArmorBaseItem armorItem)) {
-                return ItemStack.EMPTY;
-            }
-            int currentTier = getMaterialNum(armorItem.getMaterial());
-            if (currentTier < minTier) {
-                minTier = currentTier;
-                lowestStack = slot;
-            }
-        }
-        return lowestStack;
+    /**
+     * 判断装备是否已破损（耐久 <= 1）
+     */
+    public static boolean isBroken(ItemStack stack) {
+        if (stack.isEmpty()) return true;
+        return (stack.getMaxDamage() - stack.getDamageValue()) <= 1;
     }
+
+    public int getDurabilityValue(ItemStack stack) {
+        return stack.getMaxDamage() - stack.getDamageValue();
+    }
+
 
     @Override
     public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
@@ -86,41 +88,73 @@ public class ModArmorBaseItem extends ArmorItem {
         return Math.min(Math.min(remainingDurability, finalAmount), 200);
     }
 
-    private int getDurabilityValue(ItemStack stack) {
-        return stack.getMaxDamage() - stack.getDamageValue();
+    @Override
+    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
+        if (slot == this.getEquipmentSlot() && isBroken(stack)) {
+            return HashMultimap.create();
+        }
+        return super.getAttributeModifiers(slot, stack);
     }
 
     public float setMaxshengming(ItemStack stack, float value) {
+        if (isBroken(stack)) return 0f;
         return getDurabilityValue(stack) * 0.02f;
     }
 
     public float setWufang(ItemStack stack, float value) {
+        if (isBroken(stack)) return 0f;
         return getDurabilityValue(stack) * 0.01f;
     }
 
     public float setMaxshengmingTaozhuang(ItemStack stack, float value) {
+        if (isBroken(stack)) return 0f;
         return value * getProperty().hpBonusPct();
     }
 
     public float setWufangTaozhuang(ItemStack stack, float value) {
+        if (isBroken(stack)) return 0f;
         return value * getProperty().defBonusPct();
     }
 
     public float setShengminghuifuTaozhuang(ItemStack stack, float value) {
+        if (isBroken(stack)) return 0f;
         return getProperty().regenValue();
     }
 
-    // 5. 药水套装效果触发
+    // ==================== 最低等级套装获取（带破损过滤） ====================
+
+    public static ItemStack getLowTaozhuang(Iterable<ItemStack> armorSlots) {
+        ItemStack lowestStack = ItemStack.EMPTY;
+        int minTier = 7;
+        for (ItemStack slot : armorSlots) {
+            // 如果槽位为空，或者不是本模组防具，或者防具【已破损】，则判定套装不生效
+            if (slot.isEmpty() || !(slot.getItem() instanceof ModArmorBaseItem armorItem) || isBroken(slot)) {
+                return ItemStack.EMPTY;
+            }
+            int currentTier = getMaterialNum(armorItem.getMaterial());
+            if (currentTier < minTier) {
+                minTier = currentTier;
+                lowestStack = slot;
+            }
+        }
+        return lowestStack;
+    }
+
+    // ==================== 药水套装 Buff 触发（带破损过滤） ====================
+
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END || event.player.level().isClientSide()) return;
         Player player = event.player;
+
         Map<ArmorMaterial, Integer> materialCount = new HashMap<>();
         for (ItemStack stack : player.getArmorSlots()) {
-            if (stack.getItem() instanceof ModArmorBaseItem armorItem) {
+            // 只有未破损的装备才计入套装件数
+            if (stack.getItem() instanceof ModArmorBaseItem armorItem && !isBroken(stack)) {
                 materialCount.merge(armorItem.getMaterial(), 1, Integer::sum);
             }
         }
+
         materialCount.forEach((material, count) -> {
             if (count == 4) {
                 ArmorSetProperty prop = SET_PROPERTIES.get(material);
@@ -132,17 +166,18 @@ public class ModArmorBaseItem extends ArmorItem {
         });
     }
 
-    // 6. 极致精简的物品信息文本显示（通过查表让代码量缩减了 80%）
+    // ==================== Hover Tooltip 文本显示 ====================
+
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> list, TooltipFlag tooltipFlag) {
         list.add(Component.translatable("套装描述").withStyle(ChatFormatting.DARK_AQUA));
 
-        int currentDurability = getDurabilityValue(stack);
-        if (currentDurability <= 1) {
-            list.add(Component.translatable("已破损").withStyle(ChatFormatting.DARK_RED));
+        if (isBroken(stack)) {
+            list.add(Component.translatable("已破损（属性失效）").withStyle(ChatFormatting.DARK_RED));
             return;
         }
 
+        int currentDurability = getDurabilityValue(stack);
         list.add(Component.translatable("最大生命", (int)(currentDurability * 0.02f)).withStyle(ChatFormatting.YELLOW));
         list.add(Component.translatable("防御力", (int)(currentDurability * 0.01f)).withStyle(ChatFormatting.YELLOW));
         list.add(Component.translatable("套装效果").withStyle(ChatFormatting.LIGHT_PURPLE));

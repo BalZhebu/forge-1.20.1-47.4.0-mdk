@@ -5,8 +5,10 @@ import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapabilit
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -20,6 +22,13 @@ import java.util.List;
 public class SkillWheelScreen extends Screen {
     private final PlayerAttributeCapability cap;
     private int hoveredSlot = -1;
+
+    private int bindingIndex = -1;
+    private boolean isLocked = false;
+
+    private static final int LEFT_PANEL_WIDTH = 130;
+    private static final int LEFT_PANEL_HEIGHT = 200;
+    private static final int ITEM_HEIGHT = 18;
 
     public SkillWheelScreen(PlayerAttributeCapability cap) {
         super(Component.literal("Skill Wheel"));
@@ -39,6 +48,9 @@ public class SkillWheelScreen extends Screen {
         if (this.minecraft != null && this.minecraft.mouseHandler.isMouseGrabbed()) {
             this.minecraft.mouseHandler.releaseMouse();
         }
+
+        graphics.fill(0, 0, this.width, this.height, 0x66000000);
+
         int centerX = this.width / 2;
         int centerY = this.height / 2;
         if (cap == null) return;
@@ -48,8 +60,10 @@ public class SkillWheelScreen extends Screen {
         if (skills == null) {
             skills = new BaseSkillItem[0];
         }
-        this.hoveredSlot = -1;
 
+        drawLeftKeybindPanel(graphics, mouseX, mouseY, centerX, centerY);
+
+        this.hoveredSlot = -1;
         for (int i = 0; i < 9; i++) {
             float startAngle = i * 40.0f + 2.0f;
             float endAngle = (i + 1) * 40.0f - 2.0f;
@@ -61,7 +75,6 @@ public class SkillWheelScreen extends Screen {
             int iconX = (int) (centerX + Math.cos(iconAngle) * 80) - 8;
             int iconY = (int) (centerY + Math.sin(iconAngle) * 80) - 8;
 
-            //材质
             if (i < skills.length && skills[i] != null) {
                 ItemStack stack = new ItemStack(skills[i]);
                 float scale = 2.5f;
@@ -75,6 +88,8 @@ public class SkillWheelScreen extends Screen {
                 graphics.pose().popPose();
             }
         }
+
+        // 4. 右侧技能详情面板
         if (hoveredSlot != -1 && skills != null && hoveredSlot < skills.length && skills[hoveredSlot] != null) {
             BaseSkillItem s = skills[hoveredSlot];
             graphics.drawCenteredString(this.font, s.getName(ItemStack.EMPTY), centerX, centerY - 5, 0xFFAA00);
@@ -114,9 +129,101 @@ public class SkillWheelScreen extends Screen {
         }
     }
 
+    private void drawLeftKeybindPanel(GuiGraphics graphics, int mouseX, int mouseY, int centerX, int centerY) {
+        int panelX = centerX - 120 - LEFT_PANEL_WIDTH;
+
+        // ── 2. 向下偏移 20 个像素 ──
+        int panelY = centerY - (LEFT_PANEL_HEIGHT / 2) + 20;
+
+        graphics.fill(panelX - 5, panelY - 22, panelX + LEFT_PANEL_WIDTH + 5, panelY + LEFT_PANEL_HEIGHT, 0xAA000000);
+        graphics.renderOutline(panelX - 5, panelY - 22, LEFT_PANEL_WIDTH + 10, LEFT_PANEL_HEIGHT + 22, 0xFFD4AF37);
+
+        // 标题
+        graphics.drawString(this.font, "§e快捷释放设置", panelX, panelY - 18, 0xFFFFFF);
+
+        // ── 3. 极简提示文本 ──
+        graphics.drawString(this.font, "§7(点击改键后可松开R)", panelX, panelY - 8, 0xAAAAAA);
+
+        String[] numbers = {"一", "二", "三", "四", "五", "六", "七", "八", "九"};
+
+        for (int i = 0; i < 9; i++) {
+            int itemY = panelY + 10 + i * ITEM_HEIGHT;
+            int btnX = panelX + 70;
+            int btnW = 55;
+            int btnH = 14;
+
+            boolean isHovered = mouseX >= btnX && mouseX <= btnX + btnW && mouseY >= itemY && mouseY <= itemY + btnH;
+
+            graphics.drawString(this.font, "第" + numbers[i] + "魂技", panelX, itemY + 3, 0xDDDDDD);
+
+            KeyMapping km = KeyMappingInit.SKILL_KEYS[i];
+            String keyName = km.isUnbound() ? "§7未指定" : km.getTranslatedKeyMessage().getString();
+
+            int btnColor = (bindingIndex == i) ? 0xFF55FF55 : (isHovered ? 0xAAFFFFFF : 0x66333333);
+            if (bindingIndex == i) {
+                keyName = "> 按任意键 <";
+            }
+
+            graphics.fill(btnX, itemY, btnX + btnW, itemY + btnH, btnColor);
+            graphics.renderOutline(btnX, itemY, btnW, btnH, 0xFF888888);
+            graphics.drawCenteredString(this.font, keyName, btnX + btnW / 2, itemY + 3, 0xFFFFFF);
+        }
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        int centerX = this.width / 2;
+        int centerY = this.height / 2;
+        int panelX = centerX - 120 - LEFT_PANEL_WIDTH;
+        int panelY = centerY - (LEFT_PANEL_HEIGHT / 2) + 20; // 匹配下移后的坐标
+
+        for (int i = 0; i < 9; i++) {
+            int itemY = panelY + 10 + i * ITEM_HEIGHT;
+            int btnX = panelX + 70;
+            int btnW = 55;
+            int btnH = 14;
+
+            if (mouseX >= btnX && mouseX <= btnX + btnW && mouseY >= itemY && mouseY <= itemY + btnH) {
+                this.bindingIndex = i;
+                this.isLocked = true;
+                return true;
+            }
+        }
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (bindingIndex != -1) {
+            int wheelKeyCode = KeyMappingInit.SKILL_WHEEL.getKey().getValue();
+
+            if (keyCode == wheelKeyCode) {
+                return true;
+            }
+
+            if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+                KeyMappingInit.SKILL_KEYS[bindingIndex].setKey(InputConstants.UNKNOWN);
+            } else {
+                InputConstants.Key newKey = InputConstants.Type.KEYSYM.getOrCreate(keyCode);
+                KeyMappingInit.SKILL_KEYS[bindingIndex].setKey(newKey);
+            }
+
+            KeyMapping.resetMapping();
+            bindingIndex = -1;
+            return true;
+        }
+
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
     @Override
     public void tick() {
         super.tick();
+
+        if (isLocked) {
+            return;
+        }
+
         int rKeyCode = KeyMappingInit.SKILL_WHEEL.getKey().getValue();
         long windowHandle = Minecraft.getInstance().getWindow().getWindow();
         if (GLFW.glfwGetKey(windowHandle, rKeyCode) == GLFW.GLFW_RELEASE) {
@@ -145,19 +252,6 @@ public class SkillWheelScreen extends Screen {
         return false;
     }
 
-
-    /**
-     * 绘制一个圆环扇区
-     * @param graphics 渲染上下文
-     * @param cx 中心X
-     * @param cy 中心Y
-     * @param innerR 内半径
-     * @param outerR 外半径
-     * @param startAngle 起始角度
-     * @param endAngle 结束角度
-     * @param color 颜色 (ARGB)
-     */
-
     private void drawSector(GuiGraphics graphics, float cx, float cy, float innerR, float outerR, float startAngle, float endAngle, int color) {
         float alpha = (float) (color >> 24 & 255) / 255.0F;
         float red = (float) (color >> 16 & 255) / 255.0F;
@@ -183,5 +277,4 @@ public class SkillWheelScreen extends Screen {
         BufferUploader.drawWithShader(bufferbuilder.end());
         RenderSystem.disableBlend();
     }
-
 }

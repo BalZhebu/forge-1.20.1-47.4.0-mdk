@@ -343,25 +343,20 @@ public class KLivingDeathEvent {
         }
     }
 
-
     private static void handleGodGlimpse(ServerPlayer player, LivingEntity victim) {
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
+
             if (cap.getGodName() != null && !cap.getGodName().isEmpty()) {
                 return;
             }
 
-            /* 2. 门槛判定逻辑
-             如果开启了 debugIgnoreTianfu (由指令控制)，则跳过等级和天赋检查
-            否则，必须满足：等级 > 75 且 先天天赋 >= 7
-            */
-
             boolean isQualified = cap.debugIgnoreTianfu || (cap.getDengji() > 75 && cap.getXiantianTalent() >= 7);
 
             if (isQualified) {
-                // --- A. 海神获取逻辑 (溺尸、守卫者、远古守卫者) ---
+                boolean isLevel99 = cap.getDengji() >= 99;
+
                 if (victim instanceof Drowned || victim instanceof Guardian || victim instanceof ElderGuardian) {
-                    // 如果开启了 debugForceSuccess，概率为 100%，否则为 0.5%
-                    float chance = cap.debugForceSuccess ? 1.0f : 0.005f;
+                    float chance = cap.debugForceSuccess ? 1.0f : (isLevel99 ? 0.01f : 0.005f);
                     if (RANDOM.nextFloat() < chance) {
                         triggerGodExam(player, cap, "sea_god", "§b海神");
                         resetDebugStatus(cap);
@@ -369,10 +364,8 @@ public class KLivingDeathEvent {
                     }
                 }
 
-                // --- B. 天使神获取逻辑 (击杀亡灵生物) ---
                 if (victim.getMobType() == MobType.UNDEAD) {
-                    // 如果开启了 debugForceSuccess，概率为 100%，否则为 0.2%
-                    float chance = cap.debugForceSuccess ? 1.0f : 0.005f;
+                    float chance = cap.debugForceSuccess ? 1.0f : (isLevel99 ? 0.01f : 0.005f);
                     if (RANDOM.nextFloat() < chance) {
                         triggerGodExam(player, cap, "angel_god", "§e天使神");
                         resetDebugStatus(cap);
@@ -380,10 +373,8 @@ public class KLivingDeathEvent {
                     }
                 }
 
-                // --- C. 修罗神获取逻辑 (攻击力 > 5W，击杀任意生物) ---
                 if (cap.getGongji() > 50000f) {
-                    // 如果开启了 debugForceSuccess，概率为 100%，否则为 0.8%
-                    float chance = cap.debugForceSuccess ? 1.0f : 0.0055f;
+                    float chance = cap.debugForceSuccess ? 1.0f : (isLevel99 ? 0.01f : 0.0055f);
                     if (RANDOM.nextFloat() < chance) {
                         triggerGodExam(player, cap, "asura_god", "§c修罗神");
                         resetDebugStatus(cap);

@@ -33,10 +33,8 @@ public class PWRenderLivingEvent {
     public static void onItemTooltip(ItemTooltipEvent event) {
         ItemStack stack = event.getItemStack();
         if (stack.isEmpty()) return;
-
-        SellPriceRegistry.PriceEntry entry = SellPriceRegistry.getPrice(stack.getItem());
+        SellPriceRegistry.PriceEntry entry = SellPriceRegistry.getPrice(stack);
         if (entry == null) return;
-
         int count = stack.getCount();
         event.getToolTip().add(
                 Component.literal("单价: ").withStyle(ChatFormatting.GRAY)

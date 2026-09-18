@@ -51,11 +51,10 @@ public class KlMain {
 
         MinecraftForge.EVENT_BUS.register(this);
 
-        // 1. 先绑定通用生命周期事件
         modEventBus.addListener(this::commonSetup);
 
-        // 2. 注册各类 Forge 动态注册项
         ModItems.register(modEventBus);
+
         ModBlocks.register(modEventBus);
 
         GodRegistry.init();

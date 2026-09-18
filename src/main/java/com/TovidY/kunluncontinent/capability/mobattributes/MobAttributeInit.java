@@ -42,11 +42,10 @@ public class MobAttributeInit {
             return;
         }
 
-        // 2. 普通魂兽逻辑
         mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY).ifPresent(attr -> {
             if (attr.getNianxian() == 0) {
                 long nianxian = MobAttributeLogic.calculateNianxian(mob);
-                attr.initNianxian(nianxian);
+                attr.initNianxian(nianxian, mob);
             }
             applyAttributesToEntity(mob, attr);
         });

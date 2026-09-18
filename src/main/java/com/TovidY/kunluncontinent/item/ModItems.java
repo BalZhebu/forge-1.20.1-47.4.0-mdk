@@ -144,6 +144,23 @@ public class ModItems {
                             .effect(() -> new MobEffectInstance(ModEffects.RED_SPIDER_LILY_POTION.get(), 600, 0), 1.0F)
                             .build())));
 
+    public static final RegistryObject<Item> STRONG_POTION = ITEMS.register("strong_potion",
+            () -> new Item(new Item.Properties()
+                    .stacksTo(1)
+                    .food(new FoodProperties.Builder()
+                            .alwaysEat()
+                            .nutrition(0)
+                            .saturationMod(0)
+                            .effect(() -> new MobEffectInstance(ModEffects.STRONG_SOUL.get(), 300, 0), 1.0F)
+                            .build())){
+                @Override
+                public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
+                    pTooltipComponents.add(Component.translatable("item.strong_potion.tooltip").withStyle(ChatFormatting.GRAY));
+                    pTooltipComponents.add(Component.translatable("item.strong_potion.tooltip1").withStyle(ChatFormatting.GRAY));
+                    pTooltipComponents.add(Component.translatable("item.strong_potion.tooltip2").withStyle(ChatFormatting.GRAY));
+                }
+            });
+
     //传送门
     public static final RegistryObject<Item> EXTREME_COLD_SNOWFLAKE = ITEMS.register("extreme_cold_snowflake",()->new EngravingKnifeItem(new Item.Properties()){
         @Override
@@ -166,7 +183,13 @@ public class ModItems {
     public static final RegistryObject<Item> GUOSHI_PANSHIJUYUAN = ITEMS.register("guoshi_panshijuyuan",()->new WuhunguoshiItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setWuhunname(Wuhunname.panshijuyuan));
 
     //材料物品（普通物品）
-    public static final RegistryObject<Item> EXTREME_COLD_SNOWFLAKE_FRAGMENT = ITEMS.register("extreme_cold_snowflake_fragment",()->new Item(new Item.Properties()));
+    public static final RegistryObject<Item> EXTREME_COLD_SNOWFLAKE_FRAGMENT = ITEMS.register("extreme_cold_snowflake_fragment",()->new Item(new Item.Properties()){
+        @Override
+        public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
+            pTooltipComponents.add(Component.translatable("item.extreme_cold_snowflake_fragment.tooltip").withStyle(ChatFormatting.GRAY));
+        }
+    });
+
     public static final RegistryObject<Item> GUIDE_BOOK = ITEMS.register("guide_book",()->new GuideBookItem(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EXTREME_COLD = ITEMS.register("extreme_cold",()->new Item(new Item.Properties()));
 

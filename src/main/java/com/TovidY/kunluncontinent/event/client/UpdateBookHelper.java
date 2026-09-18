@@ -37,11 +37,21 @@ public class UpdateBookHelper {
             URL url = new URL(requestUrl);
             conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
-            conn.setConnectTimeout(4000);
-            conn.setReadTimeout(4000);
-            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (KunlunContinentMod)");
+            conn.setConnectTimeout(6000);
+            conn.setReadTimeout(6000);
+            conn.setInstanceFollowRedirects(true);
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
+            conn.setRequestProperty("Referer", "https://gitee.com/");
+            int responseCode = conn.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_MOVED_TEMP || responseCode == HttpURLConnection.HTTP_MOVED_PERM) {
+                String newUrl = conn.getHeaderField("Location");
+                conn.disconnect();
+                conn = (HttpURLConnection) new URL(newUrl).openConnection();
+                conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
+                responseCode = conn.getResponseCode();
+            }
 
-            if (conn.getResponseCode() == 200) {
+            if (responseCode == 200) {
                 try (InputStreamReader reader = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)) {
                     JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
 
@@ -55,11 +65,13 @@ public class UpdateBookHelper {
                             rawSections.add(element.getAsString());
                         }
                     }
-
                     return buildWrittenBook(title, version, rawSections, fullUrl);
                 }
+            } else {
+                System.err.println("[KunlunContinent] 获取日志失败，服务器返回响应码: " + responseCode);
             }
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             if (conn != null) conn.disconnect();
         }

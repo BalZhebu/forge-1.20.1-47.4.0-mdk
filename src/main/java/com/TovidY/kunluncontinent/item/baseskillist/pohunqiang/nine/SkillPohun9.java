@@ -1,6 +1,7 @@
 package com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.nine;
 
 import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
+import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -39,12 +40,23 @@ public class SkillPohun9 extends BaseSkillItem {
             LivingEntity target = level.getEntitiesOfClass(LivingEntity.class, targetBox,
                             e -> e != player && e.isAlive() && player.distanceTo(e) <= 12.0)
                     .stream().min(Comparator.comparingDouble(player::distanceTo)).orElse(null);
-            for (double d = 0; d < 12; d += 0.5) {
-                double px = start.x + look.x * d;
-                double py = start.y + look.y * d;
-                double pz = start.z + look.z * d;
-                serverLevel.sendParticles(ParticleTypes.FLASH, px, py, pz, 1, 0, 0, 0, 0);
-                serverLevel.sendParticles(ParticleTypes.SQUID_INK, px, py, pz, 5, 0.1, 0.1, 0.1, 0.02);
+
+            // ---- 特效：指向前方的死神射线（细针状光柱 + 螺旋缠绕 + 空间涟漪）----
+            ParticleFx fx = ParticleFx.of(level, player);
+            double rot = serverLevel.getGameTime() * 0.45;
+
+            if (fx != null) {
+                fx.budget(2200);
+                // 射线核心：极细高亮 + 暗紫剪影
+                fx.line(ParticleTypes.FLASH, start, end, 2.0, 0.0, 0.0, Vec3.ZERO);
+                fx.line(ParticleTypes.REVERSE_PORTAL, start, end, 0.3, 0.05, 0.0, Vec3.ZERO);
+                fx.line(ParticleTypes.SQUID_INK, start, end, 0.7, 0.15, 0.0, Vec3.ZERO);
+                // 三股螺旋缠绕射线
+                fx.helixAround(ParticleTypes.SOUL_FIRE_FLAME, start, look, 0.45, 12.0, 9.0, 3, rot, 60);
+                // 沿射线的空间涟漪环
+                for (double d = 1.5; d <= 12.0; d += 1.5) {
+                    fx.ringAround(ParticleTypes.SCULK_SOUL, start.add(look.scale(d)), look, 0.55, 16, rot + d * 0.4, 0.03);
+                }
             }
 
             if (target != null) {
@@ -54,6 +66,7 @@ public class SkillPohun9 extends BaseSkillItem {
                     float levelBonus = targetLevel * 0.0015f;
                     baseChance = Math.min(0.20f, baseChance + levelBonus); // 最高 20%
                 }
+                Vec3 hitPos = target.position().add(0, target.getBbHeight() * 0.55, 0);
                 DamageSource killSource = player.damageSources().playerAttack(player);
                 if (level.random.nextFloat() < baseChance) {
                     player.sendSystemMessage(Component.literal("§c§l[触发弑神斩杀 - 概率: " + (int)(baseChance * 100) + "%]"));
@@ -62,11 +75,23 @@ public class SkillPohun9 extends BaseSkillItem {
                         target.setHealth(0f);
                         target.die(killSource);
                     }
+                    if (fx != null) {
+                        // 斩杀的“神陨”特效：十字斩 + 血色法阵 + 死亡冲击环
+                        fx.magicCircle(ParticleTypes.CRIMSON_SPORE, ParticleTypes.SOUL_FIRE_FLAME, hitPos, ParticleFx.Axis.Y, 3.0, rot);
+                        fx.crossSlash(ParticleTypes.SONIC_BOOM, hitPos, look, new Vec3(0, 1, 0), 2.6, 150, 3);
+                        fx.shockRing(ParticleTypes.SOUL_FIRE_FLAME, hitPos, 4.0, 2.5, 40);
+                        fx.sphereBlades(ParticleTypes.END_ROD, ParticleTypes.SOUL_FIRE_FLAME, hitPos, 1.4, 18, 1.4, rot);
+                    }
                     serverLevel.sendParticles(ParticleTypes.SONIC_BOOM, target.getX(), target.getY() + 1, target.getZ(), 2, 0, 0, 0, 0);
                     serverLevel.sendParticles(ParticleTypes.EXPLOSION_EMITTER, target.getX(), target.getY() + 1, target.getZ(), 1, 0, 0, 0, 0);
                 } else {
                     target.hurt(killSource, finalDamage);
                     target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 200, 1)); // 虚弱2
+                    if (fx != null) {
+                        // 未斩杀：目标身上浮现被压制的血色锁环
+                        fx.dashedRing(ParticleTypes.CRIMSON_SPORE, hitPos, ParticleFx.Axis.Y, 1.0, 8, 0.5, rot, 0.05);
+                        fx.dashedRing(ParticleTypes.SOUL, hitPos, ParticleFx.Axis.Z, 1.0, 8, 0.5, -rot, 0.05);
+                    }
                 }
                 serverLevel.sendParticles(ParticleTypes.CRIT, target.getX(), target.getY() + 1, target.getZ(), 20, 0.5, 0.5, 0.5, 0.5);
             }

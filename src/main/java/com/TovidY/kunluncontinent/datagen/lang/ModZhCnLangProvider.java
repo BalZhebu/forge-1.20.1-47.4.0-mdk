@@ -137,6 +137,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
                 "\n§l武魂系统：§r默认按K键可打开武魂，打开武魂时会消耗精神力，打开武魂时可以吸收魂环。" +
                 "\n§l魂环吸收:§r玩家每到10/20/30级等10的倍数的等级时，会锁定等级，必须吸收魂环才可突破下一阶段，吸收时需打开武魂后右键生物掉落的魂环坐上去后消耗精神力吸收魂环，精神力不足将停止吸收，吸收进度重置。" +
                 "\n§l魂核系统：§r魂核是魂环分解后或者魂环消失后生成的产物，，会随着时间流逝消失，可用聚魂瓶收集起来。" +
+                "\n§l挑战系统：§r制作挑战石碑后右键进入维度后，右键建筑正中心的战斗石碑，随后会进刷怪，击杀生成的怪物后通关层数就有较低概率获得神位，通关层数越高，获得神位的概率也高。" +
                 "\n§l重修&转世系统：§r玩家在主世界自然生成的地狱门遗迹可找到生成在地狱岩上的彼岸花，将彼岸花磨成粉可炼制忘川渡buff，喝下后找到重修遗迹，再自己身上有buff的情况下右键重修台就会遭受99道雷劫，但记住！雷劫不致命！请不要用任何手段恢复血量，因为重修需要玩家血量到达20以内才能成功转世，若99道天雷后你血量依旧健康，那么你的转世重修就会失败。重修会使玩家的武魂、魂环、属性、技能配置等全部重置，玩家拥有什么武魂就会给与对应的武魂果实。" +
                 "\n§l重修遗迹：§r通过重修之眼可找到重修遗迹，重修之眼使用方法和末影之眼一致。" +
                 "\n§l聚灵台阵：§r将聚灵台放置中心，半径2格也就是范围5*5*2的范围内放置聚魂基石柱可解锁其中的槽位，根据下方的强度达到每多少秒恢复能量值，最多可吃到8个聚魂基石柱的增幅，多余的根据等阶高的优先。" +
@@ -155,8 +156,13 @@ public class ModZhCnLangProvider extends LanguageProvider {
                 "\n§r3.占位符 + ");
 
         add(ModItems.RED_SPIDER_LILY_POTION.get(), "§c《忘川渡·彼岸花》");
+        add(ModItems.STRONG_POTION.get(),"§e《强魄》");
         add(ModItems.EYE_TRANSFORMATION.get(), "§5重修之眼");
         add(ModItems.EXTREME_COLD.get(),"§b雪晶");
+
+        add("item.strong_potion.tooltip","拥有此BUFF时");
+        add("item.strong_potion.tooltip1","可直接吸收魂核中的能量");
+        add("item.strong_potion.tooltip2","转化为自身的经验值");
 
         add(ModItems.DEMONWHALE_SPAWN_EGG.get(),"§c魔鲸刷怪蛋");
         add(ModItems.NPCSOUL_SPAWN_EGG.get(),"NPC刷怪蛋");
@@ -185,6 +191,10 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("item.guyuancao_seeds.tooltip","会生成在大部分奖励箱中");
         add("item.guyuancao_seeds.tooltip1","打草有低概率掉落");
         add("tooltip.kunluncontinent.polar_ice_portal_block","需摆出地狱传送门的样式");
+        add("item.extreme_cold_snowflake_fragment.tooltip","可在冰刺之地击杀冰晶获取");
+
+        add("tooltip.kunluncontinent.bahuangji","拿在副手或主手上时每3秒扣除1点精神力 \n持有时玩家最终攻击力增加1.3% \n增加的百分比根据玩家等级变化 \n最高增幅5%");
+        add("tooltip.kunluncontinent.pohunqiang","拿在副手或主手上时每3秒扣除1点精神力 \n持有时玩家最终攻击力增加1.25% \n增加的百分比根据玩家等级变化 \n最高增幅3%");
 
         //成就类
         add("advancements.kunluncontinent.root.title", "初入世界");
@@ -559,6 +569,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
 
         //普通文字
         add("心神受损","你受到攻击，心神受损，被迫停止了修炼！");
+        add("message.kunluncontinent.qiehuanwuhun","没有武魂，请先升级，等级达到1级以上即可获得武魂");
         add("tooltip.kunlun.neidan_item","击杀不同年限生物概率掉落");
         add("tooltip.kunlun.neidan_item_tier","高品质内丹低概率掉落");
         add("tooltip.kunlun.instant_kill_sword.1","代码级秒杀：无视防御，强制抹除数据。");

@@ -22,6 +22,7 @@ package com.TovidY.kunluncontinent.network.client;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.event.client.PWRenderPlayerEvent;
 import com.TovidY.kunluncontinent.network.SynsAPI;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket;
@@ -43,11 +44,18 @@ public class CPacketQiehuanWuhun {
   public static void handle(CPacketQiehuanWuhun msg, Supplier<NetworkEvent.Context> ctx) {
     ctx.get().enqueueWork(() -> {
       ServerPlayer sender = ctx.get().getSender();
+      if (sender == null) return;
+
       sender.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(capability -> {
+        if (capability.getDengji() == 0) {
+          sender.connection.send(new ClientboundSetActionBarTextPacket(
+                  Component.translatable("message.kunluncontinent.qiehuanwuhun").withStyle(ChatFormatting.RED)));
+          return;
+        }
         int hunhuankuaiguan = capability.getHunhuankuaiguan();
         int size = capability.getWuhunListsname().size();
 
-        if(hunhuankuaiguan < size-1){
+        if (hunhuankuaiguan < size - 1) {
           capability.setHunhuankuaiguan(++hunhuankuaiguan);
           sender.connection.send(new ClientboundSetActionBarTextPacket(
                   Component.translatable("武魂已开启", capability.getWuhunListsname().get(hunhuankuaiguan))));
@@ -63,4 +71,5 @@ public class CPacketQiehuanWuhun {
     });
     ctx.get().setPacketHandled(true);
   }
+
 }

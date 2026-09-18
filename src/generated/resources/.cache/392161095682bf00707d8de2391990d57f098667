@@ -1,4 +1,4 @@
-// 1.20.1	2026-08-01T22:24:35.8295019	Item Models: kunluncontinent
+// 1.20.1	2026-09-18T17:56:38.1381975	Item Models: kunluncontinent
 f32644d7d62d87d0d3f109d31b9e62ec09229906 assets/kunluncontinent/models/item/amethyst.json
 f4c6955cbdbd17da9ddf02bb007f099e05afbc04 assets/kunluncontinent/models/item/attribute_button.json
 5c2f20ad8bfe9952d95e9c87b9d654a99f8cbefa assets/kunluncontinent/models/item/baicaoling_dan.json
@@ -180,6 +180,7 @@ e228c92d5905a9eaeaeec127b1506fc86c7cd1a8 assets/kunluncontinent/models/item/soul
 6bc51b0af7b61f6eb7d24baf37387b133b16f72c assets/kunluncontinent/models/item/soul_beast_skull.json
 d3d7e087b02e6cb2ea6fc0b06cde9a833e7222e5 assets/kunluncontinent/models/item/soul_bone_button.json
 b3bb1c9d27e10e548f0826729e538be1aafc0c9d assets/kunluncontinent/models/item/starlight_stone.json
+5c210250bcaab49c4c17196e22a1b56242101690 assets/kunluncontinent/models/item/strong_potion.json
 fe16c3eafd24867ff750898a03e1d9eb0d9ac62e assets/kunluncontinent/models/item/sunken_silver_axe.json
 6179e53262dc92e5fb284ad3a0c18d2a915c8b1c assets/kunluncontinent/models/item/sunken_silver_boots.json
 53aaa2e3452b063bcc89b11478c0f87fb5297d22 assets/kunluncontinent/models/item/sunken_silver_chestplate.json

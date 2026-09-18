@@ -80,13 +80,13 @@ public class SellMenu extends AbstractContainerMenu {
             public void set(int val) { sellConfirmed = (val == 1); }
         });
 
-        // 2. 输入槽 0~13
         int inX0 = 12, inY0 = 15;
+
         for (int i = 0; i < INPUT_COUNT; i++) {
             addSlot(new Slot(this.sellContainer, i, inX0 + (i % 7) * 18, inY0 + (i / 7) * 18) {
                 @Override
                 public boolean mayPlace(ItemStack s) {
-                    return !s.isEmpty() && SellPriceRegistry.getPrice(s.getItem()) != null;
+                    return !s.isEmpty() && SellPriceRegistry.getPrice(s) != null;
                 }
                 @Override public boolean mayPickup(Player p)   { return true; }
                 @Override public int getMaxStackSize()         { return 64; }
@@ -132,8 +132,11 @@ public class SellMenu extends AbstractContainerMenu {
         for (int i = 0; i < INPUT_COUNT; i++) {
             ItemStack stack = sellContainer.getItem(i);
             if (stack.isEmpty()) continue;
-            SellPriceRegistry.PriceEntry entry = SellPriceRegistry.getPrice(stack.getItem());
+
+            // 【关键修复】：重构为基于 ItemStack 读取 NBT 价格
+            SellPriceRegistry.PriceEntry entry = SellPriceRegistry.getPrice(stack);
             if (entry == null) continue;
+
             c += entry.copper * stack.getCount();
             s += entry.silver * stack.getCount();
             g += entry.gold   * stack.getCount();
@@ -150,9 +153,11 @@ public class SellMenu extends AbstractContainerMenu {
             giveCoinsToPlayer(player, ModItems.COPPER_SOUL_COIN.get(), outputCopper);
             giveCoinsToPlayer(player, ModItems.SILVER_SOUL_COIN.get(), outputSilver);
             giveCoinsToPlayer(player, ModItems.GOLDEN_SOUL_COIN.get(), outputGold);
+
             for (int i = 0; i < INPUT_COUNT; i++) {
                 ItemStack stack = sellContainer.getItem(i);
-                if (!stack.isEmpty() && SellPriceRegistry.getPrice(stack.getItem()) != null) {
+                // 【关键修复】：校验也改为 ItemStack
+                if (!stack.isEmpty() && SellPriceRegistry.getPrice(stack) != null) {
                     sellContainer.setItem(i, ItemStack.EMPTY);
                 }
             }
@@ -162,7 +167,6 @@ public class SellMenu extends AbstractContainerMenu {
         sellConfirmed = false;
         this.broadcastChanges();
     }
-
     private void giveCoinsToPlayer(ServerPlayer player, Item coinItem, int totalAmount) {
         while (totalAmount > 0) {
             int count = Math.min(totalAmount, 64);

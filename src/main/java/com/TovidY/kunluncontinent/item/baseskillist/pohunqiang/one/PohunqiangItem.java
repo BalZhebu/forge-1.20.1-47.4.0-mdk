@@ -4,6 +4,7 @@ import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCap
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.item.tool.ModToolTiers;
 import com.TovidY.kunluncontinent.network.SynsAPI;
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
@@ -66,7 +67,7 @@ public class PohunqiangItem extends SwordItem {
 
                 // 限制更新属性加成的频率，防止每 Tick 计算与网络发包（每 10 Ticks 检查一次）
                 if (player.tickCount % 10 == 0) {
-                    float multiplier = 1.2f + (player.experienceLevel * 0.001f);
+                    float multiplier = 1.25f + (player.experienceLevel * 0.001f);
                     multiplier = Math.min(multiplier, 3.0f);
 
                     float currentGongji = cap.getGongji();
@@ -95,6 +96,9 @@ public class PohunqiangItem extends SwordItem {
         if (nbt != null && nbt.contains("OwnerName")) {
             String ownerName = nbt.getString("OwnerName");
             tooltip.add(Component.literal("§7当前拥有者: §6" + ownerName));
+
+            tooltip.add(Component.translatable("tooltip.kunluncontinent.pohunqiang").withStyle(ChatFormatting.GRAY));
+
             tooltip.add(Component.literal("§8§o此武魂已与灵魂绑定，不可掉落"));
         } else {
             tooltip.add(Component.literal("§7尚未绑定所有者"));

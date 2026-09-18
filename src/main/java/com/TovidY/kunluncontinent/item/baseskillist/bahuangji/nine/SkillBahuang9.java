@@ -1,10 +1,14 @@
 package com.TovidY.kunluncontinent.item.baseskillist.bahuangji.nine;
 
+import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 // Skill 类只负责开启任务
 public class SkillBahuang9 extends BaseSkillItem {
@@ -30,6 +34,28 @@ public class SkillBahuang9 extends BaseSkillItem {
             nbt.putInt("Bahuang9_Timer", 0);
             nbt.putFloat("Bahuang9_Damage", finalDamage * 1.5f);
             player.displayClientMessage(Component.literal("§6§l第九魂技：八荒寂灭！"), true);
+
+            // ---- 起手式：镇压天地的开场阵（后续脉冲由服务端 Tick 事件接力）----
+            ParticleFx fx = ParticleFx.of(level, player);
+            if (fx != null) {
+                ServerLevel serverLevel = (ServerLevel) level;
+                Vec3 base = player.position();
+                double rot = serverLevel.getGameTime() * 0.25;
+
+                fx.budget(2600);
+                // 半径二十格的寂灭地阵：双层二十四边形 + 二十四等分刻度
+                fx.polygon(ParticleTypes.END_ROD, base.add(0, 0.12, 0), ParticleFx.Axis.Y, 20.0, 24, rot, 0.0);
+                fx.polygon(ParticleTypes.SOUL_FIRE_FLAME, base.add(0, 0.2, 0), ParticleFx.Axis.Y, 14.0, 12, -rot, 0.05);
+                fx.polygon(ParticleTypes.LAVA, base.add(0, 0.28, 0), ParticleFx.Axis.Y, 8.0, 8, rot * 1.5, 0.05);
+                fx.magicCircle(ParticleTypes.FLAME, ParticleTypes.CAMPFIRE_COSY_SMOKE, base.add(0, 0.1, 0), ParticleFx.Axis.Y, 5.5, rot * 1.9);
+                // 由内向外三圈冲击环
+                for (int r = 1; r <= 3; r++) {
+                    fx.shockRing(ParticleTypes.LARGE_SMOKE, base.add(0, 0.05 + r * 0.05, 0), 6.0 * r, 2.0, 44);
+                }
+                // 二十四根环绕光柱
+                fx.pillars(ParticleTypes.SOUL_FIRE_FLAME, base, 20.0, 24, 3.0, rot);
+                fx.burst(ParticleTypes.FLAME, base.add(0, 0.6, 0), 48, 2.0, true);
+            }
         }
     }
 }

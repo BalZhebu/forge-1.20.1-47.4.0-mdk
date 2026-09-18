@@ -4,6 +4,7 @@ import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCap
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.item.tool.ModToolTiers;
 import com.TovidY.kunluncontinent.network.SynsAPI;
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
@@ -64,10 +65,9 @@ public class BahuangjiItem extends SwordItem {
                     SynsAPI.synsPlayerAttribute(player);
                 }
 
-                // 每 10 Ticks 检查与计算攻击力加成，降低服务器频繁同步的开销
                 if (player.tickCount % 10 == 0) {
-                    float multiplier = 1.2f + (player.experienceLevel * 0.001f);
-                    multiplier = Math.min(multiplier, 3.0f);
+                    float multiplier = 1.3f + (player.experienceLevel * 0.001f);
+                    multiplier = Math.min(multiplier, 5.0f);
 
                     float currentGongji = cap.getGongji();
                     float lastBonus = nbt.getFloat("BahuangBonusValue");
@@ -75,7 +75,6 @@ public class BahuangjiItem extends SwordItem {
                     float expectedTotal = rawGongji * multiplier;
                     float newBonus = expectedTotal - rawGongji;
 
-                    // 变化大于 0.1f 时才更新并同步发包
                     if (Math.abs(newBonus - lastBonus) > 0.1f) {
                         cap.setGongji(rawGongji + newBonus);
                         nbt.putFloat("BahuangBonusValue", newBonus);
@@ -95,6 +94,9 @@ public class BahuangjiItem extends SwordItem {
         if (nbt != null && nbt.contains("OwnerName")) {
             String ownerName = nbt.getString("OwnerName");
             tooltip.add(Component.literal("§7当前拥有者: §6" + ownerName));
+
+            tooltip.add(Component.translatable("tooltip.kunluncontinent.bahuangji").withStyle(ChatFormatting.GRAY));
+
             tooltip.add(Component.literal("§8§o此武魂已与灵魂绑定，不可掉落"));
         } else {
             tooltip.add(Component.literal("§7尚未绑定所有者"));

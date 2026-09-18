@@ -4,6 +4,7 @@ import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.network.client.*;
 import com.TovidY.kunluncontinent.network.server.*;
 import com.TovidY.kunluncontinent.screen.attribute.skill.CPacketCycleSkill;
+import com.TovidY.kunluncontinent.screen.attribute.skill.CPacketReleaseDirectSkill;
 import com.TovidY.kunluncontinent.screen.attribute.skill.CPacketReleaseSkill;
 import com.TovidY.kunluncontinent.screen.attribute.skill.CPacketSelectSkill;
 import net.minecraft.network.FriendlyByteBuf;
@@ -53,6 +54,8 @@ public class NetworkHandler {
         register(S2COpenNpcDialogPacket.class,S2COpenNpcDialogPacket::encode,S2COpenNpcDialogPacket::new , S2COpenNpcDialogPacket::handle);
         // 售卖按钮交互包（客户端→服务端）
         register(C2SNpcSellPacket.class, C2SNpcSellPacket::encode, C2SNpcSellPacket::new, C2SNpcSellPacket::handle);
+
+        register(CPacketReleaseDirectSkill.class, CPacketReleaseDirectSkill::encode, CPacketReleaseDirectSkill::decode, CPacketReleaseDirectSkill::handle);
 
         register(PacketXiulianChoice.class,PacketXiulianChoice::encode,PacketXiulianChoice::decode,PacketXiulianChoice::handle);
         register(PacketOpenXiulianScreen.class,PacketOpenXiulianScreen::encode,PacketOpenXiulianScreen::new,PacketOpenXiulianScreen::handle);

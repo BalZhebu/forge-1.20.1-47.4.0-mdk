@@ -164,7 +164,24 @@ public class NpcDialogScreen extends AnimatedScreen {
 
         // ── 名字条 & 称号 ──
         String npcName = (npcEntity != null) ? npcEntity.getName().getString() : "未知";
-        int npcLevel = (npcCap != null) ? npcCap.getDengji() : 1;
+        int npcLevel = 1;
+        if (npcEntity != null && npcEntity.hasCustomName() && npcEntity.getCustomName() != null) {
+            String fullName = npcEntity.getCustomName().getString();
+            try {
+                if (fullName.contains("-----")) {
+                    String rightPart = fullName.split("-----")[1];
+                    String cleanText = rightPart.replaceAll("§[0-9a-fk-or]", "");
+                    if (cleanText.contains("级")) {
+                        String levelStr = cleanText.split("级")[0];
+                        npcLevel = Integer.parseInt(levelStr.trim());
+                    }
+                }
+            } catch (Exception e) {
+                npcLevel = 1;
+            }
+        }
+
+        if (npcLevel <= 0) npcLevel = 1;
 
         // 提取称号与颜色前缀
         String colorPrefix = CapabilityRegistryHandler.getNpcTitleColorPrefix(npcLevel);
@@ -180,19 +197,14 @@ public class NpcDialogScreen extends AnimatedScreen {
                 withAlpha(0x5A9FD8, alphaBits));
         g.fill(nameX + 5, nameY + 9, nameX + 7, nameY + NAME_BAR_H - 9,
                 withAlpha(0x8AC0F0, alphaBits));
-
-        // 绘制名字
         int nameTextX = nameX + 12;
         g.drawString(font, Component.literal("▶ " + npcName),
                 nameTextX, nameY + 8,
                 withAlpha(0xE8D080, alphaBits), false);
 
-        // 在名字下方3像素绘制修为称号
         g.drawString(font, Component.literal(formattedTitle),
                 nameTextX + 3, nameY + 20,
                 withAlpha(0xFFFFFF, alphaBits), false);
-
-        // ── 打字机文字区（修复换行符渲染方块问题）──
         int textLeft  = dialogLeft + 14;
         int textRight = dialogRight - 14;
         int textTop   = dialogTop + NAME_BAR_H + 11;
@@ -232,15 +244,12 @@ public class NpcDialogScreen extends AnimatedScreen {
                 charIdx++;
             }
 
-            // 截取干净的文字行（绝不包含 \n）
             String rowText = rawDialogText.substring(rowStart, charIdx);
 
-            // 如果遇到了换行符，将指针移过该换行符
             if (hitNewLine) {
                 charIdx++;
             }
 
-            // 渲染单行文字
             g.pose().pushPose();
             g.pose().scale(FONT_SCALE, FONT_SCALE, 1.0f);
             g.drawString(font, rowText,
@@ -254,7 +263,6 @@ public class NpcDialogScreen extends AnimatedScreen {
             row++;
         }
 
-        // 光标绘制
         if (visible < rawDialogText.length() && cursorY >= 0) {
             if ((elapsedMs / 260) % 2 == 0) {
                 g.fill(textLeft, cursorY, textLeft + 2, cursorY + TEXT_ROW_H - 2,

@@ -1,30 +1,50 @@
 package com.TovidY.kunluncontinent.capability.mobattributes;
 
 import com.TovidY.kunluncontinent.capability.CapabilityAttributeBase;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.concurrent.ThreadLocalRandom;
 
 //各个年限生物的属性生成
-
 public class MobAttributeCapability extends CapabilityAttributeBase implements INBTSerializable<CompoundTag> {
     private long nianxian;
     private boolean shenci;
     private float tempWugongModifier = 0f;
+    private boolean isWeakened = false;
 
     public MobAttributeCapability() {
         super();
         this.nianxian = 0;
     }
 
-    /**
-     * 仅在怪物首次生成/初始化年限时调用
-     */
+    public void initNianxian(long nianxian, Entity entity) {
+        this.nianxian = nianxian;
+        checkAndApplyWeakness(entity);
+        updateAttributesByNianxian();
+    }
 
     public void initNianxian(long nianxian) {
         this.nianxian = nianxian;
         updateAttributesByNianxian();
+    }
+
+    /**
+     * 检查是否满足主世界新手保护条件（0,0 坐标 1000格内 & 年限 < 5000）
+     */
+    private void checkAndApplyWeakness(Entity entity) {
+        if (entity != null && !entity.level().isClientSide()) {
+            boolean isOverworld = entity.level().dimension() == Level.OVERWORLD;
+            BlockPos pos = entity.blockPosition();
+            double distanceSq = pos.getX() * (double) pos.getX() + pos.getZ() * (double) pos.getZ();
+            // 满足条件：主世界 + 距离(0,0)小于等于1000格 (平方小于1000000) + 年限小于5000
+            if (isOverworld && distanceSq <= 1000000.0D && this.nianxian < 5000) {
+                this.isWeakened = true;
+            }
+        }
     }
 
     private void updateAttributesByNianxian() {
@@ -73,17 +93,20 @@ public class MobAttributeCapability extends CapabilityAttributeBase implements I
     }
 
     private void applyGrowth(float g, float l, float gMult, float hpMult, float hpBase) {
-        this.setWugong(g * gMult);
-        this.setWufang(g / 3f);
-        this.setMaxshengming(hpMult * g);
-        this.setShengming(hpBase * g);
-        this.setBaojilv(l);
-        this.setBaojishanghai(5f * l);
-        this.setKangbao(3f * l);
-        this.setXixue(l / 4f);
-        this.setMingzhong(l);
-        this.setShanbi(l);
-        this.setWuchuan(l);
+        // 如果触发了削弱，全属性乘以 0.35f (即削弱 65%)
+        float weakenFactor = this.isWeakened ? 0.35f : 1.0f;
+
+        this.setWugong(g * gMult * weakenFactor);
+        this.setWufang((g / 3f) * weakenFactor);
+        this.setMaxshengming(hpMult * g * weakenFactor);
+        this.setShengming(hpBase * g * weakenFactor);
+        this.setBaojilv(l * weakenFactor);
+        this.setBaojishanghai((5f * l) * weakenFactor);
+        this.setKangbao((3f * l) * weakenFactor);
+        this.setXixue((l / 4f) * weakenFactor);
+        this.setMingzhong(l * weakenFactor);
+        this.setShanbi(l * weakenFactor);
+        this.setWuchuan(l * weakenFactor);
     }
 
     @Override
@@ -92,29 +115,28 @@ public class MobAttributeCapability extends CapabilityAttributeBase implements I
         nbt.putLong("nianxian", nianxian);
         nbt.putBoolean("shenci", shenci);
         nbt.putFloat("tempWugongModifier", tempWugongModifier);
+        nbt.putBoolean("isWeakened", isWeakened); // 保存削弱标记
         return nbt;
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        super.deserializeNBT(nbt); // 注意：父类 CapabilityAttributeBase 必须把计算好的攻击、血量等属性保存进 NBT，这样读档时才不会被重置！
+        super.deserializeNBT(nbt);
         if (nbt.contains("nianxian")) this.nianxian = nbt.getLong("nianxian");
         if (nbt.contains("shenci")) this.shenci = nbt.getBoolean("shenci");
         if (nbt.contains("tempWugongModifier")) this.tempWugongModifier = nbt.getFloat("tempWugongModifier");
+        if (nbt.contains("isWeakened")) this.isWeakened = nbt.getBoolean("isWeakened"); // 读取削弱标记
     }
 
-    public void addTempWugong(float value) {
-        this.tempWugongModifier += value;
-    }
+    // Getter and Setter
+    public boolean isWeakened() { return isWeakened; }
+    public void setWeakened(boolean weakened) { this.isWeakened = weakened; }
 
-    public void removeTempWugong(float value) {
-        this.tempWugongModifier -= value;
-    }
+    public void addTempWugong(float value) { this.tempWugongModifier += value; }
+    public void removeTempWugong(float value) { this.tempWugongModifier -= value; }
 
     @Override
-    public float getGongji() {
-        return super.getGongji() + this.tempWugongModifier;
-    }
+    public float getGongji() { return super.getGongji() + this.tempWugongModifier; }
 
     public boolean isShenci() { return shenci; }
     public void setShenci(boolean shenci) { this.shenci = shenci; }

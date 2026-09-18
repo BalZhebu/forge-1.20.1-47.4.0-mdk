@@ -1,6 +1,5 @@
 package com.TovidY.kunluncontinent.screen.attribute.config;
 
-import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
@@ -12,15 +11,11 @@ import com.TovidY.kunluncontinent.screen.attribute.hunhuan.HunhuanMenu;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import org.checkerframework.checker.units.qual.C;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -160,10 +155,8 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
                 ));
             }
 
-            // 4. 底部/分页控制区手绘按钮
             int bottomY = this.topPos + this.imageHeight - 28;
 
-            // 如果总页数大于1，开启分页按钮
             if (totalPages > 1) {
                 if (currentPage > 0) {
                     this.addRenderableWidget(new HandDrawnPageButton(
@@ -179,7 +172,6 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
                 }
             }
 
-            // 返回/退出按钮
             this.addRenderableWidget(new HandDrawnButton(
                     this.leftPos + this.imageWidth - 65, bottomY, 50, 18,
                     Component.literal("§c返回"),
@@ -189,9 +181,6 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
         });
     }
 
-    // =========================================================================
-    //  子页面初始化（UI 平移与缩放）
-    // =========================================================================
     private void initSubPage() {
         this.minecraft.player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
             int btnWidth = 90;
@@ -295,9 +284,6 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
         });
     }
 
-    // =========================================================================
-    //  背景手绘逻辑（核心：替换图片资源）
-    // =========================================================================
     @Override
     protected void renderBg(GuiGraphics gui, float partialTick, int mouseX, int mouseY) {
         this.renderBackground(gui);
@@ -307,16 +293,13 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
         int w = this.imageWidth;
         int h = this.imageHeight;
 
-        // 1. 主主体阴影与暗色半透明底面板
         gui.fill(x + 3, y + 3, x + w + 3, y + h + 3, 0x80000000); // 投影
         gui.fill(x, y, x + w, y + h, 0xF012161F); // 玄铁深蓝/黑底色
 
-        // 2. 双重玄幻风金色边框
         gui.renderOutline(x, y, w, h, 0xFFD4AF37); // 外金框
         gui.renderOutline(x + 2, y + 2, w - 4, h - 4, 0xFF2A3447); // 内衬暗框
         gui.renderOutline(x + 3, y + 3, w - 6, h - 6, 0xFF8A6D3B); // 内金框
 
-        // 3. 四角装饰块（手绘古风回纹角花）
         int cornerSize = 6;
         gui.fill(x - 1, y - 1, x + cornerSize, y + 2, 0xFFE6B800);
         gui.fill(x - 1, y - 1, x + 2, y + cornerSize, 0xFFE6B800);

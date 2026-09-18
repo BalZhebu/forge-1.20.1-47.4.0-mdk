@@ -1,5 +1,6 @@
 package com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.six;
 
+import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -30,14 +31,30 @@ public class SkillPohun6 extends BaseSkillItem {
             Vec3 look = player.getLookAngle().normalize();
             Vec3 targetPos = player.position().add(look.x * 5, 0, look.z * 5);
             player.displayClientMessage(Component.literal("§c§l第六魂技：陨星巨枪！"), true);
-            for (int i = 0; i < 360; i += 10) {
-                double rad = Math.toRadians(i);
-                serverLevel.sendParticles(ParticleTypes.FLAME, targetPos.x + Math.cos(rad) * 4, targetPos.y + 0.1, targetPos.z + Math.sin(rad) * 4, 1, 0, 0, 0, 0);
+
+            // ---- 特效：地面火环法阵 → 天际垂落的巨枪（枪身螺旋 + 落点冲击环）----
+            ParticleFx fx = ParticleFx.of(level, player);
+            if (fx != null) {
+                double rot = serverLevel.getGameTime() * 0.32;
+
+                fx.budget(2000);
+                // 落点：半径四格的灼烧法阵 + 双层冲击环
+                fx.magicCircle(ParticleTypes.FLAME, ParticleTypes.LAVA, targetPos.add(0, 0.12, 0), ParticleFx.Axis.Y, 4.0, rot);
+                fx.shockRing(ParticleTypes.SOUL_FIRE_FLAME, targetPos.add(0, 0.1, 0), 4.0, 3.0, 40);
+                fx.shockRing(ParticleTypes.LARGE_SMOKE, targetPos.add(0, 0.05, 0), 6.5, 2.0, 40);
+
+                // 天际垂落的巨枪：15 格长的锥形枪体 + 双螺旋枪身 + 尾焰拖尾
+                Vec3 apex = targetPos.add(0, 15.0, 0);
+                Vec3 down = new Vec3(0, -1, 0);
+                fx.cone(ParticleTypes.CRIT, apex, down, 15.0, 1.5, 30, rot, 6);
+                fx.helixAround(ParticleTypes.SOUL_FIRE_FLAME, apex, down, 1.1, 15.0, 6.0, 2, rot, 60);
+                fx.line(ParticleTypes.FLAME, apex, targetPos, 0.6, 0.08, 0.0, Vec3.ZERO);
+                fx.column(ParticleTypes.FLAME, ParticleTypes.SOUL_FIRE_FLAME, targetPos, 0.35, 15.0, 3, rot, ParticleFx.TAU * 1.5, 1.0);
+                // 高空枪尾的光环
+                fx.ringAround(ParticleTypes.END_ROD, apex, down, 1.6, 24, rot, 0.03);
+                fx.bloom(ParticleTypes.LARGE_SMOKE, targetPos.add(0, 1.0, 0), 30, 1.2, 0.06);
             }
-            for (double h = 15; h > 0; h -= 0.5) {
-                serverLevel.sendParticles(ParticleTypes.CRIT, targetPos.x, targetPos.y + h, targetPos.z, 20, 0.2, 0.5, 0.2, 0.1);
-                serverLevel.sendParticles(ParticleTypes.LARGE_SMOKE, targetPos.x, targetPos.y + h, targetPos.z, 5, 0.1, 0.1, 0.1, 0);
-            }
+
             AABB area = new AABB(targetPos.x - 5, targetPos.y - 2, targetPos.z - 5, targetPos.x + 5, targetPos.y + 5, targetPos.z + 5);
             List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class, area, e -> e != player && e.isAlive());
             for (LivingEntity target : targets) {

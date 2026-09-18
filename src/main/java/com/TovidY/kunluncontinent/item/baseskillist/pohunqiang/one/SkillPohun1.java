@@ -1,6 +1,7 @@
 package com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.one;
 
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
+import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.ModItems;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import com.TovidY.kunluncontinent.network.SynsAPI;
@@ -15,6 +16,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 public class SkillPohun1 extends BaseSkillItem {
 
@@ -59,9 +61,22 @@ public class SkillPohun1 extends BaseSkillItem {
             // 4. 技能效果提示与音效粒子
             player.displayClientMessage(Component.literal("§c§l破魂枪，现！"), true);
 
-            serverLevel.sendParticles(ParticleTypes.SOUL,
-                    player.getX(), player.getY() + 1, player.getZ(),
-                    15, 0.2, 0.5, 0.2, 0.05);
+            // ---- 特效：脚下赤红法阵 → 环身灵魂螺旋 → 枪形光柱收束 ----
+            ParticleFx fx = ParticleFx.of(level, player);
+            if (fx != null) {
+                Vec3 base = player.position();
+                Vec3 eye = player.getEyePosition();
+                double rot = serverLevel.getGameTime() * 0.28;
+
+                fx.budget(1500);
+                fx.magicCircle(ParticleTypes.CRIMSON_SPORE, ParticleTypes.SOUL_FIRE_FLAME, base.add(0, 0.15, 0), ParticleFx.Axis.Y, 2.6, rot);
+                fx.dashedRing(ParticleTypes.SOUL, base.add(0, 0.3, 0), ParticleFx.Axis.Y, 3.2, 12, 0.5, -rot * 1.4, 0.03);
+                fx.spiral(ParticleTypes.SOUL, base.add(0, 0.2, 0), ParticleFx.Axis.Y, 2.4, 0.25, 2.6, 2.5, rot, 96, 0.05);
+                fx.column(ParticleTypes.SOUL_FIRE_FLAME, ParticleTypes.SOUL, base, 0.55, 2.6, 4, rot, ParticleFx.TAU * 1.2, 0.4);
+                fx.cone(ParticleTypes.ENCHANTED_HIT, eye.add(player.getLookAngle().scale(1.2)), player.getLookAngle(), 1.6, 0.35, 8, rot, 4);
+                fx.slash(ParticleTypes.SWEEP_ATTACK, eye, player.getLookAngle(), new Vec3(0, 1, 0), 2.4, 220, 2, rot);
+            }
+
             level.playSound(null, player.getX(), player.getY(), player.getZ(),
                     SoundEvents.TRIDENT_THROW, SoundSource.PLAYERS, 1.0f, 0.8f);
         }

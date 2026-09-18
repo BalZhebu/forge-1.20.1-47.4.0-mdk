@@ -30,7 +30,6 @@ public class LookAtDialogPlayerGoal extends Goal {
 
     @Override
     public void start() {
-        // 1. 激活时瞬间清除当前寻路，停下脚步
         this.npc.getNavigation().stop();
     }
 

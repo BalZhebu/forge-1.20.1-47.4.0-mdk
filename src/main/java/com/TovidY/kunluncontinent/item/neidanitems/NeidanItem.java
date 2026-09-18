@@ -18,12 +18,16 @@ public class NeidanItem extends Item implements INeidanData {
         return this.tier;
     }
 
+    @Override
+    public NeidanQuality getQuality() {
+        return getBaseQualityByTier();
+    }
+
     public NeidanQuality getBaseQualityByTier() {
         return switch (this.tier) {
             case 9 -> NeidanQuality.JUE;
             case 8 -> NeidanQuality.ZHEN;
             case 7 -> NeidanQuality.SHANG;
-
             default -> NeidanQuality.FAN;
         };
     }
@@ -40,10 +44,13 @@ public class NeidanItem extends Item implements INeidanData {
         return getBaseQualityByTier();
     }
 
-
-    @Override
-    public NeidanQuality getQuality() {
-        return null;
+    /**
+     * 写入品质到 NBT（掉落/炼制内丹时调用此方法）
+     */
+    public static void setQuality(ItemStack stack, NeidanQuality quality) {
+        if (quality != null) {
+            stack.getOrCreateTag().putString("Quality", quality.name());
+        }
     }
 
     @Override

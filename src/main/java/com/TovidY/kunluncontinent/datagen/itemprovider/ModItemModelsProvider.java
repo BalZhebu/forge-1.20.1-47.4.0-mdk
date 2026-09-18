@@ -33,6 +33,7 @@ public class ModItemModelsProvider extends ItemModelProvider {
 
         //药水
         basicItem(ModItems.RED_SPIDER_LILY_POTION.get());
+        basicItem(ModItems.STRONG_POTION.get());
 
         //打火石类似
         for (RegistryObject<Item> itemRegistry : ModItems.PUTONGITEM){

@@ -69,6 +69,9 @@ public class NeidanDropHandler {
         if (tier == 3) xianProb = 0.003;
         else if (tier == 4) xianProb = 0.004;
         else if (tier == 5) xianProb = 0.005;
+        else if (tier == 6) xianProb = 0.008;
+        else if (tier == 7) xianProb = 0.010;
+        else if (tier == 8) xianProb = 0.015;
         if (canDropXian && RANDOM.nextDouble() <= xianProb) {
             return NeidanQuality.XIAN;
         }
