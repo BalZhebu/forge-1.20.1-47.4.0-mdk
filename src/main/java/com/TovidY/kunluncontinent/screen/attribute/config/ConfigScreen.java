@@ -26,13 +26,12 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
 
     private int currentPage = 0;
     private static final int COLS = 3;
-    private static final int ROWS = 5; // 留出顶部/底部空间
+    private static final int ROWS = 5;
     private static final int PER_PAGE = COLS * ROWS;
 
     private boolean isOffsetSubPage = false;
     private EditBox offsetEditBox;
 
-    // 配置项定义结构
     private record ConfigItem(String name, int index, Supplier<Component> messageSupplier, Runnable onClick, Supplier<List<Component>> tooltipSupplier) {}
 
     private final List<ConfigItem> allConfigItems = new ArrayList<>();
@@ -48,7 +47,6 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
         super.init();
         this.clearWidgets();
 
-        // 屏蔽原生 Inventory/Title 文字渲染
         this.inventoryLabelY = 10000;
         this.titleLabelY = 10000;
 
@@ -88,7 +86,8 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
                     new ConfigItemData("聚灵物品渲染", 8),
                     new ConfigItemData("NPC交易品级", 9),
                     new ConfigItemData("粒子特效优化", 10),
-                    new ConfigItemData("NPC魂环显示", 11)
+                    new ConfigItemData("NPC魂环显示", 11),
+                    new ConfigItemData("第一人称魂环", 12)
             );
 
             for (ConfigItemData data : rawItems) {
@@ -425,13 +424,18 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
                     Component.literal("NPC魂环显示").withStyle(ChatFormatting.GOLD),
                     Component.literal(isOpen ? "§a[开启] §f渲染周围 NPC 的脚下魂环" : "§c[关闭] §f隐藏周围 NPC 的脚下魂环")
             );
+            case 12 -> List.of(
+                    Component.literal("第一人称魂环").withStyle(ChatFormatting.GOLD),
+                    Component.literal("§7原版第一人称不会渲染玩家自身，"),
+                    Component.literal("§7所以自己的魂环在第一人称默认是看不到的。"),
+                    Component.literal(isOpen
+                            ? "§a[开启] §f第一人称下也能看到自己身上的魂环"
+                            : "§c[关闭] §f第一人称下不渲染自己的魂环")
+            );
             default -> List.of();
         };
     }
 
-    // =========================================================================
-    //  内部类：纯代码手绘主按钮
-    // =========================================================================
     private class HandDrawnButton extends AbstractButton {
         private final Consumer<HandDrawnButton> onPress;
         private final Supplier<List<Component>> tooltipSupplier;

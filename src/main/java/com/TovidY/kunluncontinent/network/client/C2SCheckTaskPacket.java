@@ -1,5 +1,6 @@
 package com.TovidY.kunluncontinent.network.client;
 
+import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.godclass.GodRegistry;
@@ -56,8 +57,16 @@ public class C2SCheckTaskPacket {
                 GodTaskType type = GodTaskType.valueOf(typeStr);
                 boolean success = false;
                 if (type == GodTaskType.ATTRIBUTE) {
-                    float currentVal = cap.getGodAttributeValue(target);
-                    if (currentVal >= required) success = true;
+                    // 用"面板上显示的数值"判定 —— 含魂环/魂骨/装备/药水等全部外部加成。
+                    // 之前用的是 cap.getGodAttributeValue()，那只是玩家自身的裸值，所以面板达标也过不了。
+                    float currentVal = ModAttributeAPI.getPanelAttributeValue(player, target);
+                    if (currentVal >= required) {
+                        success = true;
+                    } else {
+                        player.sendSystemMessage(Component.literal("§c当前" + attributeLabel(target)
+                                + "为: §e" + formatAttrValue(currentVal)
+                                + " §c，未达考核要求: §e" + formatAttrValue(required)));
+                    }
                 } else if (type == GodTaskType.HUNHUAN_NIANXIAN) {
                     if (cap.getWuhunList() != null && !cap.getWuhunList().isEmpty()) {
                         Map<String, List<MobAttributeCapability>> wuhunRingsMap = cap.getMonsterCapabilityLists();
@@ -114,6 +123,32 @@ public class C2SCheckTaskPacket {
             });
         });
         ctx.get().setPacketHandled(true);
+    }
+
+    /** 属性键 → 中文名（只用于"未通过"的提示，免得玩家看不懂检查的是什么）。 */
+    private static String attributeLabel(String key) {
+        return switch (key) {
+            case "maxshengming" -> "最大生命值";
+            case "gongji" -> "攻击力";
+            case "fangyu" -> "防御力";
+            case "baojilv" -> "暴击率";
+            case "baojishanghai" -> "暴击伤害";
+            case "shengminghuifu" -> "生命恢复";
+            case "xixue" -> "吸血";
+            case "shanbi" -> "闪避";
+            case "mingzhong" -> "命中";
+            case "wuchuan" -> "物穿";
+            case "kangbao" -> "抗暴";
+            default -> key;
+        };
+    }
+
+    /** 提示用数值格式化：大数字去掉小数点。 */
+    private static String formatAttrValue(float value) {
+        if (Math.abs(value) >= 1000f) {
+            return String.valueOf((long) value);
+        }
+        return String.format("%.1f", value);
     }
 
     private static int countItem(Player player, String itemId) {

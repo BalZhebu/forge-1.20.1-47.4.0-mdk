@@ -1,6 +1,7 @@
 package com.TovidY.kunluncontinent.event.server;
 
 import com.TovidY.kunluncontinent.KlMain;
+import com.TovidY.kunluncontinent.advancement.AchievementAPI;
 import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
@@ -76,6 +77,12 @@ public class PWPlayerTickEvent {
                 handleThunderRealmLightning(serverPlayer, capability, gameTime);
 
                 handleSuiXingField(serverPlayer, gameTime);
+
+                // 成就：首次踏入雷界（万雷天域）
+                if (gameTime % 20 == 0
+                        && serverPlayer.level().dimension().equals(ModDimensions.THUNDER_REALM_LEVEL_KEY)) {
+                    AchievementAPI.onEnterThunderRealm(serverPlayer);
+                }
 
                 if (gameTime % 20 == 0) {
                     float maxshengming = ModAttributeAPI.getMaxshengming(player);

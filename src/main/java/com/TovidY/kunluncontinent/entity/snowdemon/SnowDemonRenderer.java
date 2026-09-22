@@ -6,17 +6,14 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 
-public class SnowDemonRenderer extends MobRenderer<SnowDemonEntity, SnowDemonModel<SnowDemonEntity>> {
+public class SnowDemonRenderer extends MobRenderer<SnowDemonEntity, SnowDemonNewModel<SnowDemonEntity>> {
     private static final ResourceLocation TEXTURE = new ResourceLocation(KlMain.MOD_ID, "textures/entity/snowdemon.png");
 
-    public SnowDemonRenderer(EntityRendererProvider.Context context) {
-        super(context, new SnowDemonModel<>(context.bakeLayer(SnowDemonModel.LAYER_LOCATION)), 0.7F);
-    }
+    /** 阴影半径：模型高 8.5 格，用 1.8 才协调（原来 0.7 是给旧的小模型用的） */
+    private static final float SHADOW_RADIUS = 1.8F;
 
-    @Override
-    protected void scale(SnowDemonEntity entity, PoseStack poseStack, float partialTickTime) {
-        float s = entity.getVisualScale();
-        poseStack.scale(s, s, s);
+    public SnowDemonRenderer(EntityRendererProvider.Context context) {
+        super(context, new SnowDemonNewModel<>(context.bakeLayer(SnowDemonNewModel.LAYER_LOCATION)), SHADOW_RADIUS);
     }
 
     @Override

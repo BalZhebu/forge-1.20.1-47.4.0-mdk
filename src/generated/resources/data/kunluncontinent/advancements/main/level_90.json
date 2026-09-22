@@ -1,7 +1,7 @@
 {
   "parent": "kunluncontinent:main/level_80",
   "criteria": {
-    "reached_lvl": {
+    "criterion": {
       "conditions": {
         "min_level": 90
       },
@@ -25,7 +25,7 @@
   },
   "requirements": [
     [
-      "reached_lvl"
+      "criterion"
     ]
   ],
   "sends_telemetry_event": true

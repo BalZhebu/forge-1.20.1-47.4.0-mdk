@@ -1,7 +1,7 @@
 {
   "parent": "kunluncontinent:main/get_gray_iron_ingot5",
   "criteria": {
-    "has_gray_iron_ingot": {
+    "criterion": {
       "conditions": {
         "items": [
           {
@@ -17,7 +17,7 @@
   "display": {
     "announce_to_chat": true,
     "description": {
-      "translate": "advancements.kunluncontinent.rinsei_ingot.description"
+      "translate": "advancements.kunluncontinent.rinsei_ingot.desc"
     },
     "frame": "challenge",
     "hidden": false,
@@ -31,7 +31,7 @@
   },
   "requirements": [
     [
-      "has_gray_iron_ingot"
+      "criterion"
     ]
   ],
   "sends_telemetry_event": true

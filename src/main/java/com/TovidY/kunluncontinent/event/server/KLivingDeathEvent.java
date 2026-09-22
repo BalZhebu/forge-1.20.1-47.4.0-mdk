@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.event.server;
 
 import com.TovidY.kunluncontinent.Init.KLConfig;
 import com.TovidY.kunluncontinent.KlMain;
+import com.TovidY.kunluncontinent.advancement.AchievementAPI;
 import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
 import com.TovidY.kunluncontinent.capability.itemattribute.ItemAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapability;
@@ -203,6 +204,7 @@ public class KLivingDeathEvent {
                                     attr.setTowerChallenging(false);
                                     attr.setTowerLastActiveTick(0);
                                     towerPlayer.sendSystemMessage(Component.literal("§a§l[昆仑大陆] 历练成功！恭喜通关第 " + (oldFloor + 1) + " 层！已解锁下一层。"));
+                                    AchievementAPI.onTowerCleared(towerPlayer, oldFloor + 1);
                                     NetworkHandler.sendToClient(new PacketSyncTowerTimer(0, false), towerPlayer);
                                     if (attr.getGodName() == null || attr.getGodName().isEmpty()) {
                                         double successChance = attr.debugForceSuccess ? 1.0 : (0.005 * (oldFloor + 1));
@@ -392,6 +394,7 @@ public class KLivingDeathEvent {
 
     private static void triggerGodExam(ServerPlayer player, PlayerAttributeCapability cap, String godId, String godName) {
         cap.initializeGodExam(player, godId);
+        AchievementAPI.onGodExamStart(player);
         MinecraftServer server = player.getServer();
         if (server != null) {
             Component msg = Component.literal("§l§f【神之遗迹】§6天降异象，神辉洒落！§f玩家 §e" + player.getName().getString() + " §f得到了 " + godName + " §f的认可，开启了神之试炼！");

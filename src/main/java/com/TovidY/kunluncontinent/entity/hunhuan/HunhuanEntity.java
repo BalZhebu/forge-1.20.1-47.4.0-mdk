@@ -44,6 +44,9 @@ public class HunhuanEntity extends Entity {
         public int livetime;
         private Player player;
 
+        /** 是否已经广播过"开始吸收"（用于配对地发出取消包，避免开局就误报取消）。 */
+        private boolean absorbAnnounced = false;
+
         private static final EntityDataAccessor<Long> NIANXIAN = SynchedEntityData.defineId(HunhuanEntity.class, EntityDataSerializers.LONG);
 
         public HunhuanEntity(EntityType<?> entityType, Level level) {
@@ -74,6 +77,7 @@ public class HunhuanEntity extends Entity {
                 this.discard();
             }
             if(player != null && player.getVehicle()!=null && player.getVehicle() == this){
+                // 吸收进行中：魂环实体本身停住不动（浮动动画全在客户端，见 ClientHunhuanRingFx）
                 return;
             }
             livetime++;
@@ -82,6 +86,10 @@ public class HunhuanEntity extends Entity {
 
         public void secondtick() {
             if (player == null || player.getVehicle() != this) {
+                // 中途下来了 —— 只有确实开始过吸收才播"中断"表现
+                if (absorbAnnounced) {
+                    announceAbsorbCancel();
+                }
                 existenceTime = 0;
                 return;
             }
@@ -115,6 +123,25 @@ public class HunhuanEntity extends Entity {
             });
         }
 
+    // ==================== 吸收动画（纯表现层，不参与任何吸收判定） ====================
+
+    /** 开始吸收：一声起手音。魂环动画由客户端自己根据"骑乘状态"生成。 */
+    private void announceAbsorbStart(Player absorber) {
+        this.getCapability(MobAttributeCapabilityProvider.CAPABILITY).ifPresent(cap ->
+                HunhuanAbsorbFx.playStart(this.level(), absorber, (int) cap.getNianxian()));
+        this.absorbAnnounced = true;
+    }
+
+    /** 吸收被打断。 */
+    private void announceAbsorbCancel() {
+        absorbAnnounced = false;
+        Player rider = this.player;
+        if (rider == null) {
+            return;
+        }
+        HunhuanAbsorbFx.playCancel(this.level(), rider);
+    }
+
     private void handleAbsorbed(boolean isShenci, int nianxian) {
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(playerAttr -> {
             String currentWuhun = playerAttr.getWuhunName();
@@ -140,6 +167,15 @@ public class HunhuanEntity extends Entity {
             }
             NetworkHandler.sendToClient(new SyncShenciAttributesPacket(playerAttr), (ServerPlayer) player);
         });
+
+        // 吸收成功：一阵收尾音效
+        HunhuanAbsorbFx.playComplete(this.level(), player, nianxian);
+        // 魂环列表刚变过，广播一次刷新客户端缓存 —— 否则新魂环不会立刻显示，
+        // 要手动关开一次魂环才出来（渲染读的是客户端那份按 UUID 缓存的快照）
+        if (player instanceof ServerPlayer serverPlayer) {
+            PlayerHunhuanAPI.broadcastWuhunRings(serverPlayer, false);
+        }
+        absorbAnnounced = false;
 
         this.discard();
     }
@@ -307,6 +343,7 @@ public class HunhuanEntity extends Entity {
                     if(player.startRiding(this)){
                         this.player = player;
                         existenceTime = 0;
+                        announceAbsorbStart(player);
                         return InteractionResult.CONSUME;
                     }
                 }

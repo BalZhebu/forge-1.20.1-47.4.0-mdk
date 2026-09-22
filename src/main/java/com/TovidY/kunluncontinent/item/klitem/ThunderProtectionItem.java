@@ -39,5 +39,7 @@ public class ThunderProtectionItem extends Item {
             tooltip.add(Component.literal("!!! 能量即将耗尽，请尽快补充 !!!").withStyle(ChatFormatting.RED, ChatFormatting.ITALIC));
         }
         super.appendHoverText(stack, level, tooltip, flag);
+
+        tooltip.add(Component.translatable("tooltip.kunluncontinent.thunder_protection").withStyle(ChatFormatting.DARK_GRAY));
     }
 }

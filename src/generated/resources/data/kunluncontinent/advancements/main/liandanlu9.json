@@ -1,7 +1,7 @@
 {
   "parent": "kunluncontinent:main/liandanlu8",
   "criteria": {
-    "has_item": {
+    "criterion": {
       "conditions": {
         "items": [
           {
@@ -31,7 +31,7 @@
   },
   "requirements": [
     [
-      "has_item"
+      "criterion"
     ]
   ],
   "sends_telemetry_event": true

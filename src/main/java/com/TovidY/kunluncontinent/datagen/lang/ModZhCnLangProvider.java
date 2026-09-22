@@ -182,11 +182,24 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.HUNHUAN_BUTTON.get(),"魂环面板");
         add(ModItems.SHENKAO_BUTTON.get(),"神考面板");
 
+        add("tooltip.cultivation_platform.tooltip","生成在主世界的 -16 ~ 40 高度之间");
+        add("tooltip.cloud_patterned_bronze_ore.tooltip","生成在主世界的 -64 ~ 0 高度之间");
+        add("tooltip.red_fire_ore.tooltip","生成在地狱的 1 ~ 100 高度之间");
+        add("tooltip.sunken_silver_ore.tooltip","生成在末地的 0 ~ 128 高度之间");
+        add("tooltip.cold_hearterd_steel_ore.tooltip","生成在极寒冰域的 -64 ~ 0 高度之间");
+        add("tooltip.ruby_ore.tooltip","生成在主世界的 -64 ~ -5 高度之间");
+        add("tooltip.amethyst_ore.tooltip","生成在地狱的 -0 ~ 100 高度之间");
+        add("tooltip.sapphire_ore.tooltip","生成在末地的 -0 ~ 100 高度之间");
+        add("tooltip.starlight_stone_ore.tooltip","生成在极寒冰域的 -64 ~ 0 高度之间");
+
         add("item.kunluncontinent.guide_book.tooltip","§7第一次进入游戏即可获得");
         add("item.kunluncontinent.guide_book.tooltip1","§7请务必认真仔细查看");
         add("item.kunluncontinent.guide_book.tooltip2","§7建议不要弄丢");
 
         add("item.fanqicao_seeds.tooltip","可通过击杀500年以上的生物低概率掉落");
+
+        add("tooltip.kunluncontinent.thunder_protection","万雷天域维度用品");
+        add("tooltip.kunluncontinent.thermal_amulet","极寒冰域维度用品");
 
         add("item.guyuancao_seeds.tooltip","会生成在大部分奖励箱中");
         add("item.guyuancao_seeds.tooltip1","打草有低概率掉落");
@@ -198,7 +211,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
 
         //成就类
         add("advancements.kunluncontinent.root.title", "初入世界");
-        add("advancements.kunluncontinent.root.description", "踏入昆仑大陆的第一步。");
+        add("advancements.kunluncontinent.root.desc", "踏入昆仑大陆的第一步。");
         add("adv.kunlun.lvl10.title", "魂师");
         add("adv.kunlun.lvl10.desc", "吸收一个魂环来到魂师行类吧");
         add("adv.kunlun.lvl20.title", "大魂师");
@@ -238,25 +251,68 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("adv.kunlun.liandanlu9.title","§c九§b阶§5炼§a丹§e炉！");
         add("adv.kunlun.liandanlu9.desc","材料要求极高实用性确不高");
         add("advancements.kunluncontinent.gray_iron_ingot.title", "灰铁锭");
-        add("advancements.kunluncontinent.gray_iron_ingot.description", "一切的开端");
+        add("advancements.kunluncontinent.gray_iron_ingot.desc", "一切的开端");
         add("advancements.kunluncontinent.cloud_patterned_bronze_ingot.title", "云纹铜锭");
-        add("advancements.kunluncontinent.cloud_patterned_bronze_ingot.description", "更好的灰铁锭");
+        add("advancements.kunluncontinent.cloud_patterned_bronze_ingot.desc", "更好的灰铁锭");
         add("advancements.kunluncontinent.red_fire_ingot.title", "赤火锭");
-        add("advancements.kunluncontinent.red_fire_ingot.description", "可在下界中找到~");
+        add("advancements.kunluncontinent.red_fire_ingot.desc", "可在下界中找到~");
         add("advancements.kunluncontinent.sunken_silver_ingot.title", "沉银");
-        add("advancements.kunluncontinent.sunken_silver_ingot.description", "可在末地中找到");
+        add("advancements.kunluncontinent.sunken_silver_ingot.desc", "可在末地中找到");
         add("advancements.kunluncontinent.rinsei_ingot.title", "凛晶");
-        add("advancements.kunluncontinent.rinsei_ingot.description", "击杀雪魔后掉落~");
+        add("advancements.kunluncontinent.rinsei_ingot.desc", "击杀雪魔后掉落~");
         add("advancements.kunluncontinent.cold_heated_steel_ingot.title", "寒心钢锭");
-        add("advancements.kunluncontinent.cold_heated_steel_ingot.description", "可在极寒冰域中找到~！");
+        add("advancements.kunluncontinent.cold_heated_steel_ingot.desc", "可在极寒冰域中找到~！");
         add("advancements.kunluncontinent.ruby.title","红宝石");
-        add("advancements.kunluncontinent.ruby.description","一切的开端");
+        add("advancements.kunluncontinent.ruby.desc","一切的开端");
         add("advancements.kunluncontinent.sapphire.title","蓝晶");
-        add("advancements.kunluncontinent.sapphire.description","下界的器具矿物");
+        add("advancements.kunluncontinent.sapphire.desc","下界的器具矿物");
         add("advancements.kunluncontinent.amethyst.title","紫瑛");
-        add("advancements.kunluncontinent.amethyst.description","末地中的宝贵矿石");
+        add("advancements.kunluncontinent.amethyst.desc","末地中的宝贵矿石");
         add("advancements.kunluncontinent.starlight_stone.title","星辰石");
-        add("advancements.kunluncontinent.starlight_stone.description","异界的宝贵矿石");
+        add("advancements.kunluncontinent.starlight_stone.desc","异界的宝贵矿石");
+
+        // ===== 魂师之路 =====
+        add("adv.kunlun.wuhun_awaken.title","觉醒武魂");
+        add("adv.kunlun.wuhun_awaken.desc","开启武魂面板，觉醒属于你的第一个武魂。");
+        add("adv.kunlun.hunhuan_first.title","第一魂环");
+        add("adv.kunlun.hunhuan_first.desc","成功吸收第一枚魂环，正式踏上魂师之路。");
+        add("adv.kunlun.hunhuan_nine.title","九环圆满");
+        add("adv.kunlun.hunhuan_nine.desc","集齐九枚魂环，九大魂技尽归你手。");
+        // ===== 年限攀登 =====
+        add("adv.kunlun.hunhuan_thousand.title","千年魂环");
+        add("adv.kunlun.hunhuan_thousand.desc","吸收一枚千年魂环。");
+        add("adv.kunlun.hunhuan_myriad.title","万年魂环");
+        add("adv.kunlun.hunhuan_myriad.desc","吸收一枚万年魂环。");
+        add("adv.kunlun.hunhuan_hundred_thousand.title","十万年魂环");
+        add("adv.kunlun.hunhuan_hundred_thousand.desc","吸收一枚十万年魂环，实力已非凡俗可比。");
+        add("adv.kunlun.hunhuan_million.title","百万年魂环");
+        add("adv.kunlun.hunhuan_million.desc","吸收一枚百万年魂环，天地为之侧目。");
+        add("adv.kunlun.hunhuan_divine.title","神赐魂环");
+        add("adv.kunlun.hunhuan_divine.desc","获得一枚千万年之上的神赐魂环。");
+        add("adv.kunlun.soul_core_first.title","魂核初凝");
+        add("adv.kunlun.soul_core_first.desc","首次获得魂环分解后凝结的魂核。");
+        // ===== 丹道 =====
+        add("adv.kunlun.alchemy_first.title","初入丹道");
+        add("adv.kunlun.alchemy_first.desc","第一次成功炼出丹药。");
+        add("adv.kunlun.alchemy_spirit.title","灵丹妙手");
+        add("adv.kunlun.alchemy_spirit.desc","炼出品阶达到「灵丹」的丹药。");
+        add("adv.kunlun.alchemy_treasure.title","宝丹自成");
+        add("adv.kunlun.alchemy_treasure.desc","炼出品阶达到「宝丹」的丹药。");
+        add("adv.kunlun.alchemy_immortal.title","仙品出炉");
+        add("adv.kunlun.alchemy_immortal.desc","炼出传说中的「仙丹」。");
+        // ===== 转生 =====
+        add("adv.kunlun.reincarnation_first.title","破后而立");
+        add("adv.kunlun.reincarnation_first.desc","渡过天劫，完成第一次转生。");
+        // ===== 魂塔与神考 =====
+        add("adv.kunlun.tower_first.title","初入魂塔");
+        add("adv.kunlun.tower_first.desc","第一次开启魂塔历练。");
+        add("adv.kunlun.tower_ten.title","魂塔十层");
+        add("adv.kunlun.tower_ten.desc","通关魂塔第十层。");
+        add("adv.kunlun.god_exam_start.title","承神之考");
+        add("adv.kunlun.god_exam_start.desc","得到神的注视，接下神之试炼。");
+        // ===== 雷界 =====
+        add("adv.kunlun.thunder_realm_enter.title","踏入雷界");
+        add("adv.kunlun.thunder_realm_enter.desc","第一次进入万雷天域。");
 
 
         //魂骨类

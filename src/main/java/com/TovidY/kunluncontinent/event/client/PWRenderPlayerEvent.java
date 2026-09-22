@@ -4,6 +4,7 @@ import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
+import com.TovidY.kunluncontinent.capability.playerattributes.PlayerHunhuanAPI;
 import com.TovidY.kunluncontinent.entity.playernpc.PlayerNpcEntity;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.client.SyncWuhunDataPacket;
@@ -12,6 +13,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -21,7 +23,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -159,6 +163,85 @@ public class PWRenderPlayerEvent {
         if (cache == null || cache.renderDataList.isEmpty()) return;
 
         renderRingsForEntity(entity, cache, event.getPoseStack(), event.getPartialTick());
+    }
+
+    /**
+     * 第一人称下补渲染"自己身上的魂环"。
+     *
+     * <p><b>为什么需要单独一份：</b>原版在 {@code LevelRenderer} 里对本地玩家有一条判定
+     * （摄像机贴着实体自己时直接跳过），第一人称下**本地玩家实体整个不渲染**，
+     * 于是 {@code PlayerRenderer} 不会被调用，{@code RenderPlayerEvent} 也就不会触发 ——
+     * 这就是"第一人称看不到自己魂环"的原因。</p>
+     *
+     * <p>所以这里换到 {@link RenderLevelStageEvent}（第一人称一定会执行）自己补一份。
+     * 关键是下面那串变换**与 {@code LivingEntityRenderer.render} 里一字不差**，
+     * 这样第一人称看到的魂环与第三人称完全一致，不用去猜模型空间用的是什么单位。</p>
+     *
+     * <p>总开关是配置 12「第一人称魂环」，默认关闭。</p>
+     */
+    @SubscribeEvent
+    public static void renderFirstPersonRings(RenderLevelStageEvent event) {
+        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_ENTITIES) {
+            return;
+        }
+        Minecraft mc = Minecraft.getInstance();
+        LocalPlayer player = mc.player;
+        if (player == null || mc.level == null || player.isSpectator()) {
+            return;
+        }
+        // 只在第一人称、且摄像机就挂在自己身上时补渲染
+        if (!mc.options.getCameraType().isFirstPerson() || mc.getCameraEntity() != player) {
+            return;
+        }
+
+        PlayerAttributeCapability cap = player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).orElse(null);
+        if (cap == null) {
+            return;
+        }
+        // 开关 12 = 第一人称魂环（默认关）；开关 2 = 自身魂环显示，关了就不用画
+        if (!cap.isConfigOpen(12) || !cap.isConfigOpen(2)) {
+            return;
+        }
+
+        EntityWuhunCache cache = entityWuhunCacheMap.get(player.getUUID());
+        if (cache == null) {
+            // 第一人称下 renderPlayerEventPost 不会跑，懒加载得自己来一次
+            List<Integer> nianxians = getLocalPlayerRingNianxians(player);
+            if (nianxians.isEmpty()) {
+                return;
+            }
+            cache = getOrCreateCache(player.getUUID());
+            cache.update(nianxians);
+        }
+        if (cache.renderDataList.isEmpty()) {
+            return;
+        }
+
+        float partialTick = event.getPartialTick();
+        Vec3 camPos = event.getCamera().getPosition();
+        PoseStack poseStack = event.getPoseStack();
+
+        // ⚠️ 位置必须做 tick 插值。
+        // 直接取 player.getX() 拿到的是"当前 tick 的快照"，而画面里其它一切（相机、实体、粒子）
+        // 都是用 lerp(xOld, x, partialTick) 插值绘制的 —— 只有这圈魂环每 tick 跳一整格位移。
+        // 环本身只有零点几格大，跳一步就是好几个环的宽度，看起来就是疯狂抽动。
+        // 这也正是 EntityRenderDispatcher 渲染实体时用的算法，照抄即可。
+        double px = Mth.lerp(partialTick, player.xOld, player.getX());
+        double py = Mth.lerp(partialTick, player.yOld, player.getY());
+        double pz = Mth.lerp(partialTick, player.zOld, player.getZ());
+
+        poseStack.pushPose();
+        // 世界坐标 → 相机相对（单位：格）
+        poseStack.translate(px - camPos.x, py - camPos.y, pz - camPos.z);
+        // ↓↓↓ 以下与 LivingEntityRenderer.render 保持一致，保证和第三人称同一套空间
+        float bodyYaw = Mth.rotLerp(partialTick, player.yBodyRotO, player.yBodyRot);
+        poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - bodyYaw));
+        poseStack.scale(-1.0F, -1.0F, 1.0F);
+        poseStack.scale(0.9375F, 0.9375F, 0.9375F);
+        poseStack.translate(0.0F, -1.501F, 0.0F);
+
+        renderRingsForEntity(player, cache, poseStack, partialTick);
+        poseStack.popPose();
     }
 
     // 统一渲染调度
@@ -374,18 +457,8 @@ public class PWRenderPlayerEvent {
             cache.animationStartTime = currentTime;
             cache.isPlayingAnimation = true;
         } else {
-            player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(capability -> {
-                List<Integer> nianxianList = new ArrayList<>();
-                if (capability.getWuhunList() != null) {
-                    for (MobAttributeCapability wuhun : capability.getWuhunList()) {
-                        if (wuhun != null) nianxianList.add((int) wuhun.getNianxian());
-                    }
-                }
-                SyncWuhunDataPacket packet = new SyncWuhunDataPacket(player.getUUID(), nianxianList, true, currentTime);
-                for (ServerPlayer serverPlayer : ((ServerLevel) player.level()).getPlayers(p -> true)) {
-                    NetworkHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> serverPlayer), packet);
-                }
-            });
+            // 服务端：把当前魂环列表广播出去，客户端据此刷新渲染缓存并播逐环显现
+            PlayerHunhuanAPI.broadcastWuhunRings((ServerPlayer) player, true);
         }
     }
 

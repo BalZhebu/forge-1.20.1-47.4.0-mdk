@@ -406,18 +406,6 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
 
     public boolean isGod() { return isGod; }
 
-    public float getGodAttributeValue(String attrKey) {
-        return switch (attrKey) {
-            case "gongji" -> this.gongji;
-            case "fangyu" -> this.fangyu;
-            case "maxshengming" -> this.maxshengming;
-            case "jingshenli" -> this.jingshenli;
-            case "baojilv" -> this.baojilv;
-            case "shanbi" -> this.shanbi;
-            default -> 0f;
-        };
-    }
-
     public boolean isConfigOpen(int index) {
         return ((configFlags >> index) & 1) == 1;
     }

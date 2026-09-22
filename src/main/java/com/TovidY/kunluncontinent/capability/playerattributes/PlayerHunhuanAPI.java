@@ -1,14 +1,18 @@
 package com.TovidY.kunluncontinent.capability.playerattributes;
 
+import com.TovidY.kunluncontinent.advancement.AchievementAPI;
 import com.TovidY.kunluncontinent.capability.mobattributes.HunhuanWeakener;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapability;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanEntity;
+import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.SynsAPI;
+import com.TovidY.kunluncontinent.network.client.SyncWuhunDataPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -55,6 +59,7 @@ public class PlayerHunhuanAPI {
                     capability.setHunhuankuaiguan(capability.getMonsterCapabilityLists().size()-1);
                     player.sendSystemMessage(Component.literal("成功觉醒武魂: " + s));
                     ((ServerPlayer)player).connection.send(new ClientboundSetTitleTextPacket(Component.literal("成功觉醒武魂: " + s)));
+                    AchievementAPI.onAwakenWuhun(player);
                     b = !b;
                     if(random.nextInt(5) == 0){
                         juexingShuangsheng(player);
@@ -93,6 +98,7 @@ public class PlayerHunhuanAPI {
                 capability.setHunhuankuaiguan(capability.getMonsterCapabilityLists().size()-1);
                 player.sendSystemMessage(Component.literal("成功觉醒武魂: " + name));
                 ((ServerPlayer)player).connection.send(new ClientboundSetTitleTextPacket(Component.literal("成功觉醒武魂: " + name)));
+                AchievementAPI.onAwakenWuhun(player);
                 SynsAPI.synsPlayerAttribute(player);
             }else {
                 player.sendSystemMessage(Component.literal("觉醒失败，已拥有该武魂").withStyle(ChatFormatting.RED));
@@ -129,6 +135,7 @@ public class PlayerHunhuanAPI {
                 listForActive.add(weakenedCap);
 
                 player.sendSystemMessage(Component.literal("成功吸收" + monsterCap.getNianxian() + "年魂环！"));
+                AchievementAPI.onAbsorbHunhuan(player, monsterCap.getNianxian(), listForActive.size());
                 SynsAPI.synsPlayerAttribute(player);
             });
         });
@@ -357,5 +364,38 @@ public class PlayerHunhuanAPI {
                 PacketDistributor.PLAYER.with(() -> player),
                 packet
         );
+    }
+
+    /**
+     * 把某个玩家当前的魂环年限列表广播给同维度所有玩家。
+     *
+     * <p><b>为什么必须广播：</b>客户端的魂环渲染读的是 {@code PWRenderPlayerEvent} 里
+     * 按玩家 UUID 缓存的一份快照（{@code entityWuhunCacheMap}），那份缓存只在
+     * 「登录 / 换维度 / 手动开关魂环」时刷新。所以**魂环列表一变就得广播一次**，
+     * 否则新魂环不会立刻出现 —— 必须手动关开一次魂环才显示出来。</p>
+     *
+     * @param playAnimation 是否让魂环逐环"显现"。
+     *                      吸收完成时传 {@code false}，免得已有的魂环陪着重播一遍出场动画。
+     */
+    public static void broadcastWuhunRings(ServerPlayer player, boolean playAnimation) {
+        if (player == null) {
+            return;
+        }
+        player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(capability -> {
+            List<Integer> nianxianList = new ArrayList<>();
+            if (capability.getWuhunList() != null) {
+                for (MobAttributeCapability wuhun : capability.getWuhunList()) {
+                    if (wuhun != null) {
+                        nianxianList.add((int) wuhun.getNianxian());
+                    }
+                }
+            }
+            long startTime = playAnimation ? player.level().getGameTime() : 0L;
+            SyncWuhunDataPacket packet = new SyncWuhunDataPacket(
+                    player.getUUID(), nianxianList, playAnimation, startTime);
+            for (ServerPlayer target : ((ServerLevel) player.level()).getPlayers(p -> true)) {
+                NetworkHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> target), packet);
+            }
+        });
     }
 }

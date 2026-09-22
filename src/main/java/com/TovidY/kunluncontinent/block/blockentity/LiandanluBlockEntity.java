@@ -1,5 +1,6 @@
 package com.TovidY.kunluncontinent.block.blockentity;
 
+import com.TovidY.kunluncontinent.advancement.AchievementAPI;
 import com.TovidY.kunluncontinent.block.ModBlockEntities;
 import com.TovidY.kunluncontinent.item.tool.SoulGatheringBottleItem;
 import com.TovidY.kunluncontinent.recipe.ModRecipes;
@@ -152,6 +153,17 @@ public class LiandanluBlockEntity extends BlockEntity implements MenuProvider {
             remaining = handler.insertItem(i, remaining, false);
             if (remaining.isEmpty()) break;
         }
+
+        // 成就：把功劳记给炼丹炉旁边最近的玩家
+        if (entity.level != null && !entity.level.isClientSide) {
+            Player crafter = entity.level.getNearestPlayer(
+                    entity.getBlockPos().getX() + 0.5D,
+                    entity.getBlockPos().getY() + 0.5D,
+                    entity.getBlockPos().getZ() + 0.5D,
+                    8.0D, false);
+            AchievementAPI.onAlchemySuccess(crafter, finalQuality);
+        }
+
         entity.setChanged(); // 确保数据持久化
     }
 

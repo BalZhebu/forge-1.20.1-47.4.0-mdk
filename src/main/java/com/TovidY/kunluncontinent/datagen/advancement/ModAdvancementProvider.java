@@ -1,16 +1,11 @@
 package com.TovidY.kunluncontinent.datagen.advancement;
 
-import com.TovidY.kunluncontinent.KlMain;
-import com.TovidY.kunluncontinent.advancement.LevelTrigger;
+import com.TovidY.kunluncontinent.advancement.AchievementAPI;
 import com.TovidY.kunluncontinent.block.ModBlocks;
 import com.TovidY.kunluncontinent.item.ModItems;
 import net.minecraft.advancements.Advancement;
-import net.minecraft.advancements.FrameType;
-import net.minecraft.advancements.critereon.InventoryChangeTrigger;
-import net.minecraft.advancements.critereon.PlayerTrigger;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.ForgeAdvancementProvider;
@@ -19,430 +14,209 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
+/**
+ * 成就数据生成。
+ *
+ * <p>所有条目都通过 {@link AdvancementHelper} 生成，新增成就只需一行：
+ * {@code AdvancementHelper.task(saver, helper, parent, "路径", 图标, 条件)}</p>
+ *
+ * <p>分支结构：</p>
+ * <pre>
+ * root ─┬─ 宝石线 / 金属线（原）
+ *       ├─ 炼丹炉线 → 丹道（新）
+ *       ├─ 等级线 → 转生（新）
+ *       ├─ 魂师之路 → 魂环 → 年限攀登 / 九环圆满 / 魂核（新）
+ *       ├─ 魂塔 → 魂塔十层 / 神之试炼（新）
+ *       └─ 雷界（新）
+ * </pre>
+ */
 public class ModAdvancementProvider extends ForgeAdvancementProvider {
+
     public ModAdvancementProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, ExistingFileHelper existingFileHelper) {
         super(output, registries, existingFileHelper, List.of(new ModAdvancements()));
     }
 
     public static class ModAdvancements implements AdvancementGenerator {
 
+        /** 项目早期成就沿用 "advancements.kunluncontinent." 前缀，这里保持兼容。 */
+        private static final String LEGACY = "advancements.kunluncontinent.";
+
         @Override
-        public void generate(HolderLookup.Provider registries, Consumer<Advancement> saver, ExistingFileHelper existingFileHelper) {
-            Advancement root = Advancement.Builder.advancement()
-                    .display(ModItems.HUNHUAN_BUTTON.get(),
-                            Component.translatable("advancements.kunluncontinent.root.title"),
-                            Component.translatable("advancements.kunluncontinent.root.description"),
-                            ResourceLocation.tryParse("minecraft:textures/gui/advancements/backgrounds/stone.png"),
-                            FrameType.TASK, true, true, false)
-                    .addCriterion("on_join", PlayerTrigger.TriggerInstance.tick())
-                    .save(saver,new ResourceLocation(KlMain.MOD_ID, "main/root"), existingFileHelper);
+        public void generate(HolderLookup.Provider registries, Consumer<Advancement> saver, ExistingFileHelper helper) {
 
-            Advancement rubyAdvancement = Advancement.Builder.advancement()
-                    .parent(root)
-                    .display(
-                            ModItems.RUBY.get(),
-                            Component.translatable("advancements.kunluncontinent.ruby.title"),
-                            Component.translatable("advancements.kunluncontinent.ruby.description"),
-                            null,
-                            FrameType.TASK, // 成就框类型：TASK(普通), CHALLENGE(挑战), GOAL(目标)
-                            true,
-                            true,
-                            false
-                    )
-                    .addCriterion("has_ruby", InventoryChangeTrigger.TriggerInstance.hasItems(
-                            ModItems.RUBY.get()
-                    ))
-                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/get_ruby"), existingFileHelper);
+            // ==================================================================
+            //  根成就
+            // ==================================================================
+            Advancement root = AdvancementHelper.root(saver, helper, "root", LEGACY + "root",
+                    ModItems.HUNHUAN_BUTTON.get(),
+                    ResourceLocation.tryParse("minecraft:textures/gui/advancements/backgrounds/stone.png"),
+                    AdvancementHelper.onJoin());
 
-            Advancement sapphireAdvancement = Advancement.Builder.advancement()
-                    .parent(rubyAdvancement)
-                    .display(
-                            ModItems.SAPPHIRE.get(),
-                            Component.translatable("advancements.kunluncontinent.sapphire.title"),
-                            Component.translatable("advancements.kunluncontinent.sapphire.description"),
-                            null,
-                            FrameType.TASK, // 成就框类型：TASK(普通), CHALLENGE(挑战), GOAL(目标)
-                            true,
-                            true,
-                            false
-                    )
-                    .addCriterion("has_sapphire", InventoryChangeTrigger.TriggerInstance.hasItems(
-                            ModItems.SAPPHIRE.get()
-                    ))
-                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/get_sapphire"), existingFileHelper);
+            // ==================================================================
+            //  宝石线（原）
+            // ==================================================================
+            Advancement ruby = AdvancementHelper.task(saver, helper, root, "get_ruby", LEGACY + "ruby",
+                    ModItems.RUBY.get(), AdvancementHelper.hasItems(ModItems.RUBY.get()));
 
-            Advancement amethystAdvancement = Advancement.Builder.advancement()
-                    .parent(sapphireAdvancement)
-                    .display(
-                            ModItems.AMETHYST.get(),
-                            Component.translatable("advancements.kunluncontinent.amethyst.title"),
-                            Component.translatable("advancements.kunluncontinent.amethyst.description"),
-                            null,
-                            FrameType.CHALLENGE, // 成就框类型：TASK(普通), CHALLENGE(挑战), GOAL(目标)
-                            true,
-                            true,
-                            false
-                    )
-                    .addCriterion("has_amethyst", InventoryChangeTrigger.TriggerInstance.hasItems(
-                            ModItems.AMETHYST.get()
-                    ))
-                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/get_amethyst"), existingFileHelper);
+            Advancement sapphire = AdvancementHelper.task(saver, helper, ruby, "get_sapphire", LEGACY + "sapphire",
+                    ModItems.SAPPHIRE.get(), AdvancementHelper.hasItems(ModItems.SAPPHIRE.get()));
 
-            Advancement starlightstoneAdvancement = Advancement.Builder.advancement()
-                    .parent(amethystAdvancement)
-                    .display(
-                            ModItems.STARLIGHT_STONE.get(),
-                            Component.translatable("advancements.kunluncontinent.starlight_stone.title"),
-                            Component.translatable("advancements.kunluncontinent.starlight_stone.description"),
-                            null,
-                            FrameType.GOAL, // 成就框类型：TASK(普通), CHALLENGE(挑战), GOAL(目标)
-                            true,
-                            true,
-                            false
-                    )
-                    .addCriterion("has_starlight_stone", InventoryChangeTrigger.TriggerInstance.hasItems(
-                            ModItems.STARLIGHT_STONE.get()
-                    ))
-                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/get_starlight_stone"), existingFileHelper);
+            Advancement amethyst = AdvancementHelper.challenge(saver, helper, sapphire, "get_amethyst", LEGACY + "amethyst",
+                    ModItems.AMETHYST.get(), AdvancementHelper.hasItems(ModItems.AMETHYST.get()));
 
+            AdvancementHelper.goal(saver, helper, amethyst, "get_starlight_stone", LEGACY + "starlight_stone",
+                    ModItems.STARLIGHT_STONE.get(), AdvancementHelper.hasItems(ModItems.STARLIGHT_STONE.get()));
 
-            Advancement grayIronAdvancement = Advancement.Builder.advancement()
-                    .parent(root) // 设置父成就（可选）
-                    .display(
-                            ModItems.GRAY_IRON_INGOT.get(),
-                            Component.translatable("advancements.kunluncontinent.gray_iron_ingot.title"),
-                            Component.translatable("advancements.kunluncontinent.gray_iron_ingot.description"),
-                            null,
-                            FrameType.TASK, // 成就框类型：TASK(普通), CHALLENGE(挑战), GOAL(目标)
-                            true,
-                            true,
-                            false
-                    )
-                    .addCriterion("has_gray_iron_ingot", InventoryChangeTrigger.TriggerInstance.hasItems(
-                            ModItems.GRAY_IRON_INGOT.get()
-                    ))
-                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/get_gray_iron_ingot"), existingFileHelper);
+            // ==================================================================
+            //  金属线（原）
+            // ==================================================================
+            Advancement grayIron = AdvancementHelper.task(saver, helper, root, "get_gray_iron_ingot", LEGACY + "gray_iron_ingot",
+                    ModItems.GRAY_IRON_INGOT.get(), AdvancementHelper.hasItems(ModItems.GRAY_IRON_INGOT.get()));
 
-            Advancement grayIronAdvancement2 = Advancement.Builder.advancement()
-                    .parent(grayIronAdvancement) // 设置父成就（可选）
-                    .display(
-                            ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get(),
-                            Component.translatable("advancements.kunluncontinent.cloud_patterned_bronze_ingot.title"),
-                            Component.translatable("advancements.kunluncontinent.cloud_patterned_bronze_ingot.description"),
-                            null,
-                            FrameType.TASK, // 成就框类型：TASK(普通), CHALLENGE(挑战), GOAL(目标)
-                            true,
-                            true,
-                            false
-                    )
-                    .addCriterion("has_gray_iron_ingot", InventoryChangeTrigger.TriggerInstance.hasItems(
-                            ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get()
-                    ))
-                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/get_gray_iron_ingot2"), existingFileHelper);
+            Advancement bronze = AdvancementHelper.task(saver, helper, grayIron, "get_gray_iron_ingot2", LEGACY + "cloud_patterned_bronze_ingot",
+                    ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get(), AdvancementHelper.hasItems(ModItems.CLOUD_PATTERNED_BRONZE_INGOT.get()));
 
-            Advancement grayIronAdvancement3 = Advancement.Builder.advancement()
-                    .parent(grayIronAdvancement2) // 设置父成就（可选）
-                    .display(
-                            ModItems.RED_FIRE_INGOT.get(),
-                            Component.translatable("advancements.kunluncontinent.red_fire_ingot.title"),
-                            Component.translatable("advancements.kunluncontinent.red_fire_ingot.description"),
-                            null,
-                            FrameType.TASK, // 成就框类型：TASK(普通), CHALLENGE(挑战), GOAL(目标)
-                            true,
-                            true,
-                            false
-                    )
-                    .addCriterion("has_gray_iron_ingot", InventoryChangeTrigger.TriggerInstance.hasItems(
-                            ModItems.RED_FIRE_INGOT.get()
-                    ))
-                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/get_gray_iron_ingot3"), existingFileHelper);
+            Advancement redFire = AdvancementHelper.task(saver, helper, bronze, "get_gray_iron_ingot3", LEGACY + "red_fire_ingot",
+                    ModItems.RED_FIRE_INGOT.get(), AdvancementHelper.hasItems(ModItems.RED_FIRE_INGOT.get()));
 
-            Advancement grayIronAdvancement4 = Advancement.Builder.advancement()
-                    .parent(grayIronAdvancement3) // 设置父成就（可选）
-                    .display(
-                            ModItems.SUNKEN_SILVER_INGOT.get(),
-                            Component.translatable("advancements.kunluncontinent.sunken_silver_ingot.title"),
-                            Component.translatable("advancements.kunluncontinent.sunken_silver_ingot.description"),
-                            null,
-                            FrameType.TASK, // 成就框类型：TASK(普通), CHALLENGE(挑战), GOAL(目标)
-                            true,
-                            true,
-                            false
-                    )
-                    .addCriterion("has_gray_iron_ingot", InventoryChangeTrigger.TriggerInstance.hasItems(
-                            ModItems.SUNKEN_SILVER_INGOT.get()
-                    ))
-                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/get_gray_iron_ingot4"), existingFileHelper);
+            Advancement sunkenSilver = AdvancementHelper.task(saver, helper, redFire, "get_gray_iron_ingot4", LEGACY + "sunken_silver_ingot",
+                    ModItems.SUNKEN_SILVER_INGOT.get(), AdvancementHelper.hasItems(ModItems.SUNKEN_SILVER_INGOT.get()));
 
-            Advancement grayIronAdvancement5 = Advancement.Builder.advancement()
-                    .parent(grayIronAdvancement4) // 设置父成就（可选）
-                    .display(
-                            ModItems.COLD_HEARTED_STEEL_INGOT.get(),
-                            Component.translatable("advancements.kunluncontinent.cold_heated_steel_ingot.title"),
-                            Component.translatable("advancements.kunluncontinent.cold_heated_steel_ingot.description"),
-                            null,
-                            FrameType.CHALLENGE, // 成就框类型：TASK(普通), CHALLENGE(挑战), GOAL(目标)
-                            true,
-                            true,
-                            false
-                    )
-                    .addCriterion("has_gray_iron_ingot", InventoryChangeTrigger.TriggerInstance.hasItems(
-                            ModItems.COLD_HEARTED_STEEL_INGOT.get()
-                    ))
-                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/get_gray_iron_ingot5"), existingFileHelper);
+            Advancement coldSteel = AdvancementHelper.challenge(saver, helper, sunkenSilver, "get_gray_iron_ingot5", LEGACY + "cold_heated_steel_ingot",
+                    ModItems.COLD_HEARTED_STEEL_INGOT.get(), AdvancementHelper.hasItems(ModItems.COLD_HEARTED_STEEL_INGOT.get()));
 
-            Advancement grayIronAdvancement6 = Advancement.Builder.advancement()
-                    .parent(grayIronAdvancement5) // 设置父成就（可选）
-                    .display(
-                            ModItems.RINSEI_INGOT.get(),
-                            Component.translatable("advancements.kunluncontinent.rinsei_ingot.title"),
-                            Component.translatable("advancements.kunluncontinent.rinsei_ingot.description"),
-                            null,
-                            FrameType.CHALLENGE, // 成就框类型：TASK(普通), CHALLENGE(挑战), GOAL(目标)
-                            true,
-                            true,
-                            false
-                    )
-                    .addCriterion("has_gray_iron_ingot", InventoryChangeTrigger.TriggerInstance.hasItems(
-                            ModItems.RINSEI_INGOT.get()
-                    ))
-                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/get_gray_iron_ingot6"), existingFileHelper);
+            AdvancementHelper.challenge(saver, helper, coldSteel, "get_gray_iron_ingot6", LEGACY + "rinsei_ingot",
+                    ModItems.RINSEI_INGOT.get(), AdvancementHelper.hasItems(ModItems.RINSEI_INGOT.get()));
 
+            // ==================================================================
+            //  炼丹炉线（原）
+            // ==================================================================
+            Advancement lu1 = AdvancementHelper.task(saver, helper, root, "liandanlu1", "adv.kunlun.liandanlu1",
+                    ModBlocks.LIANDANLU1.get(), AdvancementHelper.hasItems(ModBlocks.LIANDANLU1.get()));
 
-            // 1. 检查获得特定物品/方块的成就
-            Advancement obtainItem = Advancement.Builder.advancement()
-                    .parent(root)
-                    .display(
-                            ModBlocks.LIANDANLU1.get(),
-                            Component.translatable("adv.kunlun.liandanlu1.title"),
-                            Component.translatable("adv.kunlun.liandanlu1.desc"),
-                            null,
-                            FrameType.TASK, true, true, false
-                    )
-                    .addCriterion("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(ModBlocks.LIANDANLU1.get()))
-                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/liandanlu1"), existingFileHelper);
+            Advancement lu2 = AdvancementHelper.task(saver, helper, lu1, "liandanlu2", "adv.kunlun.liandanlu2",
+                    ModBlocks.LIANDANLU2.get(), AdvancementHelper.hasItems(ModBlocks.LIANDANLU2.get()));
 
-            // 1. 检查获得特定物品/方块的成就
-            Advancement liandanlu2 = Advancement.Builder.advancement()
-                    .parent(obtainItem)
-                    .display(
-                            ModBlocks.LIANDANLU2.get(),
-                            Component.translatable("adv.kunlun.liandanlu2.title"),
-                            Component.translatable("adv.kunlun.liandanlu2.desc"),
-                            null,
-                            FrameType.TASK, true, true, false
-                    )
-                    .addCriterion("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(ModBlocks.LIANDANLU2.get()))
-                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/liandanlu2"), existingFileHelper);
+            Advancement lu3 = AdvancementHelper.task(saver, helper, lu2, "liandanlu3", "adv.kunlun.liandanlu3",
+                    ModBlocks.LIANDANLU3.get(), AdvancementHelper.hasItems(ModBlocks.LIANDANLU3.get()));
 
-            Advancement liandanlu3 = Advancement.Builder.advancement()
-                    .parent(liandanlu2)
-                    .display(
-                            ModBlocks.LIANDANLU3.get(),
-                            Component.translatable("adv.kunlun.liandanlu3.title"),
-                            Component.translatable("adv.kunlun.liandanlu3.desc"),
-                            null,
-                            FrameType.TASK, true, true, false
-                    )
-                    .addCriterion("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(ModBlocks.LIANDANLU3.get()))
-                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/liandanlu3"), existingFileHelper);
+            Advancement lu4 = AdvancementHelper.goal(saver, helper, lu3, "liandanlu4", "adv.kunlun.liandanlu4",
+                    ModBlocks.LIANDANLU4.get(), AdvancementHelper.hasItems(ModBlocks.LIANDANLU4.get()));
 
-            Advancement liandanlu4 = Advancement.Builder.advancement()
-                    .parent(liandanlu3)
-                    .display(
-                            ModBlocks.LIANDANLU4.get(),
-                            Component.translatable("adv.kunlun.liandanlu4.title"),
-                            Component.translatable("adv.kunlun.liandanlu4.desc"),
-                            null,
-                            FrameType.GOAL, true, true, false
-                    )
-                    .addCriterion("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(ModBlocks.LIANDANLU4.get()))
-                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/liandanlu4"), existingFileHelper);
+            Advancement lu5 = AdvancementHelper.goal(saver, helper, lu4, "liandanlu5", "adv.kunlun.liandanlu5",
+                    ModBlocks.LIANDANLU5.get(), AdvancementHelper.hasItems(ModBlocks.LIANDANLU5.get()));
 
-            Advancement liandanlu5 = Advancement.Builder.advancement()
-                    .parent(liandanlu4)
-                    .display(
-                            ModBlocks.LIANDANLU5.get(),
-                            Component.translatable("adv.kunlun.liandanlu5.title"),
-                            Component.translatable("adv.kunlun.liandanlu5.desc"),
-                            null,
-                            FrameType.GOAL, true, true, false
-                    )
+            Advancement lu6 = AdvancementHelper.goal(saver, helper, lu5, "liandanlu6", "adv.kunlun.liandanlu6",
+                    ModBlocks.LIANDANLU6.get(), AdvancementHelper.hasItems(ModBlocks.LIANDANLU6.get()));
 
-                    .addCriterion("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(ModBlocks.LIANDANLU5.get()))
-                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/liandanlu5"), existingFileHelper);
+            Advancement lu7 = AdvancementHelper.challenge(saver, helper, lu6, "liandanlu7", "adv.kunlun.liandanlu7",
+                    ModBlocks.LIANDANLU7.get(), AdvancementHelper.hasItems(ModBlocks.LIANDANLU7.get()));
 
-            Advancement liandanlu6 = Advancement.Builder.advancement()
-                    .parent(liandanlu5)
-                    .display(
-                            ModBlocks.LIANDANLU6.get(),
-                            Component.translatable("adv.kunlun.liandanlu6.title"),
-                            Component.translatable("adv.kunlun.liandanlu6.desc"),
-                            null,
-                            FrameType.GOAL, true, true, false
-                    )
+            Advancement lu8 = AdvancementHelper.challenge(saver, helper, lu7, "liandanlu8", "adv.kunlun.liandanlu8",
+                    ModBlocks.LIANDANLU8.get(), AdvancementHelper.hasItems(ModBlocks.LIANDANLU8.get()));
 
-                    .addCriterion("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(ModBlocks.LIANDANLU6.get()))
-                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/liandanlu6"), existingFileHelper);
+            AdvancementHelper.challenge(saver, helper, lu8, "liandanlu9", "adv.kunlun.liandanlu9",
+                    ModBlocks.LIANDANLU9.get(), AdvancementHelper.hasItems(ModBlocks.LIANDANLU9.get()));
 
-            Advancement liandanlu7 = Advancement.Builder.advancement()
-                    .parent(liandanlu6)
-                    .display(
-                            ModBlocks.LIANDANLU7.get(),
-                            Component.translatable("adv.kunlun.liandanlu7.title"),
-                            Component.translatable("adv.kunlun.liandanlu7.desc"),
-                            null,
-                            FrameType.CHALLENGE, true, true, false
-                    )
+            // ==================================================================
+            //  等级线（原）
+            // ==================================================================
+            Advancement lvl10 = AdvancementHelper.goal(saver, helper, root, "level_10", "adv.kunlun.lvl10",
+                    ModItems.CHUYUAN_DAN.get(), AdvancementHelper.levelReached(10));
+            Advancement lvl20 = AdvancementHelper.goal(saver, helper, lvl10, "level_20", "adv.kunlun.lvl20",
+                    ModItems.BAICAOLING_DAN.get(), AdvancementHelper.levelReached(20));
+            Advancement lvl30 = AdvancementHelper.goal(saver, helper, lvl20, "level_30", "adv.kunlun.lvl30",
+                    ModItems.QIANHUABAO_DAN.get(), AdvancementHelper.levelReached(30));
+            Advancement lvl40 = AdvancementHelper.goal(saver, helper, lvl30, "level_40", "adv.kunlun.lvl40",
+                    ModItems.WANPOXUAN_DAN.get(), AdvancementHelper.levelReached(40));
+            Advancement lvl50 = AdvancementHelper.goal(saver, helper, lvl40, "level_50", "adv.kunlun.lvl50",
+                    ModItems.SHIFANGJIE_DAN.get(), AdvancementHelper.levelReached(50));
+            Advancement lvl60 = AdvancementHelper.goal(saver, helper, lvl50, "level_60", "adv.kunlun.lvl60",
+                    ModItems.HUANYUANYIQI_DAN.get(), AdvancementHelper.levelReached(60));
+            Advancement lvl70 = AdvancementHelper.goal(saver, helper, lvl60, "level_70", "adv.kunlun.lvl70",
+                    ModItems.TAIXUPOWANG_DAN.get(), AdvancementHelper.levelReached(70));
+            Advancement lvl80 = AdvancementHelper.challenge(saver, helper, lvl70, "level_80", "adv.kunlun.lvl80",
+                    ModItems.QIANWANXINGCHEN_DAN.get(), AdvancementHelper.levelReached(80));
+            Advancement lvl90 = AdvancementHelper.challenge(saver, helper, lvl80, "level_90", "adv.kunlun.lvl90",
+                    ModItems.YIZAICHUANGSHENG_DAN.get(), AdvancementHelper.levelReached(90));
+            Advancement lvl99 = AdvancementHelper.challenge(saver, helper, lvl90, "level_99", "adv.kunlun.lvl99",
+                    ModItems.YIZAICHUANGSHENG_DAN.get(), AdvancementHelper.levelReached(99));
 
-                    .addCriterion("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(ModBlocks.LIANDANLU7.get()))
-                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/liandanlu7"), existingFileHelper);
+            // ==================================================================
+            //  分支：魂师之路 —— 武魂 / 魂环 / 年限
+            // ==================================================================
+            Advancement awaken = AdvancementHelper.task(saver, helper, root, "wuhun_awaken",
+                    ModItems.HUNHUAN_BUTTON.get(), AdvancementHelper.event(AchievementAPI.WUHUN_AWAKEN));
 
-            Advancement liandanlu8 = Advancement.Builder.advancement()
-                    .parent(liandanlu7)
-                    .display(
-                            ModBlocks.LIANDANLU8.get(),
-                            Component.translatable("adv.kunlun.liandanlu8.title"),
-                            Component.translatable("adv.kunlun.liandanlu8.desc"),
-                            null,
-                            FrameType.CHALLENGE, true, true, false
-                    )
+            Advancement firstRing = AdvancementHelper.task(saver, helper, awaken, "hunhuan_first",
+                    ModItems.LOW_HUNHUAN_STORAGE_CORE.get(), AdvancementHelper.event(AchievementAPI.HUNHUAN_FIRST));
 
-                    .addCriterion("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(ModBlocks.LIANDANLU8.get()))
-                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/liandanlu8"), existingFileHelper);
+            // 年限攀登：一条递进链
+            Advancement thousand = AdvancementHelper.task(saver, helper, firstRing, "hunhuan_thousand",
+                    ModItems.HUNHUAN_STORAGE_ONE.get(), AdvancementHelper.event(AchievementAPI.HUNHUAN_THOUSAND));
 
-            Advancement liandanlu9 = Advancement.Builder.advancement()
-                    .parent(liandanlu8)
-                    .display(
-                            ModBlocks.LIANDANLU9.get(),
-                            Component.translatable("adv.kunlun.liandanlu9.title"),
-                            Component.translatable("adv.kunlun.liandanlu9.desc"),
-                            null,
-                            FrameType.CHALLENGE, true, true, false
-                    )
-                    .addCriterion("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(ModBlocks.LIANDANLU9.get()))
-                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/liandanlu9"), existingFileHelper);
+            Advancement myriad = AdvancementHelper.task(saver, helper, thousand, "hunhuan_myriad",
+                    ModItems.HUNHUAN_STORAGE_TWO.get(), AdvancementHelper.event(AchievementAPI.HUNHUAN_MYRIAD));
 
-            Advancement level10 = Advancement.Builder.advancement()
-                    .parent(root)
-                    .display(
-                            //成就图标
-                            ModItems.CHUYUAN_DAN.get(),
-                            Component.translatable("adv.kunlun.lvl10.title"),
-                            Component.translatable("adv.kunlun.lvl10.desc"),
-                            null,
-                            FrameType.GOAL, true, true, false
-                    )
-                    .addCriterion("reached_lvl", LevelTrigger.Instance.levelReached(10))
-                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/level_10"), existingFileHelper);
+            Advancement hundredThousand = AdvancementHelper.goal(saver, helper, myriad, "hunhuan_hundred_thousand",
+                    ModItems.HUNHUAN_STORAGE_THREE.get(), AdvancementHelper.event(AchievementAPI.HUNHUAN_HUNDRED_THOUSAND));
 
-            Advancement level20 = Advancement.Builder.advancement()
-                    .parent(level10)
-                    .display(
-                            ModItems.BAICAOLING_DAN.get(),
-                            Component.translatable("adv.kunlun.lvl20.title"),
-                            Component.translatable("adv.kunlun.lvl20.desc"),
-                            null,
-                            FrameType.GOAL, true, true, false
-                    )
-                    .addCriterion("reached_lvl", LevelTrigger.Instance.levelReached(20))
-                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/level_20"), existingFileHelper);
+            Advancement million = AdvancementHelper.challenge(saver, helper, hundredThousand, "hunhuan_million",
+                    ModItems.HUNHUAN_STORAGE_FOUR.get(), AdvancementHelper.event(AchievementAPI.HUNHUAN_MILLION));
 
-            Advancement level30 = Advancement.Builder.advancement()
-                    .parent(level20)
-                    .display(
-                            ModItems.QIANHUABAO_DAN.get(),
-                            Component.translatable("adv.kunlun.lvl30.title"),
-                            Component.translatable("adv.kunlun.lvl30.desc"),
-                            null,
-                            FrameType.GOAL, true, true, false
-                    )
-                    .addCriterion("reached_lvl", LevelTrigger.Instance.levelReached(30))
-                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/level_30"), existingFileHelper);
+            AdvancementHelper.challenge(saver, helper, million, "hunhuan_divine",
+                    ModItems.HUNHUAN_STORAGE_FIVE.get(), AdvancementHelper.event(AchievementAPI.HUNHUAN_DIVINE));
 
-            Advancement level40 = Advancement.Builder.advancement()
-                    .parent(level30)
-                    .display(
-                            ModItems.WANPOXUAN_DAN.get(),
-                            Component.translatable("adv.kunlun.lvl40.title"),
-                            Component.translatable("adv.kunlun.lvl40.desc"),
-                            null,
-                            FrameType.GOAL, true, true, false
-                    )
-                    .addCriterion("reached_lvl", LevelTrigger.Instance.levelReached(40))
-                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/level_40"), existingFileHelper);
+            // 九环圆满
+            AdvancementHelper.goal(saver, helper, firstRing, "hunhuan_nine",
+                    ModItems.TOP_HUNHUAN_STORAGE_CORE.get(), AdvancementHelper.event(AchievementAPI.HUNHUAN_NINE));
 
-            Advancement level50 = Advancement.Builder.advancement()
-                    .parent(level40)
-                    .display(
-                            ModItems.SHIFANGJIE_DAN.get(),
-                            Component.translatable("adv.kunlun.lvl50.title"),
-                            Component.translatable("adv.kunlun.lvl50.desc"),
-                            null,
-                            FrameType.GOAL, true, true, false
-                    )
-                    .addCriterion("reached_lvl", LevelTrigger.Instance.levelReached(50))
-                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/level_50"), existingFileHelper);
+            // 魂核：只要背包里出现过魂核（任一阶）即达成
+            AdvancementHelper.task(saver, helper, firstRing, "soul_core_first",
+                    ModItems.MIDDLE_HUNHUAN_STORAGE_CORE.get(), AdvancementHelper.hasItems(
+                            ModItems.LOW_HUNHUAN_STORAGE_CORE.get(),
+                            ModItems.MIDDLE_HUNHUAN_STORAGE_CORE.get(),
+                            ModItems.HIGH_HUNHUAN_STORAGE_CORE.get(),
+                            ModItems.TOP_HUNHUAN_STORAGE_CORE.get()));
 
-            Advancement level60 = Advancement.Builder.advancement()
-                    .parent(level50)
-                    .display(
-                            ModItems.HUANYUANYIQI_DAN.get(),
-                            Component.translatable("adv.kunlun.lvl60.title"),
-                            Component.translatable("adv.kunlun.lvl60.desc"),
-                            null,
-                            FrameType.GOAL, true, true, false
-                    )
-                    .addCriterion("reached_lvl", LevelTrigger.Instance.levelReached(60))
-                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/level_60"), existingFileHelper);
+            // ==================================================================
+            //  分支：丹道 —— 挂在炼丹炉线之后
+            // ==================================================================
+            Advancement alchemyFirst = AdvancementHelper.task(saver, helper, lu1, "alchemy_first",
+                    ModItems.CHUYUAN_DAN.get(), AdvancementHelper.event(AchievementAPI.ALCHEMY_FIRST));
 
-            Advancement level70 = Advancement.Builder.advancement()
-                    .parent(level60)
-                    .display(
-                            ModItems.TAIXUPOWANG_DAN.get(),
-                            Component.translatable("adv.kunlun.lvl70.title"),
-                            Component.translatable("adv.kunlun.lvl70.desc"),
-                            null,
-                            FrameType.GOAL, true, true, false
-                    )
-                    .addCriterion("reached_lvl", LevelTrigger.Instance.levelReached(70))
-                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/level_70"), existingFileHelper);
+            Advancement alchemySpirit = AdvancementHelper.task(saver, helper, alchemyFirst, "alchemy_spirit",
+                    ModItems.WANPOXUAN_DAN.get(), AdvancementHelper.event(AchievementAPI.ALCHEMY_SPIRIT));
 
-            Advancement level80 = Advancement.Builder.advancement()
-                    .parent(level70)
-                    .display(
-                            ModItems.QIANWANXINGCHEN_DAN.get(),
-                            Component.translatable("adv.kunlun.lvl80.title"),
-                            Component.translatable("adv.kunlun.lvl80.desc"),
-                            null,
-                            FrameType.CHALLENGE, true, true, false
-                    )
-                    .addCriterion("reached_lvl", LevelTrigger.Instance.levelReached(80))
-                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/level_80"), existingFileHelper);
+            Advancement alchemyTreasure = AdvancementHelper.goal(saver, helper, alchemySpirit, "alchemy_treasure",
+                    ModItems.TAIXUPOWANG_DAN.get(), AdvancementHelper.event(AchievementAPI.ALCHEMY_TREASURE));
 
-            Advancement level90 = Advancement.Builder.advancement()
-                    .parent(level80)
-                    .display(
-                            ModItems.YIZAICHUANGSHENG_DAN.get(),
-                            Component.translatable("adv.kunlun.lvl90.title"),
-                            Component.translatable("adv.kunlun.lvl90.desc"),
-                            null,
-                            FrameType.CHALLENGE, true, true, false
-                    )
-                    .addCriterion("reached_lvl", LevelTrigger.Instance.levelReached(90))
-                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/level_90"), existingFileHelper);
+            AdvancementHelper.challenge(saver, helper, alchemyTreasure, "alchemy_immortal",
+                    ModItems.YIZAICHUANGSHENG_DAN.get(), AdvancementHelper.event(AchievementAPI.ALCHEMY_IMMORTAL));
 
-            Advancement level99 = Advancement.Builder.advancement()
-                    .parent(level90)
-                    .display(
-                            ModItems.YIZAICHUANGSHENG_DAN.get(),
-                            Component.translatable("adv.kunlun.lvl99.title"),
-                            Component.translatable("adv.kunlun.lvl99.desc"),
-                            null,
-                            FrameType.CHALLENGE, true, true, false
-                    )
-                    .addCriterion("reached_lvl", LevelTrigger.Instance.levelReached(99))
-                    .save(saver, new ResourceLocation(KlMain.MOD_ID, "main/level_99"), existingFileHelper);
+            // ==================================================================
+            //  分支：转生 —— 挂在满级之后
+            // ==================================================================
+            AdvancementHelper.challenge(saver, helper, lvl99, "reincarnation_first",
+                    ModItems.GUOSHI_POHUNQIANG.get(), AdvancementHelper.event(AchievementAPI.REINCARNATION_FIRST));
+
+            // ==================================================================
+            //  分支：魂塔 → 神之试炼
+            // ==================================================================
+            Advancement towerFirst = AdvancementHelper.task(saver, helper, root, "tower_first",
+                    ModBlocks.SUMMON_TOWER.get(), AdvancementHelper.event(AchievementAPI.TOWER_FIRST));
+
+            AdvancementHelper.goal(saver, helper, towerFirst, "tower_ten",
+                    ModBlocks.SUMMON_TOWER.get(), AdvancementHelper.event(AchievementAPI.TOWER_TEN));
+
+            AdvancementHelper.goal(saver, helper, towerFirst, "god_exam_start",
+                    ModItems.SHENKAO_BUTTON.get(), AdvancementHelper.event(AchievementAPI.GOD_EXAM_START));
+
+            // ==================================================================
+            //  分支：雷界
+            // ==================================================================
+            AdvancementHelper.goal(saver, helper, root, "thunder_realm_enter",
+                    ModItems.FANGSHANHUNDAOQI_3.get(), AdvancementHelper.event(AchievementAPI.THUNDER_REALM_ENTER));
         }
     }
 }

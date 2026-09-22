@@ -1,7 +1,7 @@
 {
   "parent": "kunluncontinent:main/root",
   "criteria": {
-    "has_ruby": {
+    "criterion": {
       "conditions": {
         "items": [
           {
@@ -17,7 +17,7 @@
   "display": {
     "announce_to_chat": true,
     "description": {
-      "translate": "advancements.kunluncontinent.ruby.description"
+      "translate": "advancements.kunluncontinent.ruby.desc"
     },
     "frame": "task",
     "hidden": false,
@@ -31,7 +31,7 @@
   },
   "requirements": [
     [
-      "has_ruby"
+      "criterion"
     ]
   ],
   "sends_telemetry_event": true

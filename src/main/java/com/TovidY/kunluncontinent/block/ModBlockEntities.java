@@ -35,12 +35,12 @@ public class ModBlockEntities {
                             ModBlocks.LIANDANLU1.get(),
                             ModBlocks.LIANDANLU2.get(),
                             ModBlocks.LIANDANLU3.get(),
-                            ModBlocks.LIANDANLU4.get(), // 补上 4 阶
-                            ModBlocks.LIANDANLU5.get(), // 补上 5 阶
-                            ModBlocks.LIANDANLU6.get(), // 补上 6 阶
-                            ModBlocks.LIANDANLU7.get(), // 补上 7 阶
-                            ModBlocks.LIANDANLU8.get(), // 补上 8 阶
-                            ModBlocks.LIANDANLU9.get()  // 补上 9 阶
+                            ModBlocks.LIANDANLU4.get(),
+                            ModBlocks.LIANDANLU5.get(),
+                            ModBlocks.LIANDANLU6.get(),
+                            ModBlocks.LIANDANLU7.get(),
+                            ModBlocks.LIANDANLU8.get(),
+                            ModBlocks.LIANDANLU9.get()
                     ).build(null));
 
     public static final RegistryObject<BlockEntityType<UnderwaterAltarTile>> UNDERWATER_ALTAR_TILE =

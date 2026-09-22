@@ -3,6 +3,7 @@ package com.TovidY.kunluncontinent;
 import com.TovidY.kunluncontinent.Init.AddSeedsLootModifier;
 import com.TovidY.kunluncontinent.Init.KLConfig;
 import com.TovidY.kunluncontinent.Init.ModLootModifiers;
+import com.TovidY.kunluncontinent.Init.ModParticles;
 import com.TovidY.kunluncontinent.advancement.ModTriggers;
 import com.TovidY.kunluncontinent.block.ModBlockEntities;
 import com.TovidY.kunluncontinent.block.ModBlocks;
@@ -12,6 +13,7 @@ import com.TovidY.kunluncontinent.godclass.GodRegistry;
 import com.TovidY.kunluncontinent.item.tool.DecompositionItem;
 import com.TovidY.kunluncontinent.potion.ModEffects;
 import com.TovidY.kunluncontinent.entity.EntityInit;
+import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanRingParticle;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.recipe.ModRecipes;
 import com.TovidY.kunluncontinent.screen.ModMenuTypes;
@@ -22,6 +24,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -82,6 +85,8 @@ public class KlMain {
         ModBlockEntities.register(modEventBus);
 
         ModEffects.register(modEventBus);
+
+        ModParticles.register(modEventBus);
     }
 
     /**
@@ -107,6 +112,15 @@ public class KlMain {
                     UnderwaterAltarRenderer::new);
             event.registerBlockEntityRenderer(ModBlockEntities.SPIRIT_GATHERING_ALTAR_BE.get(),
                     SpiritGatheringAltarRenderer::new);
+        }
+
+        /** 注册魂环粒子：让魂环贴图本身作为粒子渲染出来。 */
+        @SubscribeEvent
+        public static void registerParticleProviders(RegisterParticleProvidersEvent event) {
+            event.registerSpriteSet(ModParticles.HUNHUAN_RING.get(),
+                    sprites -> new HunhuanRingParticle.Provider(sprites, false));
+            event.registerSpriteSet(ModParticles.SHENHUAN_RING.get(),
+                    sprites -> new HunhuanRingParticle.Provider(sprites, true));
         }
     }
 

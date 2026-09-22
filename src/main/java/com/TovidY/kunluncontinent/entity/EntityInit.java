@@ -16,7 +16,7 @@ import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanRender;
 import com.TovidY.kunluncontinent.entity.playernpc.PlayerNpcEntity;
 import com.TovidY.kunluncontinent.entity.playernpc.PlayerNpcRenderer;
 import com.TovidY.kunluncontinent.entity.snowdemon.SnowDemonEntity;
-import com.TovidY.kunluncontinent.entity.snowdemon.SnowDemonModel;
+import com.TovidY.kunluncontinent.entity.snowdemon.SnowDemonNewModel;
 import com.TovidY.kunluncontinent.entity.snowdemon.SnowDemonRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
@@ -74,9 +74,14 @@ public class EntityInit {
                             .sized(0.25F, 0.25F)
                             .build("eye_transformation_entity"));
 
+    // 碰撞箱按 SnowDemonNewModel 的实际像素尺寸换算（模型空间 16px = 1 格）：
+    //   高度：模型 y 从 -112（角尖）到 +24（脚底）= 136px = 8.5 格
+    //   宽度：躯干组（胸口+肩甲）x 从 -35 到 +35 = 70px = 4.4 格
+    //         （手臂张开到 ±43 = 5.4 格，按惯例不计入碰撞箱）
+    // 想改大小：等比调小这两个数，并把 SnowDemonRenderer 的 SHADOW_RADIUS 一起改。
     public static final RegistryObject<EntityType<SnowDemonEntity>> SNOW_DEMON = ENTITY_TYPES.register("snow_demon",
             () -> EntityType.Builder.of(SnowDemonEntity::new, MobCategory.MONSTER)
-                    .sized(1.0F, 1.2F)
+                    .sized(4.4F, 8.5F)
                     .build("snow_demon"));
 
     public static final RegistryObject<EntityType<DemonWhaleEntity>> DEMON_WHALE =
@@ -90,7 +95,7 @@ public class EntityInit {
         @SubscribeEvent
         public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
             event.registerLayerDefinition(CustomModel.LAYER_LOCATION, CustomModel::createBodyLayer);
-            event.registerLayerDefinition(SnowDemonModel.LAYER_LOCATION, SnowDemonModel::createBodyLayer);
+            event.registerLayerDefinition(SnowDemonNewModel.LAYER_LOCATION, SnowDemonNewModel::createBodyLayer);
             event.registerLayerDefinition(DemonWhaleModel.LAYER_LOCATION, DemonWhaleModel::createBodyLayer);
         }
 

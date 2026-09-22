@@ -48,6 +48,44 @@ public class ModAttributeAPI {
         return value;
     }
 
+    /**
+     * 取"属性面板上显示的那个数值"。
+     *
+     * <p>面板（{@code AttributeScreen}）里除了生命之外，用的都是本类下面那些聚合 getter；
+     * 而**生命一栏显示的就是 {@code player.getMaxHealth()}** —— 即
+     * {@link #getMaxshengming(Entity)} 的结果同步进原版 MAX_HEALTH 之后、
+     * 再叠上原版属性修正的最终值。</p>
+     *
+     * <p>⚠️ 数值类考核（神考）必须用这个方法，**不要**用
+     * {@code PlayerAttributeCapability.getMaxshengming()}：
+     * 那只是玩家自身的裸值，不含魂环 / 魂骨 / 装备 / 药水等外部加成，
+     * 会导致"面板上明明达标了却过不了考核"。</p>
+     *
+     * @param attrKey 与神考任务里写的属性键一致：maxshengming / gongji / fangyu / ...
+     */
+    public static float getPanelAttributeValue(Player player, String attrKey) {
+        if (player == null || attrKey == null) {
+            return 0f;
+        }
+        // 生命：面板显示的就是 MAX_HEALTH 的最终值（含一切加成）
+        if ("maxshengming".equals(attrKey)) {
+            return player.getMaxHealth();
+        }
+        return switch (attrKey) {
+            case "gongji" -> getGongji(player);
+            case "fangyu" -> getFangyu(player);
+            case "baojilv" -> getBaojilv(player);
+            case "baojishanghai" -> getBaojishanghai(player);
+            case "shengminghuifu" -> getShengminghuifu(player);
+            case "xixue" -> getXixue(player);
+            case "shanbi" -> getShanbi(player);
+            case "mingzhong" -> getMingzhong(player);
+            case "wuchuan" -> getWuchuan(player);
+            case "kangbao" -> getKangbao(player);
+            default -> 0f;
+        };
+    }
+
     public static float getMaxshengming(Entity entity) {
         float value = 0;
         if (entity instanceof Player player) {

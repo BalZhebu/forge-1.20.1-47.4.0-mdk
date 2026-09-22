@@ -38,5 +38,8 @@ public class ThermalAmuletItem extends Item {
             tooltip.add(Component.literal("提示：在雪地中寻找遮蔽处以延长使用时间").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
         }
         super.appendHoverText(stack, level, tooltip, flag);
+
+
+        tooltip.add(Component.translatable("tooltip.kunluncontinent.thermal_amulet").withStyle(ChatFormatting.DARK_GRAY));
     }
 }

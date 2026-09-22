@@ -18,6 +18,13 @@ public class HunhuanRender extends EntityRenderer<HunhuanEntity> {
 
     @Override
     public void render(HunhuanEntity entity, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+        // 有人骑上去 = 正在被吸收：把地面上这个魂环藏起来。
+        // 否则玩家身下会同时压着一个环，看着很怪；吸收动画交给粒子层（HunhuanRingParticle）。
+        // 乘客是原版同步的，所以玩家中途下车（吸收中断）会自动恢复显示，不需要额外状态。
+        if (!entity.getPassengers().isEmpty()) {
+            return;
+        }
+
         net.minecraft.client.player.LocalPlayer player = net.minecraft.client.Minecraft.getInstance().player;
         if (player != null) {
             player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {

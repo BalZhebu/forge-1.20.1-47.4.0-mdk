@@ -1,7 +1,7 @@
 {
   "parent": "kunluncontinent:main/get_amethyst",
   "criteria": {
-    "has_starlight_stone": {
+    "criterion": {
       "conditions": {
         "items": [
           {
@@ -17,7 +17,7 @@
   "display": {
     "announce_to_chat": true,
     "description": {
-      "translate": "advancements.kunluncontinent.starlight_stone.description"
+      "translate": "advancements.kunluncontinent.starlight_stone.desc"
     },
     "frame": "goal",
     "hidden": false,
@@ -31,7 +31,7 @@
   },
   "requirements": [
     [
-      "has_starlight_stone"
+      "criterion"
     ]
   ],
   "sends_telemetry_event": true

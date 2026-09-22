@@ -1,5 +1,6 @@
 package com.TovidY.kunluncontinent.tower.block;
 
+import com.TovidY.kunluncontinent.advancement.AchievementAPI;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.server.PacketSyncTowerTimer;
@@ -61,6 +62,7 @@ public class SummonTowerBlock extends Block {
 
                 attr.setTowerLastActiveTick(serverPlayer.server.getTickCount());
                 attr.setTowerChallenging(true);
+                AchievementAPI.onTowerStart(serverPlayer);
 
                 var floorData = TowerFloorRegistry.getFloorData(floor);
                 NetworkHandler.sendToClient(new PacketSyncTowerTimer(floorData.timeLimitSeconds, true), serverPlayer);

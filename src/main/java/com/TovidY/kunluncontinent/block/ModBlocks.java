@@ -46,23 +46,48 @@ public class ModBlocks {
 
     public static final RegistryObject<Block> GRAY_IRON_ORE =
             registerBlock("gray_iron_ore",()->
-                    new Block(BlockBehaviour.Properties.copy(Blocks.DIAMOND_ORE)));
+                    new Block(BlockBehaviour.Properties.copy(Blocks.DIAMOND_ORE)){
+                        @Override
+                        public void appendHoverText(ItemStack pStack, @Nullable BlockGetter pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
+                            pTooltip.add(Component.translatable("tooltip.cultivation_platform.tooltip").withStyle(ChatFormatting.DARK_GRAY));
+                        }
+                    });
 
     public static final RegistryObject<Block> CLOUD_PATTERNED_BRONZE_ORE =
             registerBlock("cloud_patterned_bronze_ore",()->
-                    new Block(BlockBehaviour.Properties.copy(Blocks.NETHER_GOLD_ORE)));
+                    new Block(BlockBehaviour.Properties.copy(Blocks.NETHER_GOLD_ORE)){
+                        @Override
+                        public void appendHoverText(ItemStack pStack, @Nullable BlockGetter pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
+                            pTooltip.add(Component.translatable("tooltip.cloud_patterned_bronze_ore.tooltip").withStyle(ChatFormatting.DARK_GRAY));
+                        }
+                    });
 
     public static final RegistryObject<Block> RED_FIRE_ORE =
             registerBlock("red_fire_ore",()->
-                    new Block(BlockBehaviour.Properties.copy(Blocks.NETHER_GOLD_ORE)));
+                    new Block(BlockBehaviour.Properties.copy(Blocks.NETHER_GOLD_ORE)){
+                        @Override
+                        public void appendHoverText(ItemStack pStack, @Nullable BlockGetter pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
+                            pTooltip.add(Component.translatable("tooltip.red_fire_ore.tooltip").withStyle(ChatFormatting.DARK_GRAY));
+                        }
+                    });
 
     public static final RegistryObject<Block> SUNKEN_SILVER_ORE =
             registerBlock("sunken_silver_ore",()->
-                    new Block(BlockBehaviour.Properties.copy(Blocks.NETHER_GOLD_ORE)));
+                    new Block(BlockBehaviour.Properties.copy(Blocks.NETHER_GOLD_ORE)){
+                        @Override
+                        public void appendHoverText(ItemStack pStack, @Nullable BlockGetter pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
+                            pTooltip.add(Component.translatable("tooltip.sunken_silver_ore.tooltip").withStyle(ChatFormatting.DARK_GRAY));
+                        }
+                    });
 
     public static final RegistryObject<Block> COLD_HEARTED_STEEL_ORE =
             registerBlock("cold_hearterd_steel_ore",()->
-                    new Block(BlockBehaviour.Properties.copy(Blocks.NETHER_GOLD_ORE)));
+                    new Block(BlockBehaviour.Properties.copy(Blocks.NETHER_GOLD_ORE)){
+                        @Override
+                        public void appendHoverText(ItemStack pStack, @Nullable BlockGetter pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
+                            pTooltip.add(Component.translatable("tooltip.cold_hearterd_steel_ore.tooltip").withStyle(ChatFormatting.DARK_GRAY));
+                        }
+                    });
 
     public static final RegistryObject<Block> SPIRIT_GATHERING_ALTAR =
             registerBlock("spirit_gathering_altar",()->
@@ -90,19 +115,43 @@ public class ModBlocks {
 
     public static final RegistryObject<Block> RUBY_ORE =
             registerBlock("ruby_ore",()->
-                    new Block(BlockBehaviour.Properties.copy(Blocks.NETHER_GOLD_ORE)));
+                    new Block(BlockBehaviour.Properties.copy(Blocks.NETHER_GOLD_ORE)){
+                        @Override
+                        public void appendHoverText(ItemStack pStack, @Nullable BlockGetter pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
+                            super.appendHoverText(pStack, pLevel, pTooltip, pFlag);
+                            pTooltip.add(Component.translatable("tooltip.ruby_ore.tooltip").withStyle(ChatFormatting.DARK_GRAY));
+                        }
+                    });
 
     public static final RegistryObject<Block> AMETHYST_ORE =
             registerBlock("amethyst_ore",()->
-                    new Block(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)));
+                    new Block(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)){
+                        @Override
+                        public void appendHoverText(ItemStack pStack, @Nullable BlockGetter pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
+                            super.appendHoverText(pStack, pLevel, pTooltip, pFlag);
+                            pTooltip.add(Component.translatable("tooltip.amethyst_ore.tooltip").withStyle(ChatFormatting.DARK_GRAY));
+                        }
+                    });
 
     public static final RegistryObject<Block> SAPPHIRE_ORE =
             registerBlock("sapphire_ore",()->
-                    new Block(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)));
+                    new Block(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)){
+                        @Override
+                        public void appendHoverText(ItemStack pStack, @Nullable BlockGetter pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
+                            super.appendHoverText(pStack, pLevel, pTooltip, pFlag);
+                            pTooltip.add(Component.translatable("tooltip.sapphire_ore.tooltip").withStyle(ChatFormatting.DARK_GRAY));
+                        }
+                    });
 
     public static final RegistryObject<Block> STARLIGHT_STONE_ORE =
             registerBlock("starlight_stone_ore",()->
-                    new Block(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)));
+                    new Block(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)){
+                        @Override
+                        public void appendHoverText(ItemStack pStack, @Nullable BlockGetter pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
+                            super.appendHoverText(pStack, pLevel, pTooltip, pFlag);
+                            pTooltip.add(Component.translatable("tooltip.starlight_stone_ore.tooltip").withStyle(ChatFormatting.DARK_GRAY));
+                        }
+                    });
 
     //魂土
     public static final RegistryObject<Block> SOUL_SOIL = registerBlock("soul_soil", () -> new Block(BlockBehaviour.Properties.copy(Blocks.DIRT)){

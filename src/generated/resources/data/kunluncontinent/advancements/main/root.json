@@ -1,6 +1,6 @@
 {
   "criteria": {
-    "on_join": {
+    "criterion": {
       "conditions": {},
       "trigger": "minecraft:tick"
     }
@@ -9,7 +9,7 @@
     "announce_to_chat": true,
     "background": "minecraft:textures/gui/advancements/backgrounds/stone.png",
     "description": {
-      "translate": "advancements.kunluncontinent.root.description"
+      "translate": "advancements.kunluncontinent.root.desc"
     },
     "frame": "task",
     "hidden": false,
@@ -23,7 +23,7 @@
   },
   "requirements": [
     [
-      "on_join"
+      "criterion"
     ]
   ],
   "sends_telemetry_event": true

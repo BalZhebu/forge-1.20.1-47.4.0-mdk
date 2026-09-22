@@ -89,7 +89,6 @@ public class ModItems {
     //升级模版
     public static final RegistryObject<Item> RINSEI_FORGING_TEMPLATE = ITEMS.register("rinsei_forging_template",()->new Item(new Item.Properties().stacksTo(16)));
 
-
     //药草种子
     public static final RegistryObject<Item> RED_SPIDER_SEEDS = ITEMS.register("red_spider_seeds",
             () -> new ItemNameBlockItem(ModBlocks.RED_SPIDER_LILY_BLOCK.get(), new Item.Properties()){
@@ -221,7 +220,6 @@ public class ModItems {
     public static final RegistryObject<Item> EYE_DEEP_SEA = ITEMS.register("eye_deep_sea",()->new EyeDeepSeaItem(new Item.Properties().stacksTo(1)));
 
     public static final RegistryObject<Item> DEEP_SEA_OFFERINGS = ITEMS.register("deep_sea_offerings",()->new Item(new Item.Properties()));
-
 
     //御寒魂导器
     public static final RegistryObject<Item> LOW_COLD_PROTECTION = ITEMS.register("low_cold_protection",()->new ThermalAmuletItem(new Item.Properties().stacksTo(1).durability(3000),false));
