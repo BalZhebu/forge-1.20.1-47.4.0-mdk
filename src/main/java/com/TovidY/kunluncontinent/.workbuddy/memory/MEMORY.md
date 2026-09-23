@@ -166,6 +166,22 @@
   红(十万年,`0xFF0000`) / 橙金(百万年,`0xFF8A00`) / 蓝(千万年,`0x2E7BFF`) / 金绿(亿年,`0x22FF55`)。
 - `Tier.size` 是粒子 **quadSize（四边形半宽）**；贴图图形占满 96%，**显示直径 ≈ 1.9 × size**。
 
+## 神考（神位传承）系统
+- 数据在 `godclass/GodRegistry`（海神/修罗神/天使神），任务类型 `GodTaskType`
+  （KILL / ATTRIBUTE / ITEM_CHECK / ITEM_CONSUME / HUNHUAN_NIANXIAN）。
+- 提交入口 `network/client/C2SCheckTaskPacket`（检查按钮），
+  KILL 类型由 `event/server/KLivingDeathEvent.handleGodKillTask` 自动推进。
+  两者完成时都走 `PlayerAttributeCapability.checkTaskCompletion`。
+- ⭐ **奖励只走 `GodInfo.grantAttr(player, key, value)` 这一个出口**
+  （`addAttrReward` / `addFinalAttrReward` 都只是注册它）。
+  `dengji` 是特殊键，走 `grantLevels` 真升级而不是加属性。
+- **第 9 考的奖励只在 `finalizeAscension`（飞升动画结束后）发一次**，
+  `executeRewards` 里绝不能再发 —— 否则会双倍（积攒型神考会 1~9 考全部双倍）。
+- 等级上限语义（`PlayerUpgradeSystem.isTupoDengji`）：
+  **99 级在封神前是硬上限**（"请封神后再突破"），封神后才允许 99 → 100；
+  100~198 突破需要魂环数 ≥ level/10；199 才是真满级。
+  → `grantLevels` 判据：`currentLevel >= 99 && !cap.isGod()` 才折算成属性补偿。
+
 ## 属性取数：三种口径，别用错
 | 口径 | 取法 | 用途 |
 |---|---|---|

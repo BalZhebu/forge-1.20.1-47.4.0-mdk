@@ -62,33 +62,35 @@ public class GodInfo {
     }
 
     public void executeRewards(int stage, Player player) {
-        if (this.isCumulative) {
-            if (stage < 9) {
+        if (stage < 9) {
+            if (this.isCumulative) {
+                // 积攒型神考：前八考的奖励先不发，留到第九考后的飞升动画结束再统一结算
                 player.sendSystemMessage(Component.literal("§e奖励已积攒，完成第九考后统一发放！"));
             } else {
-                for (int i = 1; i <= 9; i++) {
-                    grantStageRewards(i, player);
-                }
+                grantStageRewards(stage, player);
             }
-        } else {
-            grantStageRewards(stage, player);
+            return;
         }
-        if (stage == 9 && player instanceof ServerPlayer serverPlayer) {
-            serverPlayer.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
-                int currentLevel = cap.getDengji();
-                if (currentLevel < 99) {
-                    serverPlayer.sendSystemMessage(Component.literal("§c§l【传承受阻】 §f你当前的等级为 §e" + currentLevel + " §f级。"));
-                    serverPlayer.sendSystemMessage(Component.literal("§f必须达到 §699级巅峰 §f方可承载 §b" + this.name + " §f神位！"));
-                    return;
-                }
-                if (player.getServer() != null) {
-                    Component message = Component.literal("§d§l[神界传音] §f玩家 §b§l" + player.getScoreboardName() +
-                            " §f正在接受 §e§l" + this.name + " §f最后的传承，神位晋升中...");
-                    player.getServer().getPlayerList().broadcastSystemMessage(message, false);
-                }
-                startAscensionAnimation(serverPlayer);
-            });
+
+        // ⚠️ 第九考的奖励**不在这里发** —— 统一交给飞升动画结束后的 finalizeAscension。
+        // （老代码这里也发了一遍，导致第九考奖励发两次：积攒型更是 1~9 考全部双倍。）
+        if (!(player instanceof ServerPlayer serverPlayer)) {
+            return;
         }
+        serverPlayer.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
+            int currentLevel = cap.getDengji();
+            if (currentLevel < 99) {
+                serverPlayer.sendSystemMessage(Component.literal("§c§l【传承受阻】 §f你当前的等级为 §e" + currentLevel + " §f级。"));
+                serverPlayer.sendSystemMessage(Component.literal("§f必须达到 §699级巅峰 §f方可承载 §b" + this.name + " §f神位！"));
+                return;
+            }
+            if (player.getServer() != null) {
+                Component message = Component.literal("§d§l[神界传音] §f玩家 §b§l" + player.getScoreboardName() +
+                        " §f正在接受 §e§l" + this.name + " §f最后的传承，神位晋升中...");
+                player.getServer().getPlayerList().broadcastSystemMessage(message, false);
+            }
+            startAscensionAnimation(serverPlayer);
+        });
     }
 
     public void startAscensionAnimation(ServerPlayer player) {
@@ -205,7 +207,11 @@ public class GodInfo {
     public GodInfo addItemReward(int stage, Item item, int count, String desc) {
         String formatted = formatRewardDesc(desc);
         rewardPools.computeIfAbsent(stage, k -> new ArrayList<>()).add(player -> {
-            player.getInventory().add(new ItemStack(item, count));
+            ItemStack stack = new ItemStack(item, count);
+            // 背包塞不下就掉在地上，不要静默吞掉玩家的奖励
+            if (!player.getInventory().add(stack)) {
+                player.drop(stack, false);
+            }
         });
         rewardDescriptions.computeIfAbsent(stage, k -> new ArrayList<>()).add(formatted);
         return this;
@@ -219,32 +225,8 @@ public class GodInfo {
 
     public GodInfo addAttrReward(int stage, String attrKey, float value, String desc) {
         String formatted = formatRewardDesc(desc);
-        rewardPools.computeIfAbsent(stage, k -> new ArrayList<>()).add(player -> {
-            player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
-                if (attrKey.equals("gongji")) cap.setGongji(cap.getGongji() + value);
-                if (attrKey.equals("maxshengming")) cap.setMaxshengming(cap.getMaxshengming() + value);
-                if (attrKey.equals("maxjingshenli")) cap.setMaxjingshenli(cap.getMaxjingshenli() + value);
-                if (attrKey.equals("fangyu")) cap.setFangyu(cap.getFangyu() + value);
-                if (attrKey.equals("baojishanghai")) cap.setBaojishanghai(cap.getBaojishanghai() + value);
-
-                if (attrKey.equals("dengji")) {
-                    if (player instanceof ServerPlayer serverPlayer) {
-                        int currentLevel = cap.getDengji();
-                        int rewardLevels = (int) value;
-                        for (int i = 0; i < rewardLevels; i++) {
-                            int nextLevel = currentLevel + 1;
-                            if (currentLevel >= 99) {
-                                applyLevelStatsOnly(serverPlayer, cap, 99);
-                            } else {
-                                PlayerUpgradeSystem.processSuccessfulUpgrade(serverPlayer, cap, nextLevel);
-                                currentLevel = nextLevel;
-                            }
-                        }
-                    }
-                }
-                SynsAPI.synsPlayerAttribute(player);
-            });
-        });
+        rewardPools.computeIfAbsent(stage, k -> new ArrayList<>())
+                .add(player -> grantAttr(player, attrKey, value));
         rewardDescriptions.computeIfAbsent(stage, k -> new ArrayList<>()).add(formatted);
         return this;
     }
@@ -252,21 +234,59 @@ public class GodInfo {
 
     public GodInfo addFinalAttrReward(String attrKey, float value, String desc) {
         String formatted = formatRewardDesc(desc);
-        this.finalRewards.add(player -> {
-            player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
-                if (attrKey.equals("gongji")) cap.setGongji(cap.getGongji() + value);
-                if (attrKey.equals("maxshengming")) cap.setMaxshengming(cap.getMaxshengming() + value);
-                if (attrKey.equals("maxjingshenli")) cap.setMaxjingshenli(cap.getMaxjingshenli() + value);
-                if (attrKey.equals("fangyu")) cap.setFangyu(cap.getFangyu() + value);
-                if (attrKey.equals("baojishanghai")) cap.setBaojishanghai(cap.getBaojishanghai() + value);
-                SynsAPI.synsPlayerAttribute(player);
-            });
-        });
+        this.finalRewards.add(player -> grantAttr(player, attrKey, value));
         this.finalRewardDescriptions.add(formatted);
         return this;
     }
 
-    private void applyLevelStatsOnly(ServerPlayer player, PlayerAttributeCapability capability, int level) {
+    /**
+     * 发放一条属性奖励。
+     *
+     * <p>考中奖励和神位奖励共用这一份逻辑 —— 之前两处各写一遍，结果
+     * {@code addFinalAttrReward} 漏了 {@code dengji} 分支，
+     * 于是每个神配置里的「神位奖励：百级」都石沉大海（玩家封神后等级纹丝不动）。</p>
+     */
+    private static void grantAttr(Player player, String attrKey, float value) {
+        player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
+            switch (attrKey) {
+                case "gongji" -> cap.setGongji(cap.getGongji() + value);
+                case "maxshengming" -> cap.setMaxshengming(cap.getMaxshengming() + value);
+                case "maxjingshenli" -> cap.setMaxjingshenli(cap.getMaxjingshenli() + value);
+                case "fangyu" -> cap.setFangyu(cap.getFangyu() + value);
+                case "baojishanghai" -> cap.setBaojishanghai(cap.getBaojishanghai() + value);
+                case "dengji" -> grantLevels(player, cap, (int) value);
+                default -> {
+                }
+            }
+            SynsAPI.synsPlayerAttribute(player);
+        });
+    }
+
+    /**
+     * {@code dengji} 奖励：真正把等级顶上去（不是加属性）。
+     *
+     * <p><b>为什么看 {@code isGod()}：</b>{@code PlayerUpgradeSystem.isTupoDengji} 里
+     * 99 级在**封神之前**是硬上限（"已经满级，请封神后再突破"），
+     * 所以考试途中拿到的 +1 级卡在 99 时只能折算成属性强化；
+     * 而飞升动画结束时 {@code isGod} 已经为 true，这时才允许把 99 级顶到 100 级。</p>
+     */
+    private static void grantLevels(Player player, PlayerAttributeCapability cap, int levels) {
+        if (!(player instanceof ServerPlayer serverPlayer) || levels <= 0) {
+            return;
+        }
+        int currentLevel = cap.getDengji();
+        for (int i = 0; i < levels; i++) {
+            if (currentLevel >= 99 && !cap.isGod()) {
+                applyLevelStatsOnly(serverPlayer, cap, 99);
+            } else {
+                int nextLevel = currentLevel + 1;
+                PlayerUpgradeSystem.processSuccessfulUpgrade(serverPlayer, cap, nextLevel);
+                currentLevel = nextLevel;
+            }
+        }
+    }
+
+    private static void applyLevelStatsOnly(ServerPlayer player, PlayerAttributeCapability capability, int level) {
         capability.setMaxshengming(capability.getMaxshengming() + (level * 1.4f) * 0.7f);
         capability.setFangyu(capability.getFangyu() + (level * 0.3f) * 0.7f);
         capability.setGongji(capability.getGongji() + (level * 0.5f) * 0.65f);
@@ -275,7 +295,7 @@ public class GodInfo {
         capability.setShengming(capability.getShengming() + 1f);
         capability.setWuchuan(capability.getWuchuan() + 1f);
         capability.setShanbi(capability.getShanbi() + 1f);
-        capability.setKangbao(capability.getMingzhong() + 1f);
+        capability.setKangbao(capability.getKangbao() + 1f);
         player.sendSystemMessage(Component.literal("§d§l【神赐】 §f由于你已达99级巅峰，无法升级百级，但各类属性已强化！"));
     }
 
