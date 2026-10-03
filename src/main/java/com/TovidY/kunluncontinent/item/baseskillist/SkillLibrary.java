@@ -72,9 +72,13 @@ public class SkillLibrary {
                 ModItems.SKILL_BAHUANG_9
         ));
 
-        //裂金虎
+        //裂金虎（第一魂技池：横爪 + 4 个变体，获得时随机五选一）
         register(Wuhunname.liejinhu, 1, List.of(
-                ModItems.SKILL_LEIJINHU_1
+                ModItems.SKILL_LEIJINHU_1,
+                ModItems.SKILL_LEIJINHU_1B,
+                ModItems.SKILL_LEIJINHU_1C,
+                ModItems.SKILL_LEIJINHU_1D,
+                ModItems.SKILL_LEIJINHU_1E
         ));
         register(Wuhunname.liejinhu, 2, List.of(
                 ModItems.SKILL_LEIJINHU_2
@@ -101,9 +105,14 @@ public class SkillLibrary {
                 ModItems.SKILL_LEIJINHU_9
         ));
 
-        //磐石巨猿
+        //磐石巨猿（第一魂技池：重击 + 4 个变体，获得时随机五选一）
         register(Wuhunname.panshijuyuan, 1, List.of(
-                ModItems.SKILL_PANSHIJUYUAN_1));
+                ModItems.SKILL_PANSHIJUYUAN_1,
+                ModItems.SKILL_PANSHIJUYUAN_1B,
+                ModItems.SKILL_PANSHIJUYUAN_1C,
+                ModItems.SKILL_PANSHIJUYUAN_1D,
+                ModItems.SKILL_PANSHIJUYUAN_1E
+        ));
         register(Wuhunname.panshijuyuan, 2, List.of(
                 ModItems.SKILL_PANSHIJUYUAN_2));
         register(Wuhunname.panshijuyuan, 3, List.of(

@@ -164,6 +164,7 @@ public class PlayerUpgradeSystem {
         }
         int finalLevel = 1 + talentLevel;
         applyGrowthAndBonus(capability, finalLevel, bonusHP, bonusAtk, bonusDef);
+        AttributePoints.grantOnLevelUp(player, capability, finalLevel);
         ModTriggers.LEVEL_TRIGGER.trigger(player, finalLevel);
         addWuHun(player);
 
@@ -249,6 +250,13 @@ public class PlayerUpgradeSystem {
         if (newLevel == 75) {
             checkGodGlimpseEntry(player, capability, newLevel);
         }
+
+        AttributePoints.grantOnLevelUp(player, capability, newLevel);
+
+        // 武魂永久基础属性：按新等级重算（比例随等级线性提升，10%~50%）
+        // 只在升级时调、单向递增，配合内部防重入锁，不会刷属性
+        WuhunPermanent.clearSettledFlag(capability);
+        WuhunPermanent.grantPermanentByLevel(player, capability);
 
         ModTriggers.LEVEL_TRIGGER.trigger(player, newLevel);
     }

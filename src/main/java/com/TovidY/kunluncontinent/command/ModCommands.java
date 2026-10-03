@@ -22,5 +22,7 @@ public class ModCommands {
         TowerCommand.register(event.getDispatcher());
         CoinDropCommand.register(event.getDispatcher());
         NpcSpawnCommand.register(event.getDispatcher());
+        NpcDebugCommand.register(event.getDispatcher());
+        DropTableCommand.register(event.getDispatcher());
     }
 }

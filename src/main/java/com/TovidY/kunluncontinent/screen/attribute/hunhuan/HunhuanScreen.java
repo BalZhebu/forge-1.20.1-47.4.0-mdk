@@ -3,11 +3,6 @@ package com.TovidY.kunluncontinent.screen.attribute.hunhuan;
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
-import com.TovidY.kunluncontinent.godclass.interfac.GodClientData;
-import com.TovidY.kunluncontinent.item.ModItems;
-import com.TovidY.kunluncontinent.network.NetworkHandler;
-import com.TovidY.kunluncontinent.network.server.PacketSyncPage;
-import com.TovidY.kunluncontinent.screen.KluxTabButton;
 import com.TovidY.kunluncontinent.screen.KunlunGuiHelper;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -18,11 +13,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
+import com.TovidY.kunluncontinent.screen.attribute.AttributeTabs;
 
-public class HunhuanScreen extends AbstractContainerScreen<HunhuanMenu> {
+public class HunhuanScreen extends AbstractContainerScreen<HunhuanMenu> implements AttributeTabs.Host {
     private static final ResourceLocation HUNHUAN_ICON = new ResourceLocation(KlMain.MOD_ID, "textures/picture/particletext.png");
 
     // 翻页与武魂选择逻辑
@@ -50,39 +45,8 @@ public class HunhuanScreen extends AbstractContainerScreen<HunhuanMenu> {
         this.inventoryLabelY = 10000;
         this.titleLabelY = 10000;
 
-        int normalSize = 24;
-        int selectedSize = 28;
-        int spacing = 5;
-        int startX = this.leftPos + 10;
-        int startY = this.topPos - 26;
-
-        this.addRenderableWidget(new KunlunGuiHelper.KunlunTabButton(
-                this.font, startX, startY, normalSize, normalSize,
-                new ItemStack(ModItems.ATTRIBUTE_BUTTON.get()), Component.literal("属性面板"), false,
-                b -> NetworkHandler.INSTANCE.sendToServer(new PacketSyncPage(0))
-        ));
-
-        int currentX = startX + normalSize + spacing;
-        this.addRenderableWidget(new KunlunGuiHelper.KunlunTabButton(
-                this.font, currentX, startY, normalSize, normalSize,
-                new ItemStack(ModItems.SOUL_BONE_BUTTON.get()), Component.literal("魂骨面板"), false,
-                b -> NetworkHandler.INSTANCE.sendToServer(new PacketSyncPage(1))
-        ));
-
-        currentX += (normalSize + spacing);
-        this.addRenderableWidget(new KunlunGuiHelper.KunlunTabButton(
-                this.font, currentX, startY - 2, selectedSize, selectedSize,
-                new ItemStack(ModItems.HUNHUAN_BUTTON.get()), Component.literal("魂环配置"), true, b -> {}
-        ));
-
-        currentX += (selectedSize + spacing);
-        if (GodClientData.godName != null && !GodClientData.godName.equals("无")) {
-            this.addRenderableWidget(new KunlunGuiHelper.KunlunTabButton(
-                    this.font, currentX, startY, normalSize, normalSize,
-                    new ItemStack(ModItems.SHENKAO_BUTTON.get()), Component.literal("神考面板"), false,
-                    b -> NetworkHandler.INSTANCE.sendToServer(new PacketSyncPage(3))
-            ));
-        }
+        // 顶部页签：全部由注册表统一生成（新增面板只需在 AttributeTabs 注册一行）
+        AttributeTabs.buildTabs(this, AttributeTabs.PAGE_HUNHUAN);
 
         // 初始化默认选中的武魂索引
         if (this.minecraft != null && this.minecraft.player != null) {
@@ -295,5 +259,33 @@ public class HunhuanScreen extends AbstractContainerScreen<HunhuanMenu> {
         if (nianxian >= 1000)      return 0xA020F0;
         if (nianxian >= 100)       return 0xFFFF00;
         return 0xFFFFFF;
+    }
+
+
+    // ==================== AttributeTabs.Host 实现（暴露 protected 成员给工具类） ====================
+
+    @Override
+    public int leftPos() {
+        return this.leftPos;
+    }
+
+    @Override
+    public int topPos() {
+        return this.topPos;
+    }
+
+    @Override
+    public int imageWidth() {
+        return this.imageWidth;
+    }
+
+    @Override
+    public net.minecraft.client.gui.Font font() {
+        return this.font;
+    }
+
+    @Override
+    public void addWidget(net.minecraft.client.gui.components.AbstractWidget widget) {
+        this.addRenderableWidget(widget);
     }
 }

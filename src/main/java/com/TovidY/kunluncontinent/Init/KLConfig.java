@@ -80,20 +80,20 @@ public class KLConfig {
         dropChanceTier1 = builder.comment("10-99年魂兽的魂骨爆率")
                 .defineInRange("tier1", 0.001, 0.0, 1.0);
         dropChanceTier2 = builder.comment("100-999年魂兽的魂骨爆率")
-                .defineInRange("tier2", 0.002, 0.0, 1.0);
+                .defineInRange("tier2", 0.008, 0.0, 1.0);
         dropChanceTier3 = builder.comment("1000-9999年魂兽的魂骨爆率")
-                .defineInRange("tier3", 0.004, 0.0, 1.0);
+                .defineInRange("tier3", 0.01, 0.0, 1.0);
         dropChanceTier4 = builder.comment("10000-99999年魂兽的魂骨爆率")
-                .defineInRange("tier4", 0.006, 0.0, 1.0);
+                .defineInRange("tier4", 0.03, 0.0, 1.0);
         dropChanceTier5 = builder.comment("100000-999999年魂兽的魂骨爆率")
-                .defineInRange("tier5", 0.01, 0.0, 1.0);
+                .defineInRange("tier5", 0.065, 0.0, 1.0);
         dropChanceTier6 = builder.comment("1000000-9999999年魂兽的魂骨爆率")
                 .defineInRange("tier6", 0.5, 0.0, 1.0);
         dropChanceTier7 = builder.comment("10000000年魂兽的魂骨爆率")
                 .defineInRange("tier7", 1.0, 0.0, 1.0);
 
-        builder.pop(); // 弹出 "魂骨爆率配置"
-        builder.pop(); // 弹出 "kunluncontinent_settings"
+        builder.pop();
+        builder.pop();
 
         CONFIG = builder.build();
     }

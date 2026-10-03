@@ -40,10 +40,14 @@ import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.one.SkillPohun1;
 import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.six.SkillPohun6;
 import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.treen.SkillPohun3;
 import com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.two.SkillPohun2;
+import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
+import com.TovidY.kunluncontinent.item.baseskillist.LambdaSkillItem;
+import com.TovidY.kunluncontinent.item.baseskillist.SkillSpec;
 import com.TovidY.kunluncontinent.item.baseskillist.zhenshen.SkillBahuang7;
 import com.TovidY.kunluncontinent.item.baseskillist.zhenshen.SkillLeijinhu7;
 import com.TovidY.kunluncontinent.item.baseskillist.zhenshen.SkillPanshijuyuan7;
 import com.TovidY.kunluncontinent.item.baseskillist.zhenshen.SkillPohun7;
+import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.hungu.BoneItem;
 import com.TovidY.kunluncontinent.item.klitem.*;
 import com.TovidY.kunluncontinent.item.neidanitems.NeidanItem;
@@ -55,11 +59,21 @@ import com.TovidY.kunluncontinent.item.tool.ModToolTiers;
 import com.TovidY.kunluncontinent.item.tool.SoulGatheringBottleItem;
 import com.TovidY.kunluncontinent.potion.ModEffects;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -69,12 +83,15 @@ import org.jetbrains.annotations.Nullable;
 
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 //物品注册
 public class ModItems {
+
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(ForgeRegistries.ITEMS, KlMain.MOD_ID);
+
     //测试物品
     public static final RegistryObject<Item> DANYAO_TEST = ITEMS.register("danyao_test",()->new DanYaoItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setJingyan(999999).setMinLevel(999));
     public static final RegistryObject<Item> DANYAO_JINGSHENLI = ITEMS.register("danyao_jingshenli",()->new DanYaoItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setJingshenlibaifenbi(100).setMinLevel(999));
@@ -188,6 +205,9 @@ public class ModItems {
             pTooltipComponents.add(Component.translatable("item.extreme_cold_snowflake_fragment.tooltip").withStyle(ChatFormatting.GRAY));
         }
     });
+
+    public static final RegistryObject<Item> RESET_SCROLL = ITEMS.register("reset_scroll",
+            () -> new ResetScrollItem(new Item.Properties()));
 
     public static final RegistryObject<Item> GUIDE_BOOK = ITEMS.register("guide_book",()->new GuideBookItem(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EXTREME_COLD = ITEMS.register("extreme_cold",()->new Item(new Item.Properties()));
@@ -473,11 +493,275 @@ public class ModItems {
     public static final RegistryObject<SkillPanshijuyuan8> SKILL_PANSHIJUYUAN_8 = ITEMS.register("skill_panshijuyuan_8", SkillPanshijuyuan8::new);
     public static final RegistryObject<SkillPanshijuyuan9> SKILL_PANSHIJUYUAN_9 = ITEMS.register("skill_panshijuyuan_9", SkillPanshijuyuan9::new);
 
+    // ==================================================================================
+    //  变体魂技：同一槽位的"额外技能池"。
+    //  获得魂技时（HunhuanEntity.handleAbsorbed → SkillLibrary.getRandomSkill）
+    //  会在同槽位的池子里随机挑一个，所以一个物品图标可以对应多条魂技。
+    //  图标直接复用该槽位既有魂技的贴图，不再新增美术资源（模型见 ModItemModelsProvider）。
+    //
+    //  新增一条 = skillVariant("注册名", 图标来源, new SkillSpec(描述键, 消耗, 倍率, 吟唱, 冷却, 特效))，
+    //  然后去 SkillLibrary 把它加进对应槽位的池子 + 去语言文件补名字和描述。
+    // ==================================================================================
+    public record SkillVariantEntry(RegistryObject<? extends BaseSkillItem> skill,
+                                    RegistryObject<? extends BaseSkillItem> iconSource) {}
+
+    public static final ArrayList<SkillVariantEntry> SKILL_VARIANTS = new ArrayList<>();
+
+    private static RegistryObject<BaseSkillItem> skillVariant(String id,
+                                                              RegistryObject<? extends BaseSkillItem> iconSource,
+                                                              SkillSpec spec) {
+        RegistryObject<BaseSkillItem> reg = ITEMS.register(id, () -> new LambdaSkillItem(spec));
+        SKILL_VARIANTS.add(new SkillVariantEntry(reg, iconSource));
+        return reg;
+    }
+
+    // ---- 裂金虎 · 第一魂技（金色/雷光/虎爪系） ----
+
+    /** 金牙连斩：对面前最近的敌人连续撕抓三下（瞬发，短冷却）。 */
+    public static final RegistryObject<BaseSkillItem> SKILL_LEIJINHU_1B = skillVariant("skill_leijinhu_1b", SKILL_LEIJINHU_1,
+            new SkillSpec("skill.leijinhu.one.b.description", 90f, 1.1f, 0, 120,
+                    (level, player, power, dmg) -> {
+                        Vec3 look = player.getLookAngle();
+                        List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class,
+                                player.getBoundingBox().inflate(5.0),
+                                e -> e != player && e.isAlive()
+                                        && e.position().subtract(player.position()).normalize().dot(look) > 0.2);
+                        if (targets.isEmpty()) return;
+                        targets.sort(Comparator.comparingDouble(player::distanceToSqr));
+                        LivingEntity target = targets.get(0);
+
+                        ParticleFx fx = ParticleFx.of(level, player);
+                        double rot = level.getGameTime() * 0.6;
+                        if (fx != null) {
+                            fx.budget(900);
+                            Vec3 origin = player.getEyePosition().add(0, -0.3, 0);
+                            Vec3 right = ParticleFx.ortho(look);
+                            for (int i = 0; i < 3; i++) {
+                                Vec3 c = origin.add(look.scale(0.8 + i * 0.55));
+                                fx.slash(ParticleTypes.CRIT, c, look, right, 1.6, 120, 3, rot + i * 0.35);
+                                fx.slash(ParticleTypes.ELECTRIC_SPARK, c, look, right, 1.4, 120, 2, rot + i * 0.35);
+                            }
+                            fx.burst(ParticleTypes.WAX_ON,
+                                    target.position().add(0, target.getBbHeight() * 0.5, 0), 20, 0.7, true);
+                        }
+                        for (int i = 0; i < 3; i++) {
+                            target.hurt(player.damageSources().playerAttack(player), dmg * 0.4f);
+                        }
+                        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                                SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.PLAYERS, 1.0f, 1.3f);
+                    }));
+
+    /** 虎跃：向视线方向猛扑，对沿途敌人造成伤害并击退。 */
+    public static final RegistryObject<BaseSkillItem> SKILL_LEIJINHU_1C = skillVariant("skill_leijinhu_1c", SKILL_LEIJINHU_1,
+            new SkillSpec("skill.leijinhu.one.c.description", 110f, 1.5f, 0, 200,
+                    (level, player, power, dmg) -> {
+                        Vec3 look = player.getLookAngle();
+                        player.setDeltaMovement(look.x * 1.7, 0.28, look.z * 1.7);
+                        player.hurtMarked = true;
+
+                        ParticleFx fx = ParticleFx.of(level, player);
+                        double rot = level.getGameTime() * 0.5;
+                        Vec3 origin = player.getEyePosition().add(0, -0.3, 0);
+                        if (fx != null) {
+                            fx.budget(900);
+                            fx.spiralAround(ParticleTypes.WAX_ON, origin, look, 0.3, 1.1, 6.0, 2.0, rot, 60, 0.05);
+                            fx.burst(ParticleTypes.GLOW, origin.add(look.scale(2.0)), 24, 0.8, true);
+                        }
+                        List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class,
+                                player.getBoundingBox().inflate(3.0).expandTowards(look.scale(3.0)),
+                                e -> e != player && e.isAlive() && player.distanceTo(e) <= 5.0);
+                        for (LivingEntity t : targets) {
+                            t.hurt(player.damageSources().playerAttack(player), dmg);
+                            t.knockback(0.6, player.getX() - t.getX(), player.getZ() - t.getZ());
+                        }
+                        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                                SoundEvents.RAVAGER_ROAR, SoundSource.PLAYERS, 1.0f, 1.4f);
+                    }));
+
+    /** 噬金：扑咬最近的敌人，造成伤害并按伤害的一半回复自身生命。 */
+    public static final RegistryObject<BaseSkillItem> SKILL_LEIJINHU_1D = skillVariant("skill_leijinhu_1d", SKILL_LEIJINHU_1,
+            new SkillSpec("skill.leijinhu.one.d.description", 120f, 1.2f, 10, 240,
+                    (level, player, power, dmg) -> {
+                        List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class,
+                                player.getBoundingBox().inflate(3.5),
+                                e -> e != player && e.isAlive());
+                        if (targets.isEmpty()) return;
+                        targets.sort(Comparator.comparingDouble(player::distanceToSqr));
+                        LivingEntity target = targets.get(0);
+
+                        ParticleFx fx = ParticleFx.of(level, player);
+                        double rot = level.getGameTime() * 0.4;
+                        if (fx != null) {
+                            fx.budget(700);
+                            fx.spiral(ParticleTypes.WAX_ON, target.position(), ParticleFx.Axis.Y,
+                                    0.4, 0.2, target.getBbHeight(), 1.5, rot, 30, 0.03);
+                            fx.line(ParticleTypes.GLOW,
+                                    target.position().add(0, target.getBbHeight() * 0.5, 0),
+                                    player.getEyePosition(), 0.35, 0.05, 0.12, Vec3.ZERO);
+                            fx.burst(ParticleTypes.CRIT,
+                                    target.position().add(0, target.getBbHeight() * 0.5, 0), 18, 0.7, true);
+                        }
+                        target.hurt(player.damageSources().playerAttack(player), dmg);
+                        player.heal(dmg * 0.5f);
+                        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                                SoundEvents.FOX_BITE, SoundSource.PLAYERS, 1.1f, 0.9f);
+                    }));
+
+    /** 虎爪裂地：向面前连续撕出三道裂地爪痕，对正面扇形敌人造成伤害并短暂减速。 */
+    public static final RegistryObject<BaseSkillItem> SKILL_LEIJINHU_1E = skillVariant("skill_leijinhu_1e", SKILL_LEIJINHU_1,
+            new SkillSpec("skill.leijinhu.one.e.description", 130f, 1.7f, 20, 260,
+                    (level, player, power, dmg) -> {
+                        Vec3 look = player.getLookAngle();
+                        Vec3 origin = player.position().add(0, 0.15, 0);
+                        Vec3 right = ParticleFx.ortho(look);
+                        ParticleFx fx = ParticleFx.of(level, player);
+                        double rot = level.getGameTime() * 0.4;
+                        if (fx != null) {
+                            fx.budget(1300);
+                            for (int i = 0; i < 3; i++) {
+                                Vec3 c = origin.add(look.scale(1.4 + i * 1.3));
+                                fx.slash(ParticleTypes.CRIT, c, look, right, 2.2, 140, 3, rot + i * 0.3);
+                                fx.slash(ParticleTypes.ELECTRIC_SPARK, c, look, right, 2.0, 140, 2, rot + i * 0.3);
+                            }
+                            fx.line(ParticleTypes.WAX_ON, origin, origin.add(look.scale(5.0)), 0.4, 0.08, 0.1, Vec3.ZERO);
+                            fx.bloom(ParticleTypes.GLOW, origin.add(look.scale(4.0)), 18, 1.2, 0.1);
+                        }
+                        List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class,
+                                player.getBoundingBox().inflate(4.0).expandTowards(look.scale(3.0)),
+                                e -> e != player && e.isAlive()
+                                        && e.position().subtract(player.position()).normalize().dot(look) > 0.3);
+                        for (LivingEntity t : targets) {
+                            t.hurt(player.damageSources().playerAttack(player), dmg);
+                            t.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 1));
+                        }
+                        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                                SoundEvents.PLAYER_ATTACK_CRIT, SoundSource.PLAYERS, 1.2f, 0.8f);
+                    }));
+
+    // ---- 磐石巨猿 · 第一魂技（岩土/巨力系） ----
+
+    /** 崩拳：对面前最近的敌人打出一记重拳，造成高额伤害并猛击退。 */
+    public static final RegistryObject<BaseSkillItem> SKILL_PANSHIJUYUAN_1B = skillVariant("skill_panshijuyuan_1b", SKILL_PANSHIJUYUAN_1,
+            new SkillSpec("skill.panshijuyuan.one.b.description", 100f, 1.6f, 0, 140,
+                    (level, player, power, dmg) -> {
+                        Vec3 look = player.getLookAngle();
+                        List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class,
+                                player.getBoundingBox().inflate(3.5),
+                                e -> e != player && e.isAlive()
+                                        && e.position().subtract(player.position()).normalize().dot(look) > 0.2);
+                        BlockParticleOption stone = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.STONE.defaultBlockState());
+                        ParticleFx fx = ParticleFx.of(level, player);
+                        double rot = level.getGameTime() * 0.45;
+                        Vec3 origin = player.getEyePosition().add(0, -0.35, 0);
+                        if (fx != null) {
+                            fx.budget(800);
+                            fx.slash(stone, origin.add(look.scale(1.2)), look, ParticleFx.ortho(look), 1.8, 130, 3, rot);
+                            fx.slash(ParticleTypes.CAMPFIRE_COSY_SMOKE, origin.add(look.scale(1.2)), look,
+                                    ParticleFx.ortho(look), 1.6, 130, 2, rot + 0.2);
+                        }
+                        if (!targets.isEmpty()) {
+                            targets.sort(Comparator.comparingDouble(player::distanceToSqr));
+                            LivingEntity target = targets.get(0);
+                            target.hurt(player.damageSources().playerAttack(player), dmg);
+                            target.push(look.x * 1.1, 0.35, look.z * 1.1);
+                            target.hurtMarked = true;
+                            if (fx != null) {
+                                fx.burst(stone, target.position().add(0, target.getBbHeight() * 0.5, 0), 22, 0.8, true);
+                                fx.shockRing(ParticleTypes.CAMPFIRE_COSY_SMOKE, target.position(), 2.2, 0.4, 26);
+                            }
+                        }
+                        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                                SoundEvents.IRON_GOLEM_ATTACK, SoundSource.PLAYERS, 1.2f, 0.7f);
+                    }));
+
+    /** 石刺：在面前唤出成排石刺，对直线上的敌人造成伤害并大幅减速。 */
+    public static final RegistryObject<BaseSkillItem> SKILL_PANSHIJUYUAN_1C = skillVariant("skill_panshijuyuan_1c", SKILL_PANSHIJUYUAN_1,
+            new SkillSpec("skill.panshijuyuan.one.c.description", 115f, 1.5f, 20, 220,
+                    (level, player, power, dmg) -> {
+                        Vec3 look = player.getLookAngle();
+                        Vec3 origin = player.position().add(0, 0.1, 0);
+                        BlockParticleOption stone = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.STONE.defaultBlockState());
+                        ParticleFx fx = ParticleFx.of(level, player);
+                        double rot = level.getGameTime() * 0.5;
+                        if (fx != null) {
+                            fx.budget(1400);
+                            for (int row = 1; row <= 3; row++) {
+                                Vec3 c = origin.add(look.scale(row * 1.8));
+                                fx.pillars(stone, c, 1.6, 3, 1.8 + row * 0.3, rot + row * 0.4);
+                            }
+                            fx.circle(stone, origin, ParticleFx.Axis.Y, 1.2, 14, rot, 0.04);
+                        }
+                        List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class,
+                                player.getBoundingBox().inflate(3.0).expandTowards(look.scale(6.0)),
+                                e -> e != player && e.isAlive()
+                                        && e.position().subtract(player.position()).normalize().dot(look) > 0.35);
+                        for (LivingEntity t : targets) {
+                            t.hurt(player.damageSources().playerAttack(player), dmg);
+                            t.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 2));
+                        }
+                        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                                SoundEvents.STONE_BREAK, SoundSource.PLAYERS, 1.2f, 0.7f);
+                    }));
+
+    /** 石波：向面前推出一道石浪，对宽 3 格长 7 格内的敌人造成伤害并击退。 */
+    public static final RegistryObject<BaseSkillItem> SKILL_PANSHIJUYUAN_1D = skillVariant("skill_panshijuyuan_1d", SKILL_PANSHIJUYUAN_1,
+            new SkillSpec("skill.panshijuyuan.one.d.description", 125f, 1.4f, 30, 260,
+                    (level, player, power, dmg) -> {
+                        Vec3 look = player.getLookAngle();
+                        Vec3 side = ParticleFx.ortho(look);
+                        Vec3 origin = player.position().add(0, 0.25, 0);
+                        BlockParticleOption stone = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.COBBLESTONE.defaultBlockState());
+                        ParticleFx fx = ParticleFx.of(level, player);
+                        double rot = level.getGameTime() * 0.5;
+                        if (fx != null) {
+                            fx.budget(1500);
+                            fx.wave(stone, origin, look, side, 7.0, 0.9, 1.5, rot, 80, 0.15);
+                            fx.wave(ParticleTypes.CAMPFIRE_COSY_SMOKE, origin.add(0, 0.2, 0), look, side, 7.0, 0.7, 1.5, rot, 40, 0.15);
+                            fx.burst(stone, origin.add(look.scale(1.0)), 20, 0.8, true);
+                        }
+                        List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class,
+                                player.getBoundingBox().inflate(3.5).expandTowards(look.scale(7.0)),
+                                e -> e != player && e.isAlive()
+                                        && e.position().subtract(player.position()).normalize().dot(look) > 0.4);
+                        for (LivingEntity t : targets) {
+                            t.hurt(player.damageSources().playerAttack(player), dmg);
+                            t.push(look.x * 0.8, 0.4, look.z * 0.8);
+                            t.hurtMarked = true;
+                        }
+                        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                                SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 1.0f, 0.6f);
+                    }));
+
+    /** 磐石之怒：怒吼获得力量 2 与抗性 1，持续 15 秒（纯增益，无伤害）。 */
+    public static final RegistryObject<BaseSkillItem> SKILL_PANSHIJUYUAN_1E = skillVariant("skill_panshijuyuan_1e", SKILL_PANSHIJUYUAN_1,
+            new SkillSpec("skill.panshijuyuan.one.e.description", 105f, 0f, 10, 300,
+                    (level, player, power, dmg) -> {
+                        player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 300, 1));
+                        player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 300, 0));
+                        BlockParticleOption stone = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.STONE.defaultBlockState());
+                        ParticleFx fx = ParticleFx.of(level, player);
+                        double rot = level.getGameTime() * 0.3;
+                        Vec3 base = player.position();
+                        if (fx != null) {
+                            fx.budget(1600);
+                            fx.dome(stone, base, 2.2, 3, 14);
+                            fx.pillars(ParticleTypes.CAMPFIRE_COSY_SMOKE, base, 2.6, 8, 2.6, rot);
+                            fx.spiral(ParticleTypes.WHITE_ASH, base.add(0, 0.2, 0), ParticleFx.Axis.Y,
+                                    2.4, 0.4, 2.6, 1.8, rot, 50, 0.06);
+                            fx.burst(ParticleTypes.GLOW, base.add(0, 1.2, 0), 24, 0.8, true);
+                        }
+                        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                                SoundEvents.IRON_GOLEM_REPAIR, SoundSource.PLAYERS, 1.2f, 0.8f);
+                    }));
+
     //占位物品
     public static final RegistryObject<Item> ATTRIBUTE_BUTTON = ITEMS.register("attribute_button",()->new Item(new Item.Properties()));
     public static final RegistryObject<Item> SOUL_BONE_BUTTON = ITEMS.register("soul_bone_button",()->new Item(new Item.Properties()));
     public static final RegistryObject<Item> HUNHUAN_BUTTON = ITEMS.register("hunhuan_button",()->new Item(new Item.Properties()));
     public static final RegistryObject<Item> SHENKAO_BUTTON = ITEMS.register("shenkao_button",()->new Item(new Item.Properties()));
+    // 属性点面板页签图标（先复用魂骨按钮贴图，后续可换）
+    public static final RegistryObject<Item> POINT_BUTTON = ITEMS.register("point_button",
+            () -> new Item(new Item.Properties().stacksTo(1)));
 
     //硬币
     public static final RegistryObject<Item> GOLDEN_SOUL_COIN = ITEMS.register("golden_soul_coin",()->new Item(new Item.Properties()));
@@ -513,6 +797,7 @@ public class ModItems {
         KLBUTTON.add(SOUL_BONE_BUTTON);
         KLBUTTON.add(HUNHUAN_BUTTON);
         KLBUTTON.add(SHENKAO_BUTTON);
+        KLBUTTON.add(POINT_BUTTON);
     }
 
     public static ArrayList<RegistryObject<Item>> JUHUNPING = new ArrayList<>();
@@ -580,6 +865,7 @@ public class ModItems {
     public static ArrayList<RegistryObject<Item>> NORMALITEMSLIST = new ArrayList<>();
     static {
         NORMALITEMSLIST.add(EXTREME_COLD_SNOWFLAKE_FRAGMENT);
+        NORMALITEMSLIST.add(RESET_SCROLL);
         NORMALITEMSLIST.add(GUIDE_BOOK);
         NORMALITEMSLIST.add(EXTREME_COLD);
         NORMALITEMSLIST.add(DEMON_WHALE_MEDAL);

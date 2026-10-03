@@ -2,8 +2,10 @@ package com.TovidY.kunluncontinent.screen.attribute.config;
 
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
+import com.TovidY.kunluncontinent.event.client.PWRenderPlayerEvent;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.server.PacketChangeDisplayMode;
+import com.TovidY.kunluncontinent.network.server.PacketChangeHunhuanAnim;
 import com.TovidY.kunluncontinent.network.server.PacketSyncPage;
 import com.TovidY.kunluncontinent.network.server.PacketToggleConfig;
 import com.TovidY.kunluncontinent.network.server.PacketUpdateUIOffset;
@@ -72,6 +74,25 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
                     () -> List.of(
                             Component.literal("伤害提示显示设置").withStyle(ChatFormatting.GOLD),
                             Component.literal("§7切换在战斗中伤害数值的显示样式")
+                    )
+            ));
+
+            allConfigItems.add(new ConfigItem(
+                    "魂环开启动画",
+                    -2,
+                    () -> getAnimStyleComponent(cap.getHunhuanOpenAnim()),
+                    () -> {
+                        int next = (cap.getHunhuanOpenAnim() + 1) % PlayerAttributeCapability.HUNHUAN_ANIM_COUNT;
+                        NetworkHandler.INSTANCE.sendToServer(new PacketChangeHunhuanAnim(next));
+                        cap.setHunhuanOpenAnim(next);
+                    },
+                    () -> List.of(
+                            Component.literal("魂环开启动画").withStyle(ChatFormatting.GOLD),
+                            Component.literal("§7开启武魂（切换魂环显示）时，身上魂环的出场方式"),
+                            Component.literal("§7点击循环切换以下几种："),
+                            Component.literal("§f  ① §e逐环展开  §7原地由小放大"),
+                            Component.literal("§f  ② §e天降落位  §7自头顶之上垂落，落定带回弹"),
+                            Component.literal("§f  ③ §e魂环升腾  §7自脚下破地而出，冲天而起再落位")
                     )
             ));
 
@@ -292,12 +313,12 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
         int w = this.imageWidth;
         int h = this.imageHeight;
 
-        gui.fill(x + 3, y + 3, x + w + 3, y + h + 3, 0x80000000); // 投影
-        gui.fill(x, y, x + w, y + h, 0xF012161F); // 玄铁深蓝/黑底色
+        gui.fill(x + 3, y + 3, x + w + 3, y + h + 3, 0x80000000);
+        gui.fill(x, y, x + w, y + h, 0xF012161F);
 
-        gui.renderOutline(x, y, w, h, 0xFFD4AF37); // 外金框
-        gui.renderOutline(x + 2, y + 2, w - 4, h - 4, 0xFF2A3447); // 内衬暗框
-        gui.renderOutline(x + 3, y + 3, w - 6, h - 6, 0xFF8A6D3B); // 内金框
+        gui.renderOutline(x, y, w, h, 0xFFD4AF37);
+        gui.renderOutline(x + 2, y + 2, w - 4, h - 4, 0xFF2A3447);
+        gui.renderOutline(x + 3, y + 3, w - 6, h - 6, 0xFF8A6D3B);
 
         int cornerSize = 6;
         gui.fill(x - 1, y - 1, x + cornerSize, y + 2, 0xFFE6B800);
@@ -312,15 +333,12 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
         gui.fill(x + w - cornerSize, y + h - 2, x + w + 1, y + h + 1, 0xFFE6B800);
         gui.fill(x + w - 2, y + h - cornerSize, x + w + 1, y + h + 1, 0xFFE6B800);
 
-        // 4. 标题分割线
         gui.fill(x + 10, y + 22, x + w - 10, y + 23, 0xFF8A6D3B);
     }
 
     @Override
     public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
         super.render(gui, mouseX, mouseY, partialTick);
-
-        // 渲染标题与状态文本
         if (this.isOffsetSubPage) {
             String subTitle = "§6修真界面位置微调";
             int titleX = this.leftPos + (this.imageWidth - this.font.width(subTitle)) / 2;
@@ -334,19 +352,15 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
         } else {
             String title = "§6昆仑面板系统配置";
             gui.drawString(this.font, title, this.leftPos + 15, this.topPos + 8, 0xFFFFFF, true);
-
-            // 页码绘制
             int totalPages = Math.max(1, (int) Math.ceil((double) allConfigItems.size() / PER_PAGE));
             if (totalPages > 1) {
                 String pageStr = "§7" + (currentPage + 1) + " / " + totalPages;
                 gui.drawString(this.font, pageStr, this.leftPos + 70, this.topPos + this.imageHeight - 23, 0xFFFFFF, false);
             }
-
             String tip = "§7* 配置更改即时生效";
             gui.drawString(this.font, tip, this.leftPos + 130, this.topPos + this.imageHeight - 23, 0xFFFFFF, true);
         }
 
-        // 渲染自定义悬停 Tooltip（重构悬停逻辑）
         for (var widget : this.children()) {
             if (widget instanceof HandDrawnButton btn && btn.isMouseOver(mouseX, mouseY)) {
                 btn.renderCustomTooltip(gui, mouseX, mouseY);
@@ -384,6 +398,17 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
             case 2 -> Component.literal(prefix + "§d3D数字");
             default -> Component.literal(prefix + "§c已隐藏");
         };
+    }
+
+    private Component getAnimStyleComponent(int style) {
+        String[] names = PWRenderPlayerEvent.ANIM_STYLE_NAMES;
+        String name = (style >= 0 && style < names.length) ? names[style] : names[0];
+        String color = switch (style) {
+            case 1 -> "§b";
+            case 2 -> "§d";
+            default -> "§a";
+        };
+        return Component.literal("§6魂环开启动画: " + color + name);
     }
 
     private static List<Component> getToggleTooltip(int index, boolean isOpen) {
@@ -454,21 +479,14 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
         @Override
         protected void renderWidget(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
             boolean isHovered = this.isHoveredOrFocused();
-
-            // 1. 按钮内部颜色（悬停发光）
             int bgColor = isHovered ? 0xFF2A364F : 0xFF181F2C;
             int borderColor = isHovered ? 0xFFE6B800 : 0xFF4A5568;
-
             gui.fill(this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height, bgColor);
             gui.renderOutline(this.getX(), this.getY(), this.width, this.height, borderColor);
-
-            // 2. 悬停时的四个极小高亮角点
             if (isHovered) {
                 gui.fill(this.getX(), this.getY(), this.getX() + 2, this.getY() + 2, 0xFFFFF0A0);
                 gui.fill(this.getX() + this.width - 2, this.getY() + this.height - 2, this.getX() + this.width, this.getY() + this.height, 0xFFFFF0A0);
             }
-
-            // 3. 文字居中渲染
             int textColor = isHovered ? 0xFFFFFF : 0xDDDDDD;
             int textX = this.getX() + (this.width - ConfigScreen.this.font.width(this.getMessage())) / 2;
             int textY = this.getY() + (this.height - 8) / 2;
@@ -513,7 +531,6 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
             gui.fill(this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height, bgColor);
             gui.renderOutline(this.getX(), this.getY(), this.width, this.height, borderColor);
 
-            // 手绘三角形箭头
             int arrowColor = isHovered ? 0xFFFFD700 : 0xFFCCCCCC;
             int centerX = this.getX() + this.width / 2;
             int centerY = this.getY() + this.height / 2;

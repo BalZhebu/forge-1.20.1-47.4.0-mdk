@@ -10,7 +10,6 @@ public class LookAtDialogPlayerGoal extends Goal {
 
     public LookAtDialogPlayerGoal(PlayerNpcEntity npc) {
         this.npc = npc;
-        // 标记此 Goal 会占用 MOVE（移动）和 LOOK（视角），强行覆盖随机乱跑的 Goal
         this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
     }
 

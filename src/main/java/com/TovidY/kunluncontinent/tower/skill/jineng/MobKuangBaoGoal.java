@@ -12,6 +12,8 @@ import java.util.UUID;
 
 public class MobKuangBaoGoal extends Goal {
     private final Mob mob;
+    /** 词条等级（1~10），决定物攻加成强度。 */
+    private final int level;
     private int cooldownTicks = 0; // 冷却计时器
     private int durationTicks = 0; // 持续时间计时器
     private boolean isBuffed = false;
@@ -20,7 +22,13 @@ public class MobKuangBaoGoal extends Goal {
     private static final UUID ATTACK_SPEED_MODIFIER_UUID = UUID.fromString("1b5612c4-2a13-3d44-c813-ab92034cd222");
 
     public MobKuangBaoGoal(Mob mob) {
+        this(mob, 1);
+    }
+
+    public MobKuangBaoGoal(Mob mob, int level) {
         this.mob = mob;
+        this.level = Math.max(1, Math.min(com.TovidY.kunluncontinent.tower.skill.TowerSkillPool.MAX_LEVEL, level));
+        // 标记此 AI 影响怪物的看向（释放技能期间锁定目标）
         this.setFlags(EnumSet.of(Goal.Flag.LOOK));
     }
 
@@ -42,7 +50,8 @@ public class MobKuangBaoGoal extends Goal {
         cooldownTicks = 30 * 20;
         mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
             float baseWugong = cap.getGongji();
-            float bonusWugong = baseWugong * 0.50f;
+            // 物攻加成 = 基础 50% × 等级系数（1级=+50%，每级+10%，10级=+95%）
+            float bonusWugong = baseWugong * 0.50f * com.TovidY.kunluncontinent.tower.skill.TowerSkillPool.levelMultiplier(level);
             com.TovidY.kunluncontinent.tower.skill.MobTempAttributeManager.applyTempWugong(mob, bonusWugong, 10);
         });
 
@@ -53,7 +62,7 @@ public class MobKuangBaoGoal extends Goal {
             ));
         }
 
-        com.TovidY.kunluncontinent.tower.skill.TowerSkillPool.ShieldActiveSkillNotify(mob, "狂暴");
+        com.TovidY.kunluncontinent.tower.skill.TowerSkillPool.ShieldActiveSkillNotify(mob, "狂暴", level);
 
         mob.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.GLOWING, 200, 0, false, false));
         mob.level().playSound(null, mob.getX(), mob.getY(), mob.getZ(),

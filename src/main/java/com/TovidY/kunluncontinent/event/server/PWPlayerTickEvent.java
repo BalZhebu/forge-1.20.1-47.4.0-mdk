@@ -4,6 +4,8 @@ import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.advancement.AchievementAPI;
 import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapability;
+import com.TovidY.kunluncontinent.capability.playerattributes.FlyCrashBlast;
+import com.TovidY.kunluncontinent.capability.playerattributes.FlySpeedTuning;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerUpgradeSystem;
@@ -694,6 +696,12 @@ public class PWPlayerTickEvent {
 
         boolean canFlyPrev = player.getAbilities().mayfly;
 
+        // 飞行速度档位：写进 abilities（只在值变化时才发包），越快档位越高
+        FlySpeedTuning.applyFlyingSpeed(player, capability.getFlySpeedLevel());
+
+        // 撞墙爆炸冷却递减（服务端权威状态，客户端只负责检测并发包）
+        FlyCrashBlast.tickCooldown(player);
+
         // 禁空扫描：每 10 tick 一次，用 UUID 错开不同玩家的扫描时机，减轻服务器单 tick 压力
         boolean isAntiFlyZone = false;
         int flyOffset = Math.abs(player.getUUID().hashCode() % 10);
@@ -749,9 +757,11 @@ public class PWPlayerTickEvent {
         }
 
         // 2. 只有在飞行时，每 10 tick 额外扣除飞行消耗（与武魂无关）
+        //    消耗随飞行速度档位放大：越快越费精神力
         if (player.getAbilities().flying && gameTime % 10 == 0) {
             float currentJs = capability.getJingshenli();
-            float cost = 30.0f - (float) capability.getDengji() / 5.0f;
+            float cost = (30.0f - (float) capability.getDengji() / 5.0f)
+                    * FlySpeedTuning.costMultiplier(capability.getFlySpeedLevel());
             capability.setJingshenli(currentJs - cost);
         }
     }

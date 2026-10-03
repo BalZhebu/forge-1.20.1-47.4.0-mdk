@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.screen.attribute.skill;
 
 import com.TovidY.kunluncontinent.Init.KeyMappingInit;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapability;
+import com.TovidY.kunluncontinent.capability.playerattributes.FlySpeedTuning;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
@@ -29,6 +30,15 @@ public class SkillWheelScreen extends Screen {
     private static final int LEFT_PANEL_WIDTH = 130;
     private static final int LEFT_PANEL_HEIGHT = 200;
     private static final int ITEM_HEIGHT = 18;
+
+    // ── 飞行速度档位按钮（左侧面板底部空白区）──
+    /** 飞行区标题的基线 Y（相对 panelY）。 */
+    private static final int FLY_TITLE_DY = 172;
+    /** −/+ 按钮的顶边 Y（相对 panelY）与高度。 */
+    private static final int FLY_BTN_DY = 182;
+    private static final int FLY_BTN_SIZE = 14;
+    /** −/+ 按钮宽度。 */
+    private static final int FLY_BTN_W = 20;
 
     public SkillWheelScreen(PlayerAttributeCapability cap) {
         super(Component.literal("Skill Wheel"));
@@ -132,16 +142,13 @@ public class SkillWheelScreen extends Screen {
     private void drawLeftKeybindPanel(GuiGraphics graphics, int mouseX, int mouseY, int centerX, int centerY) {
         int panelX = centerX - 120 - LEFT_PANEL_WIDTH;
 
-        // ── 2. 向下偏移 20 个像素 ──
         int panelY = centerY - (LEFT_PANEL_HEIGHT / 2) + 20;
 
         graphics.fill(panelX - 5, panelY - 22, panelX + LEFT_PANEL_WIDTH + 5, panelY + LEFT_PANEL_HEIGHT, 0xAA000000);
         graphics.renderOutline(panelX - 5, panelY - 22, LEFT_PANEL_WIDTH + 10, LEFT_PANEL_HEIGHT + 22, 0xFFD4AF37);
 
-        // 标题
         graphics.drawString(this.font, "§e快捷释放设置", panelX, panelY - 18, 0xFFFFFF);
 
-        // ── 3. 极简提示文本 ──
         graphics.drawString(this.font, "§7(点击改键后可松开R)", panelX, panelY - 8, 0xAAAAAA);
 
         String[] numbers = {"一", "二", "三", "四", "五", "六", "七", "八", "九"};
@@ -168,6 +175,67 @@ public class SkillWheelScreen extends Screen {
             graphics.renderOutline(btnX, itemY, btnW, btnH, 0xFF888888);
             graphics.drawCenteredString(this.font, keyName, btnX + btnW / 2, itemY + 3, 0xFFFFFF);
         }
+
+        drawFlySpeedControls(graphics, mouseX, mouseY, panelX, panelY);
+    }
+
+    /**
+     * 左侧按键面板底部的飞行速度调节区。
+     *
+     * <p>面板高 {@link #LEFT_PANEL_HEIGHT}=200，9 行按键占到 panelY+168，
+     * 所以 172~196 这段是空余的，正好放标题 + 一对按钮 + 进度条。</p>
+     *
+     * <p>数值全部来自 {@link FlySpeedTuning}（唯一权威表）；
+     * 点击只发 {@link CPacketChangeFlySpeed}，由服务端改档并回同步。</p>
+     */
+    private void drawFlySpeedControls(GuiGraphics graphics, int mouseX, int mouseY, int panelX, int panelY) {
+        int level = cap.getFlySpeedLevel();
+        String levelName = FlySpeedTuning.levelName(level);
+
+        // 标题行：档位名 + 速度/耗神倍率
+        graphics.drawString(this.font, "§b飞行 " + levelName, panelX, panelY + FLY_TITLE_DY, 0xFFFFFF);
+        graphics.drawString(this.font,
+                "§7速§f×" + trim(FlySpeedTuning.speedMultiplier(level))
+                        + " §7耗§f×" + trim(FlySpeedTuning.costMultiplier(level)),
+                panelX + 52, panelY + FLY_TITLE_DY, 0xAAAAAA);
+
+        int btnY = panelY + FLY_BTN_DY;
+        drawFlyButton(graphics, mouseX, mouseY, panelX, btnY, "-",
+                level > 0, 0xFF55FF55);
+        drawFlyButton(graphics, mouseX, mouseY, panelX + LEFT_PANEL_WIDTH - FLY_BTN_W, btnY, "+",
+                level < FlySpeedTuning.MAX_LEVEL, 0xFFFFAA00);
+
+        int barX = panelX + FLY_BTN_W + 4;
+        int barW = LEFT_PANEL_WIDTH - (FLY_BTN_W + 4) * 2;
+        int barY = btnY + FLY_BTN_SIZE / 2 - 1;
+        graphics.fill(barX, barY, barX + barW, barY + 3, 0xFF1A1A1A);
+        graphics.renderOutline(barX - 1, barY - 1, barW + 2, 5, 0xFF555555);
+
+        int segCount = FlySpeedTuning.MAX_LEVEL + 1;
+        float segW = (float) barW / segCount;
+        for (int i = 0; i <= level; i++) {
+            int x0 = barX + Math.round(i * segW);
+            int x1 = (i == segCount - 1) ? barX + barW
+                    : barX + Math.round((i + 1) * segW) - 1;
+            graphics.fill(x0, barY, x1, barY + 3, 0xFF55CCFF);
+        }
+    }
+
+    /** 画一个 ± 小按钮；到顶/到底时置灰。 */
+    private void drawFlyButton(GuiGraphics graphics, int mouseX, int mouseY, int x, int y, String label,
+                               boolean enabled, int accent) {
+        boolean hovered = enabled && mouseX >= x && mouseX <= x + FLY_BTN_W
+                && mouseY >= y && mouseY <= y + FLY_BTN_SIZE;
+        int bg = !enabled ? 0xFF3A3A3A : (hovered ? (accent & 0x00FFFFFF) | 0x99000000 : 0x66222222);
+        graphics.fill(x, y, x + FLY_BTN_W, y + FLY_BTN_SIZE, bg);
+        graphics.renderOutline(x, y, FLY_BTN_W, FLY_BTN_SIZE, enabled ? accent : 0xFF666666);
+        graphics.drawCenteredString(this.font, label, x + FLY_BTN_W / 2, y + 3,
+                enabled ? 0xFFFFFF : 0x888888);
+    }
+
+    /** 整数倍率不带小数点。 */
+    private static String trim(float value) {
+        return value == Math.floor(value) ? String.valueOf((int) value) : String.valueOf(value);
     }
 
     @Override
@@ -176,6 +244,22 @@ public class SkillWheelScreen extends Screen {
         int centerY = this.height / 2;
         int panelX = centerX - 120 - LEFT_PANEL_WIDTH;
         int panelY = centerY - (LEFT_PANEL_HEIGHT / 2) + 20; // 匹配下移后的坐标
+
+        // 飞行速度 −/+ 按钮（放在按键行判定之后、super 之前，坐标与 drawFlySpeedControls 一致）
+        int flyBtnY = panelY + FLY_BTN_DY;
+        int level = cap.getFlySpeedLevel();
+        if (flyBtnY <= mouseY && mouseY <= flyBtnY + FLY_BTN_SIZE) {
+            int minusX = panelX;
+            int plusX = panelX + LEFT_PANEL_WIDTH - FLY_BTN_W;
+            if (mouseX >= minusX && mouseX <= minusX + FLY_BTN_W && level > 0) {
+                NetworkHandler.sendToServer(new CPacketChangeFlySpeed(-1));
+                return true;
+            }
+            if (mouseX >= plusX && mouseX <= plusX + FLY_BTN_W && level < FlySpeedTuning.MAX_LEVEL) {
+                NetworkHandler.sendToServer(new CPacketChangeFlySpeed(+1));
+                return true;
+            }
+        }
 
         for (int i = 0; i < 9; i++) {
             int itemY = panelY + 10 + i * ITEM_HEIGHT;

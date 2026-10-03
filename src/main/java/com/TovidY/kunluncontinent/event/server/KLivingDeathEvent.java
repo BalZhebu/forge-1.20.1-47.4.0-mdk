@@ -11,6 +11,7 @@ import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCap
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerHunhuanAPI;
 import com.TovidY.kunluncontinent.command.tovid.HunguAdminStatus;
+import com.TovidY.kunluncontinent.drop.DropExecutor;
 import com.TovidY.kunluncontinent.entity.EntityInit;
 import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanEntity;
 import com.TovidY.kunluncontinent.entity.playernpc.PlayerNpcEntity;
@@ -94,41 +95,21 @@ public class KLivingDeathEvent {
             Entity sourceEntity = event.getSource().getEntity();
             if (!(sourceEntity instanceof Player player)) return;
 
-            ModDropHandler.tryExtraDrops(entity, player);
-
             handleGodGlimpse((ServerPlayer) player,entity);
 
             CoinDropHandler.tryDropCoins(entity, cap.getNianxian(),player);
-
-            handleFanqicaoSeedDrop(entity, cap.getNianxian());
 
             NeidanDropHandler.tryDropNeidan(entity, cap, player);
             handleExperience(player, cap);
             tryGenerateHunhuan(cap, entity.level(), entity.getOnPos());
             handleHunguDrop(entity, (int) cap.getNianxian(), player);
 
+            // ⭐ 声明式掉落表（返气草种子 / 深海精华 / 你以后加的一切）
+            // 新增掉落只需要改 drop/DropRegistry.java，不用碰这个文件
+            DropExecutor.apply(entity);
+
             handleGodKillTask(player, entity);
         });
-    }
-
-
-    /**
-     * 返气草种子掉落逻辑
-     * @param entity 被击杀的魂兽/怪物
-     * @param nianxian 怪物年限
-     * 可击杀500年以上的生物掉落
-     */
-
-    private static void handleFanqicaoSeedDrop(LivingEntity entity, long nianxian) {
-        if (nianxian < 500) return;
-        double baseChance = 0.01;
-        double extraChance = (nianxian - 500) / 1000.0 * 0.001;
-        double finalChance = Math.min(0.08, baseChance + extraChance);
-        if (RANDOM.nextDouble() < finalChance) {
-            int dropCount = RANDOM.nextInt(5) + 1;
-            ItemStack seedStack = new ItemStack(ModItems.FANQICAO_SEEDS.get(), dropCount);
-            entity.spawnAtLocation(seedStack);
-        }
     }
 
     private static void playerDeach(LivingEntity entity) {
@@ -207,7 +188,21 @@ public class KLivingDeathEvent {
                                     AchievementAPI.onTowerCleared(towerPlayer, oldFloor + 1);
                                     NetworkHandler.sendToClient(new PacketSyncTowerTimer(0, false), towerPlayer);
                                     if (attr.getGodName() == null || attr.getGodName().isEmpty()) {
-                                        double successChance = attr.debugForceSuccess ? 1.0 : (0.005 * (oldFloor + 1));
+                                        // 神位触发概率：基础 = 0.5% × 通关层数（第100层基础恰好 50%）。
+                                        // 关口眷顾：整五层（5/15/25...）×1.5，整十层（10/20/30...100）×2。
+                                        // 曲线设计：只有第 100 层会自然到达 100%（0.5%×100×2 = 100%）——
+                                        // 第 90 层 90%、第 80 层 80%……越接近百层越接近必出，但只有百层是必出。
+                                        int floorNumber = oldFloor + 1;
+                                        double successChance = attr.debugForceSuccess ? 1.0 : (0.005 * floorNumber);
+                                        if (floorNumber % 10 == 0) {
+                                            successChance *= 2.0;
+                                        } else if (floorNumber % 5 == 0) {
+                                            successChance *= 1.5;
+                                        }
+                                        if (floorNumber >= 100) {
+                                            successChance = 1.0; // 百层登顶：必出神位
+                                        }
+                                        successChance = Math.min(successChance, 1.0);
                                         if (RANDOM.nextDouble() < successChance) {
                                             String[][] godPool = {
                                                     {"sea_god", "§b海神"},
@@ -312,6 +307,7 @@ public class KLivingDeathEvent {
         });
     }
 
+    //魂骨词条
     private static int rollAttributeCount() {
         double r = RANDOM.nextDouble();
         if (r < 0.05) return 1;

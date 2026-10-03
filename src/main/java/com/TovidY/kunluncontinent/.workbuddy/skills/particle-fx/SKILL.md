@@ -217,27 +217,57 @@ double px = Mth.lerp(partialTick, entity.xOld, entity.getX());   // y / z 同理
 （第一人称的走路视角晃动 `bobView` 已经包含在 `camera.getPosition()` 里，
 用 camPos 反推位置会跟着一起晃、与世界同相，不用额外补偿。）
 
-**关键：不要猜 poseStack 空间用的是什么单位，把原路径的变换链一字不差抄一遍。**
-以玩家为例（对应 `LivingEntityRenderer.render`）：
+### ✅ 这两个事件的空间已经确定（别猜，也别"抄变换链"）
+
+源码级证据（`forge-...-sources.jar` 里的 `LivingEntityRenderer.render`）：
 
 ```java
-float bodyYaw = Mth.rotLerp(partialTick, player.yBodyRotO, player.yBodyRot);
-poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - bodyYaw));   // setupRotations
-poseStack.scale(-1.0F, -1.0F, 1.0F);                            // 翻转 Y
-poseStack.scale(0.9375F, 0.9375F, 0.9375F);                     // PlayerRenderer.scale
-poseStack.translate(0.0F, -1.501F, 0.0F);
-// 之后直接复用第三人称那套绘制调用
+pushPose();
+setupRotations(…); scale(-1,-1,1); scale(0.9375); translate(0,-1.501,0);
+model.renderToBuffer(…);  … renderLayers …
+popPose();                                        // ← 先出栈
+super.render(…);
+MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.Post(…));   // ← 再发事件
 ```
 
-照抄就一定和第三人称同一个空间 —— 比推导"1 单位是 1 格还是 1/16 格"省事得多。
+`PlayerRenderer.render` 同理：Post 在 `super.render()` **之后**。
+
+⇒ **事件里拿到的 PoseStack 没有任何模型变换**，就是"实体渲染器刚进栈"的
+**相机相对坐标：原点在脚底，1 单位 = 1 格**（社区常见写法 `translate(0, getBbHeight(), 0)` 用的就是格）。
+
+**所以补渲染时只需要这一句：**
+
+```java
+poseStack.translate(pos.x - cam.x, pos.y - cam.y, pos.z - cam.z);   // 之后直接复用原绘制调用
+```
+
+⛔ **不要**再叠 `180-bodyYaw / scale(-1,-1,1) / 0.9375 / translate(0,-1.501,0)` 那串链路 ——
+那是模型层的变换，叠上去会把物件整体**推高约 1.2 格**，还会让"背后"方向反向。
+（这个坑真实踩过：第一人称魂环比第三人称高了近一格，后来查源码才修掉。）
 
 ### 加一个玩家配置开关
 
-- `PlayerAttributeCapability.configFlags` 是 **long 位掩码**，默认 `0xFFL`（bit0~7 开）；
-  `isConfigOpen(i)` 读位 / `toggleConfig(i)` 异或位。**新索引只要 ≥8，默认就是关的。**
-- 只改 `screen/attribute/config/ConfigScreen`：
-  `rawItems` 加 `new ConfigItemData("名字", 索引)`、`getToggleTooltip` 加一个 case
-  （想要多行说明就多塞几个 `Component.literal`）。按钮行为、发包、消息都是循环统一处理的。
+**布尔开关**：`PlayerAttributeCapability.configFlags` 是 **long 位掩码**，默认 `0xFFL`（bit0~7 开）；
+`isConfigOpen(i)` 读位 / `toggleConfig(i)` 异或位。**新索引只要 ≥8，默认就是关的。**
+只改 `screen/attribute/config/ConfigScreen`：
+`rawItems` 加 `new ConfigItemData("名字", 索引)`、`getToggleTooltip` 加一个 case
+（想要多行说明就多塞几个 `Component.literal`）。按钮行为、发包、消息都是循环统一处理的。
+
+**多值（循环切换）选项**（如"魂环开启动画"三选一、"伤害显示"四选一）：
+位掩码放不下，要另开一个 int 字段，照 `damageDisplayMode` 的模式走：
+1. capability 加 `private int xxx = 0;` + `serializeNBT/deserializeNBT` 各一行
+   + getter/setter（**setter 里夹到合法区间**，防旧存档/异常包把 switch 带到 default）；
+2. 新增 `network/server/PacketChangeXxx`（客户端 → 服务端，只为了**持久化**，
+   收到后 `set` + `SynsAPI.synsPlayerAttribute(player)` 回同步）+ 在 `NetworkHandler` 注册；
+3. `ConfigScreen` 里 `allConfigItems.add(new ConfigItem(...))` 手动加一项：
+   `index` 随便给个负数占位，`onClick` 里 `下一档 = (当前 + 1) % 档位总数`，
+   本地先 set 再发包（保证按钮文字立刻变）；文案/说明直接写在 tooltip supplier 里；
+4. 样式名数组放在**渲染那一侧**（如 `PWRenderPlayerEvent.ANIM_STYLE_NAMES`）供 UI 取用，
+   避免两处各写一份中文。
+
+**如果这个选项要影响"别人看到的你"**（比如别人也要按你的样式看你的魂环动画），
+就把它塞进已有的同步包（本项目是 `SyncWuhunDataPacket`）并缓存在渲染缓存里，
+别在渲染时去读本地 capability —— 那读到的永远是"自己的"设置。
 
 只有原版**确实没有**同步的状态（纯客户端表现、自定义 UI 开关）才自己发包：
 - 包注册：`NetworkHandler.register(X.class, X::encode, X::decode, X::handle)`；

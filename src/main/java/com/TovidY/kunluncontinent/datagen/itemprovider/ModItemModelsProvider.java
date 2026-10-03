@@ -75,6 +75,17 @@ public class ModItemModelsProvider extends ItemModelProvider {
             basicItem(itemRegistry.get());
         }
 
+        //变体魂技：图标直接复用同槽位既有魂技的贴图 —— 一个物品图标对应多条魂技，不新增美术资源
+        for (ModItems.SkillVariantEntry entry : ModItems.SKILL_VARIANTS) {
+            ResourceLocation id = ForgeRegistries.ITEMS.getKey(entry.skill().get());
+            ResourceLocation source = ForgeRegistries.ITEMS.getKey(entry.iconSource().get());
+            if (id == null || source == null) {
+                throw new IllegalArgumentException("Skill variant not registered: " + entry);
+            }
+            withExistingParent(id.getPath(), new ResourceLocation("item/generated"))
+                    .texture("layer0", new ResourceLocation(KlMain.MOD_ID, "item/" + source.getPath()));
+        }
+
         //按钮
         for (RegistryObject<Item> itemRegistry : ModItems.KLBUTTON) {
             basicItem(itemRegistry.get());

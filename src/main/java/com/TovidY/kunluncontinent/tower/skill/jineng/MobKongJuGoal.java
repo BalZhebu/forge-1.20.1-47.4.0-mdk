@@ -13,10 +13,17 @@ import java.util.List;
 
 public class MobKongJuGoal extends Goal {
     private final Mob mob;
+    /** 词条等级（1~10），决定负面时长。 */
+    private final int level;
     private int cooldownTicks = 0;
 
     public MobKongJuGoal(Mob mob) {
+        this(mob, 1);
+    }
+
+    public MobKongJuGoal(Mob mob, int level) {
         this.mob = mob;
+        this.level = Math.max(1, Math.min(com.TovidY.kunluncontinent.tower.skill.TowerSkillPool.MAX_LEVEL, level));
         // 咆哮施法时施加一瞬间的动作关注
         this.setFlags(EnumSet.of(Goal.Flag.LOOK));
     }
@@ -44,7 +51,13 @@ public class MobKongJuGoal extends Goal {
         // 进入 20 秒冷却时间
         cooldownTicks = 20 * 20;
 
-        TowerSkillPool.ShieldActiveSkillNotify(mob, "恐惧");
+        TowerSkillPool.ShieldActiveSkillNotify(mob, "恐惧", level);
+
+        // 负面时长 = 基础时长 × 等级系数（1级不变，10级 1.9 倍）
+        float mult = com.TovidY.kunluncontinent.tower.skill.TowerSkillPool.levelMultiplier(level);
+        int darknessTicks = Math.round(5 * 20 * mult);
+        int weaknessTicks = Math.round(4 * 20 * mult);
+        int slowTicks = Math.round(3 * 20 * mult);
 
         AABB area = mob.getBoundingBox().inflate(15.0D, 8.0D, 15.0D);
         List<Player> nearbyPlayers = mob.level().getEntitiesOfClass(Player.class, area);
@@ -52,13 +65,13 @@ public class MobKongJuGoal extends Goal {
         for (Player player : nearbyPlayers) {
             if (player.isAlive() && !player.isCreative() && !player.isSpectator()) {
                 player.addEffect(new MobEffectInstance(
-                        MobEffects.DARKNESS, 5 * 20, 0, false, true
+                        MobEffects.DARKNESS, darknessTicks, 0, false, true
                 ));
                 player.addEffect(new MobEffectInstance(
-                        MobEffects.WEAKNESS, 4 * 20, 0, false, true
+                        MobEffects.WEAKNESS, weaknessTicks, 0, false, true
                 ));
                 player.addEffect(new MobEffectInstance(
-                        MobEffects.MOVEMENT_SLOWDOWN, 3 * 20, 1, false, true
+                        MobEffects.MOVEMENT_SLOWDOWN, slowTicks, 1, false, true
                 ));
             }
         }

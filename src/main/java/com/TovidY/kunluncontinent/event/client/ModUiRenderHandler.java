@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.event.client;
 
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
+import com.TovidY.kunluncontinent.screen.playernpc.NpcTradeCatalog;
 import com.TovidY.kunluncontinent.tower.floor.ClientTimerManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -13,8 +14,6 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MerchantMenu;
-import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraftforge.api.distmarker.Dist;
@@ -160,18 +159,15 @@ public class ModUiRenderHandler {
                     int offerIndex = i + finalScrollOff;
                     if (offerIndex >= totalOffers) break;
                     MerchantOffer offer = offers.get(offerIndex);
-                    ItemStack resultStack = offer.getResult();
-                    if (resultStack.hasTag() && resultStack.getTag().contains("KlNpcQuality")) {
-                        String qualityName = resultStack.getTag().getString("KlNpcQuality");
-                        int color = getQualityColorByName(qualityName);
-                        if (color != 0) {
-                            int currentY = listStartY + (i * itemHeight);
-                            if (useStyleB) {
-                                int bgAlphaColor = (color & 0x00FFFFFF) | 0x40000000;
-                                guiGraphics.fill(listStartX, currentY, listStartX + itemWidth, currentY + itemHeight - 2, bgAlphaColor);
-                            } else {
-                                guiGraphics.fill(listStartX, currentY, listStartX + 3, currentY + itemHeight - 2, color | 0xFF000000);
-                            }
+                    // 品级从「货币 + 价格 + 物品」反查得到，不再依赖物品上的 NBT
+                    int color = NpcTradeCatalog.getOfferQualityColor(offer);
+                    if (color != 0) {
+                        int currentY = listStartY + (i * itemHeight);
+                        if (useStyleB) {
+                            int bgAlphaColor = (color & 0x00FFFFFF) | 0x40000000;
+                            guiGraphics.fill(listStartX, currentY, listStartX + itemWidth, currentY + itemHeight - 2, bgAlphaColor);
+                        } else {
+                            guiGraphics.fill(listStartX, currentY, listStartX + 3, currentY + itemHeight - 2, color | 0xFF000000);
                         }
                     }
                 }
@@ -180,18 +176,6 @@ public class ModUiRenderHandler {
             RenderSystem.disableBlend();
             guiGraphics.pose().popPose();
         }
-    }
-
-    private static int getQualityColorByName(String name) {
-        return switch (name) {
-            case "白" -> 0x55FFFFFF; // 半透明白
-            case "蓝" -> 0x555555FF; // 半透明蓝
-            case "紫" -> 0x55AA44FF; // 半透明紫
-            case "黑" -> 0x77222222; // 半透明黑
-            case "红" -> 0x55FF2222; // 半透明红
-            case "金" -> 0x55FFCC00; // 半透明金
-            default -> 0x00000000;
-        };
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)

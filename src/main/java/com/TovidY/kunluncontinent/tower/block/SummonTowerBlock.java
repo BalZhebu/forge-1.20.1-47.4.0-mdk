@@ -26,7 +26,12 @@ import java.util.stream.Stream;
 
 public class SummonTowerBlock extends Block {
 
-    private static final int MAX_AVAILABLE_FLOOR = 14;
+    /**
+     * 当前开放的最高层数。
+     * 默认跟随 {@link TowerFloorRegistry#getTotalFloors()}（配了几层就开几层）；
+     * 如果想锁定开放进度（比如先只放 20 层），把这里改成固定数字即可。
+     */
+    private static final int MAX_AVAILABLE_FLOOR = TowerFloorRegistry.getTotalFloors();
 
     public SummonTowerBlock(Properties properties) {
         super(properties);

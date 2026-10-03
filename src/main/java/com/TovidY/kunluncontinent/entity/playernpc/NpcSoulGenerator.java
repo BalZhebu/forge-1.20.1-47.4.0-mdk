@@ -63,13 +63,12 @@ public class NpcSoulGenerator {
      * 完美模拟 PlayerUpgradeSystem 的属性成长机制（裸体基础属性）
      */
     private static void applyNpcLevelGrowth(PlayerAttributeCapability cap, int targetLevel) {
-        // 赋予基础的觉醒初始属性
+
         float hp = 100.0f;
         float atk = 15.0f;
         float def = 5.0f;
         float maxSpiritual = 100.0f;
 
-        // 模拟从 1 级逐步突破升级到 targetLevel 的属性累加
         for (int lvl = 1; lvl <= targetLevel; lvl++) {
             hp += (lvl * 1.4f) * 0.7f;
             def += (lvl * 0.3f) * 0.7f;
@@ -127,9 +126,8 @@ public class NpcSoulGenerator {
             totalWuchuan += ring.getWuchuan();
         }
 
-        // 统一更新回 NPC 的主属性面板变量
         npcCap.setMaxshengming(totalHp);
-        npcCap.setShengming(totalHp); // 保持满血状态
+        npcCap.setShengming(totalHp);
         npcCap.setGongji(totalAtk);
         npcCap.setFangyu(totalDef);
         npcCap.setBaojilv(totalBaojilv);

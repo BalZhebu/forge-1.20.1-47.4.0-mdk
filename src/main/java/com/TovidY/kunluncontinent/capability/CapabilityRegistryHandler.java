@@ -171,8 +171,14 @@ public class CapabilityRegistryHandler {
                     else if (nianxian >= 10000) colorPrefix = "§0";
                     else if (nianxian >= 1000) colorPrefix = "§5";
                     else if (nianxian >= 100) colorPrefix = "§e";
-                    Component newName = Component.literal(rawName + "-----" + colorPrefix + nianxian + "年");
+                    String baseName = rawName + "-----" + colorPrefix + nianxian + "年";
+
+                    CompoundTag persistent = entity.getPersistentData();
+                    Component newName = Component.literal( baseName);
                     entity.setCustomName(newName);
+                    if (persistent.getBoolean("TowerSpawned")) {
+                        entity.setCustomNameVisible(true);
+                    }
 
                     try {
                         net.minecraftforge.fml.util.ObfuscationReflectionHelper.setPrivateValue(

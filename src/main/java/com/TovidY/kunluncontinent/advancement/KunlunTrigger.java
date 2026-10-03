@@ -34,6 +34,7 @@ public class KunlunTrigger extends SimpleCriterionTrigger<KunlunTrigger.Instance
     }
 
     /** 触发指定事件：所有声明了该 event 的成就都会被判定。 */
+
     public void trigger(ServerPlayer player, String eventId) {
         this.trigger(player, instance -> instance.matches(eventId));
     }

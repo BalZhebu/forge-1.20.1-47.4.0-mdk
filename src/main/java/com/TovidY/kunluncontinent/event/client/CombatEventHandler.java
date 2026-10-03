@@ -39,7 +39,8 @@ public class CombatEventHandler {
 
     private static float getFlyingDamageMultiplier(Player player) {
         if (!player.getAbilities().flying) return 1.0f;
-        int level = player.experienceLevel;
+        // 用 mod 自己的等级（dengji），不是原版 experienceLevel
+        int level = ModAttributeAPI.getDengji(player);
         if (level < 70) return 0.6f;
         if (level >= 90) return 0.9f;
         return 0.6f + (level - 70) * 0.015f;

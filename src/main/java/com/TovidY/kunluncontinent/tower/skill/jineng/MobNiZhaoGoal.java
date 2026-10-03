@@ -14,10 +14,17 @@ import java.util.List;
 
 public class MobNiZhaoGoal extends Goal {
     private final Mob mob;
+    /** 词条等级（1~10），决定减速强度与时长。 */
+    private final int level;
     private int cooldownTicks = 0; // 技能冷却 Tick 计数
 
     public MobNiZhaoGoal(Mob mob) {
+        this(mob, 1);
+    }
+
+    public MobNiZhaoGoal(Mob mob, int level) {
         this.mob = mob;
+        this.level = Math.max(1, Math.min(com.TovidY.kunluncontinent.tower.skill.TowerSkillPool.MAX_LEVEL, level));
         // 标记此 AI 影响怪物的移动和看向（防止释放技能时发生逻辑冲突）
         this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
     }
@@ -51,22 +58,24 @@ public class MobNiZhaoGoal extends Goal {
         // 1. 进入 15 秒冷却时间 (15秒 * 20 Tick = 300 Tick)
         cooldownTicks = 15 * 20;
 
-        // 2. 触发 3D 飘字通知（调用你原装的方法，会顶出 "§6§l⚔ 泥沼！ ⚔"）
-        TowerSkillPool.ShieldActiveSkillNotify(mob, "泥沼");
+        // 2. 触发 3D 飘字通知（带词条等级）
+        TowerSkillPool.ShieldActiveSkillNotify(mob, "泥沼", level);
 
         // 3. 施法范围判定：以怪物为中心，拉出一个半径 8 格的立方体检测区域
         AABB area = mob.getBoundingBox().inflate(8.0D, 4.0D, 8.0D);
         List<Player> nearbyPlayers = mob.level().getEntitiesOfClass(Player.class, area);
 
-        // 4. 让范围内的所有玩家陷入泥沼，移动速度扣除 40%
+        // 4. 让范围内的所有玩家陷入泥沼。
+        //    减速强度：1级 = 缓慢III（-45%），等级每 +1 强度 +1，最高缓慢V；
+        //    时长随等级系数（1级 6 秒，10级约 11.4 秒）。
+        int slowAmp = Math.min(level + 1, 4);
+        int duration = Math.round(6 * 20 * com.TovidY.kunluncontinent.tower.skill.TowerSkillPool.levelMultiplier(level));
         for (Player player : nearbyPlayers) {
             if (player.isAlive() && !player.isCreative() && !player.isSpectator()) {
-                // 给予 6 秒的 缓慢 III 药水效果。
-                // 缓慢 I 扣 15%，缓慢 II 扣 30%，缓慢 III 刚好扣除 45%（最贴近 40% 的原生完美减速，且完全免维护）
                 player.addEffect(new MobEffectInstance(
                         MobEffects.MOVEMENT_SLOWDOWN,
-                        6 * 20, // 持续 6 秒，给怪留出足够的破敌时间
-                        2,      // 等级 2 代表 III 级效果
+                        duration,
+                        slowAmp,
                         false,  // 不是环境效果
                         true    // 显示粒子，让玩家感知到脚下泥沼的特效
                 ));

@@ -2,14 +2,9 @@ package com.TovidY.kunluncontinent.screen.attribute.hungu;
 
 import com.TovidY.kunluncontinent.capability.itemattribute.ItemAttributeCapability;
 import com.TovidY.kunluncontinent.capability.itemattribute.ItemAttributeCapabilityProvider;
-import com.TovidY.kunluncontinent.godclass.interfac.GodClientData;
-import com.TovidY.kunluncontinent.item.ModItems;
-import com.TovidY.kunluncontinent.network.NetworkHandler;
-import com.TovidY.kunluncontinent.network.server.PacketSyncPage;
 import com.TovidY.kunluncontinent.screen.KunlunGuiHelper;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
@@ -18,8 +13,9 @@ import net.minecraft.world.item.ItemStack;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import com.TovidY.kunluncontinent.screen.attribute.AttributeTabs;
 
-public class HunguScreen extends AbstractContainerScreen<HunguMenu> {
+public class HunguScreen extends AbstractContainerScreen<HunguMenu> implements AttributeTabs.Host {
 
     public HunguScreen(HunguMenu container, Inventory inventory, Component text) {
         super(container, inventory, text);
@@ -34,39 +30,8 @@ public class HunguScreen extends AbstractContainerScreen<HunguMenu> {
         this.inventoryLabelY = 10000;
         this.titleLabelY = 10000;
 
-        int normalSize = 24;
-        int selectedSize = 28;
-        int spacing = 5;
-        int startX = this.leftPos + 10;
-        int startY = this.topPos - 26;
-
-        this.addRenderableWidget(new KunlunGuiHelper.KunlunTabButton(
-                this.font, startX, startY, normalSize, normalSize,
-                new ItemStack(ModItems.ATTRIBUTE_BUTTON.get()), Component.literal("属性面板"), false,
-                b -> NetworkHandler.INSTANCE.sendToServer(new PacketSyncPage(0))
-        ));
-
-        int currentX = startX + normalSize + spacing;
-        this.addRenderableWidget(new KunlunGuiHelper.KunlunTabButton(
-                this.font, currentX, startY - 2, selectedSize, selectedSize,
-                new ItemStack(ModItems.SOUL_BONE_BUTTON.get()), Component.literal("魂骨面板"), true, b -> {}
-        ));
-
-        currentX += (selectedSize + spacing);
-        this.addRenderableWidget(new KunlunGuiHelper.KunlunTabButton(
-                this.font, currentX, startY, normalSize, normalSize,
-                new ItemStack(ModItems.HUNHUAN_BUTTON.get()), Component.literal("魂环配置"), false,
-                b -> NetworkHandler.INSTANCE.sendToServer(new PacketSyncPage(2))
-        ));
-
-        currentX += (normalSize + spacing);
-        if (GodClientData.godName != null && !GodClientData.godName.equals("无")) {
-            this.addRenderableWidget(new KunlunGuiHelper.KunlunTabButton(
-                    this.font, currentX, startY, normalSize, normalSize,
-                    new ItemStack(ModItems.SHENKAO_BUTTON.get()), Component.literal("神考面板"), false,
-                    b -> NetworkHandler.INSTANCE.sendToServer(new PacketSyncPage(3))
-            ));
-        }
+        // 顶部页签：全部由注册表统一生成（新增面板只需在 AttributeTabs 注册一行）
+        AttributeTabs.buildTabs(this, AttributeTabs.PAGE_HUNGU);
     }
 
     @Override
@@ -169,5 +134,33 @@ public class HunguScreen extends AbstractContainerScreen<HunguMenu> {
             gui.drawString(this.font, text, x, y, 0xFFFFFF, false);
             lineCounter[0]++;
         }
+    }
+
+
+    // ==================== AttributeTabs.Host 实现（暴露 protected 成员给工具类） ====================
+
+    @Override
+    public int leftPos() {
+        return this.leftPos;
+    }
+
+    @Override
+    public int topPos() {
+        return this.topPos;
+    }
+
+    @Override
+    public int imageWidth() {
+        return this.imageWidth;
+    }
+
+    @Override
+    public net.minecraft.client.gui.Font font() {
+        return this.font;
+    }
+
+    @Override
+    public void addWidget(net.minecraft.client.gui.components.AbstractWidget widget) {
+        this.addRenderableWidget(widget);
     }
 }
