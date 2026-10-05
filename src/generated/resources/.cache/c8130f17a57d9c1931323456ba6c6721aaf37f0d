@@ -1,7 +1,0 @@
-// 1.20.1	2026-07-18T17:55:07.4032368	Tags for minecraft:block mod id kunluncontinent
-36c7e690d06ea33687fad670b9c0eebb887687b7 data/forge/tags/blocks/needs_netherite_tool.json
-903d093f52163a745a2a0ccda7cc5177177101a0 data/minecraft/tags/blocks/mineable/hoe.json
-6ab2616aadc578950661aee6cf64504b20039775 data/minecraft/tags/blocks/mineable/pickaxe.json
-3335372ad5e19e46d93fa5aa0dc8216bbac383ff data/minecraft/tags/blocks/mineable/shovel.json
-91506a523f9ade15866ed999169a2cc5592afba6 data/minecraft/tags/blocks/needs_diamond_tool.json
-ee7c66f65328eeca1f9f952e7ec81a98a2613d3c data/minecraft/tags/blocks/needs_iron_tool.json
