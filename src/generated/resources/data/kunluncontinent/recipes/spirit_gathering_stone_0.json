@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "kunluncontinent:gray_block"
+    },
+    "V": {
+      "item": "kunluncontinent:middle_hunhuan_storage_core"
+    },
+    "X": {
+      "item": "kunluncontinent:cloud_patterned_bronze_block"
+    },
+    "Z": {
+      "item": "kunluncontinent:spirit_gathering_stone"
+    }
+  },
+  "pattern": [
+    "CVC",
+    "CZC",
+    "CXC"
+  ],
+  "result": {
+    "item": "kunluncontinent:spirit_gathering_stone_0"
+  },
+  "show_notification": true
+}

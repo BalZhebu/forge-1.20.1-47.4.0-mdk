@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "kunluncontinent:block/stone_stamp",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "kunluncontinent:block/stone_stamp"
+    },
+    "facing=south": {
+      "model": "kunluncontinent:block/stone_stamp",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "kunluncontinent:block/stone_stamp",
+      "y": 270
+    }
+  }
+}

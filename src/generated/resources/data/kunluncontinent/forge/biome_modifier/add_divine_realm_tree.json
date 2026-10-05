@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "kunluncontinent:celestial_realm",
+  "features": "kunluncontinent:divine_realm_tree_placed",
+  "step": "vegetal_decoration"
+}

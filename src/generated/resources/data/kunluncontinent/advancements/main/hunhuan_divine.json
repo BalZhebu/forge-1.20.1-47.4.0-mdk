@@ -1,0 +1,32 @@
+{
+  "parent": "kunluncontinent:main/hunhuan_million",
+  "criteria": {
+    "criterion": {
+      "conditions": {
+        "event": "hunhuan_divine"
+      },
+      "trigger": "kunluncontinent:kunlun_event"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "adv.kunlun.hunhuan_divine.desc"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:hunhuan_storage_five"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "adv.kunlun.hunhuan_divine.title"
+    }
+  },
+  "requirements": [
+    [
+      "criterion"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

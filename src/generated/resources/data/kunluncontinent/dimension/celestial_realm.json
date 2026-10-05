@@ -1,0 +1,11 @@
+{
+  "type": "kunluncontinent:celestial_realm_type",
+  "generator": {
+    "type": "minecraft:noise",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "kunluncontinent:celestial_realm"
+    },
+    "settings": "kunluncontinent:celestial_realm"
+  }
+}

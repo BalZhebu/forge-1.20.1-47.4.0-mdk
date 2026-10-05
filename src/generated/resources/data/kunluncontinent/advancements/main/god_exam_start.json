@@ -1,0 +1,32 @@
+{
+  "parent": "kunluncontinent:main/tower_first",
+  "criteria": {
+    "criterion": {
+      "conditions": {
+        "event": "god_exam_start"
+      },
+      "trigger": "kunluncontinent:kunlun_event"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "adv.kunlun.god_exam_start.desc"
+    },
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:shenkao_button"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "adv.kunlun.god_exam_start.title"
+    }
+  },
+  "requirements": [
+    [
+      "criterion"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

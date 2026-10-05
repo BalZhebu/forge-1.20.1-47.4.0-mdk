@@ -1,0 +1,32 @@
+{
+  "parent": "kunluncontinent:main/alchemy_spirit",
+  "criteria": {
+    "criterion": {
+      "conditions": {
+        "event": "alchemy_treasure"
+      },
+      "trigger": "kunluncontinent:kunlun_event"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "adv.kunlun.alchemy_treasure.desc"
+    },
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:taixupowang_dan"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "adv.kunlun.alchemy_treasure.title"
+    }
+  },
+  "requirements": [
+    [
+      "criterion"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,14 @@
+{
+  "type": "kunluncontinent:add_item",
+  "conditions": [
+    {
+      "block": "minecraft:grass",
+      "condition": "minecraft:block_state_property"
+    },
+    {
+      "chance": 0.01,
+      "condition": "minecraft:random_chance"
+    }
+  ],
+  "item": "kunluncontinent:guyuancao_seeds"
+}

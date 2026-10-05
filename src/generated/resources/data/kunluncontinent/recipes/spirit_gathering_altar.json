@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "kunluncontinent:gray_block"
+    },
+    "Z": {
+      "item": "kunluncontinent:cloud_patterned_bronze_ingot"
+    }
+  },
+  "pattern": [
+    "ZXZ",
+    "X X",
+    "XXX"
+  ],
+  "result": {
+    "item": "kunluncontinent:spirit_gathering_altar"
+  },
+  "show_notification": true
+}

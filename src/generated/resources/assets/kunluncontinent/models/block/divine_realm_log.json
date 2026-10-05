@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "kunluncontinent:block/divine_realm_log_top",
+    "side": "kunluncontinent:block/divine_realm_log"
+  }
+}

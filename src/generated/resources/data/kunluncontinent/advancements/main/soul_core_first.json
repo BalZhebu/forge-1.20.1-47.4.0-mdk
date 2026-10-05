@@ -1,0 +1,53 @@
+{
+  "parent": "kunluncontinent:main/hunhuan_first",
+  "criteria": {
+    "criterion": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "kunluncontinent:low_hunhuan_storage_core"
+            ]
+          },
+          {
+            "items": [
+              "kunluncontinent:middle_hunhuan_storage_core"
+            ]
+          },
+          {
+            "items": [
+              "kunluncontinent:high_hunhuan_storage_core"
+            ]
+          },
+          {
+            "items": [
+              "kunluncontinent:top_hunhuan_storage_core"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "adv.kunlun.soul_core_first.desc"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:middle_hunhuan_storage_core"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "adv.kunlun.soul_core_first.title"
+    }
+  },
+  "requirements": [
+    [
+      "criterion"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

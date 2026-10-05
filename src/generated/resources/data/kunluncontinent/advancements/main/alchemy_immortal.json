@@ -1,0 +1,32 @@
+{
+  "parent": "kunluncontinent:main/alchemy_treasure",
+  "criteria": {
+    "criterion": {
+      "conditions": {
+        "event": "alchemy_immortal"
+      },
+      "trigger": "kunluncontinent:kunlun_event"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "adv.kunlun.alchemy_immortal.desc"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:yizhaichuangsheng_dan"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "adv.kunlun.alchemy_immortal.title"
+    }
+  },
+  "requirements": [
+    [
+      "criterion"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

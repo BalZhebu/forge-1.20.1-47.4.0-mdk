@@ -1,0 +1,32 @@
+{
+  "parent": "kunluncontinent:main/root",
+  "criteria": {
+    "criterion": {
+      "conditions": {
+        "event": "wuhun_awaken"
+      },
+      "trigger": "kunluncontinent:kunlun_event"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "adv.kunlun.wuhun_awaken.desc"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:hunhuan_button"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "adv.kunlun.wuhun_awaken.title"
+    }
+  },
+  "requirements": [
+    [
+      "criterion"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,32 @@
+{
+  "parent": "kunluncontinent:main/alchemy_first",
+  "criteria": {
+    "criterion": {
+      "conditions": {
+        "event": "alchemy_spirit"
+      },
+      "trigger": "kunluncontinent:kunlun_event"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "adv.kunlun.alchemy_spirit.desc"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:wanpoxuan_dan"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "adv.kunlun.alchemy_spirit.title"
+    }
+  },
+  "requirements": [
+    [
+      "criterion"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

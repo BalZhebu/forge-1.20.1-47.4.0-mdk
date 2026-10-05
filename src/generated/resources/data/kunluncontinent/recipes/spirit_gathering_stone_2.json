@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "kunluncontinent:red_fire_block"
+    },
+    "V": {
+      "item": "kunluncontinent:top_hunhuan_storage_core"
+    },
+    "X": {
+      "item": "kunluncontinent:sunken_silver_block"
+    },
+    "Z": {
+      "item": "kunluncontinent:spirit_gathering_stone_1"
+    }
+  },
+  "pattern": [
+    "CVC",
+    "CZC",
+    "CXC"
+  ],
+  "result": {
+    "item": "kunluncontinent:spirit_gathering_stone_2"
+  },
+  "show_notification": true
+}

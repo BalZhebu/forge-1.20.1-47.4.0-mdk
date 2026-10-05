@@ -1,0 +1,17 @@
+{
+  "type": "kunluncontinent:tower_realm_type",
+  "generator": {
+    "type": "minecraft:flat",
+    "settings": {
+      "biome": "kunluncontinent:tower_biome",
+      "features": false,
+      "lakes": false,
+      "layers": [
+        {
+          "block": "minecraft:air",
+          "height": 1
+        }
+      ]
+    }
+  }
+}

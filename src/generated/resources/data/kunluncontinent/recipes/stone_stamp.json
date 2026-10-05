@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "item": "minecraft:stone_bricks"
+    },
+    "W": {
+      "item": "kunluncontinent:sunken_silver_block"
+    },
+    "X": {
+      "item": "kunluncontinent:gray_block"
+    },
+    "Z": {
+      "item": "kunluncontinent:cloud_patterned_bronze_block"
+    }
+  },
+  "pattern": [
+    " X ",
+    "XWX",
+    "ZIZ"
+  ],
+  "result": {
+    "item": "kunluncontinent:stone_stamp"
+  },
+  "show_notification": true
+}

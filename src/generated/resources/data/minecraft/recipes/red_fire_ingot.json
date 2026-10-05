@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "kunluncontinent:red_fire_block"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "item": "kunluncontinent:red_fire_ingot"
+  }
+}

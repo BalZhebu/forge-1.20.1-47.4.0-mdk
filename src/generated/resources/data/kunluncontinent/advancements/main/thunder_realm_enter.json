@@ -1,0 +1,33 @@
+{
+  "parent": "kunluncontinent:main/root",
+  "criteria": {
+    "criterion": {
+      "conditions": {
+        "event": "thunder_realm_enter"
+      },
+      "trigger": "kunluncontinent:kunlun_event"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "adv.kunlun.thunder_realm_enter.desc"
+    },
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:fangshanhundaoqi_3",
+      "nbt": "{Damage:0}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "adv.kunlun.thunder_realm_enter.title"
+    }
+  },
+  "requirements": [
+    [
+      "criterion"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

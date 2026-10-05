@@ -1,0 +1,32 @@
+{
+  "parent": "kunluncontinent:main/level_99",
+  "criteria": {
+    "criterion": {
+      "conditions": {
+        "event": "reincarnation_first"
+      },
+      "trigger": "kunluncontinent:kunlun_event"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "adv.kunlun.reincarnation_first.desc"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:guoshi_pohunqiang"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "adv.kunlun.reincarnation_first.title"
+    }
+  },
+  "requirements": [
+    [
+      "criterion"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

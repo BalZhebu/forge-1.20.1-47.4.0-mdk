@@ -1,0 +1,32 @@
+{
+  "parent": "kunluncontinent:main/hunhuan_first",
+  "criteria": {
+    "criterion": {
+      "conditions": {
+        "event": "hunhuan_thousand"
+      },
+      "trigger": "kunluncontinent:kunlun_event"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "adv.kunlun.hunhuan_thousand.desc"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:hunhuan_storage_one"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "adv.kunlun.hunhuan_thousand.title"
+    }
+  },
+  "requirements": [
+    [
+      "criterion"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

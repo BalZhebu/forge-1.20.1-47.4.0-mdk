@@ -1,0 +1,32 @@
+{
+  "parent": "kunluncontinent:main/hunhuan_hundred_thousand",
+  "criteria": {
+    "criterion": {
+      "conditions": {
+        "event": "hunhuan_million"
+      },
+      "trigger": "kunluncontinent:kunlun_event"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "adv.kunlun.hunhuan_million.desc"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:hunhuan_storage_four"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "adv.kunlun.hunhuan_million.title"
+    }
+  },
+  "requirements": [
+    [
+      "criterion"
+    ]
+  ],
+  "sends_telemetry_event": true
+}
