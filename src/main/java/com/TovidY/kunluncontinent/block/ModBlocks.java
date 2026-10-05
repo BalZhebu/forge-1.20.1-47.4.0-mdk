@@ -34,9 +34,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.List;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.world.level.block.SoundType;
 
 //方块注册类
 public class ModBlocks {
+
     public static final DeferredRegister<Block> BLOCKS =
             DeferredRegister.create(ForgeRegistries.BLOCKS, KlMain.MOD_ID);
 
@@ -161,10 +167,23 @@ public class ModBlocks {
         }
     });
 
+    //神界木
+    public static final RegistryObject<Block> DIVINE_REALM_LOG = registerBlock("divine_realm_log",
+            () -> new Block(BlockBehaviour.Properties.of()
+                    .strength(2.0f).sound(SoundType.WOOD)));
+    public static final RegistryObject<Block> DIVINE_REALM_PLANKS = registerBlock("divine_realm_planks",
+            () -> new Block(BlockBehaviour.Properties.of()
+                    .strength(2.0f).sound(SoundType.WOOD)));
+    public static final RegistryObject<Block> DIVINE_REALM_LEAVES = registerBlock("divine_realm_leaves",
+            () -> new net.minecraft.world.level.block.LeavesBlock(BlockBehaviour.Properties.of()
+                    .strength(0.2f).sound(SoundType.GRASS).noOcclusion()));
+    public static final RegistryObject<Block> DIVINE_REALM_SAPLING = registerBlock("divine_realm_sapling",
+            () -> new com.TovidY.kunluncontinent.block.klblock.DivineRealmSaplingBlock(
+                    BlockBehaviour.Properties.of().noCollission().noOcclusion().strength(0.01f).sound(SoundType.GRASS)));
+
     //草药
     public static final RegistryObject<Block> RED_SPIDER_LILY_BLOCK = BLOCKS.register("red_spider_lily_block", () -> new KLCropBlock(BlockBehaviour.Properties.copy(Blocks.WHEAT).noOcclusion(), () -> Blocks.NETHERRACK, ModItems.RED_SPIDER_SEEDS,10));
     public static final RegistryObject<Block> GUYUANCAO_BLOCK = BLOCKS.register("guyuancao_block", () -> new KLCropBlock(BlockBehaviour.Properties.copy(Blocks.WHEAT).noOcclusion(), ModBlocks.SOUL_SOIL, ModItems.GUYUANCAO_SEEDS,10));
-
     public static final RegistryObject<Block> FANQICAO_BLOCK = BLOCKS.register("fanqicao_block", () -> new KLCropBlock(BlockBehaviour.Properties.copy(Blocks.WHEAT).noOcclusion(), ModBlocks.SOUL_SOIL, ModItems.FANQICAO_SEEDS,10));
 
     public static final RegistryObject<Block> DROSS_BLOCK =
@@ -328,15 +347,21 @@ public class ModBlocks {
         MODBLOCKS.add(SPIRIT_GATHERING_STONE_2);
         MODBLOCKS.add(DROSS_BLOCK);
         MODBLOCKS.add(SOUL_SOIL);
+
+        MODBLOCKS.add(DIVINE_REALM_LOG);
+        MODBLOCKS.add(DIVINE_REALM_PLANKS);
+        MODBLOCKS.add(DIVINE_REALM_LEAVES);
+        MODBLOCKS.add(DIVINE_REALM_SAPLING);
     }
 
-    private static <T extends Block> void registerBlockItems(String name,RegistryObject<T> block){
+
+    private static <T extends Block> void registerBlockItems(String name, RegistryObject<T> block){
         ModItems.ITEMS.register(name,()->new BlockItem(block.get(),new Item.Properties()));
     }
 
-    private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T>block){
-        RegistryObject<T> blocks = BLOCKS.register(name,block);
-        registerBlockItems(name,blocks);
+    private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
+        RegistryObject<T> blocks = BLOCKS.register(name, block);
+        registerBlockItems(name, blocks);
         return blocks;
     }
 

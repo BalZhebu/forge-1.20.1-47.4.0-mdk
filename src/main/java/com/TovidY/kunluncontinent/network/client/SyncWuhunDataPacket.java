@@ -18,13 +18,16 @@ public class SyncWuhunDataPacket {
     private final List<Integer> wuhunNianxianList;
     private final boolean isPlayingAnimation;
     private final long animationStartTime;
+    /** 该玩家的"魂环开启方式"样式下标，让别人的客户端也按同一个样式播放展开动画。 */
+    private final int animStyle;
 
     public SyncWuhunDataPacket(UUID playerUUID, List<Integer> wuhunNianxianList,
-                               boolean isPlayingAnimation, long animationStartTime) {
+                               boolean isPlayingAnimation, long animationStartTime, int animStyle) {
         this.playerUUID = playerUUID;
         this.wuhunNianxianList = wuhunNianxianList != null ? wuhunNianxianList : Collections.emptyList();
         this.isPlayingAnimation = isPlayingAnimation;
         this.animationStartTime = animationStartTime;
+        this.animStyle = animStyle;
     }
 
     public UUID getPlayerUUID() {
@@ -43,6 +46,10 @@ public class SyncWuhunDataPacket {
         return animationStartTime;
     }
 
+    public int getAnimStyle() {
+        return animStyle;
+    }
+
     public static void encode(SyncWuhunDataPacket pkt, FriendlyByteBuf buf) {
         buf.writeUUID(pkt.playerUUID);
         List<Integer> list = pkt.wuhunNianxianList != null ? pkt.wuhunNianxianList : Collections.emptyList();
@@ -52,6 +59,7 @@ public class SyncWuhunDataPacket {
         }
         buf.writeBoolean(pkt.isPlayingAnimation);
         buf.writeLong(pkt.animationStartTime);
+        buf.writeInt(pkt.animStyle);
     }
 
     public static SyncWuhunDataPacket decode(FriendlyByteBuf buf) {
@@ -63,7 +71,8 @@ public class SyncWuhunDataPacket {
         }
         boolean isPlayingAnimation = buf.readBoolean();
         long animationStartTime = buf.readLong();
-        return new SyncWuhunDataPacket(playerUUID, list, isPlayingAnimation, animationStartTime);
+        int animStyle = buf.readInt();
+        return new SyncWuhunDataPacket(playerUUID, list, isPlayingAnimation, animationStartTime, animStyle);
     }
 
     public static void handle(SyncWuhunDataPacket pkt, Supplier<NetworkEvent.Context> ctx) {
@@ -77,7 +86,8 @@ public class SyncWuhunDataPacket {
                         player,
                         pkt.wuhunNianxianList,
                         pkt.isPlayingAnimation,
-                        pkt.animationStartTime
+                        pkt.animationStartTime,
+                        pkt.animStyle
                 );
             }
         });

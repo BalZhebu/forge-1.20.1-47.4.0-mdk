@@ -399,6 +399,12 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .unlockedBy("has_stone_stamp", has(ModBlocks.GRAY_BLOCK.get()))
                 .save(pWriter);
 
+        //原木分解
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, ModBlocks.DIVINE_REALM_PLANKS.get(), 4)
+                .requires(ModBlocks.DIVINE_REALM_LOG.get())
+                .unlockedBy("has_divine_realm_log", has(ModBlocks.DIVINE_REALM_LOG.get()))
+                .save(pWriter);
+
         // 一行代码搞定：自动生成
         //灰铁
         nineBlockStorageRecipes(pWriter,

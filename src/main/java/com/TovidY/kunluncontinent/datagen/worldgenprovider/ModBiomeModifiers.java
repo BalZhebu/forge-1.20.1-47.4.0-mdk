@@ -50,8 +50,25 @@ public class ModBiomeModifiers {
             new ResourceLocation(KlMain.MOD_ID, "add_npc_end")
     );
 
+    // ── 神界大树：只在神界群系生成 ─────────────────────
+    public static final ResourceKey<BiomeModifier> ADD_DIVINE_REALM_TREE = ResourceKey.create(
+            ForgeRegistries.Keys.BIOME_MODIFIERS,
+            new ResourceLocation(KlMain.MOD_ID, "add_divine_realm_tree")
+    );
+
     public static void bootstrap(BootstapContext<BiomeModifier> context) {
         var biomes = context.lookup(Registries.BIOME);
+        var placedFeatures = context.lookup(Registries.PLACED_FEATURE);
+
+        // ⭐ 神界大树：只加到神界群系（celestial_realm）
+        //    密度由 ModCelestialTreeFeature.placement() 里的 RARITY 控制（每 6 格最多 1 棵）
+        context.register(ADD_DIVINE_REALM_TREE, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                HolderSet.direct(biomes.getOrThrow(ModDimensions.CELESTIAL_BIOME)),
+                HolderSet.direct(placedFeatures.getOrThrow(
+                        ModCelestialTreeFeature.DIVINE_REALM_TREE_PLACED)),
+                net.minecraft.world.level.levelgen.GenerationStep.Decoration.VEGETAL_DECORATION
+        ));
+
         // 1. 基础配置：覆盖所有雪狐出现的群系（权重 10）
         context.register(ADD_ICE_CRYSTAL_BASE, new ForgeBiomeModifiers.AddSpawnsBiomeModifier(
                 biomes.getOrThrow(BiomeTags.SPAWNS_SNOW_FOXES),

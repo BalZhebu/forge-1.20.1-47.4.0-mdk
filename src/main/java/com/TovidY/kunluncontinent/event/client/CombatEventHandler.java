@@ -39,7 +39,8 @@ public class CombatEventHandler {
 
     private static float getFlyingDamageMultiplier(Player player) {
         if (!player.getAbilities().flying) return 1.0f;
-        int level = player.experienceLevel;
+        // 用 mod 自己的等级（dengji），不是原版 experienceLevel
+        int level = ModAttributeAPI.getDengji(player);
         if (level < 70) return 0.6f;
         if (level >= 90) return 0.9f;
         return 0.6f + (level - 70) * 0.015f;
@@ -49,7 +50,15 @@ public class CombatEventHandler {
         return String.format("%.1f", v);
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGH)
+    /**
+     * 优先级 <b>HIGHEST</b>（在整个事件总线上<b>最早</b>执行）。
+     *
+     * <p>为什么必须最早：要拿到原版 {@code event.getAmount()} 当「武器基础伤害」，
+     * 此时它还没被护甲/抗性/其他 mod 改过。若用 LOW/HIGH 起步，别的 mod 可能已经把
+     * amount 覆写成 1（手打伤害）→ 我们拿 1 当基础，算出来自然也是 1 —— 这就是
+     * "装了某些 mod 后伤害只剩一滴血"的成因之一。</p>
+     */
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onLivingHurt(LivingHurtEvent event) {
         if (!(event.getSource().getEntity() instanceof LivingEntity attacker)) return;
         LivingEntity target = event.getEntity();
@@ -117,6 +126,13 @@ public class CombatEventHandler {
 
         finalDamage = Math.max(0.1f, finalDamage);
         event.setAmount(finalDamage);
+
+        // ⭐ 登记给 LivingDamageEvent 兜底用。
+        //   其他 mod 若在 Hurt 阶段 setCanceled(true)（无敌/护盾类最常见），
+        //   或者把 amount 覆写成 1，我们在这里 set 的值就废了 → 怪物只掉一滴血。
+        //   CombatDamageBackupHandler 会在 Damage 阶段把被腰斩的数值补回来。
+        CombatDamageBackupHandler.record(target, finalDamage);
+
         handleLifesteal(attacker, finalDamage);
 
         // ==================== 荆棘反伤 + 伤害飘字（合并为一处，不再重复） ====================

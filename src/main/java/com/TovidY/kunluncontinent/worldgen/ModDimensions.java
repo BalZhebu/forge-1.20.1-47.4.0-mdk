@@ -8,6 +8,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
+import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 
 public class ModDimensions {
     // 维度实例的 ResourceKey
@@ -53,4 +54,25 @@ public class ModDimensions {
     // 关卡 Key (LevelStem)
     public static final ResourceKey<LevelStem> TOWER_REALM_STEM = ResourceKey.create(Registries.LEVEL_STEM,
             new ResourceLocation(KlMain.MOD_ID, "tower_realm"));
+
+    // ==================== 神界（天境） ====================
+    // 梦幻蓝天 + 大尺寸浮空岛 + 岛下虚空
+    public static final ResourceKey<Level> CELESTIAL_REALM_LEVEL_KEY = ResourceKey.create(Registries.DIMENSION,
+            new ResourceLocation(KlMain.MOD_ID, "celestial_realm"));
+
+    public static final ResourceKey<DimensionType> CELESTIAL_REALM_TYPE = ResourceKey.create(Registries.DIMENSION_TYPE,
+            new ResourceLocation(KlMain.MOD_ID, "celestial_realm_type"));
+
+    public static final ResourceKey<Biome> CELESTIAL_BIOME = ResourceKey.create(Registries.BIOME,
+            new ResourceLocation(KlMain.MOD_ID, "celestial_realm"));
+
+    public static final ResourceKey<LevelStem> CELESTIAL_REALM_STEM = ResourceKey.create(Registries.LEVEL_STEM,
+            new ResourceLocation(KlMain.MOD_ID, "celestial_realm"));
+
+    /**
+     * 天境的<b>噪声设置</b>（地形骨架）—— 改岛屿大小/高度/形状全靠这个 Key。
+     * 岛屿表面规则（草方块/石头）另见 {@code ModWorldGenProvider#celestialSurfaceRules}。
+     */
+    public static final ResourceKey<NoiseGeneratorSettings> CELESTIAL_NOISE = ResourceKey.create(
+            Registries.NOISE_SETTINGS, new ResourceLocation(KlMain.MOD_ID, "celestial_realm"));
 }

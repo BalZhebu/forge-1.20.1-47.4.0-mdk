@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.capability;
 
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapability;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapabilityProvider;
+import com.TovidY.kunluncontinent.capability.playerattributes.AttributePointSpec;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.item.tool.ModSwordBaseItem;
@@ -29,10 +30,65 @@ import static com.TovidY.kunluncontinent.item.armor.ModArmorBaseItem.getLowTaozh
 
 public class ModAttributeAPI {
 
+    /**
+     * 取"玩家裸值 + 属性点加成"。
+     *
+     * <p><b>⚠️ 必须夹在裸值上、在其它加成相加之前调用</b>，不能在 getter 结尾对总和乘算 ——
+     * 属性点是玩家自身修炼的收益，武魂 / 魂骨 / 装备 / 药水那些加成<b>不该被一起放大</b>。
+     * 放到最后等于"开武魂后同样的 99 点收益翻十几倍"，实测 99 级 + 9 枚十万年魂环
+     * 攻击力会从 66,123 变成 157,053。</p>
+     *
+     * <p>非玩家实体（怪物）原样返回，怪物的加点表不存在。</p>
+     */
+    private static float withPoints(Entity entity, String key, float nakedValue) {
+        return AttributePointSpec.applyBonusByKey(key, nakedValue, entity);
+    }
+
     private static float getBoneBonus(Player player, String key) {
         return player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
                 .map(cap -> cap.getBoneOnlyStats().getOrDefault(key, 0f))
                 .orElse(0f);
+    }
+
+    /**
+     * 取"武魂永久基础属性"（关武魂后依然生效的那部分）。
+     *
+     * <p>与魂骨一样按能力取，NPC 没有这个概念 → 返回 0。</p>
+     */
+    private static float getPermanentBonus(Player player, String key) {
+        return player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
+                .map(cap -> cap.getWuhunPermanentStats().getOrDefault(key, 0f))
+                .orElse(0f);
+    }
+
+    /**
+     * NPC 的属性统一入口。
+     *
+     * <p><b>为什么 NPC 要单独一条路</b>：{@code PlayerNpcEntity} 继承的是 {@code PathfinderMob}，
+     * 所以下面 11 个 getter 的 {@code instanceof Mob} 分支全都会命中它 →
+     * 去读 {@link MobAttributeCapability}。但 NPC 的属性其实存在
+     * {@code soulCapability}（{@link PlayerAttributeCapability}，和玩家同一个类）里，
+     * <b>从不写MobAttributeCapability</b> → 战斗里 NPC 的攻防暴闪全读成 0。</p>
+     *
+     * <p>所以这里在Mob 分支<b>之前</b>拦一道：命中 NPC 就直接返回
+     * 「soulCapability 裸值 + 魂骨加成」，武魂加成走原魂环链路自动生效。</p>
+     *
+     * @param key裸值 getter（"gongji" / "fangyu" / …）
+     * @param boneKey 魂骨加成在 {@code boneOnlyStats} 里的键（一般与 key 相同）
+     * @return 命中的话返回 NPC 属性；<b>没命中返回 {@link #NO_NPC}</b> 让调用方继续原逻辑
+     */
+    private static final float NO_NPC = Float.NaN;
+
+    private static float npcAttr(Entity entity, String key,
+                                 java.util.function.Function<PlayerAttributeCapability, Float> rawGetter,
+                                 String boneKey) {
+        if (!(entity instanceof com.TovidY.kunluncontinent.entity.playernpc.PlayerNpcEntity npc)) {
+            return NO_NPC;
+        }
+        PlayerAttributeCapability soul = npc.getSoulCapability();
+        float raw = rawGetter.apply(soul);
+        float bone = soul.getBoneOnlyStats().getOrDefault(boneKey, 0f);
+        return raw + bone;
     }
 
     public static float getShengming(Entity entity) {
@@ -87,20 +143,25 @@ public class ModAttributeAPI {
     }
 
     public static float getMaxshengming(Entity entity) {
+        float npc = npcAttr(entity, "maxshengming",
+                PlayerAttributeCapability::getMaxshengming, "maxshengming");
+        if (!Float.isNaN(npc)) return npc;
+
         float value = 0;
         if (entity instanceof Player player) {
-            value += player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
-                    .map(PlayerAttributeCapability::getMaxshengming).orElse(0f);
+            value += withPoints(entity, "maxshengming", player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
+                    .map(PlayerAttributeCapability::getMaxshengming).orElse(0f));
 
             value += getWuhunBonus(player, MobAttributeCapability::getMaxshengming);
 
             value += getBoneBonus(player, "maxshengming");
+            value += getPermanentBonus(player, "maxshengming");
         }
         if (entity instanceof Mob mob) {
             value += mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY)
                     .map(MobAttributeCapability::getMaxshengming).orElse(0f);
         }
-        
+
         if (entity instanceof LivingEntity livingEntity) {
             Map<MobEffect, MobEffectInstance> activeEffectsMap = livingEntity.getActiveEffectsMap();
             for (Map.Entry<MobEffect, MobEffectInstance> entry : activeEffectsMap.entrySet()) {
@@ -131,13 +192,18 @@ public class ModAttributeAPI {
     }
 
     public static float getGongji(Entity entity) {
+        float npc = npcAttr(entity, "gongji",
+                PlayerAttributeCapability::getGongji, "gongji");
+        if (!Float.isNaN(npc)) return npc;
+
         float value = 0;
         if (entity instanceof Player player) {
-            value += player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
-                    .map(PlayerAttributeCapability::getGongji).orElse(0f);
+            value += withPoints(entity, "gongji", player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
+                    .map(PlayerAttributeCapability::getGongji).orElse(0f));
 
             value += getWuhunBonus(player, MobAttributeCapability::getGongji);
             value += getBoneBonus(player, "gongji");
+            value += getPermanentBonus(player, "gongji");
         }
         if (entity instanceof Mob mob) {
             value += mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY)
@@ -163,17 +229,22 @@ public class ModAttributeAPI {
     }
 
     public static float getFangyu(Entity entity) {
+        float npc = npcAttr(entity, "fangyu",
+                PlayerAttributeCapability::getFangyu, "fangyu");
+        if (!Float.isNaN(npc)) return npc;
+
         if (!(entity instanceof LivingEntity living)) return 0f;
 
         float baseFangyu = 0f;
 
         if (living instanceof Player player) {
-            baseFangyu = player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
+            baseFangyu = withPoints(living, "fangyu", player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
                     .map(PlayerAttributeCapability::getFangyu)
-                    .orElse(0f);
+                    .orElse(0f));
 
             baseFangyu += getWuhunBonus(player, MobAttributeCapability::getFangyu);
             baseFangyu += getBoneBonus(player, "fangyu");
+            baseFangyu += getPermanentBonus(player, "fangyu");
 
         } else if (living instanceof Mob mob) {
             baseFangyu = mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY)
@@ -233,11 +304,16 @@ public class ModAttributeAPI {
     }
 
     public static float getShengminghuifu(Entity entity) {
+        float npc = npcAttr(entity, "shengminghuifu",
+                PlayerAttributeCapability::getShengmingHuifu, "shengminghuifu");
+        if (!Float.isNaN(npc)) return npc;
+
         float value = 0;
         if (entity instanceof Player player) {
-            value += player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
-                    .map(PlayerAttributeCapability::getShengmingHuifu).orElse(0f);
+            value += withPoints(entity, "shengminghuifu", player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
+                    .map(PlayerAttributeCapability::getShengmingHuifu).orElse(0f));
             value += getBoneBonus(player, "shengminghuifu");
+            value += getPermanentBonus(player, "shengminghuifu");
         }
 
         if(entity instanceof LivingEntity livingEntity){
@@ -288,11 +364,16 @@ public class ModAttributeAPI {
     }
 
     public static float getMingzhong(Entity entity) {
+        float npc = npcAttr(entity, "mingzhong",
+                PlayerAttributeCapability::getMingzhong, "mingzhong");
+        if (!Float.isNaN(npc)) return npc;
+
         float value = 0;
         if (entity instanceof Player player) {
-            value += player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
-                    .map(PlayerAttributeCapability::getMingzhong).orElse(0f);
+            value += withPoints(entity, "mingzhong", player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
+                    .map(PlayerAttributeCapability::getMingzhong).orElse(0f));
             value += getBoneBonus(player, "mingzhong");
+            value += getPermanentBonus(player, "mingzhong");
         }
         if (entity instanceof Mob mob) {
             value += mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY)
@@ -311,11 +392,16 @@ public class ModAttributeAPI {
     }
 
     public static float getBaojilv(Entity entity) {
+        float npc = npcAttr(entity, "baojilv",
+                PlayerAttributeCapability::getBaojilv, "baojilv");
+        if (!Float.isNaN(npc)) return npc;
+
         float value = 0;
         if (entity instanceof Player player) {
-            value += player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
-                    .map(PlayerAttributeCapability::getBaojilv).orElse(0f);
+            value += withPoints(entity, "baojilv", player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
+                    .map(PlayerAttributeCapability::getBaojilv).orElse(0f));
             value += getBoneBonus(player, "baojilv");
+            value += getPermanentBonus(player, "baojilv");
         }
         if (entity instanceof Mob mob) {
             value += mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY)
@@ -343,11 +429,16 @@ public class ModAttributeAPI {
     }
 
     public static float getBaojishanghai(Entity entity) {
+        float npc = npcAttr(entity, "baojishanghai",
+                PlayerAttributeCapability::getBaojishanghai, "baojishanghai");
+        if (!Float.isNaN(npc)) return npc;
+
         float value = 0;
         if (entity instanceof Player player) {
-            value += player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
-                    .map(PlayerAttributeCapability::getBaojishanghai).orElse(0f);
+            value += withPoints(entity, "baojishanghai", player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
+                    .map(PlayerAttributeCapability::getBaojishanghai).orElse(0f));
             value += getBoneBonus(player, "baojishanghai");
+            value += getPermanentBonus(player, "baojishanghai");
         }
         if (entity instanceof Mob mob) {
             value += mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY)
@@ -375,11 +466,16 @@ public class ModAttributeAPI {
     }
 
     public static float getXixue(Entity entity) {
+        float npc = npcAttr(entity, "xixue",
+                PlayerAttributeCapability::getXixue, "xixue");
+        if (!Float.isNaN(npc)) return npc;
+
         float value = 0;
         if (entity instanceof Player player) {
-            value += player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
-                    .map(PlayerAttributeCapability::getXixue).orElse(0f);
+            value += withPoints(entity, "xixue", player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
+                    .map(PlayerAttributeCapability::getXixue).orElse(0f));
             value += getBoneBonus(player, "xixue");
+            value += getPermanentBonus(player, "xixue");
         }
         if (entity instanceof Mob mob) {
             value += mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY)
@@ -396,12 +492,10 @@ public class ModAttributeAPI {
         }
 
         if (entity instanceof LivingEntity livingEntity) {
-            // 考虑药水效果
             Map<MobEffect, MobEffectInstance> activeEffectsMap = livingEntity.getActiveEffectsMap();
-            for (Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry : activeEffectsMap.entrySet()) {
-                MobEffect effect = mobEffectMobEffectInstanceEntry.getKey();
-                if (effect instanceof PotionAttribute potionAttr) {
-                    value += potionAttr.getWugong(livingEntity, mobEffectMobEffectInstanceEntry, value);
+            for (Map.Entry<MobEffect, MobEffectInstance> entry : activeEffectsMap.entrySet()) {
+                if (entry.getKey() instanceof PotionAttribute potionAttr) {
+                    value += potionAttr.getXixue(livingEntity, entry, value);
                 }
             }
         }
@@ -409,11 +503,16 @@ public class ModAttributeAPI {
     }
 
     public static float getWuchuan(Entity entity) {
+        float npc = npcAttr(entity, "wuchuan",
+                PlayerAttributeCapability::getWuchuan, "wuchuan");
+        if (!Float.isNaN(npc)) return npc;
+
         float value = 0;
         if (entity instanceof Player player) {
-            value += player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
-                    .map(PlayerAttributeCapability::getWuchuan).orElse(0f);
+            value += withPoints(entity, "wuchuan", player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
+                    .map(PlayerAttributeCapability::getWuchuan).orElse(0f));
             value += getBoneBonus(player, "wuchuan");
+            value += getPermanentBonus(player, "wuchuan");
         }
         if (entity instanceof Mob mob) {
             value += mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY)
@@ -441,11 +540,16 @@ public class ModAttributeAPI {
     }
 
     public static float getShanbi(Entity entity) {
+        float npc = npcAttr(entity, "shanbi",
+                PlayerAttributeCapability::getShanbi, "shanbi");
+        if (!Float.isNaN(npc)) return npc;
+
         float value = 0;
         if (entity instanceof Player player) {
-            value += player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
-                    .map(PlayerAttributeCapability::getShanbi).orElse(0f);
+            value += withPoints(entity, "shanbi", player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
+                    .map(PlayerAttributeCapability::getShanbi).orElse(0f));
             value += getBoneBonus(player, "shanbi");
+            value += getPermanentBonus(player, "shanbi");
         }
         if (entity instanceof Mob mob) {
             value += mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY)
@@ -453,21 +557,27 @@ public class ModAttributeAPI {
         }
         
         if (entity instanceof LivingEntity livingEntity) {
-            // 考虑药水效果
             Map<MobEffect, MobEffectInstance> activeEffectsMap = livingEntity.getActiveEffectsMap();
-            for (Map.Entry<MobEffect, MobEffectInstance> mobEffectMobEffectInstanceEntry : activeEffectsMap.entrySet()) {
-                // 在这里可以添加对自定义药水效果的处理
+            for (Map.Entry<MobEffect, MobEffectInstance> entry : activeEffectsMap.entrySet()) {
+                if (entry.getKey() instanceof PotionAttribute potionAttr) {
+                    value += potionAttr.getShanbi(livingEntity, entry, value);
+                }
             }
         }
         return value;
     }
 
     public static float getKangbao(Entity entity) {
+        float npc = npcAttr(entity, "kangbao",
+                PlayerAttributeCapability::getKangbao, "kangbao");
+        if (!Float.isNaN(npc)) return npc;
+
         float value = 0;
         if (entity instanceof Player player) {
-            value += player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
-                    .map(PlayerAttributeCapability::getKangbao).orElse(0f);
+            value += withPoints(entity, "kangbao", player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
+                    .map(PlayerAttributeCapability::getKangbao).orElse(0f));
             value += getBoneBonus(player, "kangbao");
+            value += getPermanentBonus(player, "kangbao");
         }
         if (entity instanceof Mob mob) {
             value += mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY)

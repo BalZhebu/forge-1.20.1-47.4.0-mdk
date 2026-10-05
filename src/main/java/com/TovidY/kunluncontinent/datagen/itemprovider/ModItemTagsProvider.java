@@ -7,6 +7,7 @@ import com.TovidY.kunluncontinent.item.ModTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
@@ -19,6 +20,7 @@ public class ModItemTagsProvider extends ItemTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider pProvider) {
+
         this.tag(ModTags.Items.DANYAO_DROSS)
                 .add(ModItems.CHUYUAN_DAN.get())
                 .add(ModItems.BAICAOLING_DAN.get())
@@ -34,5 +36,8 @@ public class ModItemTagsProvider extends ItemTagsProvider {
         this.tag(ModTags.Items.ENGRAVING_KNIFE)
                 .add(ModItems.IRON_ENGRAVING_KNIFE.get())
                 .add(ModItems.DIAMOND_ENGRAVING_KNIFE.get());
+
+        this.tag(ItemTags.PLANKS)
+                .add(ModBlocks.DIVINE_REALM_PLANKS.get().asItem());
     }
 }

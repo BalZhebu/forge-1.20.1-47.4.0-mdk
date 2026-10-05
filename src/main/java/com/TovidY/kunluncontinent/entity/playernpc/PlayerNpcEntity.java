@@ -1,9 +1,11 @@
 package com.TovidY.kunluncontinent.entity.playernpc;
 
+import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.item.ModItems;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.server.S2COpenNpcDialogPacket;
+import com.TovidY.kunluncontinent.screen.playernpc.NpcTradeCatalog;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -16,7 +18,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -33,7 +34,6 @@ import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.core.BlockPos;
 
 import javax.annotation.Nullable;
@@ -42,6 +42,17 @@ public class PlayerNpcEntity extends PathfinderMob implements Merchant {
 
     private boolean isSparring = false;                  // 是否处于”切磋”状态
     @Nullable private ServerPlayer sparringPlayer;       // 记录正在切磋的玩家
+
+    // ==================== 魂骨带来的战斗属性 ====================
+    // 本项目的防御/暴击/闪避走自定义公式（CombatEventHandler + ModAttributeAPI），
+    // 没有原版 Attributes 实例可写，所以存字段供战斗判定读取。
+    private float boneFangyu = 0f;
+    private float boneBaojilv = 0f;
+    private float boneBaojishanghai = 0f;
+    private float boneShanbi = 0f;
+    private float boneMingzhong = 0f;
+    private float boneWuchuan = 0f;
+    private float boneKangbao = 0f;
     @Nullable private ServerPlayer tradePlayer;         // 当前交易玩家
     private MerchantOffers offers;                      // 交易配方表
     private boolean traded = false;                      // 是否与玩家完成过交易
@@ -87,6 +98,8 @@ public class PlayerNpcEntity extends PathfinderMob implements Merchant {
             npcLevel = 1 + this.random.nextInt(99);
         }
         NpcSoulGenerator.initNpcSoulData(this.soulCapability, npcLevel);
+        // 极低概率给这只 NPC 装上魂骨（等级越高越可能，且 95 级是十万年硬门槛）
+        NpcBoneGenerator.tryEquipBone(this, npcLevel);
         this.recalculateNpcStats();
         return data;
     }
@@ -113,18 +126,33 @@ public class PlayerNpcEntity extends PathfinderMob implements Merchant {
     }
 
     /**
-     * 汇总 NPC 魂环属性并更新至实体 Attributes
+     * 汇总 NPC 魂环 + 魂骨属性并更新至实体 Attributes
+     *
+     * <p><b>魂骨为什么能生效</b>：NPC 的 {@code soulCapability} 就是
+     * {@link PlayerAttributeCapability}，和玩家同一个类 —— 天然带 7 个魂骨槽。
+     * {@link NpcBoneGenerator} 往槽里塞骨后调
+     * {@code collectBoneAttributes} 填好 {@code boneOnlyStats}，
+     * 这里再把魂骨加成加上就生效了（与玩家 {@code getBoneBonus} 同口径）。</p>
      */
     public void recalculateNpcStats() {
         if (this.soulCapability == null) return;
 
-        double totalHp = this.soulCapability.getMaxshengming();
-        double totalAtk = this.soulCapability.getGongji();
+        // 裸值
+        float baseHp = this.soulCapability.getMaxshengming();
+        float baseAtk = this.soulCapability.getGongji();
+
+        // 魂骨加成（boneOnlyStats 由 NPC 装骨时填好）
+        float boneHp = this.soulCapability.getBoneOnlyStats().getOrDefault("maxshengming", 0f);
+        float boneAtk = this.soulCapability.getBoneOnlyStats().getOrDefault("gongji", 0f);
+
+        double totalHp = baseHp + boneHp;
+        double totalAtk = baseAtk + boneAtk;
 
         var maxHpAttr = this.getAttribute(Attributes.MAX_HEALTH);
         var attackAttr = this.getAttribute(Attributes.ATTACK_DAMAGE);
 
         if (maxHpAttr != null && totalHp > 0) {
+            // 原版 MAX_HEALTH 上限 1024，NPC 属性可能远超它
             maxHpAttr.setBaseValue(totalHp);
             this.setHealth((float) totalHp);
         }
@@ -132,6 +160,43 @@ public class PlayerNpcEntity extends PathfinderMob implements Merchant {
         if (attackAttr != null && totalAtk > 0) {
             attackAttr.setBaseValue(totalAtk);
         }
+
+        // 防御/闪避等战斗属性走原版 Attributes 实例，
+        // 这样 CombatEventHandler 与原版伤害系统都能正确读到
+        applyVanillaAttributes();
+    }
+
+    /**
+     * 把魂骨里的防御/暴击/闪避等属性记下来。
+     *
+     * <p><b>真正的读取在 {@code ModAttributeAPI.npcAttr}</b> —— 它直接从
+     * {@code soulCapability} + {@code boneOnlyStats} 取，所以这些属性在战斗里已经生效。
+     * 这里存的字段只是给 NPC 面板 / 调试指令快速查看用的快照。</p>
+     */
+    private void applyVanillaAttributes() {
+        var stats = this.soulCapability.getBoneOnlyStats();
+        this.boneFangyu = stats.getOrDefault("fangyu", 0f);
+        this.boneBaojilv = stats.getOrDefault("baojilv", 0f);
+        this.boneBaojishanghai = stats.getOrDefault("baojishanghai", 0f);
+        this.boneShanbi = stats.getOrDefault("shanbi", 0f);
+        this.boneMingzhong = stats.getOrDefault("mingzhong", 0f);
+        this.boneWuchuan = stats.getOrDefault("wuchuan", 0f);
+        this.boneKangbao = stats.getOrDefault("kangbao", 0f);
+    }
+
+    /** 魂骨带来的物防（供战斗判定读取）。 */
+    public float getBoneFangyu() {
+        return boneFangyu;
+    }
+
+    /** 魂骨带来的暴击率（供战斗判定读取）。 */
+    public float getBoneBaojilv() {
+        return boneBaojilv;
+    }
+
+    /** 魂骨带来的暴击伤害（供战斗判定读取）。 */
+    public float getBoneBaojishanghai() {
+        return boneBaojishanghai;
     }
 
     // ------------------- 切磋核心机制 -------------------
@@ -177,7 +242,11 @@ public class PlayerNpcEntity extends PathfinderMob implements Merchant {
     }
 
     /**
-     * 防死兜底（拦截致死伤害）
+     * 死前结算：<b>玩家击杀</b>时才触发亡语 + 魂骨掉落。
+     *
+     * <p>三条硬性条件都在这里把关：
+     * 击杀者必须是 {@link ServerPlayer}、NPC 必须带魂骨、每只只掉一次。
+     * 非玩家击杀（摔死/岩浆/其它 NPC）一律不触发——亡语和魂骨都是"给玩家的战利品"。</p>
      */
     @Override
     public void die(DamageSource cause) {
@@ -188,7 +257,57 @@ public class PlayerNpcEntity extends PathfinderMob implements Merchant {
                 return;
             }
         }
+
+        // ==================== 玩家击杀专属结算 ====================
+        if (!this.level().isClientSide && this.level() instanceof ServerLevel serverLevel) {
+            ServerPlayer killer = resolveKiller(cause);
+            if (killer != null) {
+                // ① 亡语（一定播）
+                NpcDeathWhisper.speak(this, killer);
+
+                // ② 魂骨掉落（仅当这只 NPC 带魂骨，一次掉出全部）
+                if (NpcBoneGenerator.hasBone(this)) {
+                    int n = NpcBoneGenerator.tryDropBone(this);
+                    if (n > 0) {
+                        killer.sendSystemMessage(Component.literal(
+                                "§6【魂骨】§f从 §e" + cleanDisplayName() + " §f身上掉出了 §b"
+                                        + n + " §f枚魂骨！"));
+                    }
+                }
+            }
+        }
+
         super.die(cause);
+    }
+
+    /**
+     * 解析击杀者：优先取直接攻击者，其次取最后被谁打过（处理玩家技能/召唤物间接击杀）。
+     *
+     * @return 玩家击杀者；非玩家击杀返回 {@code null}
+     */
+    private ServerPlayer resolveKiller(DamageSource cause) {
+        Entity direct = cause.getDirectEntity();
+        if (direct instanceof ServerPlayer p) return p;
+
+        Entity attacker = cause.getEntity();
+        if (attacker instanceof ServerPlayer p) return p;
+
+        // 技能/投射物间接击杀：退回到最近的目标玩家
+        LivingEntity last = getLastHurtByMob();
+        if (last instanceof ServerPlayer p) return p;
+        // 召唤物/坐骑间接击杀：看它的"主人"
+        if (last != null) {
+            Entity owner = last.getVehicle();
+            if (owner instanceof ServerPlayer p) return p;
+        }
+        return null;
+    }
+
+    /** 显示名的前半截（去掉 "-----属性" 后缀）。 */
+    private String cleanDisplayName() {
+        String full = this.getName().getString();
+        int idx = full.indexOf("-----");
+        return idx > 0 ? full.substring(0, idx) : full;
     }
 
     /**
@@ -410,25 +529,21 @@ public class PlayerNpcEntity extends PathfinderMob implements Merchant {
 
         if (compound.contains("Offers")) {
             this.offers = new MerchantOffers(compound.getCompound("Offers"));
+            // 旧存档的交易配方里，结果物品还挂着废弃的品级 NBT，会让买到的物品无法堆叠。
+            // 品级染色现在由 NpcTradeCatalog 反查，不再需要这个标签。
+            int cleaned = NpcTradeCatalog.stripLegacyQualityTag(this.offers);
+            if (cleaned > 0) {
+                KlMain.LOGGER.info("[昆仑大陆] 清理 NPC {} 笔旧交易上的废弃品级标签", cleaned);
+            }
         }
     }
 
+    /**
+     * 读档后重算属性。<b>与 {@link #recalculateNpcStats()} 是同一份逻辑</b>，
+     * 读档时魂骨槽会从 NBT 恢复，必须重跑一次汇总，否则魂骨加成会失效。
+     */
     public void refreshNpcAttributes() {
-        if (this.soulCapability == null) return;
-        double totalHp = this.soulCapability.getMaxshengming();
-        double totalAtk = this.soulCapability.getGongji();
-
-        var hpAttr = this.getAttribute(Attributes.MAX_HEALTH);
-        var atkAttr = this.getAttribute(Attributes.ATTACK_DAMAGE);
-
-        if (hpAttr != null && totalHp > 0) {
-            hpAttr.setBaseValue(totalHp);
-            this.setHealth((float) totalHp);
-        }
-
-        if (atkAttr != null && totalAtk > 0) {
-            atkAttr.setBaseValue(totalAtk);
-        }
+        recalculateNpcStats();
     }
 
     @Nullable

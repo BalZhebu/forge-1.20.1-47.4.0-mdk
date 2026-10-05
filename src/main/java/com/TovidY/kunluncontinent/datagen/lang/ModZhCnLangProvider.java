@@ -37,6 +37,11 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModBlocks.COLD_HEARTED_STEEL_BLOCK.get(), "§9寒心钢块");
         add(ModBlocks.RINSEI_BLOCK.get(), "§b凛晶块");
 
+        add("death.attack.kunluncontinent.fly_crash_1", "墙：%s 就这？");
+        add("death.attack.kunluncontinent.fly_crash_2", "%s证明了牛顿第一定律。");
+        add("death.attack.kunluncontinent.fly_crash_3", "%s的墓碑上刻着：他飞得很快，死得更快。");
+        add("death.attack.kunluncontinent.fly_crash_4", "%s 超速飞行以为自己是大运，没想到是块豆腐。");
+
         //别忘了写分配技能的类
         //技能代码
         add(ModItems.SKILL_POHUN_1.get(), "§c《破魂枪》第一魂技[破魂枪]");
@@ -69,6 +74,12 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.SKILL_LEIJINHU_8.get(), "§c《裂金虎》第八魂技[裂天]");
         add(ModItems.SKILL_LEIJINHU_9.get(), "§c《裂金虎》第九魂技[猛虎破界]");
 
+        //变体魂技：与横爪同属第一魂技槽位，获得时随机五选一
+        add(ModItems.SKILL_LEIJINHU_1B.get(), "§c《裂金虎》第一魂技[金牙连斩]");
+        add(ModItems.SKILL_LEIJINHU_1C.get(), "§c《裂金虎》第一魂技[虎跃]");
+        add(ModItems.SKILL_LEIJINHU_1D.get(), "§c《裂金虎》第一魂技[噬金]");
+        add(ModItems.SKILL_LEIJINHU_1E.get(), "§c《裂金虎》第一魂技[虎爪裂地]");
+
         add(ModItems.SKILL_PANSHIJUYUAN_1.get(), "§c《磐石巨猿》第一魂技[重击]");
         add(ModItems.SKILL_PANSHIJUYUAN_2.get(), "§c《磐石巨猿》第二魂技[石肤]");
         add(ModItems.SKILL_PANSHIJUYUAN_3.get(), "§c《磐石巨猿》第三魂技[震地]");
@@ -78,6 +89,12 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.SKILL_PANSHIJUYUAN_7.get(), "§c《磐石巨猿》第七魂技[武魂真身]");
         add(ModItems.SKILL_PANSHIJUYUAN_8.get(), "§c《磐石巨猿》第八魂技[撼岳]");
         add(ModItems.SKILL_PANSHIJUYUAN_9.get(), "§c《磐石巨猿》第九魂技[不周倾]");
+
+        //变体魂技：与重击同属第一魂技槽位，获得时随机五选一
+        add(ModItems.SKILL_PANSHIJUYUAN_1B.get(), "§c《磐石巨猿》第一魂技[崩拳]");
+        add(ModItems.SKILL_PANSHIJUYUAN_1C.get(), "§c《磐石巨猿》第一魂技[石刺]");
+        add(ModItems.SKILL_PANSHIJUYUAN_1D.get(), "§c《磐石巨猿》第一魂技[石波]");
+        add(ModItems.SKILL_PANSHIJUYUAN_1E.get(), "§c《磐石巨猿》第一魂技[磐石之怒]");
 
         add("无技能","暂无技能描述");
 
@@ -102,6 +119,10 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("skill.bahuangji.nine.description","消耗%s点精神力，释放八荒寂灭：对玩家为中心，向外扩散金色光环，光环所过之处生物受到高额伤害的同时获得5秒缓慢，共会发射10道光环，每一个光环释放时间间隔1.5秒，光环最远可达20格以外");
 
         add("skill.leijinhu.one.description", "消耗%s点精神力，释放横爪，可击打范围4格内的敌人");
+        add("skill.leijinhu.one.b.description", "消耗%s点精神力，金牙连斩：对面前最近的敌人连续撕抓三下，每一下都造成伤害");
+        add("skill.leijinhu.one.c.description", "消耗%s点精神力，虎跃：向视线方向猛扑，对沿途敌人造成伤害并击退");
+        add("skill.leijinhu.one.d.description", "消耗%s点精神力，噬金：扑咬最近的敌人造成伤害，并按伤害的一半回复自身生命");
+        add("skill.leijinhu.one.e.description", "消耗%s点精神力，虎爪裂地：向面前连续撕出三道裂地爪痕，对正面敌人造成伤害并短暂减速");
         add("skill.liejinhu.two.description","消耗%s点精神力，释放虎啸：释放技能时对距离玩家越近的敌人造成虚弱和缓慢效果，对5格以外的敌人造成缓慢效果");
         add("skill.liejinhu.three.description","消耗%s点精神力，释放裂石：对范围敌人造成巨额伤害并附加缓慢");
         add("skill.leijinhu.four.description", "消耗%s点精神力，释放碎金：对面前3*3*3范围内的敌人造成大量伤害，可以破坏硬度较低的方块");
@@ -112,6 +133,10 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("skill.leijinhu.nine.description","消耗%s点精神力，释放猛虎破界：对10格内敌人造成巨额伤害的同时附加缓慢，虚弱，反胃时长15秒，并在攻击到的实体处破碎虚空，身处虚空的生物持续受到伤害");
 
         add("skill.panshijuyuan.one.description", "消耗%s点精神力，释放重击：可击打范围5格内的敌人并附加缓慢效果");
+        add("skill.panshijuyuan.one.b.description", "消耗%s点精神力，崩拳：对面前最近的敌人打出一记重拳，造成高额伤害并猛击退");
+        add("skill.panshijuyuan.one.c.description", "消耗%s点精神力，石刺：在面前唤出成排石刺，对直线上的敌人造成伤害并大幅减速");
+        add("skill.panshijuyuan.one.d.description", "消耗%s点精神力，石波：向面前推出一道石浪，对长7格内的敌人造成伤害并击退");
+        add("skill.panshijuyuan.one.e.description", "消耗%s点精神力，磐石之怒：怒吼获得力量2与抗性1，持续15秒");
         add("skill.panshijuyuan.two.description","消耗%s点精神力，释放石肤：对自身附加30%%的防御力");
         add("skill.panshijuyuan.three.description","消耗%s点精神力，释放震地：对10格内敌人造成巨额伤害");
         add("skill.panshijuyuan.four.description", "消耗%s点精神力，释放搬山：给自身附加80%%的攻击力");
@@ -159,6 +184,25 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.STRONG_POTION.get(),"§e《强魄》");
         add(ModItems.EYE_TRANSFORMATION.get(), "§5重修之眼");
         add(ModItems.EXTREME_COLD.get(),"§b雪晶");
+
+        add(ModBlocks.DIVINE_REALM_LOG.get(), "§b霜樱原木");
+        add(ModBlocks.DIVINE_REALM_PLANKS.get(), "§b霜樱木板");
+        add(ModBlocks.DIVINE_REALM_LEAVES.get(), "§b霜樱树叶");
+        add(ModBlocks.DIVINE_REALM_SAPLING.get(), "§b霜樱树苗");
+
+        add("item.red_spider_lily_potion.tooltip","拥有此药水buff可在重修台右键进行转世重修");
+
+        add(ModItems.RESET_SCROLL.get(),"§6重置卷轴");
+        add("item.reset_scroll.tooltip","可用来重置技能点");
+        add("item.reset_scroll.tooltip1","右键使用或打开点数面板使用");
+        add("item.reset_scroll.tooltip2","和NPC交易可获得");
+
+        add("item_deep_sea_offerings_tooltip","对海底祭坛右键即可召唤魔鲸");
+        add("item.eye_deep_sea.tooltip","右键丢出跟着走可找到海底祭坛");
+        add("item.eye_transformation.tooltip","右键丢出跟着走可找到重修遗迹");
+        add("item.eye_transformation.tooltip1","重修台可用来转世重修");
+        add("item.demon_whale_medal.tooltip","用于神考提交");
+        add("tooltip.kunluncontinent.thunder_protection1","可免疫维度的闪电攻击");
 
         add("item.strong_potion.tooltip","拥有此BUFF时");
         add("item.strong_potion.tooltip1","可直接吸收魂核中的能量");
@@ -208,6 +252,8 @@ public class ModZhCnLangProvider extends LanguageProvider {
 
         add("tooltip.kunluncontinent.bahuangji","拿在副手或主手上时每3秒扣除1点精神力 \n持有时玩家最终攻击力增加1.3% \n增加的百分比根据玩家等级变化 \n最高增幅5%");
         add("tooltip.kunluncontinent.pohunqiang","拿在副手或主手上时每3秒扣除1点精神力 \n持有时玩家最终攻击力增加1.25% \n增加的百分比根据玩家等级变化 \n最高增幅3%");
+
+        add(ModItems.POINT_BUTTON.get(), "属性点");
 
         //成就类
         add("advancements.kunluncontinent.root.title", "初入世界");

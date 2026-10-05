@@ -109,6 +109,32 @@ public class MobAttributeCapability extends CapabilityAttributeBase implements I
         this.setWuchuan(l * weakenFactor);
     }
 
+    /**
+     * 全属性等比放大（挑战塔层数倍率等场景）。
+     *
+     * <p>把 {@link #applyGrowth} 生成的全部 11 项属性（物攻/物防/上限血量/当前血量/
+     * 暴击率/暴击伤害/抗暴/吸血/命中/闪避/物穿）整体乘以 {@code multiplier}。</p>
+     *
+     * <p><b>调用时机约束：</b>必须在 {@code initNianxian} 之后、
+     * {@code MobTempAttributeManager} / 词条加成（壁垒、浑厚）之前调用——
+     * 词条按放大后的基数再叠加，保证"本层全属性×N"的语义一致。
+     * 另外此时临时物攻加成（tempWugongModifier）必须仍为 0。</p>
+     */
+    public void applyAttributeMultiplier(float multiplier) {
+        if (multiplier <= 0f || multiplier == 1f) return;
+        this.setWugong(this.getGongji() * multiplier);
+        this.setWufang(this.getFangyu() * multiplier);
+        this.setMaxshengming(this.getMaxshengming() * multiplier);
+        this.setShengming(this.getShengming() * multiplier);
+        this.setBaojilv(this.getBaojilv() * multiplier);
+        this.setBaojishanghai(this.getBaojishanghai() * multiplier);
+        this.setKangbao(this.getKangbao() * multiplier);
+        this.setXixue(this.getXixue() * multiplier);
+        this.setMingzhong(this.getMingzhong() * multiplier);
+        this.setShanbi(this.getShanbi() * multiplier);
+        this.setWuchuan(this.getWuchuan() * multiplier);
+    }
+
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag nbt = super.serializeNBT();
@@ -116,6 +142,7 @@ public class MobAttributeCapability extends CapabilityAttributeBase implements I
         nbt.putBoolean("shenci", shenci);
         nbt.putFloat("tempWugongModifier", tempWugongModifier);
         nbt.putBoolean("isWeakened", isWeakened); // 保存削弱标记
+        nbt.putString("towerSkillsTag", towerSkillsTag); // 挑战塔词条标签（同步给客户端画词条行）
         return nbt;
     }
 
@@ -126,7 +153,14 @@ public class MobAttributeCapability extends CapabilityAttributeBase implements I
         if (nbt.contains("shenci")) this.shenci = nbt.getBoolean("shenci");
         if (nbt.contains("tempWugongModifier")) this.tempWugongModifier = nbt.getFloat("tempWugongModifier");
         if (nbt.contains("isWeakened")) this.isWeakened = nbt.getBoolean("isWeakened"); // 读取削弱标记
+        this.towerSkillsTag = nbt.getString("towerSkillsTag");
     }
+
+    /** 挑战塔词条标签（仅用于客户端名牌第二行显示，空串 = 无词条）。 */
+    private String towerSkillsTag = "";
+
+    public String getTowerSkillsTag() { return towerSkillsTag; }
+    public void setTowerSkillsTag(String tag) { this.towerSkillsTag = tag == null ? "" : tag; }
 
     // Getter and Setter
     public boolean isWeakened() { return isWeakened; }

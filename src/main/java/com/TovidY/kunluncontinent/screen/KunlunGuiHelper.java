@@ -13,10 +13,6 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class KunlunGuiHelper {
-
-    // -------------------------------------------------------------------------
-    //  大数值防超出格式化
-    // -------------------------------------------------------------------------
     public static String formatLargeNumber(double value) {
         if (value < 100000) {
             if (value == (long) value) return String.format("%d", (long) value);
@@ -50,13 +46,8 @@ public class KunlunGuiHelper {
         gui.fill(x + width - 2, y + height - corner, x + width + 1, y + height + 1, 0xFFE6B800);
     }
 
-    // -------------------------------------------------------------------------
-    //  通用手绘槽位衬底渲染（18x18 标准槽位）
-    // -------------------------------------------------------------------------
     public static void renderSlotBackground(GuiGraphics gui, int slotX, int slotY, boolean isHighlight) {
-        // 凹陷暗底
         gui.fill(slotX, slotY, slotX + 18, slotY + 18, 0xFF0D1117);
-        // 边框（高亮/普通）
         int borderColor = isHighlight ? 0xFFE6B800 : 0xFF374151;
         gui.renderOutline(slotX, slotY, 18, 18, borderColor);
     }
@@ -64,28 +55,22 @@ public class KunlunGuiHelper {
     public static class HandDrawnEditBox extends EditBox {
         public HandDrawnEditBox(Font font, int x, int y, int width, int height, Component message) {
             super(font, x, y, width, height, message);
-            this.setBordered(false); // 禁用原生白色平庸边框，改用下方手绘方法
+            this.setBordered(false);
         }
 
         @Override
         public void renderWidget(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
             if (!this.isVisible()) return;
 
-            // 暗黑衬底
             gui.fill(this.getX() - 2, this.getY() - 2, this.getX() + this.width + 2, this.getY() + this.height + 2, 0xFF0B0F17);
 
-            // 聚焦/未聚焦边框
             int borderColor = this.isFocused() ? 0xFFE6B800 : 0xFF4B5563;
             gui.renderOutline(this.getX() - 2, this.getY() - 2, this.width + 4, this.height + 4, borderColor);
 
-            // 调用父类方法渲染输入的文本与光标
             super.renderWidget(gui, mouseX, mouseY, partialTick);
         }
     }
 
-    // -------------------------------------------------------------------------
-    //  手绘功能按钮类
-    // -------------------------------------------------------------------------
     public static class HandDrawnButton extends AbstractButton {
         private final Consumer<HandDrawnButton> onPressAction;
         private final Supplier<List<Component>> tooltipSupplier;
@@ -140,9 +125,6 @@ public class KunlunGuiHelper {
         protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {}
     }
 
-    // -------------------------------------------------------------------------
-    //  手绘顶部切换页签按钮 (TabButton)
-    // -------------------------------------------------------------------------
     public static class KunlunTabButton extends AbstractButton {
         private final ItemStack iconStack;
         private final boolean isSelected;

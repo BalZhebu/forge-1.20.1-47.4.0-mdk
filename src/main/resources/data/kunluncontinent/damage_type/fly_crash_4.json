@@ -1,0 +1,7 @@
+{
+  "message_id": "kunluncontinent.fly_crash_4",
+  "scaling": "never",
+  "exhaustion": 0.1,
+  "effects": "hurt",
+  "death_message_type": "default"
+}

@@ -31,6 +31,18 @@ public class ModItemModelsProvider extends ItemModelProvider {
 
         handheldItem(ModItems.INSTANT_KILL_SWORD.get());
 
+        //神界树苗：物品模型直接引用方块模型（原版树苗也是这样）
+        withExistingParent("divine_realm_sapling",
+                new ResourceLocation(KlMain.MOD_ID, "block/divine_realm_sapling"));
+
+        // ⭐⭐ 神界树叶：**必须单独注册物品模型**，否则手持/掉落形态是紫黑缺失模型。
+        // 原因：ModBlockStateProvider 里树叶为了覆盖 28 种状态（distance/persistent/waterlogged）
+        // 改用了 getVariantBuilder + partialState 循环，**丢掉了 simpleBlockWithItem
+        // 附带的"自动生成 item/xxx.json"这一步**。方块正常但物品紫黑就是这个原因。
+        // 原版树叶的物品模型同样是直接引用方块模型。
+        withExistingParent("divine_realm_leaves",
+                new ResourceLocation(KlMain.MOD_ID, "block/divine_realm_leaves"));
+
         //药水
         basicItem(ModItems.RED_SPIDER_LILY_POTION.get());
         basicItem(ModItems.STRONG_POTION.get());
@@ -73,6 +85,17 @@ public class ModItemModelsProvider extends ItemModelProvider {
         //魂技类
         for (RegistryObject<? extends Item> itemRegistry : ModItems.HUNJILIST) {
             basicItem(itemRegistry.get());
+        }
+
+        //变体魂技：图标直接复用同槽位既有魂技的贴图 —— 一个物品图标对应多条魂技，不新增美术资源
+        for (ModItems.SkillVariantEntry entry : ModItems.SKILL_VARIANTS) {
+            ResourceLocation id = ForgeRegistries.ITEMS.getKey(entry.skill().get());
+            ResourceLocation source = ForgeRegistries.ITEMS.getKey(entry.iconSource().get());
+            if (id == null || source == null) {
+                throw new IllegalArgumentException("Skill variant not registered: " + entry);
+            }
+            withExistingParent(id.getPath(), new ResourceLocation("item/generated"))
+                    .texture("layer0", new ResourceLocation(KlMain.MOD_ID, "item/" + source.getPath()));
         }
 
         //按钮

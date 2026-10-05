@@ -1,8 +1,10 @@
 package com.TovidY.kunluncontinent.event.client;
 
 import com.TovidY.kunluncontinent.KlMain;
+import com.TovidY.kunluncontinent.capability.playerattributes.AttributePoints;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerUpgradeSystem;
+import com.TovidY.kunluncontinent.capability.playerattributes.WuhunPermanent;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.client.PacketSyncGodData;
 import com.TovidY.kunluncontinent.network.server.SPacketPlayerAttribute;
@@ -41,6 +43,12 @@ public class PlayerUpgradeEventListener {
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (!event.getEntity().level().isClientSide && event.getEntity() instanceof ServerPlayer serverPlayer) {
+            serverPlayer.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
+                    .ifPresent(cap -> {
+                        AttributePoints.grantOnLogin(serverPlayer, cap);
+                        // 清掉"本 tick 已结算"标记（重登后要能重新抽成）
+                        WuhunPermanent.clearSettledFlag(cap);
+                    });
             PlayerUpgradeSystem.triggerUpgradeCheck(serverPlayer);
             syncAllPlayerData(serverPlayer);
         }

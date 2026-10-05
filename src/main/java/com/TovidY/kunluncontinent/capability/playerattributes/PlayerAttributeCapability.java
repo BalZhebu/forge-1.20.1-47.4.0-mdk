@@ -94,6 +94,18 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
     private int xiantianTalent = 0;
 
     private int damageDisplayMode = 0;
+    /** 魂环开启动画样式：0 逐环展开 / 1 天降落位 / 2 魂环升腾。 */
+    private int hunhuanOpenAnim = 0;
+    /** 飞行速度档位：0  slowest ~ {@link FlySpeedTuning#MAX_LEVEL} 最快。 */
+    private int flySpeedLevel = 0;
+    private int attributePoints = 0;
+    /** 已发放点数对应的等级，老存档补发用，避免重复发。 */
+    private int pointsGrantedLevel = -1;
+    /**
+     * 11 条可加点属性各自已加的点数，下标 = {@link AttributePointSpec#ordinal()}。
+     * 长度固定，序列化时按长度写，读档时按当前枚举长度截断/补 0（加属性不用改存档格式）。
+     */
+    private int[] allocatedPoints = new int[AttributePointSpec.values().length];
     private long configFlags = 0xFFL;
 
     private int zhuanshengshu = 0;
@@ -109,6 +121,9 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
 
     private final Map<String, Float> boneOnlyStats = new HashMap<>();
     public Map<String, Float> getBoneOnlyStats() { return boneOnlyStats; }
+
+    private final Map<String, Float> wuhunPermanentStats = new HashMap<>();
+    public Map<String, Float> getWuhunPermanentStats() { return wuhunPermanentStats; }
 
 
     public PlayerAttributeCapability(){
@@ -156,6 +171,11 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         tag.putInt("Hunhuankuaiguan", hunhuankuaiguan);
 
         tag.putInt("DamageDisplayMode", damageDisplayMode);
+        tag.putInt("HunhuanOpenAnim", hunhuanOpenAnim);
+        tag.putInt("FlySpeedLevel", flySpeedLevel);
+        tag.putInt("AttributePoints", attributePoints);
+        tag.putInt("PointsGrantedLevel", pointsGrantedLevel);
+        tag.putIntArray("AllocatedPoints", allocatedPoints);
         tag.putLong("configFlags", configFlags);
 
         tag.putInt("UiOffsetY", this.uiOffsetY);
@@ -208,6 +228,12 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         }
         tag.put("BoneOnlyStats", boneTag);
 
+        CompoundTag permanentTag = new CompoundTag();
+        for (Map.Entry<String, Float> entry : wuhunPermanentStats.entrySet()) {
+            permanentTag.putFloat(entry.getKey(), entry.getValue());
+        }
+        tag.put("WuhunPermanentStats", permanentTag);
+
         CompoundTag allSkillsTag = new CompoundTag();
         for (Map.Entry<String, BaseSkillItem[]> entry : wuhunSkillsMap.entrySet()) {
             CompoundTag singleWuhunTag = new CompoundTag();
@@ -251,6 +277,16 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         this.hunhuankuaiguan = nbt.getInt("Hunhuankuaiguan");
 
         this.damageDisplayMode = nbt.getInt("DamageDisplayMode");
+        setHunhuanOpenAnim(nbt.getInt("HunhuanOpenAnim"));
+        setFlySpeedLevel(nbt.getInt("FlySpeedLevel"));
+        this.attributePoints = Math.max(0, nbt.getInt("AttributePoints"));
+        this.pointsGrantedLevel = nbt.contains("PointsGrantedLevel")
+                ? nbt.getInt("PointsGrantedLevel") : Integer.MIN_VALUE;
+
+        // 已加点：按当前枚举长度裁剪 / 补 0，加属性不用改存档格式
+        int[] saved = nbt.getIntArray("AllocatedPoints");
+        this.allocatedPoints = new int[AttributePointSpec.values().length];
+        System.arraycopy(saved, 0, this.allocatedPoints, 0, Math.min(saved.length, this.allocatedPoints.length));
 
         if (nbt.contains("UiOffsetY")) {
             this.uiOffsetY = nbt.getInt("UiOffsetY");
@@ -347,6 +383,20 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
                 this.boneOnlyStats.put(key, boneTag.getFloat(key));
             }
         }
+
+        // 旧存档没有这个 tag，wuhunPermanentStats 保持空即可（不会白给属性）
+        if (nbt.contains("WuhunPermanentStats")) {
+            CompoundTag permanentTag = nbt.getCompound("WuhunPermanentStats");
+            this.wuhunPermanentStats.clear();
+            for (String key : permanentTag.getAllKeys()) {
+                float v = permanentTag.getFloat(key);
+                // ⚠️ 读档做一次"净化"：非正数/非有限值直接丢弃，
+                // 防止存档被外部改坏后导致属性异常膨胀
+                if (Float.isFinite(v) && v > 0f) {
+                    this.wuhunPermanentStats.put(key, v);
+                }
+            }
+        }
     }
 
     private void loadWuhunData(CompoundTag nbt, String name) {
@@ -415,21 +465,7 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
     }
 
     public void refreshBoneAttributes(Player player) {
-        this.boneOnlyStats.clear();
-        for (int i = 0; i < 7; i++) {
-            ItemStack stack = hunguInventory.getStackInSlot(i);
-            if (!stack.isEmpty()) {
-                stack.getCapability(ItemAttributeCapabilityProvider.CAPABILITY).ifPresent(attr -> {
-                    List<String> active = attr.getActiveAttributes();
-                    for (String key : active) {
-                        float val = getAttrValueByKey(attr, key);
-                        if (val > 0) {
-                            boneOnlyStats.put(key, boneOnlyStats.getOrDefault(key, 0f) + val);
-                        }
-                    }
-                });
-            }
-        }
+        collectBoneAttributes(this);
         SynsAPI.synsPlayerAttribute(player);
     }
 
@@ -484,7 +520,11 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         return !godName.isEmpty() && currentStage >= 1 && currentStage <= 9;
     }
 
-    private float getAttrValueByKey(ItemAttributeCapability attr, String key) {
+    /**
+     * 按 key 从魂骨属性里取值。玩家和 <b>NPC</b> 共用（NPC 的魂骨槽也是本类的
+     * {@code hunguInventory}），两边口径必须一致，别各写一份switch。
+     */
+    public static float getAttrValueByKey(ItemAttributeCapability attr, String key) {
         return switch (key) {
             case "gongji" -> attr.getGongji();
             case "fangyu" -> attr.getFangyu();
@@ -499,6 +539,28 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
             case "shengminghuifu" -> attr.getShengminghuifu();
             default -> 0f;
         };
+    }
+
+    /**
+     * 遍历 7 个魂骨槽，把词条属性累加进 {@code boneOnlyStats}。<b>玩家与 NPC 共用</b>。
+     *
+     * <p>只做"清空 + 遍历累加"，<b>不负责发同步包</b>——玩家侧的
+     * {@link #refreshBoneAttributes(Player)} 会在后面补发，NPC 不需要发包。</p>
+     */
+    public static void collectBoneAttributes(PlayerAttributeCapability cap) {
+        cap.boneOnlyStats.clear();
+        for (int i = 0; i < 7; i++) {
+            ItemStack stack = cap.hunguInventory.getStackInSlot(i);
+            if (stack.isEmpty()) continue;
+            stack.getCapability(ItemAttributeCapabilityProvider.CAPABILITY).ifPresent(attr -> {
+                for (String key : attr.getActiveAttributes()) {
+                    float val = getAttrValueByKey(attr, key);
+                    if (val > 0) {
+                        cap.boneOnlyStats.merge(key, val, Float::sum);
+                    }
+                }
+            });
+        }
     }
 
     public ItemStackHandler getHunguInventory() {
@@ -541,6 +603,70 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
 
     public int getDamageDisplayMode() { return damageDisplayMode; }
     public void setDamageDisplayMode(int mode) { this.damageDisplayMode = mode; }
+
+    /** 魂环开启动画的样式数量：0 逐环展开 / 1 天降落位 / 2 魂环升腾。 */
+    public static final int HUNHUAN_ANIM_COUNT = 3;
+
+    public int getHunhuanOpenAnim() { return hunhuanOpenAnim; }
+
+    public void setHunhuanOpenAnim(int value) {
+        // 越界直接夹回合法区间，避免旧存档/异常包把渲染分支带到 default
+        this.hunhuanOpenAnim = Math.max(0, Math.min(HUNHUAN_ANIM_COUNT - 1, value));
+    }
+
+    /** 飞行速度档位（0 ~ {@link FlySpeedTuning#MAX_LEVEL}）。 */
+    public int getFlySpeedLevel() { return flySpeedLevel; }
+
+    /** 调整飞行档位，自动夹回合法区间。 */
+    public void setFlySpeedLevel(int value) {
+        this.flySpeedLevel = Math.max(0, Math.min(FlySpeedTuning.MAX_LEVEL, value));
+    }
+
+    /** 相对当前档位增减飞行速度（技能面板的 ± 按钮走这里）。 */
+    public void adjustFlySpeedLevel(int delta) {
+        setFlySpeedLevel(flySpeedLevel + delta);
+    }
+
+    public int getAttributePoints() { return attributePoints; }
+
+    public void setAttributePoints(int v) { this.attributePoints = Math.max(0, v); }
+
+    public void addAttributePoints(int v) { setAttributePoints(attributePoints + v); }
+
+    public int getPointsGrantedLevel() { return pointsGrantedLevel; }
+
+    public void setPointsGrantedLevel(int v) { this.pointsGrantedLevel = v; }
+
+    // ==================== 属性加点 ====================
+
+    /** 某条属性已加的点数。 */
+    public int getAllocatedPoints(AttributePointSpec spec) {
+        return allocatedPoints[spec.ordinal()];
+    }
+
+    /**
+     * 写入某条属性的点数（已clamp 到 {@link AttributePointSpec#MAX_POINTS}）。
+     * <b>只能由服务端调用</b>，客户端只是显示。
+     */
+    public void setAllocatedPoints(AttributePointSpec spec, int value) {
+        allocatedPoints[spec.ordinal()] = Math.max(0, Math.min(AttributePointSpec.MAX_POINTS, value));
+    }
+
+    /** 11 条属性已加点之和。 */
+    public int getAllocatedPointsTotal() {
+        int sum = 0;
+        for (int v : allocatedPoints) sum += v;
+        return sum;
+    }
+
+    /** 11 条全部清零（重置按钮用），返回被清掉的点数总数。 */
+    public int clearAllocatedPoints() {
+        int cleared = getAllocatedPointsTotal();
+        for (AttributePointSpec spec : AttributePointSpec.values()) {
+            allocatedPoints[spec.ordinal()] = 0;
+        }
+        return cleared;
+    }
 
     public int getZhuanshengshu() {return zhuanshengshu;}
     public void setZhuanshengshu(int zhuanshengshu) {

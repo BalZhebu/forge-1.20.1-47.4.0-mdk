@@ -40,6 +40,8 @@ public class ThunderProtectionItem extends Item {
         }
         super.appendHoverText(stack, level, tooltip, flag);
 
+        tooltip.add(Component.translatable("tooltip.kunluncontinent.thunder_protection1").withStyle(ChatFormatting.DARK_GRAY));
         tooltip.add(Component.translatable("tooltip.kunluncontinent.thunder_protection").withStyle(ChatFormatting.DARK_GRAY));
+
     }
 }

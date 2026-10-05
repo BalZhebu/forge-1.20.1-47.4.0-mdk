@@ -13,9 +13,16 @@ import net.minecraft.world.phys.Vec3;
 // Skill 类只负责开启任务
 public class SkillBahuang9 extends BaseSkillItem {
     @Override public float getBaseCost() { return 850f; }
+    /**
+     * ⚠️ 这里**不能是 0**。基类算伤害的公式是
+     * {@code finalDamage = 攻击力 * getDamageMultiplier() * 年限倍率}，
+     * 本技能把 finalDamage 存进 {@code Bahuang9_Damage} 交给 Tick 事件当每次脉冲的伤害。
+     * 之前写成 0，导致八荒寂灭的每次脉冲伤害恒为 0 —— 完全不吃魂环年限加成。
+     * 数值大小（每次脉冲 = 攻击 × 此值 × 年限倍率 × 1.5，共 10 次）按平衡自行调整。
+     */
     @Override
     public float getDamageMultiplier() {
-        return 0;
+        return 1.0f;
     }
     @Override
     public int getCastTime() {

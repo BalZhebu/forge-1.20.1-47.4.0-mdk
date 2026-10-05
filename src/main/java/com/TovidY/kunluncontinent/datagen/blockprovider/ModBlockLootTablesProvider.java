@@ -24,6 +24,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 import java.util.Set;
 //用于检查方块有没有写战利品列表，若排除方块则在方块后加入.noLootTable
+
 public class ModBlockLootTablesProvider extends BlockLootSubProvider {
     public ModBlockLootTablesProvider() {
         super(Set.of(), FeatureFlags.REGISTRY.allFlags());
@@ -32,7 +33,6 @@ public class ModBlockLootTablesProvider extends BlockLootSubProvider {
     @Override
     protected void generate() {
         dropSelf(ModBlocks.CULTIVATION_PLATFORM.get());
-
 
         dropSelf(ModBlocks.GRAY_IRON_ORE.get());
         dropSelf(ModBlocks.CLOUD_PATTERNED_BRONZE_ORE.get());
@@ -63,6 +63,11 @@ public class ModBlockLootTablesProvider extends BlockLootSubProvider {
         //魂土
         dropSelf(ModBlocks.SOUL_SOIL.get());
 
+        //神界木
+        dropSelf(ModBlocks.DIVINE_REALM_LOG.get());
+        dropSelf(ModBlocks.DIVINE_REALM_PLANKS.get());
+        dropSelf(ModBlocks.DIVINE_REALM_SAPLING.get());
+
         //丹渣
         dropSelf(ModBlocks.DROSS_BLOCK.get());
 
@@ -87,6 +92,11 @@ public class ModBlockLootTablesProvider extends BlockLootSubProvider {
         //传送门框架
         dropSelf(ModBlocks.POLAR_ICE_PORTAL_BLOCK.get());
         dropSelf(ModBlocks.THUNDER_REALM_PORTAL_BLOCK.get());
+
+        //树苗
+        this.add(ModBlocks.DIVINE_REALM_LEAVES.get(), block ->
+                createLeavesDrops(block, ModBlocks.DIVINE_REALM_SAPLING.get(), NORMAL_LEAVES_SAPLING_CHANCES)
+        );
 
         // 红宝石矿石（使用矿石破坏战利品列表）
         this.add(ModBlocks.RUBY_ORE.get(), block -> createCopperOreLikeDrops(block, ModItems.RUBY.get()));

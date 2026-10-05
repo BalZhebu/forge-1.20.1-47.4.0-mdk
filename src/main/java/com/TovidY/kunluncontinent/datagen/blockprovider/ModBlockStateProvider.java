@@ -16,8 +16,6 @@ import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
 //方块模型生成例如blockstates文件之类的
-
-
 public class ModBlockStateProvider extends BlockStateProvider {
     public ModBlockStateProvider(PackOutput output, ExistingFileHelper exFileHelper) {
         super(output,KlMain.MOD_ID, exFileHelper);
@@ -54,6 +52,39 @@ public class ModBlockStateProvider extends BlockStateProvider {
         makeCrop((CropBlock) ModBlocks.RED_SPIDER_LILY_BLOCK.get(), "red_spider_lily");
         makeCrop((CropBlock) ModBlocks.GUYUANCAO_BLOCK.get(), "guyuancao");
         makeCrop((CropBlock) ModBlocks.FANQICAO_BLOCK.get(), "fanqicao");
+
+        ModelFile logModel = models().withExistingParent("divine_realm_log", "block/cube_column")
+                .texture("end", modLoc("block/divine_realm_log_top"))
+                .texture("side", modLoc("block/divine_realm_log"));
+        simpleBlockWithItem(ModBlocks.DIVINE_REALM_LOG.get(), logModel);
+        simpleBlockWithItem(ModBlocks.DIVINE_REALM_PLANKS.get(), cubeAll(ModBlocks.DIVINE_REALM_PLANKS.get()));
+        // ⭐ 树叶：改成原版 LeavesBlock 后**多了 3 个属性**
+        //    （distance **1~7** / persistent / waterlogged），共 7×2×2 = 28 种状态。
+        //    simpleBlockWithItem 只能覆盖默认状态 → 枯萎时 distance 变化会丢模型变紫黑，
+        //    所以必须逐个 partialState 注册。全部指向同一个模型。
+        //    renderType("cutout") 不能少：贴图带 alpha，漏了镂空处会变黑方块。
+        ModelFile leavesModel = models().cubeAll("divine_realm_leaves",
+                modLoc("block/divine_realm_leaves")).renderType("cutout");
+        var leavesBuilder = getVariantBuilder(ModBlocks.DIVINE_REALM_LEAVES.get());
+        for (int dist = 1; dist <= 7; dist++) {
+            for (boolean persistent : new boolean[]{false, true}) {
+                for (boolean waterlogged : new boolean[]{false, true}) {
+                    leavesBuilder.partialState()
+                            .with(BlockStateProperties.DISTANCE, dist)
+                            .with(BlockStateProperties.PERSISTENT, persistent)
+                            .with(BlockStateProperties.WATERLOGGED, waterlogged)
+                            .modelForState().modelFile(leavesModel).addModel();
+                }
+            }
+        }
+
+        ModelFile saplingModel = models().cross("divine_realm_sapling",
+                modLoc("block/divine_realm_sapling")).renderType("cutout");
+        getVariantBuilder(ModBlocks.DIVINE_REALM_SAPLING.get())
+                .partialState().with(BlockStateProperties.STAGE, 0)
+                .modelForState().modelFile(saplingModel).addModel()
+                .partialState().with(BlockStateProperties.STAGE, 1)
+                .modelForState().modelFile(saplingModel).addModel();
 
         //传送门
         Block portalBlock = ModBlocks.POLAR_ICE_PORTAL.get();

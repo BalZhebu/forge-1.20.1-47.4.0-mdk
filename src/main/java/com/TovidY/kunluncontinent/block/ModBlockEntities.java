@@ -5,24 +5,34 @@ import com.TovidY.kunluncontinent.block.blockentity.LiandanluBlockEntity;
 import com.TovidY.kunluncontinent.block.blockentity.SpiritGatheringAltherBlockEntity;
 import com.TovidY.kunluncontinent.block.blockentity.UnderwaterAltarTile;
 import com.TovidY.kunluncontinent.block.klblock.LiandanluBlock;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import java.util.Set;
+
 public class ModBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
             DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, KlMain.MOD_ID);
 
-    // 注册聚灵祭坛 BlockEntity
+    // ====================注册聚灵祭坛 ====================
     public static final RegistryObject<BlockEntityType<SpiritGatheringAltherBlockEntity>> SPIRIT_GATHERING_ALTAR_BE =
             BLOCK_ENTITIES.register("spirit_gathering_altar_be", () ->
                     BlockEntityType.Builder.of(SpiritGatheringAltherBlockEntity::new,
                             ModBlocks.SPIRIT_GATHERING_ALTAR.get()
                     ).build(null));
 
-    // 注册炼丹炉
+    // ==================== 注册炼丹炉 ====================
     public static final RegistryObject<BlockEntityType<LiandanluBlockEntity>> LIANDANLU_BE =
             BLOCK_ENTITIES.register("liandanlu_be", () ->
                     BlockEntityType.Builder.of((pos, state) -> {
@@ -43,6 +53,7 @@ public class ModBlockEntities {
                             ModBlocks.LIANDANLU9.get()
                     ).build(null));
 
+    // ==================== 注册水下祭坛 ====================
     public static final RegistryObject<BlockEntityType<UnderwaterAltarTile>> UNDERWATER_ALTAR_TILE =
             BLOCK_ENTITIES.register("underwater_altar_be", () ->
                     BlockEntityType.Builder.of(UnderwaterAltarTile::new,

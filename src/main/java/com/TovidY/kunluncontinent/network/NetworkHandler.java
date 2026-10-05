@@ -3,7 +3,9 @@ package com.TovidY.kunluncontinent.network;
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.network.client.*;
 import com.TovidY.kunluncontinent.network.server.*;
+import com.TovidY.kunluncontinent.screen.attribute.skill.CPacketChangeFlySpeed;
 import com.TovidY.kunluncontinent.screen.attribute.skill.CPacketCycleSkill;
+import com.TovidY.kunluncontinent.screen.attribute.skill.CPacketFlyCrash;
 import com.TovidY.kunluncontinent.screen.attribute.skill.CPacketReleaseDirectSkill;
 import com.TovidY.kunluncontinent.screen.attribute.skill.CPacketReleaseSkill;
 import com.TovidY.kunluncontinent.screen.attribute.skill.CPacketSelectSkill;
@@ -44,6 +46,10 @@ public class NetworkHandler {
         register(CPacketSelectSkill.class, CPacketSelectSkill::encode, CPacketSelectSkill::decode, CPacketSelectSkill::handle);
         register(CPacketReleaseSkill.class, CPacketReleaseSkill::encode, CPacketReleaseSkill::decode, CPacketReleaseSkill::handle);
         register(CPacketCycleSkill.class, CPacketCycleSkill::encode, CPacketCycleSkill::decode, CPacketCycleSkill::handle);
+        register(CPacketChangeFlySpeed.class, CPacketChangeFlySpeed::encode, CPacketChangeFlySpeed::decode, CPacketChangeFlySpeed::handle);
+        register(CPacketFlyCrash.class, CPacketFlyCrash::encode, CPacketFlyCrash::decode, CPacketFlyCrash::handle);
+        register(CPacketAllocatePoint.class, CPacketAllocatePoint::encode, CPacketAllocatePoint::decode, CPacketAllocatePoint::handle);
+        register(CPacketResetPoints.class, CPacketResetPoints::encode, CPacketResetPoints::decode, CPacketResetPoints::handle);
         register(S2CCastingSyncPacket.class, S2CCastingSyncPacket::encode, S2CCastingSyncPacket::decode, S2CCastingSyncPacket::handle);
 
         INSTANCE.registerMessage(99, PacketChangeCamera.class, PacketChangeCamera::toBytes, PacketChangeCamera::new, PacketChangeCamera::handle);
@@ -64,6 +70,7 @@ public class NetworkHandler {
         register(SPacketEntityAttribute.class, SPacketEntityAttribute::encode, SPacketEntityAttribute::decode, SPacketEntityAttribute::handle);
         register(SPacketPlayerAttribute.class, SPacketPlayerAttribute::encode, SPacketPlayerAttribute::decode, SPacketPlayerAttribute::handle);
         register(PacketChangeDisplayMode.class,PacketChangeDisplayMode::encode,PacketChangeDisplayMode::decode,PacketChangeDisplayMode::handle);
+        register(PacketChangeHunhuanAnim.class,PacketChangeHunhuanAnim::encode,PacketChangeHunhuanAnim::decode,PacketChangeHunhuanAnim::handle);
         register(PacketToggleConfig.class, PacketToggleConfig::encode,PacketToggleConfig::decode,PacketToggleConfig::handle);
 
         register(PacketPlayGodRitualEffect.class, PacketPlayGodRitualEffect::encode, PacketPlayGodRitualEffect::decode, PacketPlayGodRitualEffect::handle);
@@ -79,6 +86,9 @@ public class NetworkHandler {
 
         // 客户端发给服务端（点击检测按钮）
         register(C2SCheckTaskPacket.class, C2SCheckTaskPacket::encode, C2SCheckTaskPacket::decode, C2SCheckTaskPacket::handle);
+
+        // 客户端发给服务端（点击「进入神界」按钮）
+        register(C2SEnterCelestial.class, C2SEnterCelestial::encode, C2SEnterCelestial::decode, C2SEnterCelestial::handle);
 
         INSTANCE.registerMessage(id, S2CSkillNotifyPacket.class, S2CSkillNotifyPacket::encode, S2CSkillNotifyPacket::decode, S2CSkillNotifyPacket::handle);
 

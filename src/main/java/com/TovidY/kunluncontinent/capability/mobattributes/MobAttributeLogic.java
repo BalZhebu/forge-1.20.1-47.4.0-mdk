@@ -34,6 +34,9 @@ public class MobAttributeLogic {
         } else if (dimension.equals(ModDimensions.POLAR_ICE_REALM_LEVEL_KEY)) {
             minNianxian = 15000;
             maxNianxian = 999999;
+        }else if (dimension.equals(ModDimensions.CELESTIAL_REALM_LEVEL_KEY)){
+            minNianxian = 100000;
+            maxNianxian = 9990000;
         } else {
             minNianxian = 30000;
             maxNianxian = 990000;

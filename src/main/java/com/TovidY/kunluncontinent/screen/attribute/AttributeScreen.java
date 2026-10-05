@@ -2,24 +2,18 @@ package com.TovidY.kunluncontinent.screen.attribute;
 
 import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
-import com.TovidY.kunluncontinent.godclass.interfac.GodClientData;
-import com.TovidY.kunluncontinent.item.ModItems;
-import com.TovidY.kunluncontinent.network.NetworkHandler;
-import com.TovidY.kunluncontinent.network.server.PacketSyncPage;
 import com.TovidY.kunluncontinent.screen.KunlunGuiHelper;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 
-import java.util.List;
 
 import static net.minecraft.client.gui.screens.inventory.InventoryScreen.renderEntityInInventoryFollowsMouse;
 
 //属性面板渲染
-public class AttributeScreen extends AbstractContainerScreen<AttributeMenu> {
+public class AttributeScreen extends AbstractContainerScreen<AttributeMenu> implements AttributeTabs.Host {
 
     private float xMouse;
     private float yMouse;
@@ -37,51 +31,36 @@ public class AttributeScreen extends AbstractContainerScreen<AttributeMenu> {
         this.inventoryLabelY = 10000;
         this.titleLabelY = 10000;
 
-        int normalSize = 24;
-        int selectedSize = 28;
-        int spacing = 5;
-        int startX = this.leftPos + 10;
-        int startY = this.topPos - 26;
+        // 顶部页签：全部由注册表统一生成（新增面板只需在 AttributeTabs 注册一行）
+        AttributeTabs.buildTabs(this, AttributeTabs.PAGE_ATTRIBUTE);
+        AttributeTabs.buildConfigButton(this);
+    }
 
-        // 1. 顶部切换 Tab 按钮
-        this.addRenderableWidget(new KunlunGuiHelper.KunlunTabButton(
-                this.font, startX, startY - 2, selectedSize, selectedSize,
-                new ItemStack(ModItems.ATTRIBUTE_BUTTON.get()), Component.literal("属性面板"), true, b -> {}
-        ));
+    // ==================== AttributeTabs.Host 实现（暴露 protected 成员给工具类） ====================
 
-        int currentX = startX + selectedSize + spacing;
-        this.addRenderableWidget(new KunlunGuiHelper.KunlunTabButton(
-                this.font, currentX, startY, normalSize, normalSize,
-                new ItemStack(ModItems.SOUL_BONE_BUTTON.get()), Component.literal("魂骨面板"), false,
-                b -> NetworkHandler.INSTANCE.sendToServer(new PacketSyncPage(1))
-        ));
+    @Override
+    public int leftPos() {
+        return this.leftPos;
+    }
 
-        currentX += (normalSize + spacing);
-        this.addRenderableWidget(new KunlunGuiHelper.KunlunTabButton(
-                this.font, currentX, startY, normalSize, normalSize,
-                new ItemStack(ModItems.HUNHUAN_BUTTON.get()), Component.literal("魂环配置"), false,
-                b -> NetworkHandler.INSTANCE.sendToServer(new PacketSyncPage(2))
-        ));
+    @Override
+    public int topPos() {
+        return this.topPos;
+    }
 
-        currentX += (normalSize + spacing);
-        if (GodClientData.godName != null && !GodClientData.godName.equals("无")) {
-            this.addRenderableWidget(new KunlunGuiHelper.KunlunTabButton(
-                    this.font, currentX, startY, normalSize, normalSize,
-                    new ItemStack(ModItems.SHENKAO_BUTTON.get()), Component.literal("神考面板"), false,
-                    b -> NetworkHandler.INSTANCE.sendToServer(new PacketSyncPage(3))
-            ));
-        }
+    @Override
+    public int imageWidth() {
+        return this.imageWidth;
+    }
 
-        // 2. 配置按钮
-        int btnSize = 18;
-        int btnX = this.leftPos + this.imageWidth - btnSize - 10;
-        int btnY = this.topPos + 8;
-        this.addRenderableWidget(new KunlunGuiHelper.HandDrawnButton(
-                this.font, btnX, btnY, btnSize, btnSize,
-                Component.literal("⚙"),
-                b -> NetworkHandler.INSTANCE.sendToServer(new PacketSyncPage(4)),
-                () -> List.of(Component.literal("打开配置界面"))
-        ));
+    @Override
+    public net.minecraft.client.gui.Font font() {
+        return this.font;
+    }
+
+    @Override
+    public void addWidget(net.minecraft.client.gui.components.AbstractWidget widget) {
+        this.addRenderableWidget(widget);
     }
 
     @Override
@@ -92,7 +71,6 @@ public class AttributeScreen extends AbstractContainerScreen<AttributeMenu> {
         this.xMouse = (float) mouseX;
         this.yMouse = (float) mouseY;
 
-        // Tooltip 渲染
         for (var child : this.children()) {
             if (child instanceof KunlunGuiHelper.HandDrawnButton btn) {
                 btn.renderTooltip(guiGraphics, mouseX, mouseY);
@@ -125,14 +103,13 @@ public class AttributeScreen extends AbstractContainerScreen<AttributeMenu> {
     private void renderFormattedAttributes(GuiGraphics gui, Player player) {
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(attributes -> {
 
-            boolean isShift = hasShiftDown(); // 获取当前键盘 Shift 状态
+            boolean isShift = hasShiftDown();
 
             int topStartY = this.topPos + 28;
             int topX = this.leftPos + 12;
             int topWidth = 195;
             int topRowHeight = 13;
 
-            // 1. 顶部 HP/MP/EXP 响应 Shift 展开
             String hpStr = isShift
                     ? String.format("%,d / %,d", (long) player.getHealth(), (long) player.getMaxHealth())
                     : KunlunGuiHelper.formatLargeNumber(player.getHealth()) + " / " + KunlunGuiHelper.formatLargeNumber(player.getMaxHealth());
@@ -163,7 +140,6 @@ public class AttributeScreen extends AbstractContainerScreen<AttributeMenu> {
             int labelWidth = 42;
             int gridRowHeight = 12;
 
-            // 2. 传入 double 类型的原始数据给 AttributeEntry 处理
             AttributeEntry[] col1Entries = new AttributeEntry[]{
                     new AttributeEntry("等级", attributes.getDengji()),
                     new AttributeEntry("攻击力", ModAttributeAPI.getGongji(player)),

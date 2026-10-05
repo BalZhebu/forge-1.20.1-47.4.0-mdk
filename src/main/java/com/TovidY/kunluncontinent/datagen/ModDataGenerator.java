@@ -39,11 +39,32 @@ import java.util.concurrent.CompletableFuture;
 public class ModDataGenerator {
 
     public static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
-            .add(Registries.BIOME, com.TovidY.kunluncontinent.datagen.worldgenprovider.ModWorldGenProvider::bootstrapBiome)
-            .add(Registries.DIMENSION_TYPE, com.TovidY.kunluncontinent.datagen.worldgenprovider.ModWorldGenProvider::bootstrapType)
-            .add(Registries.LEVEL_STEM, com.TovidY.kunluncontinent.datagen.worldgenprovider.ModWorldGenProvider::bootstrapStem)
-            .add(Registries.CONFIGURED_FEATURE, ModWorldGenOreProvider::bootstrap)
-            .add(Registries.PLACED_FEATURE, ModWorldGenOreProvider::placement)
+            // ⭐ 注意：同一个注册表只能 `.add()` 一次（重复 add 会报
+            // "Multiple entries with same key"），所以下面用 lambda 把神界
+            // 和原有维度的bootstrap 串在同一次调用里。
+            .add(Registries.BIOME, context -> {
+                com.TovidY.kunluncontinent.datagen.worldgenprovider.ModWorldGenProvider.bootstrapBiome(context);
+                com.TovidY.kunluncontinent.datagen.worldgenprovider.ModCelestialWorldGen.bootstrapCelestialBiome(context);
+            })
+            .add(Registries.DIMENSION_TYPE, context -> {
+                com.TovidY.kunluncontinent.datagen.worldgenprovider.ModWorldGenProvider.bootstrapType(context);
+                com.TovidY.kunluncontinent.datagen.worldgenprovider.ModCelestialWorldGen.bootstrapCelestialType(context);
+            })
+            .add(Registries.LEVEL_STEM, context -> {
+                com.TovidY.kunluncontinent.datagen.worldgenprovider.ModWorldGenProvider.bootstrapStem(context);
+                com.TovidY.kunluncontinent.datagen.worldgenprovider.ModCelestialWorldGen.bootstrapCelestialStem(context);
+            })
+            // 神界的岛屿地形噪声（独立注册表，可以单独add）
+            .add(Registries.NOISE_SETTINGS, com.TovidY.kunluncontinent.datagen.worldgenprovider.ModCelestialWorldGen::bootstrapCelestialNoise)
+            // ⚠️ 同一个注册表只能 .add() 一次，所以把神界树和矿物合并在一次调用里
+            .add(Registries.CONFIGURED_FEATURE, context -> {
+                ModWorldGenOreProvider.bootstrap(context);
+                com.TovidY.kunluncontinent.datagen.worldgenprovider.ModCelestialTreeFeature.bootstrap(context);
+            })
+            .add(Registries.PLACED_FEATURE, context -> {
+                ModWorldGenOreProvider.placement(context);
+                com.TovidY.kunluncontinent.datagen.worldgenprovider.ModCelestialTreeFeature.placement(context);
+            })
             .add(Registries.DAMAGE_TYPE, ModDamageTypes::bootstrap)
             .add(Registries.STRUCTURE, ModStructureProvider::bootstrapStructure)
             .add(Registries.STRUCTURE_SET, ModStructureProvider::bootstrapStructureSet)

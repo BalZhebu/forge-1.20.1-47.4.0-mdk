@@ -10,10 +10,17 @@ import java.util.EnumSet;
 
 public class MobHuiFuGoal extends Goal {
     private final Mob mob;
+    /** 词条等级（1~10），决定治疗比例。 */
+    private final int level;
     private int cooldownTicks = 0;
 
     public MobHuiFuGoal(Mob mob) {
+        this(mob, 1);
+    }
+
+    public MobHuiFuGoal(Mob mob, int level) {
         this.mob = mob;
+        this.level = Math.max(1, Math.min(com.TovidY.kunluncontinent.tower.skill.TowerSkillPool.MAX_LEVEL, level));
         // 恢复生命是瞬发治愈，不需要锁死移动或看向
         this.setFlags(EnumSet.noneOf(Goal.Flag.class));
     }
@@ -46,16 +53,16 @@ public class MobHuiFuGoal extends Goal {
         // 进入 25 秒冷却
         cooldownTicks = 25 * 20;
 
-        // 1. 触发 3D 飘字提示（顶出 "§4§l✨ 恢复！ ✨"）
-        TowerSkillPool.ShieldActiveSkillNotify(mob, "恢复");
+        // 1. 触发 3D 飘字提示（带词条等级）
+        TowerSkillPool.ShieldActiveSkillNotify(mob, "恢复", level);
 
         // 2. 核心：通过你的 Capability 系统动态计算并给予治愈
         mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
             // 获取怪物此时此刻的最终最大生命值上限（完美包容了年限基础血量与【浑厚】加成后的最终值）
             float maxHp = cap.getMaxshengming();
 
-            // 计算 20% 的恢复气血量
-            float healAmount = maxHp * 0.20f;
+            // 治疗比例 = 基础 20% × 等级系数（1级 20%，每级+10%，10级 38%）
+            float healAmount = maxHp * 0.20f * com.TovidY.kunluncontinent.tower.skill.TowerSkillPool.levelMultiplier(level);
 
             // 使用原生的 heal 方法进行安全治疗（原生系统会自动截断，确保不会超过最大生命值上限）
             mob.heal(healAmount);

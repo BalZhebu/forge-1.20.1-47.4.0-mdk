@@ -19,11 +19,12 @@ public class ShenkaoMenu extends AbstractContainerMenu {
     public ShenkaoMenu(int id, Inventory inv) {
         super(ModMenuTypes.SHENKAO_MENU.get(), id);
 
-        for (int si = 0; si < 3; ++si)
-            for (int sj = 0; sj < 9; ++sj)
-                this.addSlot(new Slot(inv, sj + (si + 1) * 9, 143 + 8 + sj * 18, 12 + 84 + si * 18));
-        for (int si = 0; si < 9; ++si)
-            this.addSlot(new Slot(inv, si, 143 + 8 + si * 18, 12 + 142));
+        // ⭐ 神祇面板**不显示物品栏槽位**。
+        //   这里原本添加了 36 个玩家背包槽（9×3+9），会导致：
+        //     ① 面板上出现 36 个空槽 + 可以把背包物品塞进来
+        //     ② ShenkaoScreen#renderBg 里那圈"槽位衬底"也白画
+        //   神考/神祇面板只展示信息，不需要任何槽位，故全部不添加。
+        //   quickMoveStack 也因此永不触发（保持返回 EMPTY 即可）。
     }
 
     @Override

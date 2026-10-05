@@ -27,6 +27,7 @@ public class ThermalAmuletItem extends Item {
         if (isInfinite) {
             tooltip.add(Component.literal("御寒能量：").withStyle(ChatFormatting.GRAY)
                     .append(Component.literal("无限").withStyle(ChatFormatting.GOLD)));
+            tooltip.add(Component.literal("提示：在雪地中寻找遮蔽处以延长使用时间").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
         } else {
             int remainDurability = stack.getMaxDamage() - stack.getDamageValue();
             int baseMinutes = (remainDurability * 5) / 60;

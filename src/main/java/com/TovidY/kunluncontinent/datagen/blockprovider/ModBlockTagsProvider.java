@@ -29,6 +29,39 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(ModBlocks.PUTUAN_BLOCK.get())
                 .add(ModBlocks.DROSS_BLOCK.get());
 
+        //斧子
+        tag(BlockTags.MINEABLE_WITH_AXE)
+                .add(ModBlocks.DIVINE_REALM_LOG.get())
+                .add(ModBlocks.DIVINE_REALM_PLANKS.get());
+
+        tag(BlockTags.SAPLINGS)
+                .add(ModBlocks.DIVINE_REALM_SAPLING.get());
+
+        tag(BlockTags.LEAVES)
+                .add(ModBlocks.DIVINE_REALM_LEAVES.get());
+
+        tag(BlockTags.REPLACEABLE_BY_TREES)
+                .add(ModBlocks.DIVINE_REALM_SAPLING.get());
+
+        //树叶可以用剪刀（骨粉）修好
+        tag(BlockTags.MINEABLE_WITH_HOE)
+                .add(ModBlocks.DIVINE_REALM_LEAVES.get());
+
+        tag(BlockTags.PLANKS)
+                .add(ModBlocks.DIVINE_REALM_PLANKS.get());
+
+        tag(BlockTags.LOGS)
+                .add(ModBlocks.DIVINE_REALM_LOG.get());
+
+        tag(BlockTags.LOGS_THAT_BURN)
+                .add(ModBlocks.DIVINE_REALM_LOG.get());
+
+        tag(BlockTags.OVERWORLD_NATURAL_LOGS)
+                .add(ModBlocks.DIVINE_REALM_LOG.get());
+
+        // MINEABLE_WITH_AXE 上面已加 → 原木/木板都能用斧子快速挖掘
+        // ⚠️ 若想让神界木"不可燃"，把上面 LOGS_THAT_BURN / LOGS 两行删掉即可
+
         //镐子
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
                 .add(ModBlocks.GRAY_IRON_ORE.get())

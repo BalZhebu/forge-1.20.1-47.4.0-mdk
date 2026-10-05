@@ -8,6 +8,8 @@ import com.TovidY.kunluncontinent.screen.attribute.hungu.HunguMenu;
 import com.TovidY.kunluncontinent.screen.attribute.hungu.HunguScreen;
 import com.TovidY.kunluncontinent.screen.attribute.hunhuan.HunhuanMenu;
 import com.TovidY.kunluncontinent.screen.attribute.hunhuan.HunhuanScreen;
+import com.TovidY.kunluncontinent.screen.attribute.point.PointMenu;
+import com.TovidY.kunluncontinent.screen.attribute.point.PointScreen;
 import com.TovidY.kunluncontinent.screen.attribute.shenkao.ShenkaoMenu;
 import com.TovidY.kunluncontinent.screen.attribute.shenkao.ShenkaoScreen;
 import com.TovidY.kunluncontinent.screen.guide.GuidBookScreen;
@@ -51,6 +53,9 @@ public class ModMenuTypes {
     public static final RegistryObject<MenuType<ShenkaoMenu>> SHENKAO_MENU =
             registerMenuType("shenkao_menu", ShenkaoMenu::new);
 
+    public static final RegistryObject<MenuType<PointMenu>> POINT_MENU =
+            registerMenuType("point_menu", PointMenu::new);
+
     public static final RegistryObject<MenuType<HunhuanMenu>> CONFIG_MENU =
             registerMenuType("config_menu", HunhuanMenu::new);
 
@@ -81,6 +86,7 @@ public class ModMenuTypes {
             MenuScreens.register(GUIDE_BOOK_MENU.get(), GuidBookScreen::new);
             MenuScreens.register(HUNHUAN_MENU.get(), HunhuanScreen::new);
             MenuScreens.register(SHENKAO_MENU.get(), ShenkaoScreen::new);
+            MenuScreens.register(POINT_MENU.get(), PointScreen::new);
             MenuScreens.register(CONFIG_MENU.get(), ConfigScreen::new);
             MenuScreens.register(SPIRITGATHERING_MENU.get(), SpiritGatheringaltarScreen::new);
             MenuScreens.register(SELL_MENU.get(), SellScreen::new);

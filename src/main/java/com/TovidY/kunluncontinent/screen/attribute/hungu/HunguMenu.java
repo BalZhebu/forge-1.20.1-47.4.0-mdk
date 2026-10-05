@@ -36,25 +36,19 @@ public class HunguMenu extends AbstractContainerMenu {
         this.addSlot(new RestrictedHunguSlot(internal, 1, 237, 48, 1));  // 1: 躯干 (胸骨)
         this.addSlot(new RestrictedHunguSlot(internal, 3, 263, 48, 3));  // 3: 右臂
 
-        // 下层：外附魂骨居中（胸骨下方），左右腿骨分列两侧（臂骨下方）
         this.addSlot(new RestrictedHunguSlot(internal, 4, 211, 74, 4));  // 4: 左腿
         this.addSlot(new RestrictedHunguSlot(internal, 6, 237, 74, 6));  // 6: 外附魂骨
         this.addSlot(new RestrictedHunguSlot(internal, 5, 263, 74, 5));  // 5: 右腿
 
-        // =========================================================================
-        // 2. 玩家物品栏（整体右移至靠右边界，Y=108 留出充足呼吸感）
-        // =========================================================================
         int invStartX = 156;
         int invStartY = 108;
 
-        // 3x9 背包
         for (int si = 0; si < 3; ++si) {
             for (int sj = 0; sj < 9; ++sj) {
                 this.addSlot(new Slot(inv, sj + (si + 1) * 9, invStartX + sj * 18, invStartY + si * 18));
             }
         }
 
-        // 1x9 快捷栏
         for (int si = 0; si < 9; ++si) {
             this.addSlot(new Slot(inv, si, invStartX + si * 18, invStartY + 56));
         }

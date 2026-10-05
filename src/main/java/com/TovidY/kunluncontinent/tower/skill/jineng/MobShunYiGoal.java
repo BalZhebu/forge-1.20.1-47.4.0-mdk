@@ -11,11 +11,18 @@ import java.util.Random;
 
 public class MobShunYiGoal extends Goal {
     private final Mob mob;
+    /** 词条等级（1~10），等级越高冷却越短。 */
+    private final int level;
     private int cooldownTicks = 0;
     private final Random random = new Random();
 
     public MobShunYiGoal(Mob mob) {
+        this(mob, 1);
+    }
+
+    public MobShunYiGoal(Mob mob, int level) {
         this.mob = mob;
+        this.level = Math.max(1, Math.min(com.TovidY.kunluncontinent.tower.skill.TowerSkillPool.MAX_LEVEL, level));
         // 标记此 AI 会打断怪物的移动（传送瞬间需要站定）
         this.setFlags(EnumSet.of(Goal.Flag.MOVE));
     }
@@ -40,11 +47,12 @@ public class MobShunYiGoal extends Goal {
      */
     @Override
     public void start() {
-        // 1. 进入 10 秒冷却时间 (10秒 * 20 Tick = 200 Tick)
-        cooldownTicks = 10 * 20;
+        // 1. 冷却随等级缩短：基础 10 秒 ÷ 等级系数（1级 10秒，10级约 5.3 秒），最低 4 秒
+        cooldownTicks = Math.max(4 * 20,
+                Math.round(10 * 20 / com.TovidY.kunluncontinent.tower.skill.TowerSkillPool.levelMultiplier(level)));
 
-        // 2. 触发 3D 飘字提示（顶出 "§4§l✨ 瞬移！ ✨"）
-        TowerSkillPool.ShieldActiveSkillNotify(mob, "瞬移");
+        // 2. 触发 3D 飘字提示（带词条等级）
+        TowerSkillPool.ShieldActiveSkillNotify(mob, "瞬移", level);
 
         // 3. 计算 20格直径（半径10格）内的随机坐标
         // random.nextInt(21) - 10 产生 -10 到 +10 的随机数

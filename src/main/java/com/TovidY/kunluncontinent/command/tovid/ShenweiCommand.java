@@ -1,12 +1,14 @@
 package com.TovidY.kunluncontinent.command.tovid;
 
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
+import com.TovidY.kunluncontinent.godclass.GodExamDebug;
 import com.TovidY.kunluncontinent.godclass.GodRegistry;
 import com.TovidY.kunluncontinent.godclass.interfac.GodInfo;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.SynsAPI;
 import com.TovidY.kunluncontinent.network.client.PacketSyncGodData;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -86,6 +88,54 @@ public class ShenweiCommand {
                                             context.getSource().sendSuccess(() ->
                                                     Component.literal("§d§l[测试] §f正在开启 §e" + godInfo.getName() + " §f的10秒成神仪式动画！"), true);
 
+                                            return 1;
+                                        })
+                                )
+                        )
+                )
+                // ⭐ 测试用：一键完成当前神考任务（不新增指令类，逻辑在 GodExamDebug）
+                .then(Commands.literal("shenwei_complete")
+                        .requires(source -> source.hasPermission(2))
+                        .then(Commands.argument("target", EntityArgument.player())
+                                // /kunc shenwei_complete <玩家>            → 完成当前 1 考
+                                .executes(context -> {
+                                    ServerPlayer player = EntityArgument.getPlayer(context, "target");
+                                    String msg = GodExamDebug.completeCurrentTask(player, 1);
+                                    context.getSource().sendSuccess(() -> Component.literal(msg), true);
+                                    return 1;
+                                })
+                                // /kunc shenwei_complete <玩家> 9          → 一路推到封神
+                                .then(Commands.argument("times", IntegerArgumentType.integer(1, 9))
+                                        .executes(context -> {
+                                            ServerPlayer player = EntityArgument.getPlayer(context, "target");
+                                            int times = IntegerArgumentType.getInteger(context, "times");
+                                            String msg = GodExamDebug.completeCurrentTask(player, times);
+                                            context.getSource().sendSuccess(() -> Component.literal(msg), true);
+                                            return 1;
+                                        })
+                                )
+                        )
+                )
+                // ⭐ 测试用：直接封神 + 播成神动画（跳过全部九考）
+                .then(Commands.literal("shenwei_grant")
+                        .requires(source -> source.hasPermission(2))
+                        .then(Commands.argument("target", EntityArgument.player())
+                                .executes(context -> {
+                                    ServerPlayer player = EntityArgument.getPlayer(context, "target");
+                                    String msg = GodExamDebug.grantGodDirectly(player, null);
+                                    context.getSource().sendSuccess(() -> Component.literal(msg), true);
+                                    return 1;
+                                })
+                                .then(Commands.argument("godid", StringArgumentType.string())
+                                        .suggests((context, builder) -> {
+                                            GodRegistry.GODS.keySet().forEach(builder::suggest);
+                                            return builder.buildFuture();
+                                        })
+                                        .executes(context -> {
+                                            ServerPlayer player = EntityArgument.getPlayer(context, "target");
+                                            String godId = StringArgumentType.getString(context, "godid");
+                                            String msg = GodExamDebug.grantGodDirectly(player, godId);
+                                            context.getSource().sendSuccess(() -> Component.literal(msg), true);
                                             return 1;
                                         })
                                 )

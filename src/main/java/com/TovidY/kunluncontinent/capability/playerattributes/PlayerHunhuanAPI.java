@@ -342,6 +342,14 @@ public class PlayerHunhuanAPI {
             newplayerCapability.setJingshenli(0);
             newplayerCapability.setZhuanshengshu(newplayerCapability.getZhuanshengshu()+oldItemCapability.getZhuanshengshu()+1);
             newplayerCapability.getHunguInventory().deserializeNBT(oldItemCapability.getHunguInventory().serializeNBT());
+
+            // ==================== 属性点：清空并按总数 10%~30% 折算继承 ====================
+            int spentPoints = oldItemCapability.getAllocatedPointsTotal();
+            int inherited = AttributePoints.inheritOnZhuansheng(newplayerCapability, oldItemCapability);
+
+            // ==================== 武魂永久基础属性：按 5% 打折保留（绝不保留全部） ====================
+            WuhunPermanent.zhuanshengKeep(newplayerCapability, oldItemCapability);
+
             newplayerCapability.resetGodSystem();
             newplayerCapability.setCurrentTowerFloor(0);
             newplayerCapability.setTowerLastActiveTick(0);
@@ -353,6 +361,10 @@ public class PlayerHunhuanAPI {
             newplayerCapability.setHunhuankuaiguan(-1);
             SynsAPI.synsPlayerAttribute(player);
             player.setHealth(newplayerCapability.getMaxshengming());
+
+            final int finalSpent = spentPoints;
+            final int finalInherited = inherited;
+            player.sendSystemMessage(Component.literal("§f属性点已重置：§7投入 §e" + finalSpent + " §7点 → §b继承 §e" + finalInherited + " §7点"));
         }
     }
 
@@ -392,7 +404,7 @@ public class PlayerHunhuanAPI {
             }
             long startTime = playAnimation ? player.level().getGameTime() : 0L;
             SyncWuhunDataPacket packet = new SyncWuhunDataPacket(
-                    player.getUUID(), nianxianList, playAnimation, startTime);
+                    player.getUUID(), nianxianList, playAnimation, startTime, capability.getHunhuanOpenAnim());
             for (ServerPlayer target : ((ServerLevel) player.level()).getPlayers(p -> true)) {
                 NetworkHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> target), packet);
             }
