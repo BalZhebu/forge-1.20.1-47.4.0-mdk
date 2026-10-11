@@ -1,5 +1,6 @@
 package com.TovidY.kunluncontinent.capability.playerattributes;
 
+import com.TovidY.kunluncontinent.advancement.AchievementAPI;
 import com.TovidY.kunluncontinent.capability.itemattribute.ItemAttributeCapability;
 import com.TovidY.kunluncontinent.capability.itemattribute.ItemAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapability;
@@ -102,11 +103,23 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
     /** 已发放点数对应的等级，老存档补发用，避免重复发。 */
     private int pointsGrantedLevel = -1;
     /**
-     * 11 条可加点属性各自已加的点数，下标 = {@link AttributePointSpec#ordinal()}。
+     * 13 条可加点属性各自已加的点数，下标 = {@link AttributePointSpec#ordinal()}。
      * 长度固定，序列化时按长度写，读档时按当前枚举长度截断/补 0（加属性不用改存档格式）。
      */
     private int[] allocatedPoints = new int[AttributePointSpec.values().length];
-    private long configFlags = 0xFFL;
+
+    /**
+     * 配置面板 {@code configFlags} 的默认值（位掩码，下标见 {@code ConfigScreen} 的 {@code ConfigItemData}）。
+     *
+     * <p>在原 {@code 0xFFL}（index 1~7 全开、8 以后全关）的基础上，
+     * 只额外把 <b>index 11「NPC魂环显示」</b> 置为默认开启，
+     * 其余 index 8~10、12 的默认值保持原状不动。</p>
+     */
+    private static final long DEFAULT_CONFIG_FLAGS =
+            0xFFL          // index 1~7 历史默认全开
+                    | (1L << 11);   // index 11 NPC魂环显示 ← 唯一新增的默认开启项
+
+    private long configFlags = DEFAULT_CONFIG_FLAGS;
 
     private int zhuanshengshu = 0;
 
@@ -295,7 +308,8 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         if (nbt.contains("configFlags")) {
             this.configFlags = nbt.getLong("configFlags");
         } else {
-            this.configFlags = 0xFFL;
+            // 老存档没有这个字段：用同一个默认值，别让「读档回退路径」与「新号路径」默认值不一致
+            this.configFlags = DEFAULT_CONFIG_FLAGS;
         }
 
         // 读取神祇系统数据
@@ -492,6 +506,10 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
     public void checkTaskCompletion(Player player) {
         GodInfo info = GodRegistry.GODS.get(this.godName);
         if (info == null) return;
+
+        // 成就：通过第 1 考 / 第 5 考（必须在推进阶段之前取 stage）
+        AchievementAPI.onGodExamStagePassed(player, this.currentStage);
+
         info.executeRewards(this.currentStage, player);
         this.nextGodStage();
 
@@ -652,14 +670,14 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         allocatedPoints[spec.ordinal()] = Math.max(0, Math.min(AttributePointSpec.MAX_POINTS, value));
     }
 
-    /** 11 条属性已加点之和。 */
+    /** 13 条属性已加点之和。 */
     public int getAllocatedPointsTotal() {
         int sum = 0;
         for (int v : allocatedPoints) sum += v;
         return sum;
     }
 
-    /** 11 条全部清零（重置按钮用），返回被清掉的点数总数。 */
+    /** 13 条全部清零（重置按钮用），返回被清掉的点数总数。 */
     public int clearAllocatedPoints() {
         int cleared = getAllocatedPointsTotal();
         for (AttributePointSpec spec : AttributePointSpec.values()) {

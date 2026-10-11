@@ -2,7 +2,9 @@ package com.TovidY.kunluncontinent.command.tovid;
 
 import com.TovidY.kunluncontinent.drop.DropRegistry;
 import com.TovidY.kunluncontinent.drop.DropRule;
+import com.TovidY.kunluncontinent.command.KLCommands;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -21,19 +23,18 @@ import java.util.List;
 public class DropTableCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(
-                Commands.literal("kunluncontinent")
-                        .requires(source -> source.hasPermission(2))
-                        .then(Commands.literal("droptable")
+        KLCommands.register(dispatcher, node());
+    }
+
+    public static LiteralArgumentBuilder<CommandSourceStack> node() {
+        return Commands.literal("droptable")
                                 .executes(ctx -> showAll(ctx.getSource()))
                                 // /kunluncontinent droptable test 50000
                                 // 模拟"一只 Lv X年限的生物会命中哪些规则"
                                 .then(Commands.literal("test")
                                         .then(Commands.argument("nianxian", IntegerArgumentType.integer(0, 1_000_000_000))
                                                 .executes(ctx -> simulate(ctx.getSource(),
-                                                        IntegerArgumentType.getInteger(ctx, "nianxian"))))))
-        );
-    }
+                                                        IntegerArgumentType.getInteger(ctx, "nianxian")))));}
 
     private static int showAll(CommandSourceStack source) {
         List<DropRule> rules = DropRegistry.rules();

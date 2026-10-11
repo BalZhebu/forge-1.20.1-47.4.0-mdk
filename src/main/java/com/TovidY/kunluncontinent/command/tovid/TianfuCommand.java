@@ -1,7 +1,9 @@
 package com.TovidY.kunluncontinent.command.tovid;
 
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
+import com.TovidY.kunluncontinent.command.KLCommands;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -19,9 +21,11 @@ import net.minecraft.server.level.ServerPlayer;
 ///
 public class TianfuCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("kunluncontinent")
-                .requires(source -> source.hasPermission(2))
-                .then(Commands.literal("tianfu")
+        KLCommands.register(dispatcher, node());
+    }
+
+    public static LiteralArgumentBuilder<CommandSourceStack> node() {
+        return Commands.literal("tianfu")
                         .then(Commands.argument("type", StringArgumentType.word())
                                 .suggests((context, builder) -> {
                                     builder.suggest("tiancai");
@@ -42,7 +46,5 @@ public class TianfuCommand {
                                         })
                                 )
                         )
-                )
-        );
-    }
+                ;}
 }

@@ -29,13 +29,74 @@ public class CombatEventHandler {
     private static final float MIANSHANG_PROC_CHANCE = 0.10f;
     private static final float THORNS_PROC_CHANCE = 0.10f;
     private static final float THORNS_REFLECT_RATIO = 0.50f;
-    private static final float SPECIAL_EFFECT_CHANCE = 0.10f;
+
+    /**
+     * 特殊特效的<b>基础</b>触发概率（0~1）。
+     *
+     * <p>⚠️ 实际触发概率 = 本值 ×玩家暴击率，见 {@link #getSpecialEffectChance}。
+     * 之所以不写死，是因为设计意图是<b>「暴击率越高，特殊特效越容易出现」</b>，
+     * 而不是「固定 10%」或「暴击后再掷一次」。</p>
+     *
+     * <p>原实现是 {@code RANDOM < 0.10f}（无条件固定 10%），
+     * 且与暴击判定<b>互斥</b>（触发特效时根本不看暴击）——
+     * 于是「暴击时才有机会出特效」的预期完全不成立。</p>
+     */
+    private static final float SPECIAL_EFFECT_BASE_CHANCE = 0.5f;
+
+    /**
+     * 根据玩家<b>实际暴击率</b>（已扣抗暴）算出特殊特效的触发概率。
+     *
+     * <p>线性映射：暴击率 0% → 0%；暴击率 50% → 25%；暴击率 100% → 50%。
+     * 也就是说堆暴击到 100% 的玩家，每两次攻击能看到一次特效。</p>
+     *
+     * <p>刻意<b>不</b>要求先判定暴击 —— 特效与暴击是两条独立的线，
+     * 只是<b>共用同一个「暴击率」作为强弱度量</b>。</p>
+     *
+     * @param finalCritRate 实际暴击率（{@code max(0, baojilv - kangbao)}，单位 %）
+     * @return 触发概率（%）
+     */
+    private static float getSpecialEffectChance(float finalCritRate) {
+        return Math.max(0f, Math.min(100f, finalCritRate)) * SPECIAL_EFFECT_BASE_CHANCE;
+    }
+
+    /**
+     * 防御减伤的<b>下限系数</b>（0.05 = 最多只减 95% 伤害）。
+     *
+     * <p>⚠️ 为什么必须设下限：原公式 {@code 100 / (100 + fangyu)} 是典型的 <b>100/x 型衰减</b>，
+     * 防御一高就断崖式暴跌，而且<b>没有下限</b>：</p>
+     * <pre>
+     *   防御    0 -> 系数 1.0000 (不减伤)
+     *   防御  100 -> 系数 0.5000
+     *   防御 1000 -> 系数 0.0909
+     *   防御 5000 -> 系数 0.0196
+     *   防御 20000 -> 系数 0.0050   <- 高等级怪普遍过万，伤害只剩 0.5%
+     *   防御 50000 -> 系数 0.0020
+     * </pre>
+     * <p>于是「魂技看着很弱」：八阶魂技（4.3x × 百万年 15x ≈ 64.5 倍攻击力）
+     * 打防御 2 万的怪时，从理论 1290 万掉到 6.4 万 —— <b>打不动上百万血量的 BOSS</b>。
+     * 技能倍率再高也没用，因为衰减是无底的。</p>
+     *
+     * <p>加上 0.05 下限后：防御再高也至少保留 5% 伤害，
+     * 高防怪仍有博弈空间（破甲、暴击、属性堆叠依然有效），但不会把伤害压到个位数。</p>
+     */
+    private static final float MIN_DAMAGE_FACTOR = 0.05f;
 
     private static final float EFFECT_TEAR = 0.225f;      // 撕裂
     private static final float EFFECT_ARMOR_PIERCE = 0.45f; // 破甲
     private static final float EFFECT_SCORCH = 0.675f;    // 燃烧
     private static final float EFFECT_DIZZY = 0.9f;       // 震荡
     // 剩余区间 = 湮灭
+
+    /**
+     * 计算防御减伤系数，<b>带下限</b>。
+     *
+     * @param effectiveFangyu 已扣除破甲的有效防御
+     * @return 伤害保留系数，范围 [{@value #MIN_DAMAGE_FACTOR}, 1.0]
+     */
+    private static float getDamageFactor(float effectiveFangyu) {
+        if (effectiveFangyu <= 0.0f) return 1.0f;
+        return Math.max(MIN_DAMAGE_FACTOR, 100f / (100f + effectiveFangyu));
+    }
 
     private static float getFlyingDamageMultiplier(Player player) {
         if (!player.getAbilities().flying) return 1.0f;
@@ -86,14 +147,17 @@ public class CombatEventHandler {
             return;
         }
 
-        // ==================== 基础伤害（飞行系数只在这里乘一次） ====================
         float gongji = ModAttributeAPI.getGongji(attacker);
         float wuchuan = ModAttributeAPI.getWuchuan(attacker);
         float fangyu = ModAttributeAPI.getEffectiveFangyu(target);
 
+        boolean isSkillDamage = com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem.isSkillDamage(target);
+
         float effectiveFangyu = Math.max(0, fangyu - wuchuan);
-        float reductionFactor = 100f / (100f + effectiveFangyu);
-        float baseDamage = (gongji + event.getAmount()) * reductionFactor;
+        float reductionFactor = getDamageFactor(effectiveFangyu);
+        float baseDamage = isSkillDamage
+                ? event.getAmount() * reductionFactor
+                : (gongji + event.getAmount()) * reductionFactor;
 
         if (attacker instanceof Player player) {
             baseDamage *= getFlyingDamageMultiplier(player);
@@ -102,40 +166,33 @@ public class CombatEventHandler {
         float finalDamage = baseDamage;
         boolean isCrit = false;
 
-        // ==================== 特殊特效判定（返回真实伤害，不再二次计算） ====================
+        float baojilv = ModAttributeAPI.getBaojilv(attacker);
+        float kangbao = ModAttributeAPI.getKangbao(target);
+        float finalCritRate = Math.max(0, baojilv - kangbao);
+        boolean critHit = (RANDOM.nextFloat() * 100) < finalCritRate;
+
         Float specialDamage = null;
-        if (RANDOM.nextFloat() < SPECIAL_EFFECT_CHANCE) {
+        float effectChance = getSpecialEffectChance(finalCritRate);
+        if (RANDOM.nextFloat() * 100.0f < effectChance) {
             specialDamage = triggerSpecialEffects(attacker, target, baseDamage);
         }
         boolean effectTriggered = specialDamage != null;
+
         if (effectTriggered) {
             finalDamage = specialDamage;
-        }
-
-        // ==================== 暴击判定 ====================
-        if (!effectTriggered) {
-            float baojilv = ModAttributeAPI.getBaojilv(attacker);
-            float kangbao = ModAttributeAPI.getKangbao(target);
-            float finalCritRate = Math.max(0, baojilv - kangbao);
-            if ((RANDOM.nextFloat() * 100) < finalCritRate) {
-                isCrit = true;
-                float baojishanghai = ModAttributeAPI.getBaojishanghai(attacker);
-                finalDamage = baseDamage * (baojishanghai / 100f);
-            }
+        } else if (critHit) {
+            isCrit = true;
+            float baojishanghai = ModAttributeAPI.getBaojishanghai(attacker);
+            finalDamage = baseDamage * (baojishanghai / 100f);
         }
 
         finalDamage = Math.max(0.1f, finalDamage);
         event.setAmount(finalDamage);
 
-        // ⭐ 登记给 LivingDamageEvent 兜底用。
-        //   其他 mod 若在 Hurt 阶段 setCanceled(true)（无敌/护盾类最常见），
-        //   或者把 amount 覆写成 1，我们在这里 set 的值就废了 → 怪物只掉一滴血。
-        //   CombatDamageBackupHandler 会在 Damage 阶段把被腰斩的数值补回来。
         CombatDamageBackupHandler.record(target, finalDamage);
 
         handleLifesteal(attacker, finalDamage);
 
-        // ==================== 荆棘反伤 + 伤害飘字（合并为一处，不再重复） ====================
         if (attacker instanceof Player player) {
 
             if (target.getPersistentData().getBoolean("Skill_JingJi_Available")

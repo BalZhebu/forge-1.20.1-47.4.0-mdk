@@ -1,6 +1,9 @@
 {
   "variants": {
-    "": {
+    "occupied=false": {
+      "model": "kunluncontinent:block/spirit_gathering_stone_1"
+    },
+    "occupied=true": {
       "model": "kunluncontinent:block/spirit_gathering_stone_1"
     }
   }

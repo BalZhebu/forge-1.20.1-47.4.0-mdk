@@ -40,6 +40,13 @@ public class ModStructureProvider {
     public static final ResourceKey<StructureSet> UNDERWATER_RUINS_SET = ResourceKey.create(Registries.STRUCTURE_SET,
             new ResourceLocation(KlMain.MOD_ID, "underwater_ruins_set"));
 
+    /** 废弃丹房：主世界地表稀有结构，内含炼丹炉与 2 个奖励箱。 */
+    public static final ResourceKey<Structure> ABANDONED_DANFANG = ResourceKey.create(Registries.STRUCTURE,
+            new ResourceLocation(KlMain.MOD_ID, "abandoned_danfang"));
+
+    public static final ResourceKey<StructureSet> ABANDONED_DANFANG_SET = ResourceKey.create(Registries.STRUCTURE_SET,
+            new ResourceLocation(KlMain.MOD_ID, "abandoned_danfang_set"));
+
     public static void bootstrapStructure(BootstapContext<Structure> context) {
         HolderGetter<Biome> biomes = context.lookup(Registries.BIOME);
         HolderGetter<StructureTemplatePool> pools = context.lookup(Registries.TEMPLATE_POOL);
@@ -71,6 +78,21 @@ public class ModStructureProvider {
                 false,
                 Heightmap.Types.OCEAN_FLOOR_WG
         ));
+
+        // 废弃丹房：主世界地表结构，稀疏生成（200/60）
+        context.register(ABANDONED_DANFANG, new JigsawStructure(
+                new Structure.StructureSettings(
+                        biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
+                        Map.of(),
+                        GenerationStep.Decoration.SURFACE_STRUCTURES,
+                        TerrainAdjustment.BEARD_THIN
+                ),
+                pools.getOrThrow(ResourceKey.create(Registries.TEMPLATE_POOL, new ResourceLocation(KlMain.MOD_ID, "abandoned_danfang_pool"))),
+                1,
+                ConstantHeight.of(VerticalAnchor.absolute(0)),
+                false,
+                Heightmap.Types.WORLD_SURFACE_WG
+        ));
     }
 
     public static void bootstrapPools(BootstapContext<StructureTemplatePool> context) {
@@ -97,6 +119,17 @@ public class ModStructureProvider {
                         StructureTemplatePool.Projection.RIGID
                 )
         );
+
+        // 废弃丹房模板池
+        context.register(ResourceKey.create(Registries.TEMPLATE_POOL, new ResourceLocation(KlMain.MOD_ID, "abandoned_danfang_pool")),
+                new StructureTemplatePool(
+                        emptyPool,
+                        List.of(
+                                Pair.of(StructurePoolElement.single(KlMain.MOD_ID + ":abandoned_danfang"), 1)
+                        ),
+                        StructureTemplatePool.Projection.RIGID
+                )
+        );
     }
 
     public static void bootstrapStructureSet(BootstapContext<StructureSet> context) {
@@ -114,6 +147,17 @@ public class ModStructureProvider {
                         20,
                         RandomSpreadType.LINEAR,
                         986514321
+                )
+        ));
+
+        // 废弃丹房：间距 200、偏移 60（比 my_building 的 500/100 密，比 underwater_ruins 的 100/20 稀）
+        context.register(ABANDONED_DANFANG_SET, new StructureSet(
+                structures.getOrThrow(ABANDONED_DANFANG),
+                new RandomSpreadStructurePlacement(
+                        200,
+                        60,
+                        RandomSpreadType.LINEAR,
+                        20261009
                 )
         ));
     }

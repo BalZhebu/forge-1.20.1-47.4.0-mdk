@@ -56,6 +56,11 @@ public class ModBiomeModifiers {
             new ResourceLocation(KlMain.MOD_ID, "add_divine_realm_tree")
     );
 
+    /** ⭐ 神界草丛：只加到神界群系（装饰层，紧贴地表生成）。 */
+    public static final ResourceKey<BiomeModifier> ADD_DIVINE_REALM_GRASS =
+            ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS,
+                    new ResourceLocation(KlMain.MOD_ID, "add_divine_realm_grass"));
+
     public static void bootstrap(BootstapContext<BiomeModifier> context) {
         var biomes = context.lookup(Registries.BIOME);
         var placedFeatures = context.lookup(Registries.PLACED_FEATURE);
@@ -66,6 +71,16 @@ public class ModBiomeModifiers {
                 HolderSet.direct(biomes.getOrThrow(ModDimensions.CELESTIAL_BIOME)),
                 HolderSet.direct(placedFeatures.getOrThrow(
                         ModCelestialTreeFeature.DIVINE_REALM_TREE_PLACED)),
+                net.minecraft.world.level.levelgen.GenerationStep.Decoration.VEGETAL_DECORATION
+        ));
+
+        // ⭐ 神界草丛：与树同一个装饰层（VEGETAL_DECORATION），
+        //   它自己的 placed feature 里已有 SurfaceWaterDepthFilter(0)+Heightmap，
+        //   所以只会贴地长、不会浮空、不会长在水里。
+        context.register(ADD_DIVINE_REALM_GRASS, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                HolderSet.direct(biomes.getOrThrow(ModDimensions.CELESTIAL_BIOME)),
+                HolderSet.direct(placedFeatures.getOrThrow(
+                        ModCelestialTreeFeature.DIVINE_REALM_GRASS_PATCH_PLACED)),
                 net.minecraft.world.level.levelgen.GenerationStep.Decoration.VEGETAL_DECORATION
         ));
 

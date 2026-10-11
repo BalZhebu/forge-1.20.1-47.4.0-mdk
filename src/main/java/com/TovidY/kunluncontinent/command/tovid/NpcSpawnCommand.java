@@ -5,7 +5,9 @@ import com.TovidY.kunluncontinent.entity.playernpc.NpcBoneGenerator;
 import com.TovidY.kunluncontinent.entity.playernpc.NpcSkinRegistry;
 import com.TovidY.kunluncontinent.entity.playernpc.NpcSoulGenerator;
 import com.TovidY.kunluncontinent.entity.playernpc.PlayerNpcEntity;
+import com.TovidY.kunluncontinent.command.KLCommands;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.commands.CommandSourceStack;
@@ -46,10 +48,11 @@ import java.util.List;
 public class NpcSpawnCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(
-                Commands.literal("kunluncontinent")
-                        .requires(source -> source.hasPermission(2))
-                        .then(Commands.literal("npc")
+        KLCommands.register(dispatcher, node());
+    }
+
+    public static LiteralArgumentBuilder<CommandSourceStack> node() {
+        return Commands.literal("npc")
                                 // 先输入等级（整数），再输入 NPC 名字（贪婪字符串，全面支持中文）
                                 .then(Commands.argument("level", IntegerArgumentType.integer(1, 999))
                                         .then(Commands.argument("name", StringArgumentType.greedyString())
@@ -62,9 +65,7 @@ public class NpcSpawnCommand {
                                                 })
                                                 .executes(NpcSpawnCommand::spawn))
                                 )
-                        )
-        );
-    }
+                        ;}
 
     /** 指令主执行体。 */
     private static int spawn(com.mojang.brigadier.context.CommandContext<CommandSourceStack> context) {

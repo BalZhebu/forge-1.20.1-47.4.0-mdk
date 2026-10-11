@@ -42,6 +42,12 @@ public class PlayerCloneEventListener {
                                 PacketDistributor.PLAYER.with(() -> serverPlayer),
                                 packet
                         );
+                        // 重生后把神考数据也补发一份。
+                        // 之前只发属性包，导致客户端 GodClientData 停在"死亡前"的旧值 ——
+                        // 而它是静态字段，收过错的就不会自己纠正。
+                        com.TovidY.kunluncontinent.network.NetworkHandler.sendToClient(
+                                new com.TovidY.kunluncontinent.network.client.PacketSyncGodData(newAttrs),
+                                serverPlayer);
                     }
                 }
             });

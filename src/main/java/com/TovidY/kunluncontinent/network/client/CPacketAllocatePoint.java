@@ -46,6 +46,14 @@ public class CPacketAllocatePoint {
 
             sender.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
                 if (AttributePoints.allocate(sender, cap, spec, msg.amount) > 0) {
+                    // ⚠️ 加「凝神」（最大精神力）后必须把**当前精神力**一起补到新上限，
+                    //    否则上限涨了但当前值不变 → 玩家看到"点了没反应"。
+                    //    其他属性（攻击力等）没有"当前值"概念，不用处理。
+                    float mpMax = com.TovidY.kunluncontinent.capability.ModAttributeAPI
+                            .getMaxjingshenli(sender);
+                    if (cap.getJingshenli() > mpMax) {
+                        cap.setJingshenli(mpMax);
+                    }
                     SynsAPI.synsPlayerAttribute(sender);
                 }
             });

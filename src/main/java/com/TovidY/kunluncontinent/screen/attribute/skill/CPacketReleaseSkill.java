@@ -60,9 +60,19 @@ public class CPacketReleaseSkill {
             if (rings != null && selectedSlot < rings.size()) {
                 nianxian = (int) rings.get(selectedSlot).getNianxian();
             }
+
+            // 开关型技能（武魂真身）的「已开启时再按 = 关闭」必须放在最前面：
+            // 开启后玩家立刻处于冷却中，走正常流程会被下面的冷却检查拦住，
+            // 导致「开了就关不掉」。
+            if (skill.tryToggleOff(player)) {
+                SynsAPI.synsPlayerAttribute(player);
+                return;
+            }
+
             float costMultiplier = skill.getCostMultiplier(nianxian);
             float finalCost = skill.getBaseCost() * costMultiplier;
-            if (cap.getJingshenli() < finalCost) {
+            // 开关型技能不扣一次性能耗（成本在开启期间按 tick 扣），跳过这次前置校验
+            if (skill.hasUpfrontCost() && cap.getJingshenli() < finalCost) {
                 player.displayClientMessage(
                         Component.literal("§c精神力不足！需要 §e" + String.format("%.1f", finalCost) + " §c当前 §e" + String.format("%.1f", cap.getJingshenli())),
                         true
@@ -90,8 +100,12 @@ public class CPacketReleaseSkill {
                 NetworkHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new S2CCastingSyncPacket(castTime));
                 player.displayClientMessage(Component.translatable("gui.kunluncontinent.casting"), true);
             } else {
-                skill.handleRelease(player.level(), player, nianxian);
-                cap.setSkillLastUsedTime(currentWuhun, selectedSlot, currentTime);
+                // 只有真的释放成功才刷新冷却：武魂真身「关闭」时返回 false，
+                // 于是关闭动作不会把冷却时间戳重置（关闭不额外加冷却）
+                boolean cast = skill.handleRelease(player.level(), player, nianxian);
+                if (cast) {
+                    cap.setSkillLastUsedTime(currentWuhun, selectedSlot, currentTime);
+                }
                 SynsAPI.synsPlayerAttribute(player);
             }
         }

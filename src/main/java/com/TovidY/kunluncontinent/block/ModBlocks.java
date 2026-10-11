@@ -15,9 +15,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.SpreadingSnowyDirtBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -38,7 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraft.world.level.block.SoundType;
 
 //方块注册类
 public class ModBlocks {
@@ -180,6 +177,9 @@ public class ModBlocks {
     public static final RegistryObject<Block> DIVINE_REALM_SAPLING = registerBlock("divine_realm_sapling",
             () -> new com.TovidY.kunluncontinent.block.klblock.DivineRealmSaplingBlock(
                     BlockBehaviour.Properties.of().noCollission().noOcclusion().strength(0.01f).sound(SoundType.GRASS)));
+
+    public static final RegistryObject<Block> DIVINE_REALM_GRASS = registerBlock("divine_realm_grass",
+            () -> new com.TovidY.kunluncontinent.block.klblock.DivineRealmGrassBlock(BlockBehaviour.Properties.of().strength(0.01f).sound(SoundType.GRASS).noOcclusion().instabreak().noCollission()));
 
     //草药
     public static final RegistryObject<Block> RED_SPIDER_LILY_BLOCK = BLOCKS.register("red_spider_lily_block", () -> new KLCropBlock(BlockBehaviour.Properties.copy(Blocks.WHEAT).noOcclusion(), () -> Blocks.NETHERRACK, ModItems.RED_SPIDER_SEEDS,10));
@@ -352,6 +352,7 @@ public class ModBlocks {
         MODBLOCKS.add(DIVINE_REALM_PLANKS);
         MODBLOCKS.add(DIVINE_REALM_LEAVES);
         MODBLOCKS.add(DIVINE_REALM_SAPLING);
+        MODBLOCKS.add(DIVINE_REALM_GRASS);
     }
 
 

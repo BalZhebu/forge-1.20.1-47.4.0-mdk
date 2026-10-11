@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.item.baseskillist.liejinhu.four;
 
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
+import static com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem.dealSkillDamage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -41,7 +42,7 @@ public class SkillLeijinhu4 extends BaseSkillItem {
             // 范围伤害
             List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class, new AABB(center).inflate(2.0), e -> e != player);
             for (LivingEntity target : targets) {
-                target.hurt(level.damageSources().mobAttack(player), finalDamage);
+                dealSkillDamage(target, finalDamage, level.damageSources().mobAttack(player));
             }
 
             // ---- 特效：地脉炸裂 —— 五格碎金多边形 + 崩塌岩屑锥 + 双重冲击环 ----

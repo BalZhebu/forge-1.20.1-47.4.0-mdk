@@ -16,6 +16,7 @@ import com.TovidY.kunluncontinent.entity.EntityInit;
 import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanEntity;
 import com.TovidY.kunluncontinent.entity.playernpc.PlayerNpcEntity;
 import com.TovidY.kunluncontinent.event.client.CoinDropHandler;
+import com.TovidY.kunluncontinent.godclass.GodExamFeedback;
 import com.TovidY.kunluncontinent.godclass.interfac.GodTaskType;
 import com.TovidY.kunluncontinent.item.ModItems;
 import com.TovidY.kunluncontinent.item.neidanitems.NeidanDropHandler;
@@ -241,6 +242,13 @@ public class KLivingDeathEvent {
                 godCap.addGodTaskProgress(1);
                 int required = godCap.getAssignedCounts()[stage];
                 if (godCap.getGodTaskProgress() >= required) {
+                    // ⭐ 击杀达成考核时必须主动播「考核通过」演出。
+                    //    之前这里只调 checkTaskCompletion，而那方法只发奖励 + 推进阶段、
+                    //    不发任何提示，于是玩家杀掉最后一只怪后屏幕毫无反应，
+                    //    必须自己点面板的「进度检查」才看得到（C2SCheckTaskPacket 里才有演出）。
+                    //    completedStage 必须在推进阶段之前取，否则会显示成下一考的序号。
+                    int completedStage = stage;
+                    GodExamFeedback.announcePass(serverPlayer, completedStage);
                     godCap.checkTaskCompletion(serverPlayer);
                 }
                 NetworkHandler.sendToClient(new PacketSyncGodData(godCap), serverPlayer);

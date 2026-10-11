@@ -18,7 +18,7 @@ import java.util.List;
  *   <li>单条属性上限 {@link AttributePointSpec#MAX_POINTS} 点；</li>
  *   <li><b>未重置前只能加不能减</b> —— {@link #allocate} 的 amount 只接受正数，
  *       想要减点必须走 {@link #resetWithScroll}；</li>
- *   <li>重置把 11 条全部清零并把点数全额退还，<b>需要 1 个重置卷轴</b>
+ *   <li>重置把 13 条全部清零并把点数全额退还，<b>需要 1 个重置卷轴</b>
  *       （{@code ModItems.RESET_SCROLL}）。两条路——右键卷轴 / 面板重置按钮——
  *       都走 {@link #resetWithScroll} 这一个入口，不要各写一份。</li>
  * </ul>
@@ -100,7 +100,7 @@ public final class AttributePoints {
     }
 
     /**
-     * 重置全部 11 条属性点，点数全额退还。<b>不消耗任何道具</b>。
+     * 重置全部 13 条属性点，点数全额退还。<b>不消耗任何道具</b>。
      *
      * <p>玩家主动行为（右键卷轴 / 面板重置按钮）请用
      * {@link #resetWithScroll(ServerPlayer, PlayerAttributeCapability)}，那边会扣卷轴。</p>
@@ -119,7 +119,7 @@ public final class AttributePoints {
     }
 
     /**
-     * 玩家主动重置：<b>消耗 1 个重置卷轴</b>后清空全部 11 条属性点，点数全额退还。
+     * 玩家主动重置：<b>消耗 1 个重置卷轴</b>后清空全部 13 条属性点，点数全额退还。
      *
      * <p>两条路都走这一个入口：① 右键 {@code ModItems.RESET_SCROLL}
      * ② 点属性点面板上的"重置属性点"按钮。</p>
@@ -178,7 +178,7 @@ public final class AttributePoints {
      * 转生时的属性点继承：<b>清空所有已加点，按转生前已加总数的 10%~30% 折算成新点数</b>，
      * 直接放进新存档的可用点数池里。
      *
-     * <p><b>为什么不按条继承、而是按总数折算</b>：转生是整体重置，11 条属性点全部清零。
+     * <p><b>为什么不按条继承、而是按总数折算</b>：转生是整体重置，13 条属性点全部清零。
      * 若逐条继承，玩家花出去的点数会被"打折退还"，等于惩罚；而按<b>总数</b>折算，
      * 相当于"你之前总共投入了 N 点，转生后返还 N×(10%~30%)"，规则简单也最好解释。</p>
      *

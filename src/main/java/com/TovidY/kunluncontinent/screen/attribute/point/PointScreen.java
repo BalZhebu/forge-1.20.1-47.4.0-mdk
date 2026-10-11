@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * 属性加点面板。
  *
- * <p>11 条属性全部由 {@link AttributePointSpec} 驱动 —— 名字、原属性名、每点收益、上限、
+ * <p>13 条属性全部由 {@link AttributePointSpec} 驱动 —— 名字、原属性名、每点收益、上限、
  * 颜色都在那一个枚举里，这里只负责画和发包。加属性 = 加一行枚举，不用改本文件。</p>
  *
  * <p>规则：<b>只能加不能减</b>，想减点必须用右下角"重置"（全额退还）。</p>
@@ -27,18 +27,24 @@ public class PointScreen extends AbstractContainerScreen<PointMenu> implements A
 
     // ==================== 布局常量 ====================
     private static final int PANEL_W = 400;
-    private static final int PANEL_H = 236;
+    private static final int PANEL_H = 250;
 
     /** 顶部"可用点数"信息块。 */
     private static final int HEADER_Y = 28;
     private static final int HEADER_H = 34;
 
-    /** 11 条属性分两列（6 + 5）。 */
-    private static final int ROWS_PER_COL = 6;
+    /**
+     * 每列的属性条数。
+     *
+     * <p>⚠️ 原来固定 6（13 条属性 6+5）。新增「凝神/定魂」后共<b>13 条</b>，
+     * 按 7 + 6 分列才不会溢出面板。改属性数量时同步改这个值。
+     * 通用公式：{@code ROWS_PER_COL = (总数 + 1) / 2}</p>
+     */
+    private static final int ROWS_PER_COL = 7;
     private static final int COL_W = 182;
     private static final int COL_GAP = 8;
     private static final int LIST_X = 12;
-    private static final int ROW_H = 22;
+    private static final int ROW_H = 18;
 
     private static final int BAR_H = 2;
     private static final int NAME_DX = 7;
@@ -103,18 +109,31 @@ public class PointScreen extends AbstractContainerScreen<PointMenu> implements A
         )));
     }
 
-    /** 某个属性的 tooltip：别名 · 原属性名 / 每点收益 / 已加点数。 */
+    /**
+     * 某个属性的 tooltip：别名 · 原属性名 / 每点收益 / 已加点数。
+     *
+     * <p>「定魂」（抗打断）多一行说明封顶与等级加成 —— 它是唯一有额外规则的属性，
+     * 不说清楚玩家会以为 99 点就 100% 免疫。</p>
+     */
     private List<Component> tooltipFor(AttributePointSpec spec) {
         int points = cap() == null ? 0 : cap().getAllocatedPoints(spec);
         String mode = spec.getMode() == AttributePointSpec.Mode.FLAT ? "直接加算" : "百分比放大";
-        return List.of(
+
+        List<Component> lines = new java.util.ArrayList<>(List.of(
                 Component.literal(spec.getColorCode() + spec.getDisplayName()
                         + " §8· §f" + spec.getAttrName()),
                 Component.literal("§7每点 §e+" + spec.getPerPointPercent() + "% §8(" + mode + ")")
                         .append(Component.literal("§7，满 " + AttributePointSpec.MAX_POINTS + " 点 §e+"
                                 + spec.getMaxTotalPercent() + "%")),
                 Component.literal("§7已加 §e" + points + " §7/ " + AttributePointSpec.MAX_POINTS + " 点")
-        );
+        ));
+
+        if (spec == AttributePointSpec.KANGDAPAN) {
+            lines.add(Component.literal("§8受击时按此概率免疫吟唱打断"));
+            lines.add(Component.literal("§7最终 §f点数 + 等级加成§7（等级上限 +15%）"));
+            lines.add(Component.literal("§7抗打断上限 §e99%§7，不会完全免疫"));
+        }
+        return lines;
     }
 
     private PlayerAttributeCapability cap() {

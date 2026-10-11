@@ -12,7 +12,9 @@ import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.util.valueproviders.WeightedListInt;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
+import net.minecraft.world.level.levelgen.feature.configurations.RandomPatchConfiguration;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.CherryFoliagePlacer;
@@ -119,30 +121,92 @@ public final class ModCelestialTreeFeature {
                         .build());
     }
 
-    // ==================== 放置规则注册 ====================
+    /**
+     * 地物：<b>神界草丛</b>（随机小簇草）。
+     *
+     * <p>用 {@link Feature#RANDOM_PATCH} 而不是 {@code SIMPLE_PATCH}：
+     * 前者会随机偏移 + 需要 {@code tries} 次尝试，铺出来的更自然；
+     * 后者是固定 3×3 网格，一眼就能看出规律。</p>
+     */
+    public static final ResourceKey<ConfiguredFeature<?, ?>> DIVINE_REALM_GRASS_PATCH =
+            ResourceKey.create(Registries.CONFIGURED_FEATURE,
+                    new ResourceLocation("kunluncontinent", "divine_realm_grass_patch"));
+
+    /** 放置规则：每格 chance 概率尝试，成功则生成一簇草。 */
+    public static final ResourceKey<PlacedFeature> DIVINE_REALM_GRASS_PATCH_PLACED =
+            ResourceKey.create(Registries.PLACED_FEATURE,
+                    new ResourceLocation("kunluncontinent", "divine_realm_grass_patch_placed"));
+
+    /** ⭐ 草丛密度：每 GRASS_RARITY 格尝试 1 次。调小 → 更密。 */
+    private static final int GRASS_RARITY = 1;
+
+    /**
+     * 内层地物「放一株草」的 <b>ConfiguredFeature</b>。
+     *
+     * <p>1.20.1 的 {@code RandomPatchConfiguration} <b>只有这一个构造器</b>：
+     * {@code (tries, xzSpread, ySpread, Holder<PlacedFeature> feature)}——
+     * 它<b>不接受方块</b>，只能嵌套一个 {@link PlacedFeature}。
+     * 而"直接放一个方块"的地物是 {@link Feature#SIMPLE_BLOCK}
+     *（配 {@code SimpleBlockConfiguration}），两者必须组合使用。</p>
+     */
+    public static final ResourceKey<ConfiguredFeature<?, ?>> DIVINE_REALM_GRASS_TALL =
+            ResourceKey.create(Registries.CONFIGURED_FEATURE,
+                    new ResourceLocation("kunluncontinent", "divine_realm_grass_tall"));
+
+    public static final ResourceKey<PlacedFeature> DIVINE_REALM_GRASS_TALL_PLACED =
+            ResourceKey.create(Registries.PLACED_FEATURE,
+                    new ResourceLocation("kunluncontinent", "divine_realm_grass_tall_placed"));
+
+    private static final int GRASS_PER_CLUMP = 20;
+
+    public static void bootstrapGrass(BootstapContext<ConfiguredFeature<?, ?>> context) {
+        // ① 内层：真正"放一株草"的地物
+        FeatureUtils.register(context, DIVINE_REALM_GRASS_TALL, Feature.SIMPLE_BLOCK,
+                new SimpleBlockConfiguration(
+                        BlockStateProvider.simple(
+                                com.TovidY.kunluncontinent.block.ModBlocks.DIVINE_REALM_GRASS
+                                        .get().defaultBlockState())));
+        FeatureUtils.register(context, DIVINE_REALM_GRASS_PATCH, Feature.RANDOM_PATCH,
+                new RandomPatchConfiguration(
+                        GRASS_PER_CLUMP,// tries：每次撒点撒几株
+                        2,             // xzSpread：3×3 格内随机
+                        0,             // ySpread：0 = 贴地
+                        context.lookup(Registries.PLACED_FEATURE)
+                                .getOrThrow(DIVINE_REALM_GRASS_TALL_PLACED)));
+    }
 
     public static void placement(BootstapContext<PlacedFeature> context) {
         HolderGetter<ConfiguredFeature<?, ?>> features = context.lookup(Registries.CONFIGURED_FEATURE);
-
-        // ⚠️ 修饰器顺序有讲究：
-        //    InSquare（先随机取一个起点）→ Rarity（决定这个格子要不要长）→ Count（长几棵）
-        //    → 只有地面（贴地）→ Heightmap（按地表高度）→ Biome（限定群系）
         List<PlacementModifier> modifiers = List.of(
                 InSquarePlacement.spread(),
-                // ⭐ 密度：每 RARITY 格最多 1 棵。**调小 → 更密**。
-                //    神界是稀疏浮岛，建议 4~8。想成丛就调到 3~4。
                 RarityFilter.onAverageOnceEvery(RARITY),
                 CountPlacement.of(2),
-                // ⭐ 只在「地表水深度为 0」处生成 —— 1.20.1 没有 PlaceOnSurfacePlacement，
-                //    这就是官方替代：水面/空气层以下不种树，等价于只长在地面��
                 SurfaceWaterDepthFilter.forMaxDepth(0),
-                // 用高度图让树根严格贴住地表
                 HeightmapPlacement.onHeightmap(Heightmap.Types.MOTION_BLOCKING),
-                // 群系限定（神界群系会通过 biome modifier 加上这条 placed feature）
                 BiomeFilter.biome()
         );
 
         context.register(DIVINE_REALM_TREE_PLACED,
                 new PlacedFeature(features.getOrThrow(DIVINE_REALM_TREE), modifiers));
+
+        context.register(DIVINE_REALM_GRASS_TALL_PLACED,
+                new PlacedFeature(features.getOrThrow(DIVINE_REALM_GRASS_TALL),
+                        java.util.List.of()));
+
+        context.register(DIVINE_REALM_GRASS_PATCH_PLACED,
+                new PlacedFeature(features.getOrThrow(DIVINE_REALM_GRASS_PATCH), List.of(
+                        InSquarePlacement.spread(),
+                        // ⭐ 密度：每 GRASS_RARITY 格尝试一簇。调小 → 更密。
+                        RarityFilter.onAverageOnceEvery(GRASS_RARITY),
+                        // ⚠️ 这里【不能】加 CountPlacement：
+                        //   草是单株方块（SIMPLE_BLOCK），叠放会对同一格反复放置，
+                        //   浪费 tries 且更乱。成簇交给内层 RandomPatch 的 tries。
+                        // 只在「地表水深度为 0」处生成 → 不会长在水里/空中
+                        SurfaceWaterDepthFilter.forMaxDepth(0),
+                        // ⭐ 关键：高度图让草严格贴住岛顶地表。
+                        //   神界是浮空岛，没有这行草会长在岛侧壁甚至半空。
+                        HeightmapPlacement.onHeightmap(Heightmap.Types.MOTION_BLOCKING),
+                        BiomeFilter.biome()
+                )));
     }
 }

@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.item.baseskillist.juyuan.eight;
 
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
+import static com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem.dealSkillDamage;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -65,7 +66,7 @@ public class SkillPanshijuyuan8 extends BaseSkillItem {
             AABB hitArea = new AABB(targetPoint.x - 3.5, targetPoint.y - 2, targetPoint.z - 3.5, targetPoint.x + 3.5, targetPoint.y + 4, targetPoint.z + 3.5);
             level.getEntitiesOfClass(LivingEntity.class, hitArea, e -> e != player && e.isAlive())
                     .forEach(target -> {
-                        target.hurt(player.damageSources().playerAttack(player), finalDamage);
+                        dealSkillDamage(target, finalDamage, player.damageSources().playerAttack(player));
                         target.setDeltaMovement(0, -2.0, 0); // 强行拍进地里
                     });
 

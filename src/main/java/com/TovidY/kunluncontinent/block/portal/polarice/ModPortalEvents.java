@@ -5,6 +5,7 @@ import com.TovidY.kunluncontinent.block.ModBlocks;
 import com.TovidY.kunluncontinent.item.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
@@ -56,6 +57,12 @@ public class ModPortalEvents {
                     if (!level.isClientSide()) {
                         if (!player.isCreative()) stack.shrink(1);
                         level.playSound(null, startPos, SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.BLOCKS, 1.0F, 1.0F);
+                        // ⭐ 把玩家手动搭的这座门记成该维度的「家」，
+                        //    否则传送时找不到附近有门就会另外造一座，导致越用越多。
+                        if (level instanceof ServerLevel serverLevel) {
+                            PortalSaveData.get(serverLevel).setHome(
+                                    serverLevel.dimension().location().toString(), startPos);
+                        }
                     }
                     event.setCanceled(true);
                     event.setCancellationResult(InteractionResult.sidedSuccess(level.isClientSide()));

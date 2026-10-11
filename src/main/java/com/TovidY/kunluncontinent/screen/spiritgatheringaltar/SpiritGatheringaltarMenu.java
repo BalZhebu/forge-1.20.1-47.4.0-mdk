@@ -91,7 +91,7 @@ public class SpiritGatheringaltarMenu extends AbstractContainerMenu {
         this.addSlot(new SlotItemHandler(internal, 0, 27, 15) {
             @Override
             public boolean mayPlace(ItemStack stack) {
-                return getStoneScore() > 5 && AltarFilters.isValidItem(stack);
+                return unlocked(0) && AltarFilters.isValidItem(stack);
             }
 
             @Override
@@ -103,15 +103,14 @@ public class SpiritGatheringaltarMenu extends AbstractContainerMenu {
         this.addSlot(new SlotItemHandler(internal, 1, 82, 15) {
             @Override
             public boolean mayPlace(ItemStack stack) {
-                return getStoneScore() > 140 && AltarFilters.isValidItem(stack);
+                return unlocked(1) && AltarFilters.isValidItem(stack);
             }
         });
 
         this.addSlot(new SlotItemHandler(internal, 2, 135, 15) {
             @Override
             public boolean mayPlace(ItemStack stack) {
-                // 槽位 2：强度大于 300 解开
-                return getStoneScore() > 300 && AltarFilters.isValidItem(stack);
+                return unlocked(2) && AltarFilters.isValidItem(stack);
             }
         });
 
@@ -127,7 +126,7 @@ public class SpiritGatheringaltarMenu extends AbstractContainerMenu {
         }
     }
 
-    // ==================== 【新增：暴露给 Screen 的数据查询口】 ====================
+    // ==================== 【暴露给 Screen 的数据查询口】 ====================
     public int getStoneScore() {
         return this.containerData.get(0);
     }
@@ -138,6 +137,13 @@ public class SpiritGatheringaltarMenu extends AbstractContainerMenu {
 
     public int getRecoverAmount() {
         return this.containerData.get(2);
+    }
+
+    /**
+     * 槽位是否已解锁。门槛统一读方块实体常量，避免三处硬编码（Menu / Screen / BE）各改各的。
+     */
+    public boolean unlocked(int slot) {
+        return getStoneScore() > SpiritGatheringAltherBlockEntity.SLOT_SCORE_REQUIREMENTS[slot];
     }
     // =========================================================================
 
@@ -166,21 +172,14 @@ public class SpiritGatheringaltarMenu extends AbstractContainerMenu {
                 slot.onQuickCraft(itemstack1, itemstack);
             } else { // 从背包快捷传到自定义槽位
                 // ✨【核心修复】快捷传送时，必须动态判断槽位是否满足解锁强度，不能无脑塞
-                int currentScore = getStoneScore();
-                boolean p0Open = currentScore > 5;
-                boolean p1Open = currentScore > 140;
-                boolean p2Open = currentScore > 300;
-
-                // 尝试逐个塞入已解锁的槽位
+                // ⚠️ 之前是三行 if (p0Open && ...) 手写硬编码门槛，改数值必漏一处。
+                //    现在统一走 unlocked(slot)。
                 boolean moved = false;
-                if (p0Open && AltarFilters.isValidItem(itemstack1)) {
-                    moved = this.moveItemStackTo(itemstack1, 0, 1, false);
-                }
-                if (!moved && p1Open && AltarFilters.isValidItem(itemstack1)) {
-                    moved = this.moveItemStackTo(itemstack1, 1, 2, false);
-                }
-                if (!moved && p2Open && AltarFilters.isValidItem(itemstack1)) {
-                    moved = this.moveItemStackTo(itemstack1, 2, 3, false);
+                for (int target = 0; target < 3; target++) {
+                    if (moved) break;
+                    if (unlocked(target) && AltarFilters.isValidItem(itemstack1)) {
+                        moved = this.moveItemStackTo(itemstack1, target, target + 1, false);
+                    }
                 }
 
                 if (!moved) {

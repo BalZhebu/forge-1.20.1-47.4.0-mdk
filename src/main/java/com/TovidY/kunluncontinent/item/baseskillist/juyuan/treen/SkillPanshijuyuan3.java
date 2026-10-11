@@ -3,6 +3,7 @@ package com.TovidY.kunluncontinent.item.baseskillist.juyuan.treen;
 import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
+import static com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem.dealSkillDamage;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -46,7 +47,7 @@ public class SkillPanshijuyuan3 extends BaseSkillItem {
             }
 
             for (LivingEntity target : targets) {
-                target.hurt(level.damageSources().explosion(player, player), finalDamage);
+                dealSkillDamage(target, finalDamage, level.damageSources().explosion(player, player));
                 target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 2));
                 target.push(0, 0.3, 0);
                 if (fx != null) {

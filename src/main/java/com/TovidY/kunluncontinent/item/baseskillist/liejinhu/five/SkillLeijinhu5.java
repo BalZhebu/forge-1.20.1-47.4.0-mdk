@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.item.baseskillist.liejinhu.five;
 
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
+import static com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem.dealSkillDamage;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -63,7 +64,7 @@ public class SkillLeijinhu5 extends BaseSkillItem {
                     }
                 }
                 else {
-                    target.hurt(player.damageSources().playerAttack(player), finalDamage);
+                    dealSkillDamage(target, finalDamage, player.damageSources().playerAttack(player));
                     if (fx != null) {
                         // 常规扑杀：目标身上留下斜向撕裂爪痕
                         Vec3 to = hitPos.subtract(player.position()).normalize();

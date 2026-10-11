@@ -27,7 +27,21 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
         //锄子
         tag(BlockTags.MINEABLE_WITH_HOE)
                 .add(ModBlocks.PUTUAN_BLOCK.get())
-                .add(ModBlocks.DROSS_BLOCK.get());
+                .add(ModBlocks.DROSS_BLOCK.get())
+                // ⭐ 神界草：用锄子铲（同原版草）
+                .add(ModBlocks.DIVINE_REALM_GRASS.get());
+
+        // ⭐ 神界草的行为标签 —— 缺了这些它就只是个"装饰方块"。
+        //   ⚠️ 常量名以**本项目 mappings 里真实存在的**为准：
+        //      · REPLACEABLE / DIRT / REPLACEABLE_BY_TREES / MINEABLE_WITH_HOE 都已验证可用
+        //      · BLOCKS_PLACEABLE_BY_TREES 和 COMBUSTIBLE 在本映射里不存在（编译报"找不到符号"），
+        //        它们的等价标签是 Tags.Blogs（Forge 的可燃标签），按需再加。
+        tag(BlockTags.REPLACEABLE)
+                .add(ModBlocks.DIVINE_REALM_GRASS.get());
+        tag(BlockTags.REPLACEABLE_BY_TREES)
+                .add(ModBlocks.DIVINE_REALM_GRASS.get());
+        tag(BlockTags.DIRT)
+                .add(ModBlocks.DIVINE_REALM_GRASS.get());
 
         //斧子
         tag(BlockTags.MINEABLE_WITH_AXE)

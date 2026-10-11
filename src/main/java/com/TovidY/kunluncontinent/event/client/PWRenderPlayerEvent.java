@@ -378,10 +378,16 @@ public class PWRenderPlayerEvent {
 
         poseStack.pushPose();
 
-        // 2. 统一先平移到背后相对位置（使用局部坐标系，无需手动计算 sin/cos 避免精度误差偏移）
+        // 2. 先旋转对齐背部朝向，再沿局部 +Z 往身后推。
+        //
+        //    ⚠️ 符号已用矩阵脚本验证：绕 Y 转 (-bodyYaw+180) 后，局部 +Z 恰好就是
+        //    **角色背后**（与 -facing 的点积 = +1.000，完全同向）。
+        //    所以 zOffset 必须取【正】才是往身后走。
+        //    原代码取 -0.6f（负值 = 沿局部 -Z = 身前），所以魂环跑到玩家脸前。
         poseStack.mulPose(Axis.YP.rotationDegrees(-bodyYaw + 180f)); // 对齐玩家背部视角
 
-        float zOffset = -0.6f - (count - 9) * 0.15f; // 背部深度
+        // 背部深度（正值 = 沿局部 +Z 推出去 = 往身后）
+        float zOffset = 0.6f + (count - 9) * 0.15f;
         float yOffset = 1.2f; // 背部高度（约胸口/翅膀位置）
         poseStack.translate(anim.x(), yOffset + anim.y(), zOffset * progress + anim.z());
 

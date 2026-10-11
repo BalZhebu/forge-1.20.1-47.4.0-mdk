@@ -168,9 +168,19 @@ public final class AttributeTabs {
     /** 属性点面板：插在属性面板右侧第二位。 */
     public static final int PAGE_POINT = 5;
 
-    /** 是否已成神（神考页签的显示条件）。 */
-    private static boolean isGod() {
-        return GodClientData.godName != null && !GodClientData.godName.equals("无");
+    /**
+     * 神考页签的显示条件 = <b>"这个玩家身上有神考数据"</b>。
+     *
+     * <p>⚠️ <b>这里必须用 {@code godId} 判定，不能用 {@code godName}</b>。
+     * 旧写法 {@code !godName.equals("无")} 有致命 bug：{@code PacketSyncGodData} 构造时
+     * 若 {@code GODS.get(godId)} 为 null，会把 displayName 设成 "无"，
+     * 而这个 displayName 又会覆盖回客户端的 godName → 页签 visible 直接为 false
+     * → <b>页签整个消失</b>，只有重登（登录会重新全量同步）才恢复。</p>
+     *
+     * <p>正确口径：{@code godId} 非空= 服务端确实给他开了神考（无论封神与否）。</p>
+     */
+    private static boolean hasGodExam() {
+        return GodClientData.godId != null && !GodClientData.godId.isEmpty();
     }
 
     /**
@@ -208,7 +218,7 @@ public final class AttributeTabs {
                         ? "神祇面板" : "神考面板",
                 () -> new ItemStack(ModItems.SHENKAO_BUTTON.get()),
                 new com.TovidY.kunluncontinent.screen.attribute.shenkao.ShenkaoMenu.Provider(),
-                AttributeTabs::isGod);
+                AttributeTabs::hasGodExam);
     }
     /**
      * 页签宿主接口 —— 让本工具类能访问 {@code leftPos/topPos/font/imageWidth}
@@ -239,7 +249,28 @@ public final class AttributeTabs {
      */
     public static void buildTabs(Host host, int currentPageId) {
         ensureRegistered();
+        requestGodDataSync();
         buildTabs(host, host.leftPos() + MARGIN_X, host.topPos() + OFFSET_Y, currentPageId);
+    }
+
+    /**
+     * ⭐ 打开面板时向服务端要一次神考数据（幂等、零副作用）。
+     *
+     * <p><b>修的 bug</b>：神考面板"消失，必须重启游戏才恢复"。
+     * 客户端 {@code GodClientData} 是静态字段，只要某次服务端发包时机不对
+     * （登出 / 换维度 / 发包早于客户端 ready），它就会卡在错误的旧值上，
+     * 而客户端<b>从不主动要</b> → UI 一直错，只有重登才恢复。</p>
+     *
+     * <p>这里在每次打开面板时对账一次，把状态拉回与服务端一致。
+     * <b>不在包里判断"玩家有没有神考"</b> —— 那样又回到"用有问题的字段做判断"的死循环。</p>
+     */
+    private static void requestGodDataSync() {
+        try {
+            NetworkHandler.INSTANCE.sendToServer(
+                    new com.TovidY.kunluncontinent.network.client.C2SRequestGodSync());
+        } catch (Throwable ignored) {
+            // 单机/无网络通道时忽略即可（数据本来就在本地）
+        }
     }
 
     /**

@@ -3,6 +3,7 @@ package com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.treen;
 import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
+import static com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem.dealSkillDamage;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -63,11 +64,13 @@ public class SkillPohun3 extends BaseSkillItem {
                     .orElse(null);
 
             if (target != null) {
-                float targetFangyu = ModAttributeAPI.getFangyu(target);
-                float effectiveFangyu = targetFangyu * 0.7f;
-                float reduction = 100f / (100f + effectiveFangyu);
-                float actualDamage = finalDamage * reduction;
-                target.hurt(level.damageSources().indirectMagic(player, player), Math.max(1.0f, actualDamage));
+                // ⚠️ 这里<b>不要</b>自己再乘一次 100/(100+防御)。
+                //    dealSkillDamage → LivingHurtEvent → CombatEventHandler
+                //    统一会做一次带下限的防御减伤（见 CombatEventHandler#getDamageFactor）。
+                //    本技能原本在这里先减一次、handler 里再减一次 = <b>伤害被砍两次</b>，
+                //    面对高防怪时伤害几乎归零，是「魂技很弱」的原因之一。
+                //    这里保留 0.7 的破甲意图，但改由 handler 的 wuchuan 口径统一处理。
+                dealSkillDamage(target, finalDamage, level.damageSources().indirectMagic(player, player));
 
                 // ---- 特效：锁定目标 → 贯穿突刺线 → 破甲碎片环 ----
                 ParticleFx fx = ParticleFx.of(level, player);

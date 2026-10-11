@@ -2,7 +2,9 @@ package com.TovidY.kunluncontinent.command.tovid;
 
 import com.TovidY.kunluncontinent.entity.playernpc.NpcBoneGenerator;
 import com.TovidY.kunluncontinent.entity.playernpc.PlayerNpcEntity;
+import com.TovidY.kunluncontinent.command.KLCommands;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -29,10 +31,11 @@ import java.util.List;
 public class NpcDebugCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(
-                Commands.literal("kunluncontinent")
-                        .requires(source -> source.hasPermission(2))
-                        .then(Commands.literal("npcdebug")
+        KLCommands.register(dispatcher, node());
+    }
+
+    public static LiteralArgumentBuilder<CommandSourceStack> node() {
+        return Commands.literal("npcdebug")
                                 .then(Commands.literal("bone")
                                         .then(Commands.argument("nianxian", IntegerArgumentType.integer(1, 10000000))
                                                 .executes(ctx -> giveBone(ctx.getSource(),
@@ -45,9 +48,7 @@ public class NpcDebugCommand {
                                         .then(Commands.argument("level", IntegerArgumentType.integer(1, 999))
                                                 .executes(ctx -> showOdds(ctx.getSource(),
                                                         IntegerArgumentType.getInteger(ctx, "level")))))
-                        )
-        );
-    }
+                        ;}
 
     private static int giveBone(CommandSourceStack source, int nianxian) {
         ServerPlayer player = source.getPlayer();

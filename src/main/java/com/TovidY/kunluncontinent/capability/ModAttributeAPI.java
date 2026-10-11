@@ -138,6 +138,7 @@ public class ModAttributeAPI {
             case "mingzhong" -> getMingzhong(player);
             case "wuchuan" -> getWuchuan(player);
             case "kangbao" -> getKangbao(player);
+            case "kangdapan" -> getKangdapan(player);
             default -> 0f;
         };
     }
@@ -360,7 +361,36 @@ public class ModAttributeAPI {
             PlayerAttributeCapability playerAttributeCapability = capability.orElseThrow(RuntimeException::new);
             value += playerAttributeCapability.getMaxjingshenli();
         }
-        return value;
+        // ⚠️ 这里原本**漏了 applyBonus** —— "凝神"点了几十点却毫无效果。
+        //    精神力是技能吟唱的燃料，必须和其他 11 条一样走统一结算。
+        return AttributePointSpec.applyBonusByKey("maxjingshenli", value, player);
+    }
+
+    /**
+     * ⭐ 抗打断几率（0~1之间的概率，1 = 必定不被打断）。
+     *
+     * <p><b>构成</b>：</p>
+     * <pre>
+     *   最终抗打断 = min(0.99, 点数加成 + 等级加成)
+     *   点数加成 = 0.8% × 已加点数        （"定魂"属性，max 99 点 → 79.2%）
+     *   等级加成 = min(0.15, 等级 × 0.15%)  （99 级 → +14.85%）
+     * </pre>
+     *
+     * <p><b>为什么封顶 0.99 而不是 1.0</b>：留1% 概率让"绝对打断"机制
+     * （如封魔类技能）永远存在，避免出现不可控的完全无敌吟唱。</p>
+     *
+     * @return 0 = 一定会被打断；0.99 = 99% 概率扛住
+     */
+    public static float getKangdapan(Entity entity) {
+        if (!(entity instanceof Player player)) return 0f;
+
+        float points = AttributePointSpec.applyBonusByKey("kangdapan", 0f, player);
+
+        // 等级加成：线性但封顶 15%，保证低等级也能感知到差异
+        int level = getDengji(player);
+        float levelBonus = Math.min(0.15f, level * 0.0015f);
+
+        return Math.min(0.99f, points + levelBonus);
     }
 
     public static float getMingzhong(Entity entity) {

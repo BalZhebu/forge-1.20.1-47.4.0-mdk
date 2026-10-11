@@ -10,6 +10,7 @@ import com.TovidY.kunluncontinent.datagen.itemprovider.ModItemModelsProvider;
 import com.TovidY.kunluncontinent.datagen.itemprovider.ModItemTagsProvider;
 import com.TovidY.kunluncontinent.datagen.itemprovider.ModRecipesProvider;
 import com.TovidY.kunluncontinent.datagen.lang.ModZhCnLangProvider;
+import com.TovidY.kunluncontinent.datagen.lootprovider.ModChestLootTablesProvider;
 import com.TovidY.kunluncontinent.datagen.oredatagen.ModBiomeModifierProvider;
 import com.TovidY.kunluncontinent.datagen.oredatagen.ModStructureProvider;
 import com.TovidY.kunluncontinent.datagen.oredatagen.ModWorldGenOreProvider;
@@ -60,6 +61,7 @@ public class ModDataGenerator {
             .add(Registries.CONFIGURED_FEATURE, context -> {
                 ModWorldGenOreProvider.bootstrap(context);
                 com.TovidY.kunluncontinent.datagen.worldgenprovider.ModCelestialTreeFeature.bootstrap(context);
+                com.TovidY.kunluncontinent.datagen.worldgenprovider.ModCelestialTreeFeature.bootstrapGrass(context);
             })
             .add(Registries.PLACED_FEATURE, context -> {
                 ModWorldGenOreProvider.placement(context);
@@ -85,7 +87,12 @@ public class ModDataGenerator {
 
         // 基础 Provider
         generator.addProvider(event.includeServer(), new ModRecipesProvider(packOutput));
-        generator.addProvider(event.includeServer(), new LootTableProvider(packOutput, Set.of(), List.of(new LootTableProvider.SubProviderEntry(ModBlockLootTablesProvider::new, LootContextParamSets.BLOCK))));
+        // 方块掉落 + 宝箱战利品：同一个 LootTableProvider 下挂多个子 Provider，
+        // 各自声明用哪个 LootContextParamSet（方块 / 箱子），缺一不可。
+        generator.addProvider(event.includeServer(), new LootTableProvider(packOutput, Set.of(), List.of(
+                new LootTableProvider.SubProviderEntry(ModBlockLootTablesProvider::new, LootContextParamSets.BLOCK),
+                new LootTableProvider.SubProviderEntry(ModChestLootTablesProvider::new, LootContextParamSets.CHEST)
+        )));
 
         // 标签 Provider
         BlockTagsProvider blockTagsProvider = generator.addProvider(event.includeServer(),

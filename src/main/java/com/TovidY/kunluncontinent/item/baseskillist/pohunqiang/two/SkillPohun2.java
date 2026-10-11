@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.two;
 
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
+import static com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem.dealSkillDamage;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -68,7 +69,7 @@ public class SkillPohun2 extends BaseSkillItem {
                     entity -> entity != player && entity.isAlive());
             float finalDamage = 10.0f * getDamageMultiplier() * powerMultiplier;
             for (LivingEntity target : targets) {
-                target.hurt(player.damageSources().mobAttack(player), finalDamage);
+                dealSkillDamage(target, finalDamage, player.damageSources().mobAttack(player));
                 target.knockback(0.5, -lookDirection.x, -lookDirection.z);
                 if (fx != null) {
                     Vec3 hitPos = target.position().add(0, target.getBbHeight() * 0.6, 0);

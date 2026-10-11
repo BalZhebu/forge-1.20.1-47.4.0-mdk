@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.item.baseskillist.bahuangji.treen;
 
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
+import static com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem.dealSkillDamage;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -75,7 +76,7 @@ public class SkillBahuang3 extends BaseSkillItem {
                         e -> e != player && e.isAlive() && e.distanceToSqr(player) <= radius * radius);
 
                 for (LivingEntity target : targets) {
-                    target.hurt(player.damageSources().playerAttack(player), finalDamage);
+                    dealSkillDamage(target, finalDamage, player.damageSources().playerAttack(player));
 
                     double distX = target.getX() - lX;
                     double distZ = target.getZ() - lZ;

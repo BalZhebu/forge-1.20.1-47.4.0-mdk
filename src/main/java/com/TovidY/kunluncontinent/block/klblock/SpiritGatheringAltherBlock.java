@@ -80,6 +80,8 @@ public class SpiritGatheringAltherBlock extends BaseEntityBlock {
                     if (random.nextInt(16) == 0) {
                         for (int y = 0; y <= 3; ++y) {
                             BlockPos stonePos = pos.offset(x, y, z);
+                            // ⚠️ 必须先判区块加载，否则客户端会因粒子动画强制加载区块
+                            if (!level.hasChunkAt(stonePos)) continue;
                             BlockState stoneState = level.getBlockState(stonePos);
 
                             if (stoneState.getBlock() instanceof SpiritGatheringStoneBlock stoneBlock) {
@@ -123,10 +125,12 @@ public class SpiritGatheringAltherBlock extends BaseEntityBlock {
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (!level.isClientSide) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
-            if (blockEntity instanceof SpiritGatheringAltherBlockEntity altarEntity) {
-                NetworkHooks.openScreen((ServerPlayer) player, altarEntity, pos);
-            } else {
-                throw new IllegalStateException("聚灵台方块实体缺失，请检查注册！");
+            //⚠️ 之前这里是 throw IllegalStateException。
+            //    方块实体缺失（例如老存档降级 / 注册名变更）会直接让服务器抛异常崩服，
+            //    而这只是一个"点一下没反应"的场景，不该炸。改为优雅拒绝。
+            if (blockEntity instanceof SpiritGatheringAltherBlockEntity altarEntity
+                    && player instanceof ServerPlayer serverPlayer) {
+                NetworkHooks.openScreen(serverPlayer, altarEntity, pos);
             }
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
@@ -143,12 +147,21 @@ public class SpiritGatheringAltherBlock extends BaseEntityBlock {
         if (state.getBlock() != newState.getBlock()) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof SpiritGatheringAltherBlockEntity altarEntity) {
-                altarEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(handler -> {
-                    for (int i = 0; i < handler.getSlots(); i++) {
-                        Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), handler.getStackInSlot(i));
-                    }
-                });
-                level.updateNeighbourForOutputSignal(pos, this);
+                //⚠️ 必须只在服务端执行。之前在客户端也跑了一遍 onRemove，
+                //    会让客户端凭空生成掉落物实体（幽灵物品），也会白白setBlock。
+                if (!level.isClientSide) {
+                    //⭐ 关键：释放辐射区所有基石的 OCCUPIED 锁。
+                    //    releaseAllStones 之前是死代码，从没被调用过 →
+                    //    挖掉聚灵台后柱子永远残留 occupied=true，整片区域再也起不了阵。
+                    altarEntity.releaseAllStones(level);
+
+                    altarEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(handler -> {
+                        for (int i = 0; i < handler.getSlots(); i++) {
+                            Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), handler.getStackInSlot(i));
+                        }
+                    });
+                    level.updateNeighbourForOutputSignal(pos, this);
+                }
             }
             // 3. 关键修复：如果你用了 BaseEntityBlock，必须先在上面处理完掉落，再调用 super.onRemove
             // 否则父类会提前把 BlockEntity 删掉，导致 getCapability 拿不到数据，吞掉里面的物品！

@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.datagen.blockprovider;
 
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.block.ModBlocks;
+import com.TovidY.kunluncontinent.block.klblock.SpiritGatheringStoneBlock;
 import com.TovidY.kunluncontinent.block.portal.polarice.PolarIcePortalBlock;
 import com.TovidY.kunluncontinent.block.portal.polarice.ThunderRealmPortalBlock;
 import net.minecraft.core.Direction;
@@ -58,11 +59,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
                 .texture("side", modLoc("block/divine_realm_log"));
         simpleBlockWithItem(ModBlocks.DIVINE_REALM_LOG.get(), logModel);
         simpleBlockWithItem(ModBlocks.DIVINE_REALM_PLANKS.get(), cubeAll(ModBlocks.DIVINE_REALM_PLANKS.get()));
-        // ⭐ 树叶：改成原版 LeavesBlock 后**多了 3 个属性**
-        //    （distance **1~7** / persistent / waterlogged），共 7×2×2 = 28 种状态。
-        //    simpleBlockWithItem 只能覆盖默认状态 → 枯萎时 distance 变化会丢模型变紫黑，
-        //    所以必须逐个 partialState 注册。全部指向同一个模型。
-        //    renderType("cutout") 不能少：贴图带 alpha，漏了镂空处会变黑方块。
+
         ModelFile leavesModel = models().cubeAll("divine_realm_leaves",
                 modLoc("block/divine_realm_leaves")).renderType("cutout");
         var leavesBuilder = getVariantBuilder(ModBlocks.DIVINE_REALM_LEAVES.get());
@@ -85,6 +82,10 @@ public class ModBlockStateProvider extends BlockStateProvider {
                 .modelForState().modelFile(saplingModel).addModel()
                 .partialState().with(BlockStateProperties.STAGE, 1)
                 .modelForState().modelFile(saplingModel).addModel();
+
+        ModelFile grassModel = models().cross("divine_realm_grass",
+                modLoc("block/divine_realm_grass")).renderType("cutout");
+        simpleBlockWithItem(ModBlocks.DIVINE_REALM_GRASS.get(), grassModel);
 
         //传送门
         Block portalBlock = ModBlocks.POLAR_ICE_PORTAL.get();
@@ -216,19 +217,19 @@ public class ModBlockStateProvider extends BlockStateProvider {
                 new ResourceLocation(KlMain.MOD_ID, "block/spirit_gathering_stone"));
 
         Block stone1 = ModBlocks.SPIRIT_GATHERING_STONE_0.get();
-        simpleBlock(stone1, new ModelFile.UncheckedModelFile(
+        stoneWithOccupied(stone1, new ModelFile.UncheckedModelFile(
                 new ResourceLocation(KlMain.MOD_ID, "block/spirit_gathering_stone_0")));
         itemModels().withExistingParent("spirit_gathering_stone_0",
                 new ResourceLocation(KlMain.MOD_ID, "block/spirit_gathering_stone_0"));
 
         Block stone2 = ModBlocks.SPIRIT_GATHERING_STONE_1.get();
-        simpleBlock(stone2, new ModelFile.UncheckedModelFile(
+        stoneWithOccupied(stone2, new ModelFile.UncheckedModelFile(
                 new ResourceLocation(KlMain.MOD_ID, "block/spirit_gathering_stone_1")));
         itemModels().withExistingParent("spirit_gathering_stone_1",
                 new ResourceLocation(KlMain.MOD_ID, "block/spirit_gathering_stone_1"));
 
         Block stone3 = ModBlocks.SPIRIT_GATHERING_STONE_2.get();
-        simpleBlock(stone3, new ModelFile.UncheckedModelFile(
+        stoneWithOccupied(stone3, new ModelFile.UncheckedModelFile(
                 new ResourceLocation(KlMain.MOD_ID, "block/spirit_gathering_stone_2")));
         itemModels().withExistingParent("spirit_gathering_stone_2",
                 new ResourceLocation(KlMain.MOD_ID, "block/spirit_gathering_stone_2"));
@@ -248,6 +249,25 @@ public class ModBlockStateProvider extends BlockStateProvider {
                     modLoc("block/" + name + "_stage" + age)).renderType("cutout");
 
             builder.partialState().with(BlockStateProperties.AGE_3, age)
+                    .modelForState().modelFile(model).addModel();
+        }
+    }
+
+    /**
+     * 聚魂基柱带 {@code OCCUPIED} 属性，<b>不能</b>用 {@code simpleBlock}。
+     *
+     * <p>{@code simpleBlock} 只生成 {@code ""} 一个 variant；客户端拿到
+     * {@code occupied=true} 的状态时找不到对应 variant，会直接渲染成紫黑缺失模型。</p>
+     *
+     * <p>这里显式补全 {@code occupied=false} / {@code occupied=true} 两个 variant，
+     * 视觉上暂时用同一个模型（后续要做"链接成功"的亮色外观时，
+     * 只需把 occupied=true 换成另一个 model 即可）。</p>
+     */
+    private void stoneWithOccupied(Block block, ModelFile model) {
+        VariantBlockStateBuilder builder = getVariantBuilder(block);
+        for (Boolean occupied : new Boolean[]{Boolean.FALSE, Boolean.TRUE}) {
+            builder.partialState()
+                    .with(SpiritGatheringStoneBlock.OCCUPIED, occupied)
                     .modelForState().modelFile(model).addModel();
         }
     }

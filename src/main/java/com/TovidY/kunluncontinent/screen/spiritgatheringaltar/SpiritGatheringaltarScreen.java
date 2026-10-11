@@ -1,6 +1,7 @@
 package com.TovidY.kunluncontinent.screen.spiritgatheringaltar;
 
 import com.TovidY.kunluncontinent.KlMain;
+import com.TovidY.kunluncontinent.block.blockentity.SpiritGatheringAltherBlockEntity;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -44,10 +45,9 @@ public class SpiritGatheringaltarScreen extends AbstractContainerScreen<SpiritGa
         int score = this.menu.getStoneScore();
         int[] slotX = {27, 82, 135};
         int[] slotY = {15, 15, 15};
-        int[] limits = {5, 140, 300};
 
         for (int i = 0; i < 3; i++) {
-            if (score <= limits[i]) {
+            if (!this.menu.unlocked(i)) {
                 guiGraphics.fill(this.leftPos + slotX[i], this.topPos + slotY[i],
                         this.leftPos + slotX[i] + 16, this.topPos + slotY[i] + 16, 0x55FF0000);
                 guiGraphics.drawString(this.font, "×", this.leftPos + slotX[i] + 6, this.topPos + slotY[i] + 4, 0xAAFF3333, false);
@@ -89,7 +89,6 @@ public class SpiritGatheringaltarScreen extends AbstractContainerScreen<SpiritGa
         int score = this.menu.getStoneScore();
         int[] slotX = {27, 82, 135};
         int[] slotY = {15, 15, 15};
-        int[] limits = {5, 140, 300};
 
         // ✨【新加：悬停在锁定的槽位上时弹出 Tooltip 详情窗】
         for (int i = 0; i < 3; i++) {
@@ -98,13 +97,14 @@ public class SpiritGatheringaltarScreen extends AbstractContainerScreen<SpiritGa
                     mouseY >= this.topPos + slotY[i] && mouseY < this.topPos + slotY[i] + 16) {
 
                 // 如果当前大阵的强度不足以解开这个槽位，就给它加一段警告文本
-                if (score <= limits[i]) {
+                if (!this.menu.unlocked(i)) {
+                    int need = SpiritGatheringAltherBlockEntity.SLOT_SCORE_REQUIREMENTS[i];
                     List<Component> tooltip = new ArrayList<>();
                     tooltip.add(Component.literal("🔒 聚灵阵插槽已锁定").withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
                     tooltip.add(Component.literal("当前聚灵强度: ").withStyle(ChatFormatting.GRAY)
                             .append(Component.literal(String.valueOf(score)).withStyle(ChatFormatting.LIGHT_PURPLE)));
                     tooltip.add(Component.literal("解锁需要强度: ").withStyle(ChatFormatting.GRAY)
-                            .append(Component.literal("> " + limits[i]).withStyle(ChatFormatting.GOLD)));
+                            .append(Component.literal("> " + need).withStyle(ChatFormatting.GOLD)));
 
                     // 用原版的浮窗方法渲染文本组件，能自动根据屏幕边缘调整位置，不占任何死空间
                     guiGraphics.renderComponentTooltip(this.font, tooltip, mouseX, mouseY);

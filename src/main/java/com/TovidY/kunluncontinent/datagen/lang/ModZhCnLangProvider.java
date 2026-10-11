@@ -104,7 +104,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("skill.pohunqiang.four.description", "消耗%s点精神力，释放贯日：掷出长枪，化作一道流光贯穿直线上的所有敌人，最远可达20格以外。");
         add("skill.pohunqiang.five.description", "消耗%s点精神力，释放碎星：对自身15格范围内的所有实体造成持续性高额伤害，持续5秒");
         add("skill.pohunqiang.six.description", "消耗%s点精神力，释放巨枪：对距离玩家1格面前召唤巨枪落下来像陨石一样砸下来，造成巨额伤害");
-        add("skill.pohunqiang.7.description", "消耗%s点精神力，释放武魂真身，全属性增幅自身");
+        add("skill.pohunqiang.7.description", "开启破魂枪真身：持续增幅自身；维持消耗为普通武魂的10倍，精神力低于上限10%时自动解除，再次释放可提前关闭。开启后进入冷却");
         add("skill.pohunqiang.eight.description","消耗%s点精神力，释放裂空，将自身面前空气斩出虚空，让身处虚空处的敌人每秒收到伤害。");
         add("skill.pohunqiang.nine.description","消耗%s点精神力，释放弑神：对单独一个生物造成巨额伤害，并给对方附加虚弱2，同时有5%%的概率直接斩杀，并且，斩杀面对玩家时，玩家等级越高，斩杀概率越高");
 
@@ -114,7 +114,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("skill.bahuangji.four.description", "消耗%s点精神力，释放断江：横向挥出，化作一道半月形光刃，宽4格可向前飞行10格。");
         add("skill.bahuangji.five.description", "消耗%s点精神力，释放镇岳：对玩家自身30格范围内的所有生物获得缓慢2的buff，并造成高额伤害");
         add("skill.bahuangji.six.description", "消耗%s点精神力，释放破军：强制玩家向前猛冲30格，对路径上敌人造成巨额伤害");
-        add("skill.bahuangji.7.description", "消耗%s点精神力，释放武魂真身，全属性增幅自身");
+        add("skill.bahuangji.7.description", "开启八荒戟真身：持续增幅自身；维持消耗为普通武魂的10倍，精神力低于上限10%时自动解除，再次释放可提前关闭。开启后进入冷却");
         add("skill.bahuangji.eight.description","消耗%s点精神力，释放降雷，对自身范围50格内的所有敌人造成雷击伤害，无视高度。");
         add("skill.bahuangji.nine.description","消耗%s点精神力，释放八荒寂灭：对玩家为中心，向外扩散金色光环，光环所过之处生物受到高额伤害的同时获得5秒缓慢，共会发射10道光环，每一个光环释放时间间隔1.5秒，光环最远可达20格以外");
 
@@ -128,7 +128,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("skill.leijinhu.four.description", "消耗%s点精神力，释放碎金：对面前3*3*3范围内的敌人造成大量伤害，可以破坏硬度较低的方块");
         add("skill.leijinhu.five.description", "消耗%s点精神力，释放扑杀：单体技能，对一个实体造成高额伤害的同时，有极低概率直接斩杀对方，斩杀特效不论对方实力强弱，触发后顷刻斩杀");
         add("skill.leijinhu.six.description", "消耗%s点精神力，释放啸月：在白天使用获得大日之威效果20秒，在夜晚使用获得邀月之华效果25秒。buff提供全属性加成。");
-        add("skill.liejinhu.7.description", "消耗%s点精神力，释放武魂真身，全属性增幅自身");
+        add("skill.liejinhu.7.description", "开启裂金虎真身：持续增幅自身；维持消耗为普通武魂的10倍，精神力低于上限10%时自动解除，再次释放可提前关闭。开启后进入冷却");
         add("skill.leijinhu.eight.description","消耗%s点精神力，释放裂天：对自身半径20格范围内造成10次高额伤害。");
         add("skill.leijinhu.nine.description","消耗%s点精神力，释放猛虎破界：对10格内敌人造成巨额伤害的同时附加缓慢，虚弱，反胃时长15秒，并在攻击到的实体处破碎虚空，身处虚空的生物持续受到伤害");
 
@@ -142,7 +142,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("skill.panshijuyuan.four.description", "消耗%s点精神力，释放搬山：给自身附加80%%的攻击力");
         add("skill.panshijuyuan.five.description", "消耗%s点精神力，释放撼地：给自身附加85%%的攻击力，70%%的防御力");
         add("skill.panshijuyuan.six.description", "消耗%s点精神力，释放裂地：强制跳起来5格以上高度，狠狠砸向地面，对范围20格内敌人造成高额伤害");
-        add("skill.panshijuyuan.7.description", "消耗%s点精神力，释放武魂真身，全属性增幅自身");
+        add("skill.panshijuyuan.7.description", "开启磐石巨猿真身：持续增幅自身；维持消耗为普通武魂的10倍，精神力低于上限10%时自动解除，再次释放可提前关闭。开启后进入冷却");
         add("skill.panshijuyuan.eight.description","消耗%s点精神力，释放憾岳：对面自身前5格内敌人造成极高倍率的伤害");
         add("skill.panshijuyuan.nine.description","消耗%s点精神力，释放不周倾：对强制跳跃15格，落下后对周围100格范围里敌人造成恐怖伤害，并附加缓慢3，虚弱3，反胃，饥饿时长15秒");
 
@@ -189,6 +189,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModBlocks.DIVINE_REALM_PLANKS.get(), "§b霜樱木板");
         add(ModBlocks.DIVINE_REALM_LEAVES.get(), "§b霜樱树叶");
         add(ModBlocks.DIVINE_REALM_SAPLING.get(), "§b霜樱树苗");
+        add(ModBlocks.DIVINE_REALM_GRASS.get(), "§e灵草");
 
         add("item.red_spider_lily_potion.tooltip","拥有此药水buff可在重修台右键进行转世重修");
 
@@ -196,6 +197,10 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("item.reset_scroll.tooltip","可用来重置技能点");
         add("item.reset_scroll.tooltip1","右键使用或打开点数面板使用");
         add("item.reset_scroll.tooltip2","和NPC交易可获得");
+
+        add("divine_realm_grass_block","可用剪刀完整破坏");
+        add("divine_realm_grass_block_1","被破坏时低概率掉落返气草和固元草");
+        add("divine_realm_grass_block_2","被破坏时高概率掉落大部分的种子");
 
         add("item_deep_sea_offerings_tooltip","对海底祭坛右键即可召唤魔鲸");
         add("item.eye_deep_sea.tooltip","右键丢出跟着走可找到海底祭坛");
@@ -354,11 +359,37 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("adv.kunlun.tower_first.desc","第一次开启魂塔历练。");
         add("adv.kunlun.tower_ten.title","魂塔十层");
         add("adv.kunlun.tower_ten.desc","通关魂塔第十层。");
+        add("adv.kunlun.tower_thirty.title","魂塔三十层");
+        add("adv.kunlun.tower_thirty.desc","通关魂塔第三十层。");
+        add("adv.kunlun.tower_fifty.title","魂塔五十层");
+        add("adv.kunlun.tower_fifty.desc","通关魂塔第五十层。");
+        add("adv.kunlun.tower_hundred.title","百层登顶");
+        add("adv.kunlun.tower_hundred.desc","通关魂塔第一百层，天道亲传神位。");
         add("adv.kunlun.god_exam_start.title","承神之考");
         add("adv.kunlun.god_exam_start.desc","得到神的注视，接下神之试炼。");
+        add("adv.kunlun.god_exam_stage1.title","首考告捷");
+        add("adv.kunlun.god_exam_stage1.desc","通过神考第一考。");
+        add("adv.kunlun.god_exam_stage5.title","半程磨砺");
+        add("adv.kunlun.god_exam_stage5.desc","通过神考第五考。");
+        add("adv.kunlun.god_ascended.title","神位加身");
+        add("adv.kunlun.god_ascended.desc","九考尽过，神格已成。");
         // ===== 雷界 =====
         add("adv.kunlun.thunder_realm_enter.title","踏入雷界");
         add("adv.kunlun.thunder_realm_enter.desc","第一次进入万雷天域。");
+        // ===== 神界 =====
+        add("adv.kunlun.celestial_realm_enter.title","登临神界");
+        add("adv.kunlun.celestial_realm_enter.desc","第一次踏入神界天境。");
+        // ===== 极冰界 =====
+        add("adv.kunlun.polar_ice_realm_enter.title","极冰踏境");
+        add("adv.kunlun.polar_ice_realm_enter.desc","第一次踏入极冰界。");
+        // ===== 魂塔秘境 =====
+        add("adv.kunlun.tower_realm_enter.title","魂塔秘境");
+        add("adv.kunlun.tower_realm_enter.desc","第一次进入魂塔秘境。");
+        // ===== 丹药 =====
+        add("adv.kunlun.danyao_first.title","初尝丹道");
+        add("adv.kunlun.danyao_first.desc","第一次服用丹药。");
+        add("adv.kunlun.danyao_batch.title","批量服丹");
+        add("adv.kunlun.danyao_batch.desc","蹲下右键，一次服用多颗丹药。");
 
 
         //魂骨类

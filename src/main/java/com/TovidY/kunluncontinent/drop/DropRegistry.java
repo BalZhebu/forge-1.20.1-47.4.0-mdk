@@ -73,7 +73,7 @@ public final class DropRegistry {
                 .filter(DropFilter.mobType(net.minecraft.world.entity.MobType.WATER)
                         .or(DropFilter.nameContains("fish", "ocean", "whale", "shark",
                                 "dolphin", "squid", "cod", "salmon", "tropical", "puffer")))
-                .chance(0.06)
+                .chance(0.1)
                 .build());
 
         //击杀50000年以上生物可有5%的概率掉落重置卷轴

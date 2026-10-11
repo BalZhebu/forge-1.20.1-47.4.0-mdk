@@ -5,7 +5,9 @@ import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCap
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.event.client.PlayerAttributeInit;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerUpgradeSystem;
+import com.TovidY.kunluncontinent.command.KLCommands;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -65,10 +67,11 @@ public class AttributeCommand {
             (context, builder) -> SharedSuggestionProvider.suggest(ATTRIBUTES.keySet(), builder);
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(
-                Commands.literal("kunluncontinent")
-                        .requires(source -> source.hasPermission(2))
-                        .then(Commands.literal("attribute")
+        KLCommands.register(dispatcher, node());
+    }
+
+    public static LiteralArgumentBuilder<CommandSourceStack> node() {
+        return Commands.literal("attribute")
                                 // 💡 极致优化 3：换用 word() 类型，不仅运行速度更快，玩家输入命令时再也不需要加无脑的双引号了！
                                 .then(Commands.argument("attributeName", StringArgumentType.word())
                                         .suggests(ATTRIBUTE_SUGGESTIONS)
@@ -81,9 +84,7 @@ public class AttributeCommand {
                                                 )
                                         )
                                 )
-                        )
-        );
-    }
+                        ;}
 
     private static int modifyAttribute(CommandContext<CommandSourceStack> context, ServerPlayer target) throws CommandSyntaxException {
         ServerPlayer player = (target == null) ? context.getSource().getPlayerOrException() : target;

@@ -107,7 +107,7 @@ public class GodRegistry {
                 .addAttrReward(3, "gongji", 800.0f,"攻击力提升：800点")
 
                 .addTask(4, GodTaskType.KILL, "minecraft:warden", 30, "第四考：击杀30只循声守卫（监守者）")
-                .addItemReward(4, Items.ENCHANTED_GOLDEN_APPLE, 64,"§b附魔金苹果 x64")
+                .addItemReward(4, Items.ENCHANTED_GOLDEN_APPLE, 20,"§b附魔金苹果 x20")
 
                 .addTask(5, GodTaskType.KILL, "minecraft:wither", 10, "第五考：击杀10只凋灵Boss")
                 .addAttrReward(5, "maxjingshenli", 2500.0f,"最大精神力提升：2500")
@@ -115,7 +115,7 @@ public class GodRegistry {
                 .addTask(6, GodTaskType.HUNHUAN_NIANXIAN, "any", 850000, "第六考：拥有一枚850000年以上魂环")
                 .addAttrReward(6, "maxshengming", 500000.0f,"最大生命值提升：500000点")
 
-                .addTask(7, GodTaskType.ITEM_CHECK, "kunluncontinent:demon_whale", 1, "第七考：击杀1只魔鲸")
+                .addTask(7, GodTaskType.KILL, "kunluncontinent:demon_whale", 1, "第七考：击杀1只魔鲸")
                 .addAttrReward(7, "maxjingshenli", 2500.0f,"最大精神力提升：2500点")
 
                 .addTask(8, GodTaskType.HUNHUAN_NIANXIAN, "any", 3500000, "第八考：拥有一枚3500000年以上魂环")

@@ -3,6 +3,7 @@ package com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.nine;
 import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
+import static com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem.dealSkillDamage;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -85,7 +86,7 @@ public class SkillPohun9 extends BaseSkillItem {
                     serverLevel.sendParticles(ParticleTypes.SONIC_BOOM, target.getX(), target.getY() + 1, target.getZ(), 2, 0, 0, 0, 0);
                     serverLevel.sendParticles(ParticleTypes.EXPLOSION_EMITTER, target.getX(), target.getY() + 1, target.getZ(), 1, 0, 0, 0, 0);
                 } else {
-                    target.hurt(killSource, finalDamage);
+                    dealSkillDamage(target, finalDamage, killSource);
                     target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 200, 1)); // 虚弱2
                     if (fx != null) {
                         // 未斩杀：目标身上浮现被压制的血色锁环

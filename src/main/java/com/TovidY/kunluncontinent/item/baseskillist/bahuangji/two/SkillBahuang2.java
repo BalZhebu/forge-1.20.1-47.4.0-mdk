@@ -88,7 +88,7 @@ public class SkillBahuang2 extends BaseSkillItem {
                 double dotProduct = lookVec.dot(toTarget);
                 double angleDeg = Math.toDegrees(Math.acos(dotProduct));
                 if (angleDeg <= angleRange / 2) {
-                    target.hurt(player.damageSources().mobAttack(player), finalDamage);
+                    dealSkillDamage(target, finalDamage, player.damageSources().mobAttack(player));
                     target.knockback(0.8, -toTarget.x, -toTarget.z);
                     if (fx != null) {
                         // 命中者被斩痕劈开

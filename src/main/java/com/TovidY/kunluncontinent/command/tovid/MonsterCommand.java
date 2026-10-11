@@ -2,7 +2,9 @@ package com.TovidY.kunluncontinent.command.tovid;
 
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.network.SynsAPI;
+import com.TovidY.kunluncontinent.command.KLCommands;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.LongArgumentType;
 import net.minecraft.commands.CommandSourceStack;
@@ -18,9 +20,11 @@ import net.minecraft.world.entity.Mob;
 
 public class MonsterCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("kunluncontinent")
-                .requires(source -> source.hasPermission(2))
-                .then(Commands.literal("monster")
+        KLCommands.register(dispatcher, node());
+    }
+
+    public static LiteralArgumentBuilder<CommandSourceStack> node() {
+        return Commands.literal("monster")
                         .then(Commands.argument("entity_id", ResourceLocationArgument.id())
                                 .suggests(SuggestionProviders.SUMMONABLE_ENTITIES)
                                 .then(Commands.argument("nianxian", LongArgumentType.longArg(0, 999999999))
@@ -34,9 +38,7 @@ public class MonsterCommand {
                                         )
                                 )
                         )
-                )
-        );
-    }
+                ;}
 
     private static int spawnMonster(CommandSourceStack source, ResourceLocation entityId, long nianxian, boolean applyAttribute) {
         ServerLevel level = source.getLevel();

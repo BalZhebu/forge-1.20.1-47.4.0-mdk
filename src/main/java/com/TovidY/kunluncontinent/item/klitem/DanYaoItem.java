@@ -1,5 +1,6 @@
 package com.TovidY.kunluncontinent.item.klitem; // 请确保包名与你项目一致
 
+import com.TovidY.kunluncontinent.advancement.AchievementAPI;
 import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerHunhuanAPI;
@@ -87,6 +88,14 @@ public class DanYaoItem extends Item {
                 return InteractionResultHolder.fail(itemstack);
             }
         }
+
+        if (player.isCrouching()) {
+            if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
+                DanYaoBatchEater.eatAllOf(serverPlayer, this, itemstack);
+            }
+            return InteractionResultHolder.consume(itemstack);
+        }
+
         return super.use(level, player, hand);
     }
 
@@ -97,6 +106,7 @@ public class DanYaoItem extends Item {
             if (this.maxused <= 0 || usedCount < this.maxused) {
                 serverPlayer.awardStat(Stats.ITEM_USED.get(this));
                 applyDanyaoAttribute(itemStack, serverPlayer);
+                AchievementAPI.onEatDanyao(serverPlayer, 1);
             } else {
                 serverPlayer.sendSystemMessage(Component.literal("已达到该丹药服用上限！").withStyle(ChatFormatting.YELLOW));
             }
@@ -144,6 +154,52 @@ public class DanYaoItem extends Item {
 
             SynsAPI.synsPlayerAttribute(player);
         });
+    }
+
+    public void applyNonExpEffects(ItemStack stack, ServerPlayer player) {
+        DanYaoQuality q = DanYaoQuality.getFromStack(stack);
+        float m = q.multiplier;
+        if (q == DanYaoQuality.PO_SUI) return;
+
+        player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
+            if (this.wugong > 0) PlayerHunhuanAPI.addGongji(player, this.wugong * m);
+            if (this.wufang > 0) PlayerHunhuanAPI.addFangyu(player, this.wufang * m);
+            if (this.shengming > 0) PlayerHunhuanAPI.addShengming(player, this.shengming * m);
+            if (this.maxshengming > 0) PlayerHunhuanAPI.addMaxshengming(player, this.maxshengming * m);
+            if (this.jingshenli > 0) PlayerHunhuanAPI.addJingshenli(player, this.jingshenli * m);
+            if (this.maxjingshenli > 0) PlayerHunhuanAPI.addMaxJingshenli(player, this.maxjingshenli * m);
+            if (this.baojilv > 0) PlayerHunhuanAPI.addBaojilv(player, this.baojilv * m);
+            if (this.baojishanghai > 0) PlayerHunhuanAPI.addBaojishanhai(player, this.baojishanghai * m);
+            if (this.kangbao > 0) PlayerHunhuanAPI.addKangbao(player, this.kangbao * m);
+            if (this.xixue > 0) PlayerHunhuanAPI.addXixue(player, this.xixue * m);
+            if (this.mingzhong > 0) PlayerHunhuanAPI.addMingzhong(player, this.mingzhong * m);
+            if (this.shanbi > 0) PlayerHunhuanAPI.addShanbi(player, this.shanbi * m);
+            if (this.tupochenggonggailv > 0) PlayerHunhuanAPI.addTupochenggonggailv(player, this.tupochenggonggailv * m);
+
+            if (this.shengmingbaifenbi > 0) {
+                float addedHealth = player.getMaxHealth() * (this.shengmingbaifenbi * m) / 100f;
+                PlayerHunhuanAPI.addShengming(player, addedHealth);
+            }
+            if (this.jingshenlibaifenbi > 0) {
+                float addedMana = ModAttributeAPI.getMaxjingshenli(player) * (this.jingshenlibaifenbi * m) / 100f;
+                PlayerHunhuanAPI.addJingshenli(player, addedMana);
+            }
+        });
+    }
+
+    /** 未乘品质倍率的原始经验值，供批量服用预估经验总量。 */
+    public float getRawJingyan() {
+        return this.jingyan;
+    }
+
+    /** 单个玩家对该丹药的服用上限；{@code <=0} 表示不限。 */
+    public int getMaxused() {
+        return this.maxused;
+    }
+
+    /** 服用所需的最低等级；0 表示无门槛。 */
+    public int getMinLevel() {
+        return this.minLevel;
     }
 
     // --- Setters (链式调用) ---
@@ -200,6 +256,17 @@ public class DanYaoItem extends Item {
         if (this.minLevel > 0) {
             list.add(Component.literal(" "));
             list.add(Component.literal("服用要求：等级 " + this.minLevel).withStyle(ChatFormatting.DARK_RED));
+        }
+
+        list.add(Component.literal(" "));
+        list.add(Component.literal("▶ 蹲下右键：一键服用丹药")
+                .withStyle(ChatFormatting.DARK_AQUA, ChatFormatting.BOLD));
+        if (this.jingyan > 0) {
+            list.add(Component.literal("   只吃到刚好够升级为止，剩余丹药保留")
+                    .withStyle(ChatFormatting.GRAY));
+        } else {
+            list.add(Component.literal("   该丹药无升级限制，将全部服用")
+                    .withStyle(ChatFormatting.GRAY));
         }
     }
 }

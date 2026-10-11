@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.item.baseskillist.bahuangji.six;
 
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
+import static com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem.dealSkillDamage;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -67,7 +68,7 @@ public class SkillBahuang6 extends BaseSkillItem {
                 AABB hitBox = new AABB(px - 2.5, py - 2.0, pz - 2.5, px + 2.5, py + 2.0, pz + 2.5);
                 level.getEntitiesOfClass(LivingEntity.class, hitBox, e -> e != player && e.isAlive())
                         .forEach(target -> {
-                            target.hurt(player.damageSources().playerAttack(player), finalDamage);
+                            dealSkillDamage(target, finalDamage, player.damageSources().playerAttack(player));
                             Vec3 push = target.position().subtract(player.position()).normalize().scale(0.8);
                             target.push(push.x, 0.3, push.z);
                         });

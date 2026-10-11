@@ -1,5 +1,7 @@
 package com.TovidY.kunluncontinent.datagen.blockprovider;
 
+import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
+import net.minecraft.world.item.Items;
 import com.TovidY.kunluncontinent.block.ModBlocks;
 import com.TovidY.kunluncontinent.block.klblock.KLCropBlock;
 import com.TovidY.kunluncontinent.item.ModItems;
@@ -26,6 +28,14 @@ import java.util.Set;
 //用于检查方块有没有写战利品列表，若排除方块则在方块后加入.noLootTable
 
 public class ModBlockLootTablesProvider extends BlockLootSubProvider {
+    // ==================== 神界草掉落概率（对齐原版） ====================
+
+    /** 种子掉落总概率 —— 原版 {@code createGrassDrops} 用的是 {@code 0.125F}。 */
+    private static final float SEED_DROP_CHANCE = 0.125F;
+
+    /** 草药本体（返气草/归元草）掉落概率，各 5%。 */
+    private static final float HERB_DROP_CHANCE = 0.05F;
+
     public ModBlockLootTablesProvider() {
         super(Set.of(), FeatureFlags.REGISTRY.allFlags());
     }
@@ -98,6 +108,8 @@ public class ModBlockLootTablesProvider extends BlockLootSubProvider {
                 createLeavesDrops(block, ModBlocks.DIVINE_REALM_SAPLING.get(), NORMAL_LEAVES_SAPLING_CHANCES)
         );
 
+        this.add(ModBlocks.DIVINE_REALM_GRASS.get(), this::createDivineRealmGrassDrops);
+
         // 红宝石矿石（使用矿石破坏战利品列表）
         this.add(ModBlocks.RUBY_ORE.get(), block -> createCopperOreLikeDrops(block, ModItems.RUBY.get()));
         this.add(ModBlocks.AMETHYST_ORE.get(), block -> createCopperOreLikeDrops(block, ModItems.AMETHYST.get()));
@@ -111,6 +123,47 @@ public class ModBlockLootTablesProvider extends BlockLootSubProvider {
 
         this.add(ModBlocks.GUYUANCAO_BLOCK.get(), block -> createKLCropDrops(block, ModItems.GUYUANCAO_ITEM.get(), ModItems.GUYUANCAO_SEEDS.get()));
         this.add(ModBlocks.FANQICAO_BLOCK.get(), block -> createKLCropDrops(block, ModItems.FANQICAO_ITEM.get(), ModItems.FANQICAO_SEEDS.get()));
+    }
+
+    private LootTable.Builder createDivineRealmGrassDrops(Block grass) {
+        LootItemCondition.Builder hasNoShearsOrSilkTouch = HAS_SHEARS.or(HAS_SILK_TOUCH).invert();
+
+        LootPool.Builder silkPool = LootPool.lootPool()
+                .setRolls(ConstantValue.exactly(1.0F))
+                .when(HAS_SHEARS.or(HAS_SILK_TOUCH))
+                .add(LootItem.lootTableItem(grass));
+
+        LootPool.Builder seedPool = LootPool.lootPool()
+                .setRolls(ConstantValue.exactly(1.0F))
+                .when(hasNoShearsOrSilkTouch)
+                .when(LootItemRandomChanceCondition.randomChance(SEED_DROP_CHANCE))
+                // --- 修仙种子 ---
+                .add(LootItem.lootTableItem(ModItems.RED_SPIDER_SEEDS.get()).setWeight(1))
+                .add(LootItem.lootTableItem(ModItems.FANQICAO_SEEDS.get()).setWeight(1))
+                .add(LootItem.lootTableItem(ModItems.GUYUANCAO_SEEDS.get()).setWeight(1))
+                // --- 原版植物种子 ---
+                .add(LootItem.lootTableItem(Items.WHEAT_SEEDS).setWeight(1))
+                .add(LootItem.lootTableItem(Items.BEETROOT_SEEDS).setWeight(1))
+                .add(LootItem.lootTableItem(Items.MELON_SEEDS).setWeight(1))
+                .add(LootItem.lootTableItem(Items.PUMPKIN_SEEDS).setWeight(1))
+                .add(LootItem.lootTableItem(Items.TORCHFLOWER_SEEDS).setWeight(1))
+                .add(LootItem.lootTableItem(Items.PITCHER_POD).setWeight(1));
+
+        LootPool.Builder herbPool = LootPool.lootPool()
+                .setRolls(ConstantValue.exactly(1.0F))
+                .when(hasNoShearsOrSilkTouch) // 解决私有变量报错
+                .when(LootItemRandomChanceCondition.randomChance(HERB_DROP_CHANCE))
+                .add(LootItem.lootTableItem(ModItems.FANQICAO_ITEM.get())
+                        .setWeight(1)
+                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 2.0F))))
+                .add(LootItem.lootTableItem(ModItems.GUYUANCAO_ITEM.get())
+                        .setWeight(1)
+                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 2.0F))));
+
+        return LootTable.lootTable()
+                .withPool(silkPool)
+                .withPool(seedPool)
+                .withPool(herbPool);
     }
 
     protected LootTable.Builder createKLCropDrops(Block block, Item product, Item seed) {

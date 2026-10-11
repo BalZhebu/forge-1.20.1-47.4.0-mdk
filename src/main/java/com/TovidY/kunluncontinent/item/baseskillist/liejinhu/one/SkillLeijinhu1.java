@@ -3,6 +3,7 @@ package com.TovidY.kunluncontinent.item.baseskillist.liejinhu.one;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
+import static com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem.dealSkillDamage;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -89,7 +90,7 @@ public class SkillLeijinhu1 extends BaseSkillItem {
             for (Entity target : targets) {
                 if (target instanceof LivingEntity livingTarget && target != player) {
                     float damage = 10.0f * getDamageMultiplier() * powerMultiplier;
-                    livingTarget.hurt(level.damageSources().playerAttack(player), damage);
+                    dealSkillDamage(livingTarget, damage, level.damageSources().playerAttack(player));
                     livingTarget.knockback(0.5, player.getX() - target.getX(), player.getZ() - target.getZ());
                     if (fx != null) {
                         // 被抓中的目标：三道撕裂爪痕

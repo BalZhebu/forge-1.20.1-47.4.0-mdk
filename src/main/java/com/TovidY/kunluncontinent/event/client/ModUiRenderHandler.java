@@ -233,7 +233,11 @@ public class ModUiRenderHandler {
             guiGraphics.blit(food, BAR_X, FOOD_Y, currentWidthF, 4, 0, 0, uWidthF, 4, 127, 4);
 
             // 精神力条
-            double jsRatio = capability.getMaxjingshenli() > 0 ? (double) capability.getJingshenli() / capability.getMaxjingshenli() : 0;
+            // ⚠️ 上限走 ModAttributeAPI（**含"凝神"加点**），不能用裸字段，
+            //    否则加了精神力上限但进度条/文字完全不变，看起来就是"点了没用"。
+            float jsMax = com.TovidY.kunluncontinent.capability.ModAttributeAPI
+                    .getMaxjingshenli(player);
+            double jsRatio = jsMax > 0 ? (double) capability.getJingshenli() / jsMax : 0;
             int currentWidthJ = (int) (BAR_W * Math.min(1.0, jsRatio));
             int uWidthJ = (int) (127 * Math.min(1.0, jsRatio));
 
@@ -253,7 +257,7 @@ public class ModUiRenderHandler {
             pose.scale(0.5f, 0.5f, 1.0f);
             String healthInfo = "生命：" + formatBigNum(player.getHealth()) + "/" + formatBigNum(player.getMaxHealth());
             String foodInfo = "体力: " + player.getFoodData().getFoodLevel() + "/20";
-            String jsInfo = "精神力: " + formatBigNum(capability.getJingshenli()) + "/" + formatBigNum(capability.getMaxjingshenli());
+            String jsInfo = "精神力: " + formatBigNum(capability.getJingshenli()) + "/" + formatBigNum(jsMax);
             String expInfo = "经验: " + formatBigNum(capability.getJingyan()) + "/" + formatBigNum(capability.getMaxjingyan());
 
             int textWidthH = Minecraft.getInstance().font.width(healthInfo);

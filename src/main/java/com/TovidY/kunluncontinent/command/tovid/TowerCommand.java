@@ -1,7 +1,9 @@
 package com.TovidY.kunluncontinent.command.tovid; // 对齐你的包名
 
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
+import com.TovidY.kunluncontinent.command.KLCommands;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.minecraft.commands.CommandSourceStack;
@@ -12,9 +14,11 @@ import net.minecraft.server.level.ServerPlayer;
 
 public class TowerCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("kunluncontinent")
-                .requires(source -> source.hasPermission(2)) // 需要管理员(OP)权限
-                .then(Commands.literal("tower")
+        KLCommands.register(dispatcher, node());
+    }
+
+    public static LiteralArgumentBuilder<CommandSourceStack> node() {
+        return Commands.literal("tower")
                         .then(Commands.argument("target", EntityArgument.player())
                                 .then(Commands.literal("debugForceGod")
                                         .then(Commands.argument("enable", BoolArgumentType.bool())
@@ -57,7 +61,5 @@ public class TowerCommand {
                                         )
                                 )
                         )
-                )
-        );
-    }
+                ;}
 }

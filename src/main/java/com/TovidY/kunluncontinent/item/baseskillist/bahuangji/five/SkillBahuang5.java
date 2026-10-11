@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.item.baseskillist.bahuangji.five;
 
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
+import static com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem.dealSkillDamage;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -50,7 +51,7 @@ public class SkillBahuang5 extends BaseSkillItem {
 
             List<LivingEntity> damageTargets = level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(10.0), e -> e != player && e.isAlive());
             for (LivingEntity target : damageTargets) {
-                target.hurt(player.damageSources().playerAttack(player), finalDamage);
+                dealSkillDamage(target, finalDamage, player.damageSources().playerAttack(player));
                 target.push(0, 0.5, 0);
                 if (fx != null) {
                     Vec3 tp = target.position().add(0, target.getBbHeight() * 0.4, 0);

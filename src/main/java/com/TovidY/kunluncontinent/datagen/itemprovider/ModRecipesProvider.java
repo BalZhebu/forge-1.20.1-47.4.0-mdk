@@ -140,11 +140,22 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .pattern("ZXZ")
                 .pattern("XOX")
                 .pattern("ZXZ")
-                .define('O', Items.ENCHANTED_GOLDEN_APPLE)
+                .define('O', Items.GOLDEN_APPLE)
                 .define('Z', ModItems.DEEPSEA_JINGHUA.get())
                 .define('X', ModItems.EYE_DEEP_SEA.get())
                 .unlockedBy("has_eye_dee_sea", has(ModItems.DEEP_SEA_OFFERINGS.get()))
-                .save(pWriter);
+                .save(pWriter);   // ← 去掉手动 ID
+
+// 配方2：附魔深海祭品（产出10个，必须手动指定不同 ID）
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.DEEP_SEA_OFFERINGS.get(), 10)
+                .pattern("ZXZ")
+                .pattern("XOX")
+                .pattern("ZXZ")
+                .define('O', Items.ENCHANTED_GOLDEN_APPLE)
+                .define('Z', ModItems.DEEPSEA_JINGHUA.get())
+                .define('X', ModItems.EYE_DEEP_SEA.get())
+                .unlockedBy("has_eye_dee_sea_two", has(ModItems.DEEP_SEA_OFFERINGS.get()))
+                .save(pWriter, "kunluncontinent:deep_sea_offerings_enchanted");
 
         //魔鲸徽章
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.DEMON_WHALE_MEDAL.get())
@@ -758,10 +769,9 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
 
         //丹渣块
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.DROSS_BLOCK.get())
-                .pattern("###")
-                .pattern("###")
-                .pattern("###")
-                .define('#', ModItems.DROSS.get()) // 这里直接使用丹渣物品
+                .pattern("##")
+                .pattern("##")
+                .define('#', ModItems.DROSS.get())
                 .unlockedBy("has_dross_item", has(ModItems.DROSS.get()))
                 .save(pWriter);
 

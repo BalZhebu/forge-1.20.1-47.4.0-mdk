@@ -9,10 +9,12 @@ import com.TovidY.kunluncontinent.capability.playerattributes.FlySpeedTuning;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerUpgradeSystem;
+import com.TovidY.kunluncontinent.capability.playerattributes.XiulianLogic;
 import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanEntity;
 import com.TovidY.kunluncontinent.entity.playernpc.PlayerNpcEntity;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
+import com.TovidY.kunluncontinent.item.baseskillist.zhenshen.ZhenshenState;
 import com.TovidY.kunluncontinent.item.klitem.ZhuanShengTestItem;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.SynsAPI;
@@ -80,10 +82,18 @@ public class PWPlayerTickEvent {
 
                 handleSuiXingField(serverPlayer, gameTime);
 
-                // 成就：首次踏入雷界（万雷天域）
-                if (gameTime % 20 == 0
-                        && serverPlayer.level().dimension().equals(ModDimensions.THUNDER_REALM_LEVEL_KEY)) {
-                    AchievementAPI.onEnterThunderRealm(serverPlayer);
+                // 成就：首次踏入各维度（每 20 tick 判一次，开销可忽略）
+                if (gameTime % 20 == 0) {
+                    var dim = serverPlayer.level().dimension();
+                    if (dim.equals(ModDimensions.THUNDER_REALM_LEVEL_KEY)) {
+                        AchievementAPI.onEnterThunderRealm(serverPlayer);
+                    } else if (dim.equals(ModDimensions.CELESTIAL_REALM_LEVEL_KEY)) {
+                        AchievementAPI.onEnterCelestialRealm(serverPlayer);
+                    } else if (dim.equals(ModDimensions.POLAR_ICE_REALM_LEVEL_KEY)) {
+                        AchievementAPI.onEnterPolarIceRealm(serverPlayer);
+                    } else if (dim.equals(ModDimensions.TOWER_REALM_LEVEL_KEY)) {
+                        AchievementAPI.onEnterTowerRealm(serverPlayer);
+                    }
                 }
 
                 if (gameTime % 20 == 0) {
@@ -101,6 +111,14 @@ public class PWPlayerTickEvent {
                 }
 
                 updatePlayerFly(player, capability, gameTime);
+
+                // 1b. 武魂真身的状态机：刷新增益时长 + 三个自动关闭条件。
+                //     ⚠️ 必须放在这里而不是 updatePlayerFly 里 —— 那个方法对
+                //     创造/旁观模式直接 return，放里面会导致真身的增益「5 秒后凭空消失」。
+                //     顺序上排在 updatePlayerFly 之后，保证判断的是刚扣完维持费的精神力。
+                if (gameTime % 20 == 0 && ZhenshenState.isActive(serverPlayer)) {
+                    ZhenshenState.tickServer(serverPlayer, capability);
+                }
 
                 handleMeditationLogic(serverPlayer, capability, gameTime);
             });
@@ -572,19 +590,52 @@ public class PWPlayerTickEvent {
         }
     }
 
+/** 神界（天境）维度里，坐在蒲团上的修炼速度倍率。 */
+    private static final float CELESTIAL_MEDITATION_MULTIPLIER = 2.0f;
+    /** 神界（天境）维度里，修炼时间的自然回复倍率。 */
+    private static final int CELESTIAL_XIULIAN_TIME_RECOVER_MULTIPLIER = 2;
+
+    /**
+     * 蒲团每秒回复精神力的<b>比例</b>（占精神力上限）。
+     *
+     * <p>⚠️ 旧实现是 {@code maxJs * 0.02f + 5.0f} —— 那个 {@code +5.0f} 固定值
+     * 导致回复量恒定「约 50 秒回满」：上限 1 万时 1 秒回 205 点（顶格），
+     * 上限 100 万时 1 秒回 2 万 —— <b>无论多少上限都是 50 秒满</b>，
+     * 蒲团等于给了无限精神力，完全丧失「挂机慢慢回」的定位。</p>
+     *
+     * <p>改为纯百分比后：任何等级都是 {@code 1 / 0.04 = 25} 秒回满，
+     * 且<b>上限越高、需要的时间不变</b>，只靠时间换不回高等级的精神力。</p>
+     */
+    private static final float PUTUAN_JINGSHENLI_REGEN_RATIO = 0.04f;
+
+    /**
+     * 修炼时间耗尽后的冷却期内，回复速度的<b>慢化倍数</b>（3 = 慢 3 倍）。
+     * <p>冷却仍会存在（原本 3 分钟），但期间也能缓慢回时间，不必干站。</p>
+     */
+    private static final int XIULIAN_COOLDOWN_RECOVER_PENALTY = 3;
+
     private static void handleMeditationLogic(ServerPlayer player, PlayerAttributeCapability cap, long gameTime) {
         boolean isMeditating = player.getVehicle() != null
                 && player.getVehicle().getTags().contains("putuan_seat");
+        // ⭐ 神界（天境）：蒲团修炼速度 ×2、修炼时间回复速度 ×2。
+        //    判定用 level.dimension()（服务端权威），与 CelestialTeleport#isInCelestial 同一口径。
+        boolean inCelestial = player.level().dimension() == ModDimensions.CELESTIAL_REALM_LEVEL_KEY;
         CompoundTag nbt = player.getPersistentData();
 
         if (isMeditating) {
             if (gameTime % 20 == 0) {
                 boolean needSync = false;
                 float currentJs = cap.getJingshenli();
-                float maxJs = cap.getMaxjingshenli();
+                // ⭐ 口径统一：必须用 ModAttributeAPI（含魂骨/装备/面板加成），
+                //    与 updateJingshenliRegen 保持一致。
+                //    之前这里用裸的 cap.getMaxjingshenli()，两处算出不同上限，
+                //    Math.min 会拿错边界导致精神力溢出或回不满。
+                float maxJs = ModAttributeAPI.getMaxjingshenli(player);
+                if (maxJs <= 0.0f) maxJs = cap.getMaxjingshenli();
 
                 if (currentJs < maxJs) {
-                    cap.setJingshenli(Math.min(maxJs, currentJs + maxJs * 0.02f + 5.0f));
+                    // 纯百分比回复（去掉旧的 +5.0f 固定值，理由见常量注释）
+                    cap.setJingshenli(Math.min(maxJs, currentJs + maxJs * PUTUAN_JINGSHENLI_REGEN_RATIO));
                     needSync = true;
                 }
 
@@ -593,17 +644,15 @@ public class PWPlayerTickEvent {
                     cap.setXiulianTime(currentTime - 1);
                     int lvl = cap.getDengji();
 
-                    float expGained;
-                    if (lvl <= 30) {
-                        expGained = cap.getMaxjingyan() / (5f * 60f);
-                    } else if (lvl <= 70) {
-                        expGained = cap.getMaxjingyan() / (7f * 60f);
-                    } else {
-                        float baseMinutes = 10f;
-                        float penaltyFactor = 1.0f + (lvl - 70) * 0.08f;
-                        float effectiveMinutes = baseMinutes * penaltyFactor;
+                    // 连续公式：分钟数随等级平滑递增，30/70 级不再有断层跳变。
+                    // 公式已抽到 XiulianLogic，跳过修炼走同一份，两者收益必然一致。
+                    float expGained = cap.getMaxjingyan() / (XiulianLogic.minutesPerLevel(lvl) * 60f);
 
-                        expGained = cap.getMaxjingyan() / (effectiveMinutes * 60f);
+                    // ⭐ 神界天境：只翻倍"经验获取"，修炼时间消耗（currentTime - 1）保持 1 点不变。
+                    //    这样神界挂机 = 同样 10 分钟消耗同样修炼时间，但拿到的经验 ×2，
+                    //    既让玩家明显变强，又不会出现"消耗不变→净收益只是刷时长"的歧义。
+                    if (inCelestial) {
+                        expGained *= CELESTIAL_MEDITATION_MULTIPLIER;
                     }
 
                     cap.setJingyan(cap.getJingyan() + expGained);
@@ -613,13 +662,14 @@ public class PWPlayerTickEvent {
                     if (currentTime - 1 <= 0) {
                         cap.setUsingAll(true);
                         player.sendSystemMessage(Component.literal("§c【修炼结束】你的修炼时间已耗尽！进入 3 分钟回复冷却。"));
-                        nbt.putInt("XiulianCooldown", 3600);
+                        nbt.putInt("XiulianCooldown", XiulianLogic.COOLDOWN_TICKS);
                     }
                 }
 
                 if (needSync) SynsAPI.synsPlayerAttribute(player);
             }
         } else {
+            // 不在蒲团上：先扣冷却，冷却结束后再恢复修炼时间
             if (nbt.contains("XiulianCooldown")) {
                 int cd = nbt.getInt("XiulianCooldown");
                 if (cd > 0) {
@@ -628,14 +678,27 @@ public class PWPlayerTickEvent {
                     nbt.remove("XiulianCooldown");
                     player.sendSystemMessage(Component.literal("§a【冥想调息】你的修炼时间恢复冷却已结束，开始逐渐恢复修炼时间。"));
                 }
-            } else {
-                int recoverTickRate = cap.isUsingAll() ? 87 : 100;
-                if (gameTime % recoverTickRate == 0) {
-                    if (cap.getXiulianTime() < 600) { // 最大 10 分钟 (600秒)
-                        cap.setXiulianTime(cap.getXiulianTime() + 1);
-                        if (cap.getXiulianTime() >= 600) {
-                            cap.setUsingAll(false);
-                        }
+            }
+
+            // ⭐ 冷却期间也允许回复（只是慢一些），避免玩家修炼时间耗尽后
+            //    必须干站 3 分钟才能继续 —— 那是纯粹的等待惩罚，没有玩法意义。
+            //    冷却中按 1/3 速度回复，即每 300 tick 回 1 秒。
+            int baseRate = cap.isUsingAll() ? 87 : 100;
+            int tickRate = nbt.contains("XiulianCooldown")
+                    ? baseRate * XIULIAN_COOLDOWN_RECOVER_PENALTY   // 冷却中：3 倍间隔
+                    : baseRate;
+
+            if (gameTime % tickRate == 0) {
+                if (cap.getXiulianTime() < XiulianLogic.TIME_MAX) {
+                    // ⭐ 神界天境：回复速度 ×2。
+                    //    这里刻意「回复量 ×2」而不是「周期 ÷2」——87/100 都是奇数，
+                    //    除 2 会得到 43/50，反倒变成 2.02~2.05 倍的误差。
+                    int recoverAmount = inCelestial
+                            ? CELESTIAL_XIULIAN_TIME_RECOVER_MULTIPLIER : 1;
+                    int next = Math.min(XiulianLogic.TIME_MAX, cap.getXiulianTime() + recoverAmount);
+                    cap.setXiulianTime(next);
+                    if (next >= XiulianLogic.TIME_MAX) {
+                        cap.setUsingAll(false);
                     }
                 }
             }
@@ -656,8 +719,16 @@ public class PWPlayerTickEvent {
                 player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 100, 0));
             }
             if (cap.getCurrentCastingSkill() != null) {
-                cap.stopCasting(player);
-                player.displayClientMessage(Component.literal("§c魂力紊乱，吟唱中断！"), true);
+                // ⭐ 抗打断判定：点数加成 + 等级加成（ModAttributeAPI#getKangdapan 统一算）
+                //    没扛住才真的打断。抗住时给个 ActionBar 提示，让玩家知道这一点生效了。
+                float resist = com.TovidY.kunluncontinent.capability.ModAttributeAPI.getKangdapan(player);
+                if (player.getRandom().nextFloat() < resist) {
+                    player.displayClientMessage(
+                            Component.literal("§6定魂之力护住了吟唱！"), true);
+                } else {
+                    cap.stopCasting(player);
+                    player.displayClientMessage(Component.literal("§c魂力紊乱，吟唱中断！"), true);
+                }
             }
         });
     }
@@ -682,7 +753,10 @@ public class PWPlayerTickEvent {
 
     private static void updateJingshenliRegen(Player player, PlayerAttributeCapability capability) {
         float currentJingshenli = capability.getJingshenli();
+        // 口径与蒲团一致：都用 ModAttributeAPI（含魂骨/装备/面板加成）
         float maxJingshenli = ModAttributeAPI.getMaxjingshenli(player);
+        // 兜底：上限异常（0 / 负）时直接返回，避免出现「除以 0」或精神力被写负
+        if (maxJingshenli <= 0.0f) return;
         if (currentJingshenli < maxJingshenli) {
             capability.setJingshenli(Math.min(currentJingshenli + maxJingshenli * 0.01f, maxJingshenli));
             SynsAPI.synsPlayerAttribute(player);
@@ -737,22 +811,14 @@ public class PWPlayerTickEvent {
         }
 
 // 1. 只要开启了武魂（无论飞不飞），每 20 tick (1秒) 必定扣除武魂维持消耗
+        //    ⚠️ 武魂真身开启时这份维持费 ×10（ZhenshenState.UPKEEP_MULTIPLIER），
+        //    这是「真身贵 10 倍」的唯一落地点，别在别处再乘一次。
+        //
+        //    注意：本方法开头对创造/旁观模式直接 return，所以这两个模式<b>不扣维持费</b>
+        //    （改动前的既有行为，保持不动）。因此「真身的状态机」不能写在这里，
+        //    否则创造模式玩家会看到「增益 5 秒后凭空消失」—— 见 onPlayerTick 里的 1b。
         if (capability.getWuhunName() != null && gameTime % 20 == 0) {
-            int lvl = capability.getDengji();
-            float cost;
-            if (lvl <= 40) {
-                cost = 3.0f + (lvl * 0.051f);
-            }
-            else if (lvl <= 70) {
-                cost = 25.0f - 0.088f * (float)Math.pow(lvl - 55, 2);
-            }
-            else {
-                // 71级时约 5.0，之后每升一级降低 0.12 点
-                cost = 5.2f - ((lvl - 70) * 0.12f);
-            }
-            if (cost < 1.5f) {
-                cost = 1.5f;
-            }
+            float cost = wuhunUpkeepCost(capability.getDengji()) * ZhenshenState.upkeepMultiplier(player);
             capability.setJingshenli(capability.getJingshenli() - cost);
         }
 
@@ -764,6 +830,25 @@ public class PWPlayerTickEvent {
                     * FlySpeedTuning.costMultiplier(capability.getFlySpeedLevel());
             capability.setJingshenli(currentJs - cost);
         }
+    }
+
+    /**
+     * 普通开启武魂时的每秒维持费（按等级）。
+     *
+     * <p>抽成方法是为了让武魂真身的 10 倍倍率有唯一落点 ——
+     * 真身不再复制一遍这段公式，见 {@code ZhenshenState#upkeepMultiplier}。</p>
+     */
+    private static float wuhunUpkeepCost(int lvl) {
+        float cost;
+        if (lvl <= 40) {
+            cost = 3.0f + (lvl * 0.051f);
+        } else if (lvl <= 70) {
+            cost = 25.0f - 0.088f * (float) Math.pow(lvl - 55, 2);
+        } else {
+            // 71级时约 5.0，之后每升一级降低 0.12 点
+            cost = 5.2f - ((lvl - 70) * 0.12f);
+        }
+        return Math.max(cost, 1.5f);
     }
 
     // ==================== 转生逻辑 ====================

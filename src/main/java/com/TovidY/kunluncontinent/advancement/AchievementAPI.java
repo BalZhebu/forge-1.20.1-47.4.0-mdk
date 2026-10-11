@@ -17,9 +17,15 @@ import java.util.List;
  * AchievementAPI.onAbsorbHunhuan(player, nianxian, n);   // 吸收魂环（含年限分档 + 九环圆满）
  * AchievementAPI.onAlchemySuccess(nearbyPlayer, quality);// 炼丹成功（含品质分档）
  * AchievementAPI.onReincarnate(player);                  // 转生
- * AchievementAPI.onTowerCleared(player, newFloor);        // 魂塔通关
+ * AchievementAPI.onTowerCleared(player, newFloor);        // 魂塔通关（10/30/50/100 层分档）
  * AchievementAPI.onGodExamStart(player);                 // 开启神考
+ * AchievementAPI.onGodExamStagePassed(player, stage);    // 通过某一考
+ * AchievementAPI.onGodAscended(player);                  // 成就神位
  * AchievementAPI.onEnterThunderRealm(player);            // 踏入雷界
+ * AchievementAPI.onEnterCelestialRealm(player);          // 踏入神界
+ * AchievementAPI.onEnterPolarIceRealm(player);           // 踏入极冰界
+ * AchievementAPI.onEnterTowerRealm(player);              // 踏入魂塔秘境
+ * AchievementAPI.onEatDanyao(player, count);             // 服用丹药（count>=2 视为批量）
  * }</pre>
  */
 public final class AchievementAPI {
@@ -68,6 +74,36 @@ public final class AchievementAPI {
     /** 第一次踏入雷界。 */
     public static final String THUNDER_REALM_ENTER = "thunder_realm_enter";
 
+    // ---------- 维度探索 ----------
+    /** 第一次踏入神界（天境）。 */
+    public static final String CELESTIAL_REALM_ENTER = "celestial_realm_enter";
+    /** 第一次踏入极冰界。 */
+    public static final String POLAR_ICE_REALM_ENTER = "polar_ice_realm_enter";
+    /** 第一次踏入魂塔秘境。 */
+    public static final String TOWER_REALM_ENTER = "tower_realm_enter";
+
+    // ---------- 神考进阶 ----------
+    /** 通过神考第一考。 */
+    public static final String GOD_EXAM_STAGE1 = "god_exam_stage1";
+    /** 通过神考第五考（半程）。 */
+    public static final String GOD_EXAM_STAGE5 = "god_exam_stage5";
+    /** 成就神位（九考全过）。 */
+    public static final String GOD_ASCENDED = "god_ascended";
+
+    // ---------- 魂塔层数 ----------
+    /** 魂塔通关三十层。 */
+    public static final String TOWER_THIRTY = "tower_thirty";
+    /** 魂塔通关五十层。 */
+    public static final String TOWER_FIFTY = "tower_fifty";
+    /** 魂塔通关百层（登顶必出神位）。 */
+    public static final String TOWER_HUNDRED = "tower_hundred";
+
+    // ---------- 丹药 / 聚灵 ----------
+    /** 第一次服用丹药。 */
+    public static final String DANYAO_FIRST = "danyao_first";
+    /** 批量服用丹药（蹲下右键一次吃多颗）。 */
+    public static final String DANYAO_BATCH = "danyao_batch";
+
     // ==================================================================================
     //  分档规则（新增档位只需在这里加一行，运行时会自动多触发一个成就）
     // ==================================================================================
@@ -97,6 +133,19 @@ public final class AchievementAPI {
 
     /** 一枚武魂最多承载的魂环数量（九魂技对应九环）。 */
     public static final int MAX_RINGS = 9;
+
+    /**
+     * 魂塔层数档位：达到阈值即点亮对应成就。
+     * <p>十层已由 {@link #TOWER_TEN} 覆盖，这里只补更高的档。</p>
+     */
+    public record TowerTier(int floor, String eventId) {
+    }
+
+    public static final List<TowerTier> TOWER_TIERS = List.of(
+            new TowerTier(30, TOWER_THIRTY),
+            new TowerTier(50, TOWER_FIFTY),
+            new TowerTier(100, TOWER_HUNDRED)
+    );
 
     // ==================================================================================
     //  基础触发
@@ -169,6 +218,12 @@ public final class AchievementAPI {
         if (newFloor >= 10) {
             trigger(player, TOWER_TEN);
         }
+        // 三十 / 五十 / 百层
+        for (TowerTier tier : TOWER_TIERS) {
+            if (newFloor >= tier.floor()) {
+                trigger(player, tier.eventId());
+            }
+        }
     }
 
     /** 接下神之试炼。 */
@@ -176,8 +231,46 @@ public final class AchievementAPI {
         trigger(player, GOD_EXAM_START);
     }
 
+    /**
+     * 通过神考某一考。
+     *
+     * @param stage 刚完成的考号（1~9）
+     */
+    public static void onGodExamStagePassed(Player player, int stage) {
+        if (stage == 1) trigger(player, GOD_EXAM_STAGE1);
+        if (stage == 5) trigger(player, GOD_EXAM_STAGE5);
+    }
+
+    /** 成就神位（九考全过）。 */
+    public static void onGodAscended(Player player) {
+        trigger(player, GOD_ASCENDED);
+    }
+
     /** 第一次踏入雷界。 */
     public static void onEnterThunderRealm(Player player) {
         trigger(player, THUNDER_REALM_ENTER);
+    }
+
+    /** 第一次踏入神界（天境）。 */
+    public static void onEnterCelestialRealm(Player player) {
+        trigger(player, CELESTIAL_REALM_ENTER);
+    }
+
+    /** 第一次踏入极冰界。 */
+    public static void onEnterPolarIceRealm(Player player) {
+        trigger(player, POLAR_ICE_REALM_ENTER);
+    }
+
+    /** 第一次踏入魂塔秘境。 */
+    public static void onEnterTowerRealm(Player player) {
+        trigger(player, TOWER_REALM_ENTER);
+    }
+
+    /** 服用丹药（含批量服丹，单颗也会触发第一次）。 */
+    public static void onEatDanyao(Player player, int count) {
+        trigger(player, DANYAO_FIRST);
+        if (count >= 2) {
+            trigger(player, DANYAO_BATCH);
+        }
     }
 }

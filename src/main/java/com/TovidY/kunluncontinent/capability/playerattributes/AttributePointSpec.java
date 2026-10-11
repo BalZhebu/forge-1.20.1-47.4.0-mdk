@@ -5,7 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 
 /**
- * 属性加点面板的<b>唯一权威定义表</b>：11 条可加点属性。
+ * 属性加点面板的<b>唯一权威定义表</b>：13 条可加点属性。
  *
  * <p><b>数值设计（99 级 = 99 点，单条上限 99 点，所以一个 build 最多点满一条）</b>：
  * <pre>
@@ -47,7 +47,35 @@ public enum AttributePointSpec {
     SHANBI("shanbi", "游龙", "闪避", 0.25f, Mode.FLAT, 0xFF66E0E0, "§3"),
     MINGZHONG("mingzhong", "锁魂", "命中", 0.15F, Mode.FLAT, 0xFFFFCC66, "§e"),
     WUCHUAN("wuchuan", "破甲", "物穿", 1.0f, Mode.MULT, 0xFFAAAAAA, "§7"),
-    KANGBAO("kangbao", "坚心", "抗暴", 0.3f, Mode.FLAT, 0xFF88CCFF, "§9");
+    KANGBAO("kangbao", "坚心", "抗暴", 0.3f, Mode.FLAT, 0xFF88CCFF, "§9"),
+
+    // ========== 2026-10-05 新增 ==========
+    // ⚠️ 新枚举只能追加在**末尾** —— ordinal() 会被写进玩家存档的
+    //    "AllocatedPoints" int数组，插在中间会让老存档的点位全部错位一格。
+
+    /**
+     * 【精神力】每点 +1.5% 最大精神力。
+     *
+     * <p>数值定位：满99 点 = +148.5% → 最大精神力变成原来的 2.485 倍。
+     * 精神力是技能吟唱的<b>燃料</b>（见 {@code PWPlayerTickEvent#handleSkillCasting}），
+     * 上限提高等于变相延长可连续施放的技能数，与"强攻/强健"同一档量级。</p>
+     *
+     * <p>走 {@link Mode#MULT}：精神力基数是几万的大数字，加固定百分点没意义。</p>
+     */
+    JINGSHENLI("maxjingshenli", "凝神", "最大精神力", 3.0f, Mode.MULT, 0xFF66CCFF, "§b"),
+
+    /**
+     * 【抗打断】每点 +0.8% 抗打断几率，上限 99% 封顶。
+     *
+     * <p><b>结算方式特殊（FLAT 但封顶）</b>：概率类属性走加算，
+     * 但 99 点 × 0.8% = 79.2%，再高就接近无敌了，所以
+     * {@link com.TovidY.kunluncontinent.capability.ModAttributeAPI#getKangDapan}
+     * 额外做了 {@code min(0.99f, ...)} 封顶。</p>
+     *
+     * <p>等级加成：抗打断最终概率 = 点数加成 + 等级加成
+     * （{@code min(0.15f, dengji * 0.0015f)}，即 99 级 ≈ +14.85%）。</p>
+     */
+    KANGDAPAN("kangdapan", "定魂", "抗打断", 0.8f, Mode.FLAT, 0xFFFFB060, "§6");
 
     /** 结算方式。 */
     public enum Mode {

@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.block.blockentity;
 
 import com.TovidY.kunluncontinent.advancement.AchievementAPI;
 import com.TovidY.kunluncontinent.block.ModBlockEntities;
+import com.TovidY.kunluncontinent.item.klitem.DanYaoQuality;
 import com.TovidY.kunluncontinent.item.tool.SoulGatheringBottleItem;
 import com.TovidY.kunluncontinent.recipe.ModRecipes;
 import com.TovidY.kunluncontinent.recipe.liandanlurecipe.AlchemicalCalculator;
@@ -36,6 +37,15 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 
 public class LiandanluBlockEntity extends BlockEntity implements MenuProvider {
+
+    /** 药渣槽在 ItemHandler 中的下标。 */
+    public static final int DROSS_SLOT = AlchemicalCalculator.DROSS_SLOT;
+    /** 聚魂瓶槽在 ItemHandler 中的下标。 */
+    public static final int BOTTLE_SLOT = 18;
+    /** 产出槽区间 [5, 16]。 */
+    public static final int RESULT_SLOT_START = 5;
+    public static final int RESULT_SLOT_END = 16;
+
     private final int furnaceLevel;
     private int progress = 0;
     private int maxProgress = 200;
@@ -59,7 +69,7 @@ public class LiandanluBlockEntity extends BlockEntity implements MenuProvider {
                 case 0 -> LiandanluBlockEntity.this.progress;
                 case 1 -> LiandanluBlockEntity.this.maxProgress;
                 case 2 -> {
-                    ItemStack stack = LiandanluBlockEntity.this.itemHandler.getStackInSlot(18);
+                    ItemStack stack = LiandanluBlockEntity.this.itemHandler.getStackInSlot(BOTTLE_SLOT);
                     yield stack.isEmpty() ? 0 : 1;
                 }
                 default -> 0;
@@ -83,29 +93,35 @@ public class LiandanluBlockEntity extends BlockEntity implements MenuProvider {
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, LiandanluBlockEntity entity) {
         // 1. 获取配方
-        SimpleContainer container = new SimpleContainer(5);
-        for (int i = 0; i < 5; i++) container.setItem(i, entity.itemHandler.getStackInSlot(i));
+        SimpleContainer container = new SimpleContainer(AlchemicalCalculator.MATERIAL_SLOTS);
+        for (int i = 0; i < AlchemicalCalculator.MATERIAL_SLOTS; i++) {
+            container.setItem(i, entity.itemHandler.getStackInSlot(i));
+        }
 
         Optional<LiandanRecipe> recipeOptional = level.getRecipeManager()
                 .getRecipeFor(ModRecipes.LIANDAN_TYPE.get(), container, level);
 
-        if (recipeOptional.isPresent()) {
-            LiandanRecipe recipe = recipeOptional.get();
-            ItemStack bottleStack = entity.itemHandler.getStackInSlot(18);
+        if (recipeOptional.isEmpty()) {
+            entity.progress = 0;
+            return;
+        }
 
-            if (bottleStack.getItem() instanceof SoulGatheringBottleItem bottle &&
-                    bottle.getNengliang(null, bottleStack) >= recipe.getEnergyCost() &&
-                    canInsertResult(entity.itemHandler)) {
+        LiandanRecipe recipe = recipeOptional.get();
+        ItemStack bottleStack = entity.itemHandler.getStackInSlot(BOTTLE_SLOT);
 
-                entity.maxProgress = entity.getAdjustedCookingTime(recipe);
-                entity.progress++;
+        if (!(bottleStack.getItem() instanceof SoulGatheringBottleItem bottle)
+                || bottle.getNengliang(null, bottleStack) < recipe.getEnergyCost()
+                || !canInsertResult(entity.itemHandler)) {
+            // 材料/能量/输出任一不满足 → 进度清零，避免「攒了一半进度换材料」的白嫖
+            entity.progress = 0;
+            return;
+        }
 
-                if (entity.progress >= entity.maxProgress) {
-                    executeCraft(entity, recipe, bottle, bottleStack);
-                    entity.progress = 0;
-                }
-            }
-        } else {
+        entity.maxProgress = entity.getAdjustedCookingTime(recipe);
+        entity.progress++;
+
+        if (entity.progress >= entity.maxProgress) {
+            executeCraft(entity, recipe, bottle, bottleStack);
             entity.progress = 0;
         }
     }
@@ -138,56 +154,67 @@ public class LiandanluBlockEntity extends BlockEntity implements MenuProvider {
     private static void executeCraft(LiandanluBlockEntity entity, LiandanRecipe recipe, SoulGatheringBottleItem bottle, ItemStack bottleStack) {
         if (bottle.getNengliang(null, bottleStack) < recipe.getEnergyCost()) return;
 
+        IItemHandlerModifiable handler = (IItemHandlerModifiable) entity.itemHandler;
+
+        // 先算概率再扣能量：随机只消耗一次，且失败不会白扣
+        double[] weights = AlchemicalCalculator.computeWeights(
+                handler, recipe.isSpecial(), entity.furnaceLevel, recipe.getRecipeLevel());
+        int finalQuality = AlchemicalCalculator.roll(weights, entity.level.getRandom());
+
         bottle.setNengliang(null, bottleStack, bottle.getNengliang(null, bottleStack) - recipe.getEnergyCost());
 
-        IItemHandlerModifiable handler = (IItemHandlerModifiable) entity.itemHandler;
-        int finalQuality = AlchemicalCalculator.calculateResultQuality(handler);
         ItemStack resultStack = recipe.getResultItem(entity.level.registryAccess()).copy();
         resultStack.getOrCreateTag().putInt("DanYaoQuality", finalQuality);
 
-        for (int i = 0; i < 5; i++) handler.extractItem(i, 1, false);
-        if (!handler.getStackInSlot(17).isEmpty()) handler.extractItem(17, 1, false);
+        for (int i = 0; i < AlchemicalCalculator.MATERIAL_SLOTS; i++) handler.extractItem(i, 1, false);
+        if (!handler.getStackInSlot(DROSS_SLOT).isEmpty()) handler.extractItem(DROSS_SLOT, 1, false);
 
         ItemStack remaining = resultStack;
-        for (int i = 5; i <= 16; i++) {
+        for (int i = RESULT_SLOT_START; i <= RESULT_SLOT_END; i++) {
             remaining = handler.insertItem(i, remaining, false);
             if (remaining.isEmpty()) break;
         }
 
-        // 成就：把功劳记给炼丹炉旁边最近的玩家
         if (entity.level != null && !entity.level.isClientSide) {
             Player crafter = entity.level.getNearestPlayer(
                     entity.getBlockPos().getX() + 0.5D,
                     entity.getBlockPos().getY() + 0.5D,
                     entity.getBlockPos().getZ() + 0.5D,
                     8.0D, false);
-            AchievementAPI.onAlchemySuccess(crafter, finalQuality);
+            if (crafter != null) {
+                AchievementAPI.onAlchemySuccess(crafter, finalQuality);
+            }
         }
 
-        entity.setChanged(); // 确保数据持久化
+        entity.setChanged();
     }
 
+    /**
+     * 炉温对耗时的影响：炉等级 ≥ 丹方等级 → 加速；低于 → 惩罚。
+     *
+     * <p>旧实现惩罚是 {@code 2^levelDiff}（最高 2^8=256 倍，配 72000 tick 上限 = 整整一小时）。
+     * 这里改成温和的线性加速 + 对数惩罚，最高约 4 倍（400 → 1600 tick ≈ 80 秒）。</p>
+     */
     private int getAdjustedCookingTime(LiandanRecipe recipe) {
-        int danLevel = recipe.getRecipeLevel();
-        int luLevel = this.furnaceLevel;
-        int baseTicks = recipe.getCookTime();
+        int baseTicks = Math.max(20, recipe.getCookTime());
         if (recipe.isSpecial()) {
             return baseTicks;
         }
 
-        float speedMultiplier;
+        int danLevel = recipe.getRecipeLevel();
+        int luLevel = this.furnaceLevel;
+
         if (luLevel >= danLevel) {
-            speedMultiplier = 1.0f + (luLevel - danLevel) * 0.5f;
+            float speedMultiplier = 1.0f + (luLevel - danLevel) * 0.35f;
             return (int) Math.max(baseTicks / speedMultiplier, 20);
-        } else {
-            int levelDiff = danLevel - luLevel;
-            long penaltyTicks = (long) baseTicks * (long) Math.pow(2, levelDiff);
-            return (int) Math.min(penaltyTicks, 72000);
         }
+        int levelDiff = danLevel - luLevel;
+        double penalty = Math.pow(1.35, Math.min(levelDiff, 8));
+        return Math.min((int) (baseTicks * penalty), 3600);
     }
 
     private static boolean canInsertResult(IItemHandler handler) {
-        for (int i = 5; i <= 16; i++) {
+        for (int i = RESULT_SLOT_START; i <= RESULT_SLOT_END; i++) {
             if (handler.getStackInSlot(i).isEmpty()) return true;
         }
         return false;
@@ -226,6 +253,10 @@ public class LiandanluBlockEntity extends BlockEntity implements MenuProvider {
     // 在 LiandanluBlockEntity.java
     public ItemStackHandler getItemHandler() {
         return this.itemHandler;
+    }
+
+    public int getFurnaceLevel() {
+        return this.furnaceLevel;
     }
 
 

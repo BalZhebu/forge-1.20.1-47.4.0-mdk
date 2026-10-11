@@ -28,7 +28,10 @@ public class PacketSyncGodData {
         this.isGod = cap.isGod();
 
         GodInfo info = GodRegistry.GODS.get(this.godId);
-        this.displayName = (info != null) ? info.getName() : "无";
+        // ⚠️ 兜底用空串，**不能用 "无"** —— displayName 会覆盖客户端的 godName，
+        //    而 AttributeTabs 的页签显示条件曾拿 godName.equals("无") 判 false，
+        //    导致页签直接消失（必须重登才恢复）。空串不触发任何"无"字样比较。
+        this.displayName = (info != null) ? info.getName() : "";
 
         this.rewardDesc = (info != null) ? info.getRewardTooltip(this.stage) : "无";
 

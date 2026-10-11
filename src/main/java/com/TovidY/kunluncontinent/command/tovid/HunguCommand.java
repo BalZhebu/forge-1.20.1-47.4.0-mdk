@@ -1,6 +1,8 @@
 package com.TovidY.kunluncontinent.command.tovid;
 
+import com.TovidY.kunluncontinent.command.KLCommands;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -10,9 +12,11 @@ import net.minecraft.server.level.ServerPlayer;
 
 public class HunguCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("kunluncontinent")
-                .requires(source -> source.hasPermission(2))
-                .then(Commands.literal("hungu")
+        KLCommands.register(dispatcher, node());
+    }
+
+    public static LiteralArgumentBuilder<CommandSourceStack> node() {
+        return Commands.literal("hungu")
                         .then(Commands.argument("target", EntityArgument.player())
                                 .then(Commands.argument("enabled", BoolArgumentType.bool())
                                         .executes(context -> {
@@ -26,7 +30,5 @@ public class HunguCommand {
                                         })
                                 )
                         )
-                )
-        );
-    }
+                ;}
 }

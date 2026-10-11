@@ -1,6 +1,8 @@
 package com.TovidY.kunluncontinent.command.tovid;
 
+import com.TovidY.kunluncontinent.command.KLCommands;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.commands.CommandSourceStack;
@@ -15,9 +17,11 @@ public class NeidanCommand {
     };
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("kunluncontinent")
-                .requires(source -> source.hasPermission(2))
-                .then(Commands.literal("neidan")
+        KLCommands.register(dispatcher, node());
+    }
+
+    public static LiteralArgumentBuilder<CommandSourceStack> node() {
+        return Commands.literal("neidan")
                         .then(Commands.argument("player", EntityArgument.player())
                                 .then(Commands.literal("probability")
                                         .then(Commands.argument("value", BoolArgumentType.bool())
@@ -49,7 +53,5 @@ public class NeidanCommand {
                                         )
                                 )
                         )
-                )
-        );
-    }
+                ;}
 }

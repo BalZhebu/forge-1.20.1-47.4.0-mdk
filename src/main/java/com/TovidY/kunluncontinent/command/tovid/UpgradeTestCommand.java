@@ -3,6 +3,7 @@ package com.TovidY.kunluncontinent.command.tovid;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerUpgradeSystem;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -11,13 +12,24 @@ import net.minecraft.server.level.ServerPlayer;
 
 //适配指令赋予经验升级测试（辅助方法）
 public class UpgradeTestCommand {
+
+    /**
+     * 独立根节点 {@code /testupgrade}。
+     *
+     * <p>⚠️ 这个命令历史上就<b>不在</b> {@code /kunluncontinent} 下，
+     * 所以不能走 {@link com.TovidY.kunluncontinent.command.KLCommands#register}，
+     * 仍需自己注册根节点。</p>
+     */
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(
-            Commands.literal("testupgrade")
-                .requires(source -> source.hasPermission(2))
-                .executes(UpgradeTestCommand::execute)
-        );
+        dispatcher.register(node());
     }
+
+    public static LiteralArgumentBuilder<CommandSourceStack> node() {
+        return Commands.literal("testupgrade")
+                .requires(source -> source.hasPermission(2))
+                .executes(UpgradeTestCommand::execute);
+    }
+
     private static int execute(CommandContext<CommandSourceStack> context) {
         ServerPlayer player = context.getSource().getPlayer();
         if (player == null) {

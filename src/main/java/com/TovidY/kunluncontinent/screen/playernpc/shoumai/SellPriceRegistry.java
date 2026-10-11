@@ -109,12 +109,12 @@ public class SellPriceRegistry {
         registerNeidan(ModItems.NEIDAN7.get(), NeidanQuality.XIAN,  new PriceEntry(0, 0, 35));
 
         // --- 8阶内丹 (NEIDAN8) ---
-        registerNeidan(ModItems.NEIDAN8.get(), NeidanQuality.FAN,   new PriceEntry(14, 45, 11));
-        registerNeidan(ModItems.NEIDAN8.get(), NeidanQuality.LIANG, new PriceEntry(14, 45, 11));
-        registerNeidan(ModItems.NEIDAN8.get(), NeidanQuality.SHANG, new PriceEntry(14, 45, 11));
-        registerNeidan(ModItems.NEIDAN8.get(), NeidanQuality.ZHEN,  new PriceEntry(14, 45, 11));
-        registerNeidan(ModItems.NEIDAN8.get(), NeidanQuality.JUE,   new PriceEntry(14, 45, 11));
-        registerNeidan(ModItems.NEIDAN8.get(), NeidanQuality.XIAN,  new PriceEntry(14, 45, 11));
+        registerNeidan(ModItems.NEIDAN8.get(), NeidanQuality.FAN,   new PriceEntry(1, 0, 0));
+        registerNeidan(ModItems.NEIDAN8.get(), NeidanQuality.LIANG, new PriceEntry(2, 0, 0));
+        registerNeidan(ModItems.NEIDAN8.get(), NeidanQuality.SHANG, new PriceEntry(4, 0, 0));
+        registerNeidan(ModItems.NEIDAN8.get(), NeidanQuality.ZHEN,  new PriceEntry(10, 0, 0));
+        registerNeidan(ModItems.NEIDAN8.get(), NeidanQuality.JUE,   new PriceEntry(20, 0, 0));
+        registerNeidan(ModItems.NEIDAN8.get(), NeidanQuality.XIAN,  new PriceEntry(40, 0, 0));
 
         // --- 9阶内丹 (NEIDAN9) ---
         registerNeidan(ModItems.NEIDAN9.get(), NeidanQuality.FAN,   new PriceEntry(3, 0, 0));

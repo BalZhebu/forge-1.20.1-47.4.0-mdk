@@ -1,5 +1,6 @@
 package com.TovidY.kunluncontinent.capability.playerattributes;
 
+import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
 import com.TovidY.kunluncontinent.advancement.AchievementAPI;
 import com.TovidY.kunluncontinent.capability.mobattributes.HunhuanWeakener;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapability;
@@ -203,7 +204,11 @@ public class PlayerHunhuanAPI {
             if (!capability.isShenci()) {
                 player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(capability1 -> {
                     float jingshenli = (float) ((capability.getNianxian() / (v1 * v1 * 0.5)) / v);
-                    capability1.setJingshenli(capability1.getJingshenli() - jingshenli);
+                    // 扣精神力时同样用"加点后的上限"做下限钳制，
+                    // 否则加点后上限>裸上限时，扣到裸上限就会变成负数
+                    float mpMax = ModAttributeAPI.getMaxjingshenli((ServerPlayer) player);
+                    capability1.setJingshenli(
+                            Math.max(0f, Math.min(capability1.getJingshenli() - jingshenli, mpMax)));
                 });
             }
             if (entity.getExistenceTime() >= v) {
@@ -260,7 +265,11 @@ public class PlayerHunhuanAPI {
 
     public static void addJingshenli(ServerPlayer player, float value) {
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(capability -> {
-            capability.setJingshenli(Math.min(capability.getJingshenli()+value,capability.getMaxjingshenli()));
+            // ⚠️ 上限必须走 ModAttributeAPI（**含加点加成**），不能直接读
+            //    capability.getMaxjingshenli() —— 那是裸字段，不含"凝神"加点，
+            //    会把回复量钳在裸上限上，导致点了精神力却"回不满"。
+            float cap = ModAttributeAPI.getMaxjingshenli(player);
+            capability.setJingshenli(Math.min(capability.getJingshenli() + value, cap));
             syncPlayerAttributeToClient(player, capability);
         });
     }

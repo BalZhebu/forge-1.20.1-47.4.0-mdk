@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.item.baseskillist.liejinhu.two;
 
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
+import static com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem.dealSkillDamage;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -88,7 +89,7 @@ public class SkillLeijinhu2 extends BaseSkillItem {
                 if (distance <= 5.0) {
                     target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 0)); // 缓慢1级
                     target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 60, 0)); // 虚弱
-                    target.hurt(player.damageSources().mobAttack(player), 4.0f * powerMultiplier);
+                    dealSkillDamage(target, 4.0f * powerMultiplier, player.damageSources().mobAttack(player));
                 }
                 else if (distance <= 10.0) {
                     target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 2)); // 缓慢3级

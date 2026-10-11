@@ -24,10 +24,15 @@ import java.util.function.Consumer;
  * <pre>
  * root ─┬─ 宝石线 / 金属线（原）
  *       ├─ 炼丹炉线 → 丹道（新）
- *       ├─ 等级线 → 转生（新）
+ *       ├─ 等级线 ─┬─ 10→99 级（新）
+ *       │          └─ 丹药 → 批量服丹（新）
  *       ├─ 魂师之路 → 魂环 → 年限攀登 / 九环圆满 / 魂核（新）
- *       ├─ 魂塔 → 魂塔十层 / 神之试炼（新）
- *       └─ 雷界（新）
+ *       ├─ 魂塔 ─┬─ 10 / 30 / 50 / 100 层（新）
+ *       │        └─ 神考 → 第一考 → 第五考 → 成就神位（新）
+ *       └─ 维度探索 ─┬─ 雷界（原）
+ *                    ├─ 神界（新）
+ *                    ├─ 极冰界（新）
+ *                    └─ 魂塔秘境（新）
  * </pre>
  */
 public class ModAdvancementProvider extends ForgeAdvancementProvider {
@@ -201,22 +206,59 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                     ModItems.GUOSHI_POHUNQIANG.get(), AdvancementHelper.event(AchievementAPI.REINCARNATION_FIRST));
 
             // ==================================================================
-            //  分支：魂塔 → 神之试炼
+            //  分支：魂塔 → 三十 / 五十 / 百层 → 神之试炼 → 封神
             // ==================================================================
             Advancement towerFirst = AdvancementHelper.task(saver, helper, root, "tower_first",
                     ModBlocks.SUMMON_TOWER.get(), AdvancementHelper.event(AchievementAPI.TOWER_FIRST));
 
-            AdvancementHelper.goal(saver, helper, towerFirst, "tower_ten",
+            Advancement towerTen = AdvancementHelper.goal(saver, helper, towerFirst, "tower_ten",
                     ModBlocks.SUMMON_TOWER.get(), AdvancementHelper.event(AchievementAPI.TOWER_TEN));
 
-            AdvancementHelper.goal(saver, helper, towerFirst, "god_exam_start",
+            Advancement towerThirty = AdvancementHelper.goal(saver, helper, towerTen, "tower_thirty",
+                    ModBlocks.SUMMON_TOWER.get(), AdvancementHelper.event(AchievementAPI.TOWER_THIRTY));
+
+            Advancement towerFifty = AdvancementHelper.goal(saver, helper, towerThirty, "tower_fifty",
+                    ModBlocks.SUMMON_TOWER.get(), AdvancementHelper.event(AchievementAPI.TOWER_FIFTY));
+
+            Advancement towerHundred = AdvancementHelper.challenge(saver, helper, towerFifty, "tower_hundred",
+                    ModBlocks.SUMMON_TOWER.get(), AdvancementHelper.event(AchievementAPI.TOWER_HUNDRED));
+
+            // 神考：接下试炼 → 第一考 → 第五考 → 成就神位
+            Advancement godExamStart = AdvancementHelper.task(saver, helper, towerFirst, "god_exam_start",
                     ModItems.SHENKAO_BUTTON.get(), AdvancementHelper.event(AchievementAPI.GOD_EXAM_START));
 
+            Advancement godStage1 = AdvancementHelper.task(saver, helper, godExamStart, "god_exam_stage1",
+                    ModItems.DEMON_WHALE_MEDAL.get(), AdvancementHelper.event(AchievementAPI.GOD_EXAM_STAGE1));
+
+            Advancement godStage5 = AdvancementHelper.goal(saver, helper, godStage1, "god_exam_stage5",
+                    ModItems.GUOSHI_POHUNQIANG.get(), AdvancementHelper.event(AchievementAPI.GOD_EXAM_STAGE5));
+
+            AdvancementHelper.challenge(saver, helper, godStage5, "god_ascended",
+                    ModItems.HUNHUAN_STORAGE_FIVE.get(), AdvancementHelper.event(AchievementAPI.GOD_ASCENDED));
+
             // ==================================================================
-            //  分支：雷界
+            //  分支：维度探索 —— 雷界 / 神界 / 极冰界 / 魂塔秘境
             // ==================================================================
-            AdvancementHelper.goal(saver, helper, root, "thunder_realm_enter",
+            Advancement thunderRealm = AdvancementHelper.goal(saver, helper, root, "thunder_realm_enter",
                     ModItems.FANGSHANHUNDAOQI_3.get(), AdvancementHelper.event(AchievementAPI.THUNDER_REALM_ENTER));
+
+            AdvancementHelper.goal(saver, helper, thunderRealm, "celestial_realm_enter",
+                    ModItems.GOLDEN_SOUL_COIN.get(), AdvancementHelper.event(AchievementAPI.CELESTIAL_REALM_ENTER));
+
+            AdvancementHelper.goal(saver, helper, thunderRealm, "polar_ice_realm_enter",
+                    ModItems.THUNDERREALM_SNOWFLAKE.get(), AdvancementHelper.event(AchievementAPI.POLAR_ICE_REALM_ENTER));
+
+            AdvancementHelper.goal(saver, helper, thunderRealm, "tower_realm_enter",
+                    ModBlocks.SUMMON_TOWER.get(), AdvancementHelper.event(AchievementAPI.TOWER_REALM_ENTER));
+
+            // ==================================================================
+            //  分支：丹药 —— 挂在一阶丹（等级线起点）之后
+            // ==================================================================
+            Advancement danyaoFirst = AdvancementHelper.task(saver, helper, lvl10, "danyao_first",
+                    ModItems.CHUYUAN_DAN.get(), AdvancementHelper.event(AchievementAPI.DANYAO_FIRST));
+
+            AdvancementHelper.goal(saver, helper, danyaoFirst, "danyao_batch",
+                    ModItems.NEIDAN9.get(), AdvancementHelper.event(AchievementAPI.DANYAO_BATCH));
         }
     }
 }

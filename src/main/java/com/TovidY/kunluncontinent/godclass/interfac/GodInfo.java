@@ -1,5 +1,6 @@
 package com.TovidY.kunluncontinent.godclass.interfac;
 
+import com.TovidY.kunluncontinent.advancement.AchievementAPI;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerUpgradeSystem;
@@ -164,6 +165,9 @@ public class GodInfo {
 
         NetworkHandler.sendToClient(new PacketChangeCamera(0), player);
         player.sendSystemMessage(Component.literal("§a§l神格已成，凡躯已脱！"));
+
+        // 成就：成就神位（九考全过）
+        AchievementAPI.onGodAscended(player);
     }
 
     private void grantStageRewards(int stage, Player player) {

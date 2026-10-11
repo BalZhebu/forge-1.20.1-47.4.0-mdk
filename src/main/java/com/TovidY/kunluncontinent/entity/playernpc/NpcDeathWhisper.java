@@ -80,7 +80,6 @@ public final class NpcDeathWhisper {
             });
         }
 
-        // 亡灵尖啸（1.20.1 没有 WRAITH_* 常量，用 ENDERMAN_SCREAM 代替）+ 死亡音
         Level level0 = npc.level();
         level0.playSound(null, npc.getX(), npc.getY(), npc.getZ(),
                 SoundEvents.ENDERMAN_SCREAM, SoundSource.HOSTILE, 0.6F, 1.5F);
