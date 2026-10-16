@@ -47,6 +47,7 @@ import com.TovidY.kunluncontinent.item.baseskillist.zhenshen.SkillBahuang7;
 import com.TovidY.kunluncontinent.item.baseskillist.zhenshen.SkillLeijinhu7;
 import com.TovidY.kunluncontinent.item.baseskillist.zhenshen.SkillPanshijuyuan7;
 import com.TovidY.kunluncontinent.item.baseskillist.zhenshen.SkillPohun7;
+import com.TovidY.kunluncontinent.special.lonebamboo.SkillPoleVault;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.hungu.BoneItem;
 import com.TovidY.kunluncontinent.item.klitem.*;
@@ -293,6 +294,7 @@ public class ModItems {
     public static final RegistryObject<Item> SNOW_DEMON_SPAWN_EGG = ITEMS.register("snow_demon_spawn_egg", () -> new ForgeSpawnEggItem(EntityInit.SNOW_DEMON, 0x000000, 0xFFFFFF, new Item.Properties()));
     public static final RegistryObject<Item> DEMONWHALE_SPAWN_EGG = ITEMS.register("demonwhale_spawn_egg", () -> new ForgeSpawnEggItem(EntityInit.DEMON_WHALE, 0xB80505, 0x79400B, new Item.Properties()));
     public static final RegistryObject<Item> NPCSOUL_SPAWN_EGG = ITEMS.register("npcsoul_spawn_egg", () -> new ForgeSpawnEggItem(EntityInit.PLAYER_NPC, 0xB70565, 0x79454B, new Item.Properties()));
+    public static final RegistryObject<Item> LONE_BAMBOO_SPAWN_EGG = ITEMS.register("lone_bamboo_spawn_egg", () -> new ForgeSpawnEggItem(EntityInit.LONE_BAMBOO, 0x6A8C3A, 0xC8D9A0, new Item.Properties()));
 
     //矿石宝石
     public static final RegistryObject<Item> GRAY_IRON_INGOT = ITEMS.register("gray_iron_ingot",()->new Item(new Item.Properties()));
@@ -514,15 +516,9 @@ public class ModItems {
     public static final RegistryObject<SkillPanshijuyuan8> SKILL_PANSHIJUYUAN_8 = ITEMS.register("skill_panshijuyuan_8", SkillPanshijuyuan8::new);
     public static final RegistryObject<SkillPanshijuyuan9> SKILL_PANSHIJUYUAN_9 = ITEMS.register("skill_panshijuyuan_9", SkillPanshijuyuan9::new);
 
-    // ==================================================================================
-    //  变体魂技：同一槽位的"额外技能池"。
-    //  获得魂技时（HunhuanEntity.handleAbsorbed → SkillLibrary.getRandomSkill）
-    //  会在同槽位的池子里随机挑一个，所以一个物品图标可以对应多条魂技。
-    //  图标直接复用该槽位既有魂技的贴图，不再新增美术资源（模型见 ModItemModelsProvider）。
-    //
-    //  新增一条 = skillVariant("注册名", 图标来源, new SkillSpec(描述键, 消耗, 倍率, 吟唱, 冷却, 特效))，
-    //  然后去 SkillLibrary 把它加进对应槽位的池子 + 去语言文件补名字和描述。
-    // ==================================================================================
+    public static final RegistryObject<SkillPoleVault> SKILL_POLE_VAULT =
+            ITEMS.register("skill_pole_vault", SkillPoleVault::new);
+
     public record SkillVariantEntry(RegistryObject<? extends BaseSkillItem> skill,
                                     RegistryObject<? extends BaseSkillItem> iconSource) {}
 
@@ -867,6 +863,9 @@ public class ModItems {
         HUNJILIST.add(SKILL_BAHUANG_9);
         HUNJILIST.add(SKILL_LEIJINHU_9);
         HUNJILIST.add(SKILL_PANSHIJUYUAN_9);
+        // 特殊魂技也算「魂技类」：贴图 assets/kunluncontinent/textures/item/skill_pole_vault.png，
+        // 由 HUNJILIST 统一生成模型（basicItem 用注册名当贴图名，不用在这里再写一遍）
+        HUNJILIST.add(SKILL_POLE_VAULT);
     }
 
     public static ArrayList<RegistryObject<Item>> DUANZAOMOBAN = new ArrayList<>();
@@ -907,6 +906,7 @@ public class ModItems {
         SPAWNEGGLIST.add(SNOW_DEMON_SPAWN_EGG);
         SPAWNEGGLIST.add(DEMONWHALE_SPAWN_EGG);
         SPAWNEGGLIST.add(NPCSOUL_SPAWN_EGG);
+        SPAWNEGGLIST.add(LONE_BAMBOO_SPAWN_EGG);
     }
 
     public static ArrayList<RegistryObject<Item>> HUNGULIST = new ArrayList<>();

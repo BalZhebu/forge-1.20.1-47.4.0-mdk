@@ -20,7 +20,6 @@ public class SkillLeijinhu5 extends BaseSkillItem {
     @Override public float getBaseCost() { return 290f; }
     @Override public float getDamageMultiplier() { return 2.6f; }
     @Override public int getCastTime() { return 20; }
-    @Override public int getCooldownTicks() { return 700; }
 
     @Override
     public String getDescriptionKey() { return "skill.leijinhu.five.description"; }

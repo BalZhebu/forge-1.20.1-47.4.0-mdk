@@ -16,6 +16,22 @@ public class MobAttributeCapability extends CapabilityAttributeBase implements I
     private float tempWugongModifier = 0f;
     private boolean isWeakened = false;
 
+    /**
+     * 生成这个能力时的「来源生物」实体类型 ID（如 {@code kunluncontinent:lone_bamboo}），空串 = 未知。
+     *
+     * <p><b>为什么需要它：</b>魂环实体是独立实体，它的能力是击杀瞬间从魂兽身上
+     * 整份复制过来的（{@code KLivingDeathEvent#addHunhuanEntity}）。魂环本身拿不到
+     * 原生物对象，所以「这个魂环来自谁」只能靠复制时顺手记一个 ID 带过来 ——
+     * 特殊生物魂环（{@code special} 包）靠它判断该不该给特殊魂技。</p>
+     */
+    private String sourceType = "";
+
+    public String getSourceType() { return sourceType; }
+
+    public void setSourceType(String sourceType) {
+        this.sourceType = sourceType == null ? "" : sourceType;
+    }
+
     public MobAttributeCapability() {
         super();
         this.nianxian = 0;
@@ -143,6 +159,7 @@ public class MobAttributeCapability extends CapabilityAttributeBase implements I
         nbt.putFloat("tempWugongModifier", tempWugongModifier);
         nbt.putBoolean("isWeakened", isWeakened); // 保存削弱标记
         nbt.putString("towerSkillsTag", towerSkillsTag); // 挑战塔词条标签（同步给客户端画词条行）
+        nbt.putString("sourceType", sourceType); // 来源生物实体类型 ID（特殊魂环判定用）
         return nbt;
     }
 
@@ -154,6 +171,7 @@ public class MobAttributeCapability extends CapabilityAttributeBase implements I
         if (nbt.contains("tempWugongModifier")) this.tempWugongModifier = nbt.getFloat("tempWugongModifier");
         if (nbt.contains("isWeakened")) this.isWeakened = nbt.getBoolean("isWeakened"); // 读取削弱标记
         this.towerSkillsTag = nbt.getString("towerSkillsTag");
+        this.sourceType = nbt.getString("sourceType");
     }
 
     /** 挑战塔词条标签（仅用于客户端名牌第二行显示，空串 = 无词条）。 */

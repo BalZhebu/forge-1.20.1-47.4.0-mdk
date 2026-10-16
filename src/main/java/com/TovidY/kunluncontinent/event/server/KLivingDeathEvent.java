@@ -20,6 +20,8 @@ import com.TovidY.kunluncontinent.godclass.GodExamFeedback;
 import com.TovidY.kunluncontinent.godclass.interfac.GodTaskType;
 import com.TovidY.kunluncontinent.item.ModItems;
 import com.TovidY.kunluncontinent.item.neidanitems.NeidanDropHandler;
+import com.TovidY.kunluncontinent.special.SpecialSoulRing;
+import com.TovidY.kunluncontinent.special.SpecialSoulRingRegistry;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.SynsAPI;
 import com.TovidY.kunluncontinent.network.client.PacketSyncGodData;
@@ -102,8 +104,22 @@ public class KLivingDeathEvent {
 
             NeidanDropHandler.tryDropNeidan(entity, cap, player);
             handleExperience(player, cap);
-            tryGenerateHunhuan(cap, entity.level(), entity.getOnPos());
-            handleHunguDrop(entity, (int) cap.getNianxian(), player);
+
+            // ⭐ 特殊生物（娱乐 / 剧情魂环）：统一查 special 包注册表。
+            //    没注册过的普通生物 special == null，走原来的年限概率逻辑，行为完全不变。
+            SpecialSoulRing special = SpecialSoulRingRegistry.get(entity.getType());
+
+            // 魂环：特殊生物可声明「必定掉落」，跳过年限概率表直接生成
+            if (special != null && special.alwaysDropSoulRing()) {
+                addHunhuanEntity(cap, entity.level(), entity.getOnPos(), entity);
+            } else {
+                tryGenerateHunhuan(cap, entity.level(), entity.getOnPos(), entity);
+            }
+
+            // 魂骨：特殊生物可声明「必定不掉」，连骰子都不掷
+            if (special == null || !special.neverDropSoulBone()) {
+                handleHunguDrop(entity, (int) cap.getNianxian(), player);
+            }
 
             // ⭐ 声明式掉落表（返气草种子 / 深海精华 / 你以后加的一切）
             // 新增掉落只需要改 drop/DropRegistry.java，不用碰这个文件
@@ -342,10 +358,10 @@ public class KLivingDeathEvent {
         return 0;
     }
 
-    private static void tryGenerateHunhuan(MobAttributeCapability cap, Level level, BlockPos pos) {
+    private static void tryGenerateHunhuan(MobAttributeCapability cap, Level level, BlockPos pos, Entity source) {
         double prob = KLConfig.ENABLE_HUNHUAN_PROBABILITY.get() ? getHunhuanProb(cap.getNianxian()) : 1.0;
         if (RANDOM.nextDouble() <= prob) {
-            addHunhuanEntity(cap, level, pos);
+            addHunhuanEntity(cap, level, pos, source);
         }
     }
 
@@ -446,7 +462,14 @@ public class KLivingDeathEvent {
         return KLConfig.TIER1_PROB.get();
     }
 
-    public static void addHunhuanEntity(MobAttributeCapability sourceCap, Level level, BlockPos pos) {
+    /**
+     * 生成一个魂环实体。
+     *
+     * @param source 掉落这个魂环的生物。<b>必须传</b> —— 魂环的能力是从它身上整份
+     *               复制过来的，顺手把来源实体类型 ID 也写进能力里，
+     *               吸收时才能判断「这个魂环该不该给特殊魂技」（见 {@code special} 包）。
+     */
+    public static void addHunhuanEntity(MobAttributeCapability sourceCap, Level level, BlockPos pos, Entity source) {
         if (level.isClientSide) return;
         HunhuanEntity hunhuan = new HunhuanEntity(EntityInit.HUNHUAN.get(), level);
         hunhuan.setPos(pos.getX() + 0.5, pos.getY() + 1.2, pos.getZ() + 0.5);
@@ -454,6 +477,10 @@ public class KLivingDeathEvent {
         hunhuan.getCapability(MobAttributeCapabilityProvider.CAPABILITY).ifPresent(targetCap -> {
             targetCap.deserializeNBT(sourceCap.serializeNBT());
             hunhuan.setNianxian(targetCap.getNianxian());
+            // 记下来源生物类型（魂环是独立实体，拿不到原生物，只能靠这个带过去）
+            if (source != null) {
+                targetCap.setSourceType(String.valueOf(ForgeRegistries.ENTITY_TYPES.getKey(source.getType())));
+            }
         });
         level.addFreshEntity(hunhuan);
     }

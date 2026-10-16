@@ -25,11 +25,6 @@ public class SkillPohun2 extends BaseSkillItem {
     }
 
     @Override
-    public int getCooldownTicks() {
-        return 120; // 6秒冷却
-    }
-
-    @Override
     public float getDamageMultiplier() {
         return 1.6f; // 基础伤害倍率
     }

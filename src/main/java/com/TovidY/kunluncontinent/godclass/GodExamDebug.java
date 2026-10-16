@@ -57,9 +57,7 @@ public final class GodExamDebug {
                         int stageBefore = cap.getCurrentStage();
                         int need = cap.getAssignedCounts()[stageBefore];
 
-                        // ① 进度顶满
                         cap.setGodTaskProgress(need);
-                        // ② 走真实的完成路径（发奖励 + 推进阶段 + 封神动画）
                         cap.checkTaskCompletion(player);
 
                         done++;

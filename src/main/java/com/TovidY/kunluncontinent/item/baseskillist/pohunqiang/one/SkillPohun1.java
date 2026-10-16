@@ -26,7 +26,6 @@ public class SkillPohun1 extends BaseSkillItem {
 
     @Override public int getCastTime() { return 0; }
 
-    @Override public int getCooldownTicks() { return 60; }
 
     @Override
     public String getDescriptionKey() {

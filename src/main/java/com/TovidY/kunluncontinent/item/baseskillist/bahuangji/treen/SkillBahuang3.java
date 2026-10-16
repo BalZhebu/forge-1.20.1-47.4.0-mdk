@@ -29,10 +29,7 @@ public class SkillBahuang3 extends BaseSkillItem {
     public float getDamageMultiplier() { return 2.85f; }
 
     @Override
-    public int getCastTime() { return 60; }
-
-    @Override
-    public int getCooldownTicks() { return 360; } // 18s
+    public int getCastTime() { return 25; }
 
     @Override
     public String getDescriptionKey() {

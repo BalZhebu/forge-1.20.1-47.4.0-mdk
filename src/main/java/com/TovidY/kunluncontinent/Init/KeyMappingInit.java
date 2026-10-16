@@ -6,6 +6,7 @@ import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.client.CPacketOpenAttrubuteGUI;
 import com.TovidY.kunluncontinent.network.client.CPacketQiehuanWuhun;
 import com.TovidY.kunluncontinent.screen.attribute.skill.CPacketCycleSkill;
+import com.TovidY.kunluncontinent.screen.attribute.skill.CPacketReleaseBatch;
 import com.TovidY.kunluncontinent.screen.attribute.skill.CPacketReleaseDirectSkill;
 import com.TovidY.kunluncontinent.screen.attribute.skill.CPacketReleaseSkill;
 import com.TovidY.kunluncontinent.screen.attribute.skill.SkillWheelScreen;
@@ -20,6 +21,10 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
+
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
 
 //按键注册类
 public class KeyMappingInit {
@@ -94,9 +99,29 @@ public class KeyMappingInit {
                     NetworkHandler.INSTANCE.sendToServer(new CPacketQiehuanWuhun());
                 }
 
-                for (int slot = 0; slot < 9; slot++) {
+                // 收集本 tick 被按到的槽位。
+                // 把同一个物理键绑到多个槽位时，一次按键会让多个 KeyMapping 同时"消费到点击" ——
+                // 这里把它们合并成一个「一键释放」请求（CPacketReleaseBatch），
+                // 由服务端逐个、按序、跨 tick 释放并给一条汇总提示。
+                // 否则 9 个包会在同一 tick 里撞在一起：吟唱互斥刷屏 / 真身被误关 /
+                // 特效粒子挤在一帧 / 只看得到最后一条提示。
+                List<Integer> firedSlots = new ArrayList<>();
+                for (int slot = 0; slot < SKILL_KEYS.length; slot++) {
                     while (SKILL_KEYS[slot].consumeClick()) {
-                        NetworkHandler.INSTANCE.sendToServer(new CPacketReleaseDirectSkill(slot));
+                        firedSlots.add(slot);
+                    }
+                }
+                if (!firedSlots.isEmpty()) {
+                    List<Integer> distinctSlots = new ArrayList<>(new LinkedHashSet<>(firedSlots));
+                    if (distinctSlots.size() == 1) {
+                        // 只按到一个槽位：保持原有行为，一次点击一个包
+                        int slot = distinctSlots.get(0);
+                        for (int i = 0; i < firedSlots.size(); i++) {
+                            NetworkHandler.INSTANCE.sendToServer(new CPacketReleaseDirectSkill(slot));
+                        }
+                    } else {
+                        // 一个键打到多个槽位 → 一键释放
+                        NetworkHandler.INSTANCE.sendToServer(new CPacketReleaseBatch(distinctSlots));
                     }
                 }
             } else {

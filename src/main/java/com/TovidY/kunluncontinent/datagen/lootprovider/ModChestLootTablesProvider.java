@@ -74,12 +74,10 @@ public class ModChestLootTablesProvider implements LootTableSubProvider {
                 .add(entry(ModItems.DEMON_WHALE_MEDAL, 8, 1.0F, 2.0F))
                 .add(entry(ModItems.NEIDAN3, 8, 1.0F, 2.0F))
                 .add(entry(ModItems.WANPOXUAN_DAN, 8, 1.0F, 3.0F))
-                .add(entry(ModItems.MIDDLE_HUNHUAN_STORAGE_CORE, 7, 1.0F, 2.0F))
                 .add(entry(ModItems.SHIFANGJIE_DAN, 5, 1.0F, 2.0F))
                 // ---------- 极稀有 ----------
                 .add(entry(ModItems.NEIDAN4, 4, 1.0F, 2.0F))
                 .add(entry(ModItems.NEIDAN5, 3, 1.0F, 1.0F))
-                .add(entry(ModItems.TOP_HUNHUAN_STORAGE_CORE, 2, 1.0F, 1.0F))
                 .add(entry(ModItems.NEIDAN6, 2, 1.0F, 1.0F)));
     }
 

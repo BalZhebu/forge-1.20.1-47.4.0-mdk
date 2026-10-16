@@ -18,7 +18,6 @@ public class SkillBahuang6 extends BaseSkillItem {
     @Override public float getBaseCost() { return 500f; }
     @Override public float getDamageMultiplier() { return 3.3f; }
     @Override public int getCastTime() { return 5; }
-    @Override public int getCooldownTicks() { return 1000; }
 
     @Override
     public String getDescriptionKey() { return "skill.bahuangji.six.description"; }

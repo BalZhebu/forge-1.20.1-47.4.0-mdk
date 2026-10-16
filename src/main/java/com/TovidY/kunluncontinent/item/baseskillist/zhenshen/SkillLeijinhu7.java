@@ -19,7 +19,6 @@ public class SkillLeijinhu7 extends BaseZhenshenSkill {
     @Override public float getBaseCost() { return 550f; }
     @Override public float getDamageMultiplier() { return 0f; }
     @Override public int getCastTime() { return 0; }
-    @Override public int getCooldownTicks() { return 1200; }
 
     @Override
     public String getDescriptionKey() {

@@ -29,11 +29,6 @@ public class SkillLeijinhu1 extends BaseSkillItem {
     }
 
     @Override
-    public int getCooldownTicks() {
-        return 160; // 8秒冷却
-    }
-
-    @Override
     public float getDamageMultiplier() {
         return 1.3f;//倍率
     }

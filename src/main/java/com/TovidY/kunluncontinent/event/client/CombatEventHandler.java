@@ -254,7 +254,6 @@ public class CombatEventHandler {
             showEffectMsg(attacker, target, "§6§l震荡！", name, dmg, "震荡 " + fmt(dmg), 0xFFFFAA00);
             return dmg;
         } else {
-            // 湮灭：不再手动 hurt()，真实伤害交给外层 event.setAmount 统一生效
             float trueDamage = target.getMaxHealth() * 0.2f;
             showEffectMsg(attacker, target, "§5§l湮灭！", name, trueDamage, "湮灭 " + fmt(trueDamage), 0xFFAA00AA);
             return trueDamage;
@@ -272,7 +271,7 @@ public class CombatEventHandler {
     private static void processDisplay(Player player, LivingEntity target, Component msg, String indicatorText, int color) {
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
             int mode = cap.getDamageDisplayMode();
-            if (mode == 3) return; // 快速返回：配置为隐藏时不构造任何对象
+            if (mode == 3) return;
             switch (mode) {
                 case 0 -> player.displayClientMessage(msg, true);
                 case 1 -> player.displayClientMessage(msg, false);

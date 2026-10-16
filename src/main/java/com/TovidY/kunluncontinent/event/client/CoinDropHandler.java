@@ -14,7 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CoinDropHandler {
     private static final RandomSource RANDOM = RandomSource.create();
 
-    // 内存数据，不进行 NBT 保存。用 Boolean 表示：Boolean.TRUE=强制百分百掉落，Boolean.FALSE=强制关闭掉落
     private static final Map<UUID, Boolean> COIN_DROP_TEST_MAP = new ConcurrentHashMap<>();
     /**
      * 设置玩家的掉落测试状态
@@ -45,7 +44,6 @@ public class CoinDropHandler {
                 return;
             }
         } else {
-            // 正常逻辑：35% 基础概率，随年限增加
             double baseTriggerChance = 0.10;
             double extraChance = getBonusChanceByNianxian(nianxian);
             double totalTriggerChance = Math.min(0.45, baseTriggerChance + extraChance);

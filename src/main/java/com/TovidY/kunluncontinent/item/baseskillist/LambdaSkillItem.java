@@ -45,11 +45,6 @@ public class LambdaSkillItem extends BaseSkillItem {
     }
 
     @Override
-    public int getCooldownTicks() {
-        return spec.cooldownTicks();
-    }
-
-    @Override
     public String getDescriptionKey() {
         return spec.descKey();
     }

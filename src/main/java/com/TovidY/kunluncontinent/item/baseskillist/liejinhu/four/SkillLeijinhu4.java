@@ -25,7 +25,6 @@ public class SkillLeijinhu4 extends BaseSkillItem {
     @Override public float getBaseCost() { return 210f; }
     @Override public float getDamageMultiplier() { return 2.3f; }
     @Override public int getCastTime() { return 60; }
-    @Override public int getCooldownTicks() { return 640; } // 32s
 
     @Override
     public String getDescriptionKey() {

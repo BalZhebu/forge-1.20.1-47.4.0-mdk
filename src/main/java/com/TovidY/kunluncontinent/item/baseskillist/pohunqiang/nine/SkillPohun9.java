@@ -4,6 +4,9 @@ import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import static com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem.dealSkillDamage;
+import com.TovidY.kunluncontinent.render.skill.SkillEffectStyles;
+import com.TovidY.kunluncontinent.render.skill.SkillFieldFx;
+import com.TovidY.kunluncontinent.render.skill.SkillFxToggle;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -18,13 +21,16 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.Comparator;
+import java.util.List;
 
 public class SkillPohun9 extends BaseSkillItem {
+
+    /** 光刃特效时长（tick）。 */
+    private static final int BLADE_TICKS = 30;
+
     @Override public float getBaseCost() { return 750F; }
     @Override public float getDamageMultiplier() { return 2.8f; }
     @Override public int getCastTime() { return 25; }
-    @Override public int getCooldownTicks() { return 1400; } // 70秒
 
     @Override
     public String getDescriptionKey() { return "skill.pohunqiang.nine.description"; }
@@ -38,15 +44,26 @@ public class SkillPohun9 extends BaseSkillItem {
             Vec3 end = start.add(look.scale(12));
             player.displayClientMessage(Component.literal("§4§l第九魂技：弑神！"), true);
             AABB targetBox = new AABB(start, end).inflate(1.5);
-            LivingEntity target = level.getEntitiesOfClass(LivingEntity.class, targetBox,
-                            e -> e != player && e.isAlive() && player.distanceTo(e) <= 12.0)
-                    .stream().min(Comparator.comparingDouble(player::distanceTo)).orElse(null);
+            // 路径上**所有**生物都挨刀 —— 不再只挑最近的那一个。
+            // 每个目标各自掷一次斩杀骰，所以一道光刃横扫过去有可能同时斩掉好几个。
+            List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class, targetBox,
+                    e -> e != player && e.isAlive() && player.distanceTo(e) <= 12.0);
 
             // ---- 特效：指向前方的死神射线（细针状光柱 + 螺旋缠绕 + 空间涟漪）----
-            ParticleFx fx = ParticleFx.of(level, player);
+            // 粒子 / 着色器二选一（全局开关，见 SkillFxToggle）。
+            // 后面斩杀 / 未斩杀两段的附加特效也靠 fx == null 自动跳过。
+            boolean shaderMode = SkillFxToggle.useShader(player);
+            ParticleFx fx = shaderMode ? null : ParticleFx.of(level, player);
             double rot = serverLevel.getGameTime() * 0.45;
 
-            if (fx != null) {
+            if (shaderMode) {
+                // ---- 表现 A：着色器版 —— 一道劈出去的光刃 ----
+                // 用专用着色器 skill_blade（月牙轮廓 + 上下锐利刃口 + 白热核心线），
+                // 比通用能量带更有"劈斩"的气势。方向取发包那一刻的视线，
+                // 起点抬到眼睛高度（预设里的 startHeight）。
+                SkillFieldFx.atEntity(player, SkillEffectStyles.POHUN9_BLADE, 1.0F, BLADE_TICKS);
+            } else if (fx != null) {
+                // ---- 表现 B：粒子版（默认）----
                 fx.budget(2200);
                 // 射线核心：极细高亮 + 暗紫剪影
                 fx.line(ParticleTypes.FLASH, start, end, 2.0, 0.0, 0.0, Vec3.ZERO);
@@ -60,7 +77,7 @@ public class SkillPohun9 extends BaseSkillItem {
                 }
             }
 
-            if (target != null) {
+            for (LivingEntity target : targets) {
                 float baseChance = 0.05f; // 基础 5%
                 if (target instanceof Player targetPlayer) {
                     int targetLevel = ModAttributeAPI.getDengji(targetPlayer);

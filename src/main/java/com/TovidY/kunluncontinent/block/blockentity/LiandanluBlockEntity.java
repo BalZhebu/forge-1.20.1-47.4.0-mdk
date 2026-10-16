@@ -3,6 +3,7 @@ package com.TovidY.kunluncontinent.block.blockentity;
 import com.TovidY.kunluncontinent.advancement.AchievementAPI;
 import com.TovidY.kunluncontinent.block.ModBlockEntities;
 import com.TovidY.kunluncontinent.item.klitem.DanYaoQuality;
+import com.TovidY.kunluncontinent.item.neidanitems.NeidanItem;
 import com.TovidY.kunluncontinent.item.tool.SoulGatheringBottleItem;
 import com.TovidY.kunluncontinent.recipe.ModRecipes;
 import com.TovidY.kunluncontinent.recipe.liandanlurecipe.AlchemicalCalculator;
@@ -166,7 +167,19 @@ public class LiandanluBlockEntity extends BlockEntity implements MenuProvider {
         ItemStack resultStack = recipe.getResultItem(entity.level.registryAccess()).copy();
         resultStack.getOrCreateTag().putInt("DanYaoQuality", finalQuality);
 
-        for (int i = 0; i < AlchemicalCalculator.MATERIAL_SLOTS; i++) handler.extractItem(i, 1, false);
+        // 扣材料：⭐ 内丹有 NEIDAN_KEEP_CHANCE 的概率「保住」，即不消耗这一颗。
+        //    每格独立掷骰，5 格全是内丹时至少保住 1 颗 ≈ 67%，期望省下 20%。
+        //    草药 / 药渣等非内丹材料照常消耗 —— 只有 NeidanItem 吃这个折扣。
+        int keptNeidan = 0;
+        for (int i = 0; i < AlchemicalCalculator.MATERIAL_SLOTS; i++) {
+            ItemStack inSlot = handler.getStackInSlot(i);
+            if (inSlot.getItem() instanceof NeidanItem
+                    && entity.level.getRandom().nextFloat() < AlchemicalCalculator.NEIDAN_KEEP_CHANCE) {
+                keptNeidan++;
+                continue;
+            }
+            handler.extractItem(i, 1, false);
+        }
         if (!handler.getStackInSlot(DROSS_SLOT).isEmpty()) handler.extractItem(DROSS_SLOT, 1, false);
 
         ItemStack remaining = resultStack;
@@ -183,6 +196,11 @@ public class LiandanluBlockEntity extends BlockEntity implements MenuProvider {
                     8.0D, false);
             if (crafter != null) {
                 AchievementAPI.onAlchemySuccess(crafter, finalQuality);
+                // 保住了内丹就给个反馈，否则玩家看不出这个机制有没有生效
+                if (keptNeidan > 0) {
+                    crafter.displayClientMessage(Component.literal(
+                            "§b炼丹余韵：§f" + keptNeidan + " §b颗内丹未被消耗"), true);
+                }
             }
         }
 

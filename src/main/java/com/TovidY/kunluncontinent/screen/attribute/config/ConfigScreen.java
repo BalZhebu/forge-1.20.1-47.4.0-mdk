@@ -108,7 +108,8 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
                     new ConfigItemData("NPC交易品级", 9),
                     new ConfigItemData("粒子特效优化", 10),
                     new ConfigItemData("NPC魂环显示", 11),
-                    new ConfigItemData("第一人称魂环", 12)
+                    new ConfigItemData("第一人称魂环", 12),
+                    new ConfigItemData("技能特效优化", 13)
             );
 
             for (ConfigItemData data : rawItems) {
@@ -387,6 +388,11 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
         if (index == 9) {
             return Component.literal("§6" + name + ": " + (isOpen ? "§b样式 B" : "§a样式 A"));
         }
+        // index 13 的开关语义是反的（开启 = 粒子、关闭 = 着色器），
+        // 直接标当前生效的是哪一套，比写"开启/关闭"清楚得多。
+        if (index == 13) {
+            return Component.literal("§6" + name + ": " + (isOpen ? "§a粒子" : "§d着色器"));
+        }
         return Component.literal("§6" + name + (isOpen ? ": §a开启" : ": §c关闭"));
     }
 
@@ -456,6 +462,17 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
                     Component.literal(isOpen
                             ? "§a[开启] §f第一人称下也能看到自己身上的魂环"
                             : "§c[关闭] §f第一人称下不渲染自己的魂环")
+            );
+            case 13 -> List.of(
+                    Component.literal("技能特效优化").withStyle(ChatFormatting.GOLD),
+                    Component.literal("§8  粒子版 §7— 由粒子堆出形状的低模特效，优化较强"),
+                    Component.literal("§8  着色器版 §7— 由渲染代码进行的高特效，可能造成较高的性能消耗"),
+                    Component.literal("§7两种表现§l二选一§r§7，永远不会同时出现。"),
+                    Component.literal(isOpen
+                            ? "§a[开启] §f技能用粒子特效"
+                            : "§c[关闭] §f技能用着色器渲染"),
+                    Component.literal("§8注意！用着色器版时若看不到任何特效（多半因为开着光影）"),
+                    Component.literal("§8把这个开关打开就能退回粒子版。")
             );
             default -> List.of();
         };

@@ -55,7 +55,8 @@ public class GuidBookScreen extends AbstractContainerScreen<GuideBookMenu> {
         addArticle("欢迎来到昆仑",
                 "§1§l《欢迎来到昆仑大陆！祝您玩的愉快 ~ 》§r\n"
                         + "[本引导书更新于’§b1.0§r‘版本]\n\n"
-                        + "§c§l请各位玩家务必认真仔细查看§r，基本收录了正常游玩时遇到的§b所有常见攻略§r。");
+                        + "§c§l请各位玩家务必认真仔细查看§r，基本收录了正常游玩时遇到的§b所有常见攻略§r。 \n\n§c提示：引导书的左侧页面可上下滑动。\n\n"
+                        + "§c注意！游玩时尽量用界面尺寸为3进行游玩，否则会出现玩家长按R键呼出技能面板时会出现右侧和左侧的窗口被挡住的BUG！");
 
         addArticle("属性面板系统",
                 "§l属性面板系统：§r\n"

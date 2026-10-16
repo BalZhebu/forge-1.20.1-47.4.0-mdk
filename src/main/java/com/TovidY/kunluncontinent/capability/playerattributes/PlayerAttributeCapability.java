@@ -40,6 +40,15 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
     private int castingTick = 0;
     private int requiredCastTick = 0;
     private BaseSkillItem currentCastingSkill = null;
+    /** 正在吟唱的技能所在槽位；-1 = 没在吟唱（见 {@link #getCastingSlot()}）。 */
+    private int castingSlot = -1;
+    /**
+     * 本次吟唱是否带抗打断。
+     *
+     * <p>抗打断在<b>吟唱开始的那一刻只掷一次骰</b>：掷中就代表整段吟唱全程不可被打断，
+     * 掷不中则任意一次实打实的命中都能打断。见 {@code CPacketReleaseSkill}。</p>
+     */
+    private boolean castingProtected = false;
 
     private float uiScale = 1.0f;
 
@@ -111,15 +120,32 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
     /**
      * 配置面板 {@code configFlags} 的默认值（位掩码，下标见 {@code ConfigScreen} 的 {@code ConfigItemData}）。
      *
-     * <p>在原 {@code 0xFFL}（index 1~7 全开、8 以后全关）的基础上，
-     * 只额外把 <b>index 11「NPC魂环显示」</b> 置为默认开启，
-     * 其余 index 8~10、12 的默认值保持原状不动。</p>
+     * <p>在原 {@code 0xFFL}（index 1~7 全开、8 以后全关）的基础上，额外把两项置为默认开启：
+     * <b>index 11「NPC魂环显示」</b>、<b>index 13「技能特效优化」</b>。
+     * 其余 index 8~10、12 保持原状不动。</p>
+     *
+     * <p>⚠️ index 13 的语义是<b>反向</b>的：<b>开启 = 用粒子特效</b>（默认，即既有表现），
+     * <b>关闭 = 用着色器渲染</b>。所以它默认必须是 1，否则老玩家一进游戏地阵就变成着色器版了。</p>
      */
     private static final long DEFAULT_CONFIG_FLAGS =
             0xFFL          // index 1~7 历史默认全开
-                    | (1L << 11);   // index 11 NPC魂环显示 ← 唯一新增的默认开启项
+                    | (1L << 11)   // index 11 NPC魂环显示   ← 默认开启
+                    | (1L << 13);  // index 13 技能特效优化 ← 默认开启 = 走粒子表现
 
     private long configFlags = DEFAULT_CONFIG_FLAGS;
+
+    /**
+     * {@code configFlags} 的结构版本，用于配置位迁移。
+     *
+     * <p>加一个新的配置位、且这个位需要"老存档补成某个默认值"时把版本号 +1，
+     * 并在 {@link #deserializeNBT} 里加一段对应的补位逻辑。
+     * 不这么做的话，老存档那一位是 0，会被当成"玩家主动关掉了"。</p>
+     *
+     * <ul>
+     *   <li>v1 —— 补 index 13「技能特效优化」（该位语义反向：开启 = 粒子、关闭 = 着色器）</li>
+     * </ul>
+     */
+    private static final int CONFIG_FLAGS_VERSION = 1;
 
     private int zhuanshengshu = 0;
 
@@ -190,6 +216,7 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         tag.putInt("PointsGrantedLevel", pointsGrantedLevel);
         tag.putIntArray("AllocatedPoints", allocatedPoints);
         tag.putLong("configFlags", configFlags);
+        tag.putInt("ConfigFlagsVersion", CONFIG_FLAGS_VERSION);
 
         tag.putInt("UiOffsetY", this.uiOffsetY);
 
@@ -310,6 +337,15 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         } else {
             // 老存档没有这个字段：用同一个默认值，别让「读档回退路径」与「新号路径」默认值不一致
             this.configFlags = DEFAULT_CONFIG_FLAGS;
+        }
+
+        // ── 配置位迁移 ──────────────────────────────────────────────
+        // v1：index 13「技能特效优化」是后加的，而且语义反向（开启 = 粒子、关闭 = 着色器）。
+        //     老存档里这一位必然是 0，会被当成"玩家主动切到着色器" —— 与「默认走粒子」的
+        //     预期不符，所以这里补成 1。
+        //     ⚠️ 只对版本号 < 1 的存档补，玩家手动关掉之后重进不会被强行打开。
+        if (nbt.getInt("ConfigFlagsVersion") < 1) {
+            this.configFlags |= (1L << 13);
         }
 
         // 读取神祇系统数据
@@ -765,10 +801,32 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         this.uiOffsetY = value;
     }
 
-    public void startCasting(BaseSkillItem skill, int time) {
+    public void startCasting(BaseSkillItem skill, int slot, int time, boolean protectedCast) {
         this.currentCastingSkill = skill;
+        this.castingSlot = slot;
         this.requiredCastTick = time;
         this.castingTick = 0;
+        this.castingProtected = protectedCast;
+    }
+
+    /**
+     * 正在吟唱的技能所在槽位；{@code -1} = 没在吟唱。
+     *
+     * <p><b>为什么必须记住槽位</b>：吟唱完成时要按「该槽位魂环的年限」算威力 / 消耗倍率，
+     * 并把冷却记回该槽位。以前用的是「当前选中槽位」，于是有两个问题：</p>
+     * <ul>
+     *   <li>吟唱期间动一下选中槽位，这次吟唱就会被判成"武魂变化"直接中断；</li>
+     *   <li>批量释放（同一个键绑多个槽位）根本不改选中槽位，于是批量里的吟唱
+     *       <b>开局第一 tick 就被判定中断</b>，永远放不出来。</li>
+     * </ul>
+     */
+    public int getCastingSlot() {
+        return this.castingSlot;
+    }
+
+    /** 本次吟唱是否带抗打断（开局掷中的话整段都打不断）。 */
+    public boolean isCastingProtected() {
+        return this.castingProtected;
     }
 
     @Override
@@ -849,8 +907,10 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
 
     public void stopCasting(Player player) {
         this.currentCastingSkill = null;
+        this.castingSlot = -1;
         this.castingTick = 0;
         this.requiredCastTick = 0;
+        this.castingProtected = false;
 
         removeCastingSlowdown(player);
     }

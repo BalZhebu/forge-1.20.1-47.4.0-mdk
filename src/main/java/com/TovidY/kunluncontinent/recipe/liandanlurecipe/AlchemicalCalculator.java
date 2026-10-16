@@ -42,6 +42,20 @@ public final class AlchemicalCalculator {
     /** 药渣槽在 ItemHandler 中的下标。 */
     public static final int DROSS_SLOT = 17;
 
+    /**
+     * 每次炼丹时，<b>每一格内丹</b>有该概率「保住」原本要被扣掉的那一颗。
+     *
+     * <p>每格<b>独立</b>掷骰，所以 5 格全是内丹时：
+     * 至少保住 1 颗的概率约 {@code 1 - 0.8^5 ≈ 67%}，期望保住 {@code 5 × 0.2 = 1} 颗
+     * —— 相当于内丹消耗整体省下 20%。</p>
+     *
+     * <p>只作用于 {@link NeidanItem}（neidan1~9）。草药、药渣这类非内丹材料照常消耗，
+     * 它们不是「内丹」，不享受这个折扣。</p>
+     *
+     * <p>落地位置：{@code LiandanluBlockEntity#executeCraft} 里那段扣材料的循环。</p>
+     */
+    public static final float NEIDAN_KEEP_CHANCE = 0.20f;
+
     /** 基础权重曲线（全部凡品内丹时的分布）。 */
     private static final double[] BASE_WEIGHTS = {40.0, 30.0, 15.0, 10.0, 4.0, 1.0};
 

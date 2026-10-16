@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.entity;
 
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.entity.Icecrysta.IceCrystalEntity;
+import com.TovidY.kunluncontinent.entity.lonebamboo.LoneBambooEntity;
 import com.TovidY.kunluncontinent.entity.playernpc.PlayerNpcEntity;
 import com.TovidY.kunluncontinent.entity.snowdemon.SnowDemonEntity;
 import net.minecraft.world.entity.SpawnPlacements;
@@ -30,6 +31,17 @@ public class ModEntitySpawnEvents {
                 SpawnPlacements.Type.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 SnowDemonEntity::checkSnowDemonSpawnRules,
+                SpawnPlacementRegisterEvent.Operation.REPLACE
+        );
+
+        // ── 孤竹：主世界地表 ──
+        // 高度图用 MOTION_BLOCKING_NO_LEAVES，会跳过树叶直接给地表，
+        // 所以竹子不会插在树冠上。昼夜判定刻意不做，见 LoneBambooEntity#checkLoneBambooSpawnRules
+        event.register(
+                EntityInit.LONE_BAMBOO.get(),
+                SpawnPlacements.Type.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                LoneBambooEntity::checkLoneBambooSpawnRules,
                 SpawnPlacementRegisterEvent.Operation.REPLACE
         );
 

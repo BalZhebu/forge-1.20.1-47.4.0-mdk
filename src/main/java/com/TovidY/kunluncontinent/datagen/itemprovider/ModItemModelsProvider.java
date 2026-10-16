@@ -87,6 +87,9 @@ public class ModItemModelsProvider extends ItemModelProvider {
             basicItem(itemRegistry.get());
         }
 
+        //特殊魂技（special 包）的图标走 HUNJILIST 的统一生成 —— 贴图在
+        //assets/kunluncontinent/textures/item/skill_pole_vault.png，与物品注册名同名即可，无需在这里单独写
+
         //变体魂技：图标直接复用同槽位既有魂技的贴图 —— 一个物品图标对应多条魂技，不新增美术资源
         for (ModItems.SkillVariantEntry entry : ModItems.SKILL_VARIANTS) {
             ResourceLocation id = ForgeRegistries.ITEMS.getKey(entry.skill().get());

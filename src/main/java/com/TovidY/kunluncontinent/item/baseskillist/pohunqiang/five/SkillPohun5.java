@@ -16,7 +16,6 @@ public class SkillPohun5 extends BaseSkillItem {
     @Override public float getBaseCost() { return 350f; }
     @Override public float getDamageMultiplier() { return 1.88f; }
     @Override public int getCastTime() { return 60; }
-    @Override public int getCooldownTicks() { return 840; }
     @Override
     public String getDescriptionKey() {
         return "skill.pohunqiang.five.description";

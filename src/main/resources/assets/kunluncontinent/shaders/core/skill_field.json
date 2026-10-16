@@ -1,0 +1,28 @@
+{
+  "blend": {
+    "func": "add",
+    "srcrgb": "srcalpha",
+    "dstrgb": "one"
+  },
+  "vertex": "kunluncontinent:skill_field",
+  "fragment": "kunluncontinent:skill_field",
+  "attributes": [
+    "Position",
+    "Color"
+  ],
+  "samplers": [
+  ],
+  "uniforms": [
+    { "name": "ModelViewMat", "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
+    { "name": "ProjMat", "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
+    { "name": "Center", "type": "float", "count": 2, "values": [ 0.0, 0.0 ] },
+    { "name": "Radius", "type": "float", "count": 1, "values": [ 1.0 ] },
+    { "name": "Time", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "Age", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "Pulse", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "Fade", "type": "float", "count": 1, "values": [ 1.0 ] },
+    { "name": "Intensity", "type": "float", "count": 1, "values": [ 1.0 ] },
+    { "name": "CoreColor", "type": "float", "count": 3, "values": [ 0.55, 0.06, 0.10 ] },
+    { "name": "EdgeColor", "type": "float", "count": 3, "values": [ 0.14, 0.03, 0.28 ] }
+  ]
+}

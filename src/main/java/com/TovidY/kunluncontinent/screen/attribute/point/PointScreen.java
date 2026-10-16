@@ -129,7 +129,8 @@ public class PointScreen extends AbstractContainerScreen<PointMenu> implements A
         ));
 
         if (spec == AttributePointSpec.KANGDAPAN) {
-            lines.add(Component.literal("§8受击时按此概率免疫吟唱打断"));
+            lines.add(Component.literal("§8吟唱开始时按此概率获得护体"));
+            lines.add(Component.literal("§8掷中则整段吟唱都不会被打断"));
             lines.add(Component.literal("§7最终 §f点数 + 等级加成§7（等级上限 +15%）"));
             lines.add(Component.literal("§7抗打断上限 §e99%§7，不会完全免疫"));
         }

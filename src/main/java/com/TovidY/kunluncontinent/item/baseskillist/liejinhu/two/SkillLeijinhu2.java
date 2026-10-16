@@ -29,11 +29,6 @@ public class SkillLeijinhu2 extends BaseSkillItem {
     }
 
     @Override
-    public int getCooldownTicks() {
-        return 100;
-    }
-
-    @Override
     public float getDamageMultiplier() {
         return 0.4f; // 虎啸主要提供控制，伤害较低
     }

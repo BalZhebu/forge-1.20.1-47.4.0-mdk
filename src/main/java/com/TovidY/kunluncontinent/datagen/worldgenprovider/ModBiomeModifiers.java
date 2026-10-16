@@ -56,6 +56,16 @@ public class ModBiomeModifiers {
             new ResourceLocation(KlMain.MOD_ID, "add_divine_realm_tree")
     );
 
+    // ── 孤竹：主世界地表，昼夜都可生成 ─────────────────
+    // 只挂在 #minecraft:is_overworld 上；「排除沙漠/海洋/沙滩/河流」不在权重表里做，
+    // 而是在 LoneBambooEntity#checkLoneBambooSpawnRules 里查 ModBiomeTags.LONE_BAMBOO_BLOCKED。
+    // 原因：Forge 的 AddSpawnsBiomeModifier 只能接受一个 HolderSet（标签是并集），
+    // 没法表达「这个标签减去那个标签」。
+    public static final ResourceKey<BiomeModifier> ADD_LONE_BAMBOO = ResourceKey.create(
+            ForgeRegistries.Keys.BIOME_MODIFIERS,
+            new ResourceLocation(KlMain.MOD_ID, "add_lone_bamboo")
+    );
+
     /** ⭐ 神界草丛：只加到神界群系（装饰层，紧贴地表生成）。 */
     public static final ResourceKey<BiomeModifier> ADD_DIVINE_REALM_GRASS =
             ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS,
@@ -108,6 +118,14 @@ public class ModBiomeModifiers {
                         //苦力怕
                         new MobSpawnSettings.SpawnerData(EntityType.CREEPER, 10, 1, 1)
                 )
+        ));
+
+        // ── 孤竹 ───────────────────────────────────────
+        // CREATURE 类别本身就不分昼夜，所以「白天晚上都出」不需要额外配置。
+        // 权重 6：比牛羊（8~12）略低一点，当景观桩子用，不至于满地都是。
+        context.register(ADD_LONE_BAMBOO, new ForgeBiomeModifiers.AddSpawnsBiomeModifier(
+                biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
+                List.of(new MobSpawnSettings.SpawnerData(EntityInit.LONE_BAMBOO.get(), 6, 1, 2))
         ));
 
         // ── PlayerNPC 自然生成 ───────────────────────

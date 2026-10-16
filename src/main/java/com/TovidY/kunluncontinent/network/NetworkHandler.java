@@ -6,6 +6,7 @@ import com.TovidY.kunluncontinent.network.server.*;
 import com.TovidY.kunluncontinent.screen.attribute.skill.CPacketChangeFlySpeed;
 import com.TovidY.kunluncontinent.screen.attribute.skill.CPacketCycleSkill;
 import com.TovidY.kunluncontinent.screen.attribute.skill.CPacketFlyCrash;
+import com.TovidY.kunluncontinent.screen.attribute.skill.CPacketReleaseBatch;
 import com.TovidY.kunluncontinent.screen.attribute.skill.CPacketReleaseDirectSkill;
 import com.TovidY.kunluncontinent.screen.attribute.skill.CPacketReleaseSkill;
 import com.TovidY.kunluncontinent.screen.attribute.skill.CPacketSelectSkill;
@@ -51,6 +52,8 @@ public class NetworkHandler {
         register(CPacketAllocatePoint.class, CPacketAllocatePoint::encode, CPacketAllocatePoint::decode, CPacketAllocatePoint::handle);
         register(CPacketResetPoints.class, CPacketResetPoints::encode, CPacketResetPoints::decode, CPacketResetPoints::handle);
         register(S2CCastingSyncPacket.class, S2CCastingSyncPacket::encode, S2CCastingSyncPacket::decode, S2CCastingSyncPacket::handle);
+        register(S2CPoleVaultPacket.class, S2CPoleVaultPacket::encode, S2CPoleVaultPacket::decode, S2CPoleVaultPacket::handle);
+        register(S2CSkillFieldPacket.class, S2CSkillFieldPacket::encode, S2CSkillFieldPacket::decode, S2CSkillFieldPacket::handle);
 
         INSTANCE.registerMessage(99, PacketChangeCamera.class, PacketChangeCamera::toBytes, PacketChangeCamera::new, PacketChangeCamera::handle);
 
@@ -62,6 +65,7 @@ public class NetworkHandler {
         register(C2SNpcSellPacket.class, C2SNpcSellPacket::encode, C2SNpcSellPacket::new, C2SNpcSellPacket::handle);
 
         register(CPacketReleaseDirectSkill.class, CPacketReleaseDirectSkill::encode, CPacketReleaseDirectSkill::decode, CPacketReleaseDirectSkill::handle);
+        register(CPacketReleaseBatch.class, CPacketReleaseBatch::encode, CPacketReleaseBatch::decode, CPacketReleaseBatch::handle);
 
         register(PacketXiulianChoice.class,PacketXiulianChoice::encode,PacketXiulianChoice::decode,PacketXiulianChoice::handle);
         register(PacketOpenXiulianScreen.class,PacketOpenXiulianScreen::encode,PacketOpenXiulianScreen::new,PacketOpenXiulianScreen::handle);

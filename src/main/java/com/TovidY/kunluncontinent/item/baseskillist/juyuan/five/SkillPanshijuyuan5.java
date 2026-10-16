@@ -19,7 +19,6 @@ public class SkillPanshijuyuan5 extends BaseSkillItem {
     @Override public float getBaseCost() { return 280f; }
     @Override public float getDamageMultiplier() { return 0f; }
     @Override public int getCastTime() { return 10; }
-    @Override public int getCooldownTicks() { return 800; }
 
     @Override
     public String getDescriptionKey() { return "skill.panshijuyuan.five.description"; }

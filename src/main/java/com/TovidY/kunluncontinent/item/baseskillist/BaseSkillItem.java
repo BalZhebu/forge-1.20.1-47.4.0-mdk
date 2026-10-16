@@ -21,6 +21,28 @@ import net.minecraftforge.common.util.FakePlayerFactory;
 import java.util.List;
 
 public abstract class BaseSkillItem extends Item {
+
+    // ==================================================================================
+    //  全局魂技数值 —— 改这两个常量即可对「全部魂技」生效
+    // ==================================================================================
+
+    /**
+     * 所有魂技统一的冷却时间（tick）。{@code 60} = 3 秒。
+     *
+     * <p>⚠️ 冷却已经<b>锁定</b>在这里：{@link #getCooldownTicks()} 是 {@code final}，
+     * 不要在子类里再覆盖 —— 那不会生效，只会误导后来的人。</p>
+     */
+    public static final int GLOBAL_COOLDOWN_TICKS = 60;
+
+    /**
+     * 精神力消耗的全局倍率。
+     *
+     * <p>实际消耗 = 各技能的 {@link #getBaseCost()} × 年限系数 × 本倍率。
+     * 想整体调贵/调便宜只改这一个数，不用去动 37 个技能类里的基础值
+     * （那些值是「设计基准」，保留着方便以后单独回调）。</p>
+     */
+    public static final float GLOBAL_COST_MULTIPLIER = 2.0f;
+
     public BaseSkillItem() {
         super(new Item.Properties().stacksTo(1).fireResistant());
     }
@@ -28,7 +50,51 @@ public abstract class BaseSkillItem extends Item {
     public abstract float getBaseCost();
     public abstract float getDamageMultiplier();
     public abstract int getCastTime();
-    public abstract int getCooldownTicks();
+
+    /**
+     * 魂技冷却（tick）。
+     *
+     * <p>默认锁定为 {@link #GLOBAL_COOLDOWN_TICKS}（3 秒），<b>常规魂技不要动本方法</b>。
+     * 只有「特殊魂技」（见 {@code com.TovidY.kunluncontinent.special} 包）才通过
+     * {@link #getSpecialCooldownTicks()} 开口子 —— 这样「全局锁定」这条约定仍然守得住，
+     * 又不必为个别娱乐技能把 37 个技能类全改一遍。</p>
+     */
+    public final int getCooldownTicks() {
+        int special = getSpecialCooldownTicks();
+        return special > 0 ? special : GLOBAL_COOLDOWN_TICKS;
+    }
+
+    /**
+     * 「特殊魂技」的冷却覆盖点。
+     *
+     * <p>默认 {@code -1} = 不覆盖，用全局 3 秒锁定；返回 {@code > 0} 时以它为准。</p>
+     */
+    protected int getSpecialCooldownTicks() {
+        return -1;
+    }
+
+    /**
+     * 技能实际要扣的精神力。
+     *
+     * <p><b>所有消耗计算都必须走这里</b> —— 前置校验、扣费、tooltip 三处共用同一份公式，
+     * 避免出现「tooltip 显示 1100 实际只扣 550」这类不一致。加全局倍率也只改这一处。</p>
+     *
+     * @param costMultiplier 年限系数，取自 {@link #getCostMultiplier(int)}
+     */
+    public final float getFinalCost(float costMultiplier) {
+        float fixed = getSpecialFixedCost();
+        return fixed >= 0.0F ? fixed : getBaseCost() * costMultiplier * GLOBAL_COST_MULTIPLIER;
+    }
+
+    /**
+     * 「特殊魂技」的消耗覆盖点。
+     *
+     * <p>默认 {@code -1} = 不覆盖，走「基础值 × 年限系数 × 全局倍率」；
+     * 返回 {@code >= 0} 时直接当作最终消耗（既不吃年限系数，也不吃全局倍率）。</p>
+     */
+    protected float getSpecialFixedCost() {
+        return -1.0F;
+    }
 
     public void executeEffect(Level level, Player player, float powerMultiplier) {
         if (!level.isClientSide) {
@@ -63,7 +129,7 @@ public abstract class BaseSkillItem extends Item {
     }
 
     public Component getDynamicDescription(float costMultiplier) {
-        float finalCost = getBaseCost() * costMultiplier;
+        float finalCost = getFinalCost(costMultiplier);
         return Component.translatable(getDescriptionKey(), String.format("%.1f", finalCost));
     }
 
@@ -86,7 +152,7 @@ public abstract class BaseSkillItem extends Item {
 
     public void applyPenalty(Player player, float costMultiplier) {
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
-            float finalCost = getBaseCost() * costMultiplier;
+            float finalCost = getFinalCost(costMultiplier);
             cap.setJingshenli(Math.max(0, cap.getJingshenli() - finalCost));
         });
     }
@@ -125,7 +191,7 @@ public abstract class BaseSkillItem extends Item {
      */
     public boolean handleRelease(Level level, Player player, int nianxian) {
         float costMultiplier = getCostMultiplier(nianxian);
-        float finalCost = getBaseCost() * costMultiplier;
+        float finalCost = getFinalCost(costMultiplier);
 
         boolean[] cast = {false};
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {

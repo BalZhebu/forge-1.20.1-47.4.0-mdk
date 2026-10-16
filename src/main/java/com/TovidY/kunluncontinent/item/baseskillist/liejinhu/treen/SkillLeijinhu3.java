@@ -27,9 +27,6 @@ public class SkillLeijinhu3 extends BaseSkillItem {
     @Override
     public int getCastTime() { return 10; }
     @Override
-    public int getCooldownTicks() { return 300; } // 15s
-
-    @Override
     public String getDescriptionKey() {
         return "skill.liejinhu.three.description";
     }

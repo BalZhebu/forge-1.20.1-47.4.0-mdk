@@ -67,9 +67,14 @@ public enum AttributePointSpec {
     /**
      * 【抗打断】每点 +0.8% 抗打断几率，上限 99% 封顶。
      *
+     * <p><b>掷骰时机：一次吟唱只掷一次</b>（吟唱开始那一刻）。
+     * 掷中则整段吟唱都不会被打断，掷不中则任意一次实打实的命中都能打断。
+     * 不要改成「每次受击掷一次」—— 长吟唱下会变成必断，详见
+     * {@link com.TovidY.kunluncontinent.capability.ModAttributeAPI#getKangdapan} 的说明。</p>
+     *
      * <p><b>结算方式特殊（FLAT 但封顶）</b>：概率类属性走加算，
      * 但 99 点 × 0.8% = 79.2%，再高就接近无敌了，所以
-     * {@link com.TovidY.kunluncontinent.capability.ModAttributeAPI#getKangDapan}
+     * {@link com.TovidY.kunluncontinent.capability.ModAttributeAPI#getKangdapan}
      * 额外做了 {@code min(0.99f, ...)} 封顶。</p>
      *
      * <p>等级加成：抗打断最终概率 = 点数加成 + 等级加成

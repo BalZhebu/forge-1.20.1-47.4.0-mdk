@@ -18,7 +18,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SkillWheelScreen extends Screen {
     private final PlayerAttributeCapability cap;
@@ -133,7 +136,13 @@ public class SkillWheelScreen extends Screen {
                 graphics.drawString(this.font, "§7魂技年限: " + String.format("%,d", nianxian) + "年", panelX, currentY, nxColor);
             }
             currentY += 15;
-            graphics.drawString(this.font, "§b魂技冷却: " + (s.getCooldownTicks()/20) + "秒", panelX, currentY, 0x55FFFF);
+            // 冷却按 1 位小数显示：常规魂技是整秒（3 秒），特殊魂技可能是 0.5 秒 ——
+            // 用整数除法会把 0.5 秒显示成「0秒」
+            float cooldownSeconds = s.getCooldownTicks() / 20.0f;
+            String cooldownText = (cooldownSeconds == Math.round(cooldownSeconds))
+                    ? String.valueOf((int) cooldownSeconds)
+                    : String.format("%.1f", cooldownSeconds);
+            graphics.drawString(this.font, "§b魂技冷却: " + cooldownText + "秒", panelX, currentY, 0x55FFFF);
         } else {
             graphics.drawCenteredString(this.font, "§7选择魂技", centerX, centerY - 5, 0xFFFFFF);
         }
@@ -147,9 +156,31 @@ public class SkillWheelScreen extends Screen {
         graphics.fill(panelX - 5, panelY - 22, panelX + LEFT_PANEL_WIDTH + 5, panelY + LEFT_PANEL_HEIGHT, 0xAA000000);
         graphics.renderOutline(panelX - 5, panelY - 22, LEFT_PANEL_WIDTH + 10, LEFT_PANEL_HEIGHT + 22, 0xFFD4AF37);
 
+        // 先算出「哪些槽位共用了同一个物理键」。
+        // 共用的那几行一次按下就会一起触发 —— 服务端会走「一键释放」：
+        // 逐个、按序、跨 tick 释放，并在最后给一条汇总提示（见 SkillBatchRelease）。
+        Map<Integer, List<Integer>> slotsByKey = new LinkedHashMap<>();
+        for (int i = 0; i < 9; i++) {
+            KeyMapping km = KeyMappingInit.SKILL_KEYS[i];
+            if (km.isUnbound()) {
+                continue;
+            }
+            slotsByKey.computeIfAbsent(km.getKey().getValue(), k -> new ArrayList<>()).add(i);
+        }
+        boolean hasSharedKey = false;
+        for (List<Integer> group : slotsByKey.values()) {
+            if (group.size() > 1) {
+                hasSharedKey = true;
+                break;
+            }
+        }
+
         graphics.drawString(this.font, "§e快捷释放设置", panelX, panelY - 18, 0xFFFFFF);
 
-        graphics.drawString(this.font, "§7(点击改键后可松开R)", panelX, panelY - 8, 0xAAAAAA);
+        // 有共用键时，把副标题换成说明 —— 空间只够放这一行
+        graphics.drawString(this.font,
+                hasSharedKey ? "§b同键→依次释放 §7(吟唱仅1次)" : "§7(点击改键后可松开R)",
+                panelX, panelY - 8, 0xAAAAAA);
 
         String[] numbers = {"一", "二", "三", "四", "五", "六", "七", "八", "九"};
 
@@ -161,9 +192,17 @@ public class SkillWheelScreen extends Screen {
 
             boolean isHovered = mouseX >= btnX && mouseX <= btnX + btnW && mouseY >= itemY && mouseY <= itemY + btnH;
 
-            graphics.drawString(this.font, "第" + numbers[i] + "魂技", panelX, itemY + 3, 0xDDDDDD);
-
             KeyMapping km = KeyMappingInit.SKILL_KEYS[i];
+            boolean isShared = !km.isUnbound()
+                    && slotsByKey.getOrDefault(km.getKey().getValue(), List.of()).size() > 1;
+
+            // 共用键的行：左侧画一根青色竖条 + 名字染成青色，一眼能看出"这几行是连在一起的"
+            if (isShared) {
+                graphics.fill(panelX - 4, itemY + 1, panelX - 1, itemY + btnH - 1, 0xFF55DDFF);
+            }
+            graphics.drawString(this.font, "第" + numbers[i] + "魂技", panelX, itemY + 3,
+                    isShared ? 0x55DDFF : 0xDDDDDD);
+
             String keyName = km.isUnbound() ? "§7未指定" : km.getTranslatedKeyMessage().getString();
 
             int btnColor = (bindingIndex == i) ? 0xFF55FF55 : (isHovered ? 0xAAFFFFFF : 0x66333333);
@@ -172,7 +211,7 @@ public class SkillWheelScreen extends Screen {
             }
 
             graphics.fill(btnX, itemY, btnX + btnW, itemY + btnH, btnColor);
-            graphics.renderOutline(btnX, itemY, btnW, btnH, 0xFF888888);
+            graphics.renderOutline(btnX, itemY, btnW, btnH, isShared ? 0xFF55DDFF : 0xFF888888);
             graphics.drawCenteredString(this.font, keyName, btnX + btnW / 2, itemY + 3, 0xFFFFFF);
         }
 

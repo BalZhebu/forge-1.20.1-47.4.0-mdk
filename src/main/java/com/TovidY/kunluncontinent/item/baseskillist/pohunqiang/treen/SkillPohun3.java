@@ -26,7 +26,6 @@ public class SkillPohun3 extends BaseSkillItem {
 
     @Override public int getCastTime() { return 20; }
 
-    @Override public int getCooldownTicks() { return 300; }
     @Override
     public void executeEffect(Level level, Player player, float powerMultiplier) {
         float playerGongji = ModAttributeAPI.getGongji(player);

@@ -14,7 +14,13 @@ import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanEntity;
 import com.TovidY.kunluncontinent.entity.playernpc.PlayerNpcEntity;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
+import com.TovidY.kunluncontinent.item.baseskillist.liejinhu.eight.SkillLeijinhu8;
+import com.TovidY.kunluncontinent.item.baseskillist.liejinhu.nine.SkillLeijinhu9;
 import com.TovidY.kunluncontinent.item.baseskillist.zhenshen.ZhenshenState;
+import com.TovidY.kunluncontinent.render.skill.SkillEffectStyles;
+import com.TovidY.kunluncontinent.render.skill.SkillFieldFx;
+import com.TovidY.kunluncontinent.render.skill.SkillFxToggle;
+import com.TovidY.kunluncontinent.screen.attribute.skill.SkillBatchRelease;
 import com.TovidY.kunluncontinent.item.klitem.ZhuanShengTestItem;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.SynsAPI;
@@ -73,9 +79,13 @@ public class PWPlayerTickEvent {
 
                 handleReincarnationLogic(serverPlayer, gameTime);
 
+                // 一键释放（同键绑多个槽位）：每隔几个 tick 放一个，放完汇总成一条提示
+                SkillBatchRelease.tick(serverPlayer, capability, gameTime);
+
                 handleSkillCasting(serverPlayer, capability, gameTime);
                 handleLieDiLanding(serverPlayer);
                 handleLiejinhuEight(serverPlayer);
+                handleLiejinhuNine(serverPlayer);
                 handleBahuangNine(serverPlayer);
 
                 handleThunderRealmLightning(serverPlayer, capability, gameTime);
@@ -237,18 +247,23 @@ public class PWPlayerTickEvent {
             PlayerAttributeCapability cap = player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).orElse(null);
             boolean particleOpt = cap != null && cap.isConfigOpen(10);
 
-            // 特效：每次脉冲重绘半径二十格的“寂灭地阵”，由内向外旋转
-            ParticleFx fx = ParticleFx.of(level);
-            if (fx != null) {
-                fx.lod(particleOpt ? 0.5 : 1.0).budget(particleOpt ? 1100 : 2600);
-                Vec3 base = player.position();
-                double rot = level.getGameTime() * 0.22;
+            // 特效：每次脉冲重绘半径二十格的“寂灭地阵”，由内向外旋转。
+            // ⚠️ 玩家把「技能特效优化」**关掉**（= 切到着色器版）时，这里**一个粒子都不发** ——
+            //    地阵已经交给客户端着色器画了。两种表现必须二选一，同时放会像
+            //    "粒子在光圈上乱飘"，比纯粒子版还脏。伤害、缓慢、音效照常。
+            if (!SkillFxToggle.useShader(player)) {
+                ParticleFx fx = ParticleFx.of(level);
+                if (fx != null) {
+                    fx.lod(particleOpt ? 0.5 : 1.0).budget(particleOpt ? 1100 : 2600);
+                    Vec3 base = player.position();
+                    double rot = level.getGameTime() * 0.22;
 
-                fx.polygon(ParticleTypes.END_ROD, base.add(0, 0.12, 0), ParticleFx.Axis.Y, 20.0, 24, rot, 0.0);
-                fx.polygon(ParticleTypes.SOUL_FIRE_FLAME, base.add(0, 0.18, 0), ParticleFx.Axis.Y, 13.0, 12, -rot, 0.05);
-                fx.dashedRing(ParticleTypes.LAVA, base.add(0, 0.24, 0), ParticleFx.Axis.Y, 6.5, 12, 0.5, rot * 1.5, 0.08);
-                fx.pillars(ParticleTypes.END_ROD, base, 20.0, particleOpt ? 12 : 24, 3.0, rot);
-                fx.burst(ParticleTypes.FLAME, base.add(0, 0.5, 0), particleOpt ? 20 : 40, 1.5, true);
+                    fx.polygon(ParticleTypes.END_ROD, base.add(0, 0.12, 0), ParticleFx.Axis.Y, 20.0, 24, rot, 0.0);
+                    fx.polygon(ParticleTypes.SOUL_FIRE_FLAME, base.add(0, 0.18, 0), ParticleFx.Axis.Y, 13.0, 12, -rot, 0.05);
+                    fx.dashedRing(ParticleTypes.LAVA, base.add(0, 0.24, 0), ParticleFx.Axis.Y, 6.5, 12, 0.5, rot * 1.5, 0.08);
+                    fx.pillars(ParticleTypes.END_ROD, base, 20.0, particleOpt ? 12 : 24, 3.0, rot);
+                    fx.burst(ParticleTypes.FLAME, base.add(0, 0.5, 0), particleOpt ? 20 : 40, 1.5, true);
+                }
             }
 
             level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(20.0),
@@ -333,9 +348,13 @@ public class PWPlayerTickEvent {
         timer++;
         PlayerAttributeCapability cap = player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).orElse(null);
         boolean particleOpt = cap != null && cap.isConfigOpen(10);
+        // 粒子 / 着色器二选一：着色器版的金色大阵在技能释放那一刻一次性发了 110 tick，
+        // 覆盖整段十轮脉冲；这里每轮不再打粒子（脉冲的"节奏感"由着色器内部的
+        // Pulse 循环自己表现）。把 fx 置空，下面所有 if (fx != null) 会自动跳过。
+        boolean shaderMode = SkillFxToggle.useShader(player);
 
         if (timer >= 10) {
-            ParticleFx fx = ParticleFx.of(level);
+            ParticleFx fx = shaderMode ? null : ParticleFx.of(level);
             if (fx != null) {
                 fx.lod(particleOpt ? 0.5 : 1.0).budget(particleOpt ? 800 : 1800);
             }
@@ -346,7 +365,13 @@ public class PWPlayerTickEvent {
             for (LivingEntity target : targets) {
                 target.invulnerableTime = 0;
                 target.hurt(player.damageSources().playerAttack(player), damage);
-                if (fx != null) {
+                if (shaderMode) {
+                    // 着色器版：无论这一刀有没有把它打死，都在它<b>体内</b>炸一次金光。
+                    // 锚点是这个生物：它死了 / 消失后 anchor() 会退回这一帧的坐标，
+                    // 所以爆点会留在原地，不会跟着飘走。
+                    SkillFieldFx.atEntity(target, SkillEffectStyles.BURST_LIETIAN,
+                            SkillLeijinhu8.BURST_RADIUS, SkillLeijinhu8.BURST_TICKS);
+                } else if (fx != null) {
                     // 每名敌人身上炸开一记金色裂天爪痕
                     Vec3 hp = target.position().add(0, target.getBbHeight() * 0.5, 0);
                     Vec3 to = hp.subtract(player.position()).normalize();
@@ -380,19 +405,67 @@ public class PWPlayerTickEvent {
             }
         } else {
             nbt.putInt("Liejinhu8_Timer", timer);
-            // 优化：每 4 tick 发一次，原来每 2 tick
-            if (!particleOpt && timer % 2 == 0) {
-                level.sendParticles(ParticleTypes.END_ROD,
-                        player.getX(), player.getY() + 1, player.getZ(), 2, 0.5, 0.5, 0.5, 0.01);
-            } else if (particleOpt && timer % 4 == 0) {
-                level.sendParticles(ParticleTypes.END_ROD,
-                        player.getX(), player.getY() + 1, player.getZ(), 1, 0.5, 0.5, 0.5, 0.01);
+            // ⚠️ 这里的脉冲间隙粒子也必须跟着「粒子 / 着色器」二选一走。
+            //    原来只判了 particleOpt（配置位 10「粒子特效优化」），导致着色器模式下
+            //    仍然会零星飘出 END_ROD —— 和"着色器版一个粒子都不发"的约定矛盾，
+            //    而且会让玩家误以为"粒子还在、着色器没生效"。
+            if (!shaderMode) {
+                // 优化：每 4 tick 发一次，原来每 2 tick
+                if (!particleOpt && timer % 2 == 0) {
+                    level.sendParticles(ParticleTypes.END_ROD,
+                            player.getX(), player.getY() + 1, player.getZ(), 2, 0.5, 0.5, 0.5, 0.01);
+                } else if (particleOpt && timer % 4 == 0) {
+                    level.sendParticles(ParticleTypes.END_ROD,
+                            player.getX(), player.getY() + 1, player.getZ(), 1, 0.5, 0.5, 0.5, 0.01);
+                }
             }
         }
     }
 
-    // ==================== 碎星领域 ====================
+    /**
+     * 裂金虎 · 第九魂技「猛虎破界」的<b>延迟结算</b>。
+     *
+     * <h3>为什么要延迟</h3>
+     * <p>着色器版的表现是两拍：① 每只生物身后张开黑色旋涡；② 旋涡打出金色光芒。
+     * 伤害要跟着第②拍走 —— 否则会变成"怪已经掉血了，旋涡才开始张开"。
+     * 释放那一刻（{@code SkillLeijinhu9#executeEffect}）只登记目标 id 和倒计时，
+     * 真正结算在这里。</p>
+     *
+     * <h3>为什么用 NBT 存 id 而不是静态表</h3>
+     * <p>跟 {@code Liejinhu8_Active} 一个路子：不引入跨 tick 的静态状态，
+     * 玩家退出 / 死亡 / 换维度都不会留下悬挂引用。目标在这一刻已经死了或换了维度，
+     * {@code level.getEntity(id)} 取不到就自然跳过。</p>
+     */
+    private static void handleLiejinhuNine(ServerPlayer player) {
+        CompoundTag nbt = player.getPersistentData();
+        if (!nbt.contains("Liejinhu9_Targets")) return;
 
+        int delay = nbt.getInt("Liejinhu9_Delay") - 1;
+        if (delay > 0) {
+            nbt.putInt("Liejinhu9_Delay", delay);
+            return;
+        }
+
+        ServerLevel level = player.serverLevel();
+        float damage = nbt.getFloat("Liejinhu9_Damage");
+        int[] ids = nbt.getIntArray("Liejinhu9_Targets");
+
+        // 先把登记清掉再做结算：结算里可能触发其它逻辑，别让它在中间被重入
+        nbt.remove("Liejinhu9_Delay");
+        nbt.remove("Liejinhu9_Damage");
+        nbt.remove("Liejinhu9_Targets");
+
+        for (int id : ids) {
+            var entity = level.getEntity(id);
+            if (!(entity instanceof LivingEntity target) || !target.isAlive()) continue;
+            // 金光和伤害同一 tick —— "光到即伤"
+            SkillFieldFx.atEntity(target, SkillEffectStyles.VORTEX_POJIE_LIGHT,
+                    SkillLeijinhu9.LIGHT_RADIUS, SkillLeijinhu9.LIGHT_TICKS);
+            SkillLeijinhu9.applyStrike(player, level, target, damage, null, 0.0D);
+        }
+    }
+
+    // ==================== 碎星领域 ====================
     private static void handleSuiXingField(ServerPlayer player, long gameTime) {
         CompoundTag nbt = player.getPersistentData();
         if (!nbt.contains("SuiXingTimer")) return;
@@ -460,6 +533,21 @@ public class PWPlayerTickEvent {
 
     // ==================== 裂地 / 布洲倾落地 ====================
 
+    /**
+     * 不周倾落地冲击波的扩散速度（格/tick）。
+     *
+     * <p>80 格需要 40 tick（2 秒）铺满。⚠️ 这个值必须和客户端
+     * {@code ShockwaveEffect#EXPAND_TICKS} 对得上（那里是 40 tick），
+     * 否则光波跑在前面或落在后面，又会出现"没扫到就打到了"的违和感。</p>
+     */
+    private static final double BZQ_SHOCK_SPEED = 2.0D;
+
+    /** 不周倾落地冲击波的最大半径（格）。与原判定范围一致。 */
+    private static final double BZQ_SHOCK_RADIUS = 80.0D;
+
+    /** 客户端光波特效的持续时长（tick）= 扩散 40 + 淡出 18。 */
+    private static final int BZQ_SHOCK_TICKS = 58;
+
     private static void handleLieDiLanding(ServerPlayer player) {
         CompoundTag nbt = player.getPersistentData();
         ServerLevel level = player.serverLevel();
@@ -470,34 +558,40 @@ public class PWPlayerTickEvent {
         double landLod = landOpt ? 0.5 : 1.0;
 
         if (nbt.contains("BuZhouQing_Active") && player.onGround() && verticalMomentum <= 0) {
-            float dmg = nbt.getFloat("BuZhouQing_Damage");
-            List<LivingEntity> bzTargets = level.getEntitiesOfClass(LivingEntity.class,
-                    player.getBoundingBox().inflate(80.0), e -> e != player && e.isAlive());
-            for (LivingEntity target : bzTargets) {
-                target.hurt(player.damageSources().playerAttack(player), dmg);
-                target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 300, 2));
-                target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 300, 2));
-                target.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 300, 1));
-                target.addEffect(new MobEffectInstance(MobEffects.HUNGER, 300, 1));
-            }
+            // ---- 落地：不再"瞬间打满全场"，而是启动一个向外扩散的冲击波 ----
+            // 原来的做法是立刻对 80 格内所有人生效 + 同时打一圈落地粒子，
+            // 结果是光波还没扫到远处，远处的怪已经掉血了 —— 很违和。
+            // 现在伤害和光波用**同一个速度**往外推（见下面的 BZQ_Shock 分支），
+            // 做到"光波扫到哪里，哪里才受伤"。
+            nbt.putBoolean("BZQ_Shock", true);
+            nbt.putDouble("BZQ_ShockR", 0.0D);
+            nbt.putFloat("BZQ_ShockDmg", nbt.getFloat("BuZhouQing_Damage"));
 
-            // ---- 不周倾落地：不周山倾塌 —— 半径二十格地阵 + 三圈扩散冲击环 + 八方地柱 ----
-            ParticleFx fx = ParticleFx.of(level);
-            if (fx != null) {
-                fx.lod(landLod).budget(landOpt ? 1600 : 3600);
-                Vec3 base = player.position();
-                double rot = level.getGameTime() * 0.2;
+            if (SkillFxToggle.useShader(player)) {
+                // ---- 表现 A：着色器版 —— 一道扩散到最大半径的冲击光波 ----
+                // 客户端按 durationTicks 自己推进前沿，服务端只发这一次。
+                // ⚠️ 用 atPoint 钉在**落地点**，不要用 atEntity —— 光波的圆心必须留在原地，
+                //    否则玩家落地后一跑，扩散到一半的圆环会整个跟着人平移，像被拖着走。
+                SkillFieldFx.atPoint(player, SkillEffectStyles.SHOCK_BUZHOU,
+                        player.getX(), player.getY(), player.getZ(),
+                        (float) BZQ_SHOCK_RADIUS, BZQ_SHOCK_TICKS);
+            } else {
+                // ---- 表现 B：粒子版 —— 落地瞬间的阵法 + 地柱 ----
+                // 持续往外推的冲击环由下面的 tick 分支每帧补，这里只打"落地那一下"。
+                ParticleFx fx = ParticleFx.of(level);
+                if (fx != null) {
+                    fx.lod(landLod).budget(landOpt ? 1600 : 3600);
+                    Vec3 base = player.position();
+                    double rot = level.getGameTime() * 0.2;
 
-                fx.polygon(ParticleTypes.CAMPFIRE_COSY_SMOKE, base.add(0, 0.12, 0), ParticleFx.Axis.Y, 20.0, 24, rot, 0.3);
-                fx.polygon(ParticleTypes.SOUL_FIRE_FLAME, base.add(0, 0.2, 0), ParticleFx.Axis.Y, 14.0, 16, -rot, 0.1);
-                fx.magicCircle(ParticleTypes.LAVA, ParticleTypes.WHITE_ASH, base.add(0, 0.1, 0), ParticleFx.Axis.Y, 7.0, rot * 1.6);
-                fx.shockRing(ParticleTypes.LARGE_SMOKE, base.add(0, 0.05, 0), 10.0, 2.5, 48);
-                fx.shockRing(ParticleTypes.LARGE_SMOKE, base.add(0, 0.1, 0), 20.0, 2.0, 52);
-                fx.shockRing(ParticleTypes.WHITE_ASH, base.add(0, 0.15, 0), 30.0, 1.5, 56);
-                fx.pillars(ParticleTypes.SOUL_FIRE_FLAME, base, 20.0, landOpt ? 12 : 24, 4.0, rot);
-                fx.column(ParticleTypes.CAMPFIRE_COSY_SMOKE, ParticleTypes.LAVA, base, 1.6, 10.0, 4, rot, ParticleFx.TAU * 0.8, 0.5);
-                fx.burst(ParticleTypes.SOUL_FIRE_FLAME, base.add(0, 0.6, 0), landOpt ? 26 : 56, 2.4, true);
-                fx.bloom(ParticleTypes.WHITE_ASH, base.add(0, 1.2, 0), landOpt ? 24 : 48, 4.0, 0.25);
+                    fx.polygon(ParticleTypes.CAMPFIRE_COSY_SMOKE, base.add(0, 0.12, 0), ParticleFx.Axis.Y, 20.0, 24, rot, 0.3);
+                    fx.polygon(ParticleTypes.SOUL_FIRE_FLAME, base.add(0, 0.2, 0), ParticleFx.Axis.Y, 14.0, 16, -rot, 0.1);
+                    fx.magicCircle(ParticleTypes.LAVA, ParticleTypes.WHITE_ASH, base.add(0, 0.1, 0), ParticleFx.Axis.Y, 7.0, rot * 1.6);
+                    fx.pillars(ParticleTypes.SOUL_FIRE_FLAME, base, 20.0, landOpt ? 12 : 24, 4.0, rot);
+                    fx.column(ParticleTypes.CAMPFIRE_COSY_SMOKE, ParticleTypes.LAVA, base, 1.6, 10.0, 4, rot, ParticleFx.TAU * 0.8, 0.5);
+                    fx.burst(ParticleTypes.SOUL_FIRE_FLAME, base.add(0, 0.6, 0), landOpt ? 26 : 56, 2.4, true);
+                    fx.bloom(ParticleTypes.WHITE_ASH, base.add(0, 1.2, 0), landOpt ? 24 : 48, 4.0, 0.25);
+                }
             }
 
             level.playSound(null, player.getX(), player.getY(), player.getZ(),
@@ -506,6 +600,54 @@ public class PWPlayerTickEvent {
                     SoundEvents.WARDEN_ROAR, SoundSource.PLAYERS, 2.0f, 0.5f);
             nbt.remove("BuZhouQing_Active");
             nbt.remove("BuZhouQing_Damage");
+        }
+
+        // ---- 冲击波推进：每 tick 把半径往外推一格，只结算"这一圈环带"里的敌人 ----
+        // 用「上一帧半径 ~ 这一帧半径」这个环带做判定，天然不会重复命中同一个目标，
+        // 也不用额外记录"打过谁"。想跑出范围的敌人依然跑得掉 —— 这是合理的：
+        // 光波没追上它，本来就不该受伤。
+        if (nbt.getBoolean("BZQ_Shock")) {
+            double r0 = nbt.getDouble("BZQ_ShockR");
+            double r1 = Math.min(r0 + BZQ_SHOCK_SPEED, BZQ_SHOCK_RADIUS);
+            float shockDamage = nbt.getFloat("BZQ_ShockDmg");
+            Vec3 center = player.position();
+            double rr0 = r0 * r0;
+            double rr1 = r1 * r1;
+
+            List<LivingEntity> ring = level.getEntitiesOfClass(LivingEntity.class,
+                    player.getBoundingBox().inflate(r1),
+                    e -> {
+                        if (e == player || !e.isAlive()) {
+                            return false;
+                        }
+                        double d2 = e.position().distanceToSqr(center);
+                        return d2 > rr0 && d2 <= rr1;
+                    });
+            for (LivingEntity target : ring) {
+                target.hurt(player.damageSources().playerAttack(player), shockDamage);
+                target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 300, 2));
+                target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 300, 2));
+                target.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 300, 1));
+                target.addEffect(new MobEffectInstance(MobEffects.HUNGER, 300, 1));
+            }
+
+            // 粒子版：在光波当前所在的位置补一圈粒子，让粒子和判定同步往前走
+            if (!SkillFxToggle.useShader(player)) {
+                ParticleFx wave = ParticleFx.of(level);
+                if (wave != null) {
+                    wave.lod(landLod).budget(landOpt ? 120 : 200);
+                    wave.shockRing(ParticleTypes.LARGE_SMOKE,
+                            center.add(0, 0.08, 0), r1, 1.5, landOpt ? 20 : 34);
+                }
+            }
+
+            if (r1 >= BZQ_SHOCK_RADIUS) {
+                nbt.remove("BZQ_Shock");
+                nbt.remove("BZQ_ShockR");
+                nbt.remove("BZQ_ShockDmg");
+            } else {
+                nbt.putDouble("BZQ_ShockR", r1);
+            }
         }
 
         if (nbt.contains("LieDiActive") && player.onGround() && verticalMomentum <= 0) {
@@ -556,6 +698,15 @@ public class PWPlayerTickEvent {
         BaseSkillItem castingSkill = cap.getCurrentCastingSkill();
         if (castingSkill == null) return;
 
+        // 吟唱期间武魂被关掉 / 换掉 / 换了技能槽 → 这次吟唱已经没有意义。
+        // ⚠️ 不判的话，下面「完成结算」会拿**新武魂的槽位**去取年限倍率，算出错误的伤害。
+        if (!isStillCastable(cap, castingSkill)) {
+            cap.stopCasting(player);
+            player.displayClientMessage(Component.literal("§c武魂变化，吟唱中断！"), true);
+            SynsAPI.synsPlayerAttribute(player);
+            return;
+        }
+
         cap.setCastingTick(cap.getCastingTick() + 1);
 
         if (gameTime % 5 == 0) {
@@ -573,21 +724,33 @@ public class PWPlayerTickEvent {
 
         if (cap.getCastingTick() >= cap.getRequiredCastTick()) {
             String currentWuhun = cap.getWuhunName();
-            int selectedSlot = cap.getSelectedSkillSlot();
+            // ⚠️ 必须用「吟唱开始时就记下的槽位」，不能用 getSelectedSkillSlot()：
+            //    批量释放不改选中槽位，用选中槽位会取到错魂环的年限（倍率算错），
+            //    并且会把冷却记到错误的槽位上。
+            int castSlot = cap.getCastingSlot();
             int nianxian = 10;
             List<MobAttributeCapability> rings = cap.getMonsterCapabilityLists().get(currentWuhun);
-            if (rings != null && selectedSlot >= 0 && selectedSlot < rings.size()) {
-                nianxian = (int) rings.get(selectedSlot).getNianxian();
+            if (rings != null && castSlot >= 0 && castSlot < rings.size()) {
+                nianxian = (int) rings.get(castSlot).getNianxian();
             }
             float powerMultiplier = castingSkill.getPowerMultiplier(nianxian);
             float costMultiplier = castingSkill.getCostMultiplier(nianxian);
             castingSkill.executeEffect(player.level(), player, powerMultiplier);
             castingSkill.applyPenalty(player, costMultiplier);
-            cap.setSkillLastUsedTime(currentWuhun, selectedSlot, gameTime);
+            cap.setSkillLastUsedTime(currentWuhun, castSlot, gameTime);
             player.displayClientMessage(Component.translatable("gui.kunluncontinent.cast_shifa"), true);
             cap.stopCasting(player);
             SynsAPI.synsPlayerAttribute(player);
         }
+    }
+
+    /** 吟唱中的技能是否仍然是「当前武魂、它自己的那个槽位」上的那一个。 */
+    private static boolean isStillCastable(PlayerAttributeCapability cap, BaseSkillItem castingSkill) {
+        String wuhun = cap.getWuhunName();
+        if (wuhun == null) return false;
+        BaseSkillItem[] skills = cap.getWuhunSkillsMap().get(wuhun);
+        int slot = cap.getCastingSlot();
+        return skills != null && slot >= 0 && slot < skills.length && skills[slot] == castingSkill;
     }
 
 /** 神界（天境）维度里，坐在蒲团上的修炼速度倍率。 */
@@ -711,6 +874,22 @@ public class PWPlayerTickEvent {
     @SubscribeEvent
     public static void onPlayerHurt(LivingHurtEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
+
+        // ⚠️ 先确认「这一下真的打实了」，否则会出现「明明闪避了、吟唱却断了」这种别扭体验。
+        //   ① 事件已被取消：本模组的 CombatEventHandler 是 priority = HIGHEST（比本方法早执行），
+        //      它在【闪避】和【免伤】生效时会 setCanceled(true)。
+        //      而 Forge 取消事件**不会**阻止后面的监听器 —— 必须自己判 isCanceled()。
+        //      闪避是核心属性，不判的话玩家看到「闪避了这次攻击！」之后吟唱照断。
+        //   ② 伤害为 0：算下来 0 点伤害的攻击不该算「受到攻击」。
+        //   ③ 不是生物打的：摔落 / 火焰 / 中毒 / 窒息 / 虚空走的是同一个事件，
+        //      玩家只是站在原地被烧，不该算被打断。
+        //      远程弹射物取 shooter（getEntity）也能命中，所以两个都查。
+        boolean landedHit = !event.isCanceled()
+                && event.getAmount() > 0.0F
+                && (event.getSource().getEntity() instanceof LivingEntity
+                    || event.getSource().getDirectEntity() instanceof LivingEntity);
+        if (!landedHit) return;
+
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
             if (player.getVehicle() != null && player.getVehicle().getTags().contains("putuan_seat")) {
                 player.stopRiding();
@@ -719,16 +898,15 @@ public class PWPlayerTickEvent {
                 player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 100, 0));
             }
             if (cap.getCurrentCastingSkill() != null) {
-                // ⭐ 抗打断判定：点数加成 + 等级加成（ModAttributeAPI#getKangdapan 统一算）
-                //    没扛住才真的打断。抗住时给个 ActionBar 提示，让玩家知道这一点生效了。
-                float resist = com.TovidY.kunluncontinent.capability.ModAttributeAPI.getKangdapan(player);
-                if (player.getRandom().nextFloat() < resist) {
-                    player.displayClientMessage(
-                            Component.literal("§6定魂之力护住了吟唱！"), true);
-                } else {
-                    cap.stopCasting(player);
-                    player.displayClientMessage(Component.literal("§c魂力紊乱，吟唱中断！"), true);
+                // ⭐ 抗打断在**吟唱开始时就已经掷过骰**（见 CPacketReleaseSkill）：
+                //    掷中了就代表整段吟唱打不断，这里直接放行、连提示都不要再发 ——
+                //    每次受击都提示会在吟唱期间把 ActionBar 刷屏。
+                //    掷不中则任意一次实打实的命中都能打断。
+                if (cap.isCastingProtected()) {
+                    return;
                 }
+                cap.stopCasting(player);
+                player.displayClientMessage(Component.literal("§c魂力紊乱，吟唱中断！"), true);
             }
         });
     }
@@ -923,6 +1101,17 @@ public class PWPlayerTickEvent {
         if (event.getEntity().level().isClientSide) return;
         if (!(event.getEntity() instanceof Player player)) return;
 
+        // 死亡时把吟唱状态清干净。否则死亡到实体移除之间 onPlayerTick 还在跑，
+        // 会把这次吟唱推完并结算（死人放技能）；而且 -70% 移速的吟唱减速修正
+        // 会一直挂在属性上（万一以后加了拦截死亡的机制，就会永久减速）。
+        if (player instanceof ServerPlayer serverPlayer) {
+            serverPlayer.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
+                    .ifPresent(cap -> cap.stopCasting(serverPlayer));
+        }
+
+        // 一键释放可能还有没放完的槽位，死了就别再续了
+        SkillBatchRelease.cancel(player.getUUID());
+
         ZhuanShengTestItem.cancelReincarnation(player);
 
         CompoundTag data = player.getPersistentData();
@@ -930,6 +1119,19 @@ public class PWPlayerTickEvent {
         data.remove("IsLightningPhase");
         data.remove("ReincarnationTimer");
         data.remove("LightningCount");
+
+        // 裂天（裂金虎8）的十轮脉冲、猛虎破界（裂金虎9）待结算的金光：
+        // 死了就一起清掉。理由和上面清吟唱一样 —— 死亡到实体移除之间 onPlayerTick
+        // 还在跑，不清的话死亡动画期间还会继续对周围生物结算伤害。
+        // （另外 Forge 会把玩家的 persistentData 复制到重生后的实体上，
+        //   不清的话会变成"复活 0.5 秒后突然挨一发自己死前放的技能"。）
+        data.remove("Liejinhu8_Active");
+        data.remove("Liejinhu8_Remaining");
+        data.remove("Liejinhu8_Timer");
+        data.remove("Liejinhu8_Damage");
+        data.remove("Liejinhu9_Delay");
+        data.remove("Liejinhu9_Damage");
+        data.remove("Liejinhu9_Targets");
     }
 
     @SubscribeEvent

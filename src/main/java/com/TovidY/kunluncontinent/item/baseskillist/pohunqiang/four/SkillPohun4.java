@@ -20,7 +20,6 @@ public class SkillPohun4 extends BaseSkillItem {
     @Override public float getBaseCost() { return 220f; }
     @Override public float getDamageMultiplier() { return 2.2f; }
     @Override public int getCastTime() { return 40; }
-    @Override public int getCooldownTicks() { return 700; } // 35s
 
     @Override
     public String getDescriptionKey() {

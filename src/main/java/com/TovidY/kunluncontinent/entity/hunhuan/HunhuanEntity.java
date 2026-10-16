@@ -9,7 +9,7 @@ import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCap
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerHunhuanAPI;
 import com.TovidY.kunluncontinent.entity.hunhe.HunheEntity;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
-import com.TovidY.kunluncontinent.item.baseskillist.SkillLibrary;
+import com.TovidY.kunluncontinent.special.SpecialSoulRingRegistry;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.client.SyncShenciAttributesPacket;
 import net.minecraft.ChatFormatting;
@@ -107,6 +107,8 @@ public class HunhuanEntity extends Entity {
                 getCapability(MobAttributeCapabilityProvider.CAPABILITY).ifPresent(hunhuanCap -> {
                     boolean isShenci = hunhuanCap.isShenci();
                     int nianxian = (int) hunhuanCap.getNianxian();
+                    // 这个魂环来自哪只生物 —— 决定吸收后给什么魂技（特殊生物魂环见 special 包）
+                    String sourceType = hunhuanCap.getSourceType();
                     if (!PlayerHunhuanAPI.isXishouHunhuan((ServerPlayer) player, this)) {
                         return;
                     }
@@ -114,7 +116,7 @@ public class HunhuanEntity extends Entity {
                             ? PlayerHunhuanAPI.forceXishouHunhuan(player, this)
                             : PlayerHunhuanAPI.xishouHunhuan(player, this);
                     if (absorbed) {
-                        handleAbsorbed(isShenci, nianxian);
+                        handleAbsorbed(isShenci, nianxian, sourceType);
                         return;
                     }
                     existenceTime++;
@@ -142,7 +144,7 @@ public class HunhuanEntity extends Entity {
         HunhuanAbsorbFx.playCancel(this.level(), rider);
     }
 
-    private void handleAbsorbed(boolean isShenci, int nianxian) {
+    private void handleAbsorbed(boolean isShenci, int nianxian, String sourceType) {
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(playerAttr -> {
             String currentWuhun = playerAttr.getWuhunName();
             if (currentWuhun != null) {
@@ -150,7 +152,11 @@ public class HunhuanEntity extends Entity {
                 if (currentWuhunRings != null) {
                     int ringIndex = currentWuhunRings.size();
                     if (ringIndex >= 1 && ringIndex <= 9) {
-                        BaseSkillItem rewardSkill = SkillLibrary.getRandomSkill(currentWuhun, ringIndex, player.getRandom());
+                        // ⭐ 技能分配唯一入口：
+                        //    特殊生物魂环（如孤竹）→ 用它自己的魂技（撑杆跳），替换该槽位本该拿到的正常魂技；
+                        //    普通魂环 → 回落到该武魂的 SkillLibrary 技能池，行为与改动前完全一致。
+                        BaseSkillItem rewardSkill = SpecialSoulRingRegistry.resolveSkill(
+                                sourceType, currentWuhun, ringIndex, player.getRandom());
                         if (rewardSkill != null) {
                             playerAttr.setWuhunSkill(currentWuhun, ringIndex - 1, rewardSkill);
 

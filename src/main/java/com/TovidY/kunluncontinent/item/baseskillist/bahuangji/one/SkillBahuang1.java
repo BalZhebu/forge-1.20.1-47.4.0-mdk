@@ -30,9 +30,6 @@ public class SkillBahuang1 extends BaseSkillItem {
     public int getCastTime() { return 0; } // 瞬发
 
     @Override
-    public int getCooldownTicks() { return 60; } // 3秒
-
-    @Override
     public String getDescriptionKey() {
         return "skill.bakuangji.one.description";
     }

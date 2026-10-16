@@ -26,11 +26,6 @@ public class SkillBahuang2 extends BaseSkillItem {
     }
 
     @Override
-    public int getCooldownTicks() {
-        return 120;
-    }
-
-    @Override
     public float getDamageMultiplier() {
         return 1.6f;
     }

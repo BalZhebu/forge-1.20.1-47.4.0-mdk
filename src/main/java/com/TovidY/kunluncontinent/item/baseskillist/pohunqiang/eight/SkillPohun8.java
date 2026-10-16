@@ -2,6 +2,9 @@ package com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.eight;
 
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
+import com.TovidY.kunluncontinent.render.skill.SkillEffectStyles;
+import com.TovidY.kunluncontinent.render.skill.SkillFieldFx;
+import com.TovidY.kunluncontinent.render.skill.SkillFxToggle;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -11,10 +14,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 public class SkillPohun8 extends BaseSkillItem {
+
+    /** 裂隙特效时长（tick）。裂隙是瞬间撕开的，比地阵短得多。 */
+    private static final int RIFT_TICKS = 30;
+
     @Override public float getBaseCost() { return 700f; }
     @Override public float getDamageMultiplier() { return 3.8f; }
     @Override public int getCastTime() { return 15; }
-    @Override public int getCooldownTicks() { return 1000; }
 
     @Override
     public String getDescriptionKey() { return "skill.pohunqiang.eight.description"; }
@@ -26,13 +32,24 @@ public class SkillPohun8 extends BaseSkillItem {
             Vec3 look = player.getLookAngle().normalize();
             player.displayClientMessage(Component.literal("§c§l第八魂技：裂空！"), true);
 
-            // ---- 特效：沿视线撕开一道虚空裂隙（暗核 + 两侧锯齿撕口）----
-            ParticleFx fx = ParticleFx.of(level, player);
+            // 粒子 / 着色器二选一（全局开关，见 SkillFxToggle）。
+            // 后面「每个虚空节点套一圈封印环」那段也靠 fx == null 自动跳过。
+            boolean shaderMode = SkillFxToggle.useShader(player);
+            ParticleFx fx = shaderMode ? null : ParticleFx.of(level, player);
             Vec3 origin = player.position().add(0, 1.0, 0);
-            Vec3 riftEnd = origin.add(look.scale(20));
             double rot = serverLevel.getGameTime() * 0.4;
 
-            if (fx != null) {
+            if (shaderMode) {
+                // ---- 表现 A：着色器版 —— 沿视线撕开的一道虚空裂缝 ----
+                // 用的是专用着色器 skill_rift（普通 alpha 混合，裂缝内部是近纯黑，
+                // 所以能真正把背景压暗成"空洞"，而不是加法混合下那种发光带）。
+                // 锚在施法者身上，方向取发包那一刻的视线（客户端首帧解析后不再跟着转），
+                // 所以这是一道"朝着当时那个方向"的固定裂口。
+                SkillFieldFx.atEntity(player, SkillEffectStyles.POHUN8_RIFT, 1.0F, RIFT_TICKS);
+            } else if (fx != null) {
+                // ---- 表现 B：粒子版（默认）----
+                Vec3 riftEnd = origin.add(look.scale(20));
+
                 fx.budget(1800);
                 // 裂隙主轴：暗物质核心 + 外层空间撕裂
                 fx.line(ParticleTypes.REVERSE_PORTAL, origin, riftEnd, 0.35, 0.12, 0.0, Vec3.ZERO);

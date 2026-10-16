@@ -11,10 +11,12 @@ import com.TovidY.kunluncontinent.datagen.itemprovider.ModItemTagsProvider;
 import com.TovidY.kunluncontinent.datagen.itemprovider.ModRecipesProvider;
 import com.TovidY.kunluncontinent.datagen.lang.ModZhCnLangProvider;
 import com.TovidY.kunluncontinent.datagen.lootprovider.ModChestLootTablesProvider;
+import com.TovidY.kunluncontinent.datagen.lootprovider.ModEntityLootTablesProvider;
 import com.TovidY.kunluncontinent.datagen.oredatagen.ModBiomeModifierProvider;
 import com.TovidY.kunluncontinent.datagen.oredatagen.ModStructureProvider;
 import com.TovidY.kunluncontinent.datagen.oredatagen.ModWorldGenOreProvider;
 import com.TovidY.kunluncontinent.datagen.worldgenprovider.ModBiomeModifiers;
+import com.TovidY.kunluncontinent.datagen.worldgenprovider.ModBiomeTagsProvider;
 import com.TovidY.kunluncontinent.datagen.worldgenprovider.ModGlobalLootModifierProvider;
 import com.TovidY.kunluncontinent.datagen.worldgenprovider.ModWorldGenProvider;
 import net.minecraft.core.HolderLookup;
@@ -87,17 +89,20 @@ public class ModDataGenerator {
 
         // 基础 Provider
         generator.addProvider(event.includeServer(), new ModRecipesProvider(packOutput));
-        // 方块掉落 + 宝箱战利品：同一个 LootTableProvider 下挂多个子 Provider，
-        // 各自声明用哪个 LootContextParamSet（方块 / 箱子），缺一不可。
+        // 方块掉落 / 宝箱战利品 / 实体掉落：同一个 LootTableProvider 下挂多个子 Provider，
+        // 各自声明用哪个 LootContextParamSet（BLOCK / CHEST / ENTITY），缺一不可。
         generator.addProvider(event.includeServer(), new LootTableProvider(packOutput, Set.of(), List.of(
                 new LootTableProvider.SubProviderEntry(ModBlockLootTablesProvider::new, LootContextParamSets.BLOCK),
-                new LootTableProvider.SubProviderEntry(ModChestLootTablesProvider::new, LootContextParamSets.CHEST)
+                new LootTableProvider.SubProviderEntry(ModChestLootTablesProvider::new, LootContextParamSets.CHEST),
+                new LootTableProvider.SubProviderEntry(ModEntityLootTablesProvider::new, LootContextParamSets.ENTITY)
         )));
 
         // 标签 Provider
         BlockTagsProvider blockTagsProvider = generator.addProvider(event.includeServer(),
                 new ModBlockTagsProvider(packOutput, lookupProvider, existingFileHelper));
         generator.addProvider(event.includeServer(), new ModItemTagsProvider(packOutput, lookupProvider, blockTagsProvider.contentsGetter(), existingFileHelper));
+        // 生物群系标签（自定义标签，如孤竹的生成排除表）
+        generator.addProvider(event.includeServer(), new ModBiomeTagsProvider(packOutput, lookupProvider, existingFileHelper));
 
         // 客户端渲染相关 Provider
         generator.addProvider(event.includeClient(), new ModBlockStateProvider(packOutput, existingFileHelper));

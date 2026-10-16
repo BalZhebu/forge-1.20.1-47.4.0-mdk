@@ -13,6 +13,9 @@ import com.TovidY.kunluncontinent.entity.hunhe.HunheEntity;
 import com.TovidY.kunluncontinent.entity.hunhe.HunheRender;
 import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanEntity;
 import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanRender;
+import com.TovidY.kunluncontinent.entity.lonebamboo.LoneBambooEntity;
+import com.TovidY.kunluncontinent.entity.lonebamboo.LoneBambooModel;
+import com.TovidY.kunluncontinent.entity.lonebamboo.LoneBambooRenderer;
 import com.TovidY.kunluncontinent.entity.playernpc.PlayerNpcEntity;
 import com.TovidY.kunluncontinent.entity.playernpc.PlayerNpcRenderer;
 import com.TovidY.kunluncontinent.entity.snowdemon.SnowDemonEntity;
@@ -55,6 +58,7 @@ public class EntityInit {
             () -> EntityType.Builder.of(IceCrystalEntity::new, MobCategory.MONSTER)
                     .sized(0.6F, 1.2F)
                     .build("ice_crystal"));
+
     public static final RegistryObject<EntityType<IceShardEntity>> ICE_SHARD = ENTITY_TYPES.register("ice_shard",
             () -> EntityType.Builder.<IceShardEntity>of(IceShardEntity::new, MobCategory.MISC)
                     .sized(0.25F, 0.25F)
@@ -74,11 +78,6 @@ public class EntityInit {
                             .sized(0.25F, 0.25F)
                             .build("eye_transformation_entity"));
 
-    // 碰撞箱按 SnowDemonNewModel 的实际像素尺寸换算（模型空间 16px = 1 格）：
-    //   高度：模型 y 从 -112（角尖）到 +24（脚底）= 136px = 8.5 格
-    //   宽度：躯干组（胸口+肩甲）x 从 -35 到 +35 = 70px = 4.4 格
-    //         （手臂张开到 ±43 = 5.4 格，按惯例不计入碰撞箱）
-    // 想改大小：等比调小这两个数，并把 SnowDemonRenderer 的 SHADOW_RADIUS 一起改。
     public static final RegistryObject<EntityType<SnowDemonEntity>> SNOW_DEMON = ENTITY_TYPES.register("snow_demon",
             () -> EntityType.Builder.of(SnowDemonEntity::new, MobCategory.MONSTER)
                     .sized(4.4F, 8.5F)
@@ -89,6 +88,12 @@ public class EntityInit {
                     .sized(8.0F, 6.5F)
                     .build("demon_whale"));
 
+    public static final RegistryObject<EntityType<LoneBambooEntity>> LONE_BAMBOO =
+            ENTITY_TYPES.register("lone_bamboo", () -> EntityType.Builder.of(LoneBambooEntity::new, MobCategory.CREATURE)
+                    .sized(0.6F, 1.9F)
+                    .clientTrackingRange(10)
+                    .build("lone_bamboo"));
+
     @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {
 
@@ -97,6 +102,7 @@ public class EntityInit {
             event.registerLayerDefinition(CustomModel.LAYER_LOCATION, CustomModel::createBodyLayer);
             event.registerLayerDefinition(SnowDemonNewModel.LAYER_LOCATION, SnowDemonNewModel::createBodyLayer);
             event.registerLayerDefinition(DemonWhaleModel.LAYER_LOCATION, DemonWhaleModel::createBodyLayer);
+            event.registerLayerDefinition(LoneBambooModel.LAYER_LOCATION, LoneBambooModel::createBodyLayer);
         }
 
         @SubscribeEvent
@@ -108,6 +114,8 @@ public class EntityInit {
             EntityRenderers.register(EntityInit.SNOW_DEMON.get(), SnowDemonRenderer::new);
 
             EntityRenderers.register(EntityInit.DEMON_WHALE.get(), DemonWhaleRenderer::new);
+
+            EntityRenderers.register(EntityInit.LONE_BAMBOO.get(), LoneBambooRenderer::new);
 
             EntityRenderers.register(EntityInit.PLAYER_NPC.get(), PlayerNpcRenderer::new);
         }
@@ -126,6 +134,8 @@ public class EntityInit {
             event.put(EntityInit.ICE_CRYSTAL.get(), IceCrystalEntity.createAttributes().build());
             event.put(EntityInit.SNOW_DEMON.get(), SnowDemonEntity.createAttributes().build());
             event.put(EntityInit.DEMON_WHALE.get(), DemonWhaleEntity.createAttributes().build());
+
+            event.put(EntityInit.LONE_BAMBOO.get(), LoneBambooEntity.createAttributes().build());
 
             event.put(EntityInit.PLAYER_NPC.get(), PlayerNpcEntity.createAttributes().build());
         }

@@ -96,6 +96,10 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.SKILL_PANSHIJUYUAN_1D.get(), "§c《磐石巨猿》第一魂技[石波]");
         add(ModItems.SKILL_PANSHIJUYUAN_1E.get(), "§c《磐石巨猿》第一魂技[磐石之怒]");
 
+        // ===== 特殊魂技（com.TovidY.kunluncontinent.special 包）=====
+        add(ModItems.SKILL_POLE_VAULT.get(), "§b《孤竹》特殊魂技[撑杆跳]");
+        add("skill.pole_vault.description", "消耗%s点精神力，撑杆一跃，原地弹起约6格，落地不会受伤。");
+
         add("无技能","暂无技能描述");
 
         add("skill.pohunqiang.one.description", "消耗%s点精神力，凝结武魂实体化。");
@@ -106,7 +110,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("skill.pohunqiang.six.description", "消耗%s点精神力，释放巨枪：对距离玩家1格面前召唤巨枪落下来像陨石一样砸下来，造成巨额伤害");
         add("skill.pohunqiang.7.description", "开启破魂枪真身：持续增幅自身；维持消耗为普通武魂的10倍，精神力低于上限10%时自动解除，再次释放可提前关闭。开启后进入冷却");
         add("skill.pohunqiang.eight.description","消耗%s点精神力，释放裂空，将自身面前空气斩出虚空，让身处虚空处的敌人每秒收到伤害。");
-        add("skill.pohunqiang.nine.description","消耗%s点精神力，释放弑神：对单独一个生物造成巨额伤害，并给对方附加虚弱2，同时有5%%的概率直接斩杀，并且，斩杀面对玩家时，玩家等级越高，斩杀概率越高");
+        add("skill.pohunqiang.nine.description","消耗%s点精神力，释放弑神：对身前路径上所有生物造成巨额伤害，并附加虚弱2，各有5%%的概率直接斩杀；目标为玩家时，玩家等级越高斩杀概率越高");
 
         add("skill.bakuangji.one.description", "消耗%s点精神力，凝结武魂实体化。");
         add("skill.bahuangji.two.description", "消耗%s点精神力，释放横扫：对面前扇形范围敌人造成伤害");
@@ -144,7 +148,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("skill.panshijuyuan.six.description", "消耗%s点精神力，释放裂地：强制跳起来5格以上高度，狠狠砸向地面，对范围20格内敌人造成高额伤害");
         add("skill.panshijuyuan.7.description", "开启磐石巨猿真身：持续增幅自身；维持消耗为普通武魂的10倍，精神力低于上限10%时自动解除，再次释放可提前关闭。开启后进入冷却");
         add("skill.panshijuyuan.eight.description","消耗%s点精神力，释放憾岳：对面自身前5格内敌人造成极高倍率的伤害");
-        add("skill.panshijuyuan.nine.description","消耗%s点精神力，释放不周倾：对强制跳跃15格，落下后对周围100格范围里敌人造成恐怖伤害，并附加缓慢3，虚弱3，反胃，饥饿时长15秒");
+        add("skill.panshijuyuan.nine.description","消耗%s点精神力，释放不周倾：强制跳跃15格，落地后掀起一道冲击光波向外扩散至80格，光波扫过的敌人受到恐怖伤害，并附加缓慢3、虚弱3、反胃、饥饿，持续15秒");
 
 
         //锻造模版
@@ -564,6 +568,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         //生物蛋
         add(ModItems.ICE_CRYSTAL_SPAWN_EGG.get(), "冰晶刷怪蛋");
         add(ModItems.SNOW_DEMON_SPAWN_EGG.get(), "雪魔刷怪蛋");
+        add(ModItems.LONE_BAMBOO_SPAWN_EGG.get(), "孤竹刷怪蛋");
 
         //实体类
         add(EntityInit.HUNHUAN.get(),"§b魂环");
@@ -573,6 +578,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(EntityInit.SNOW_DEMON.get(),"§b雪魔");
         add(EntityInit.DEMON_WHALE.get(), "§c魔鲸");
         add(EntityInit.PLAYER_NPC.get(),"Steve");
+        add(EntityInit.LONE_BAMBOO.get(), "§2孤竹");
 
         //装备类
         add(ModItems.GRAY_IRON_HELMET.get(),"§8灰铁头盔");

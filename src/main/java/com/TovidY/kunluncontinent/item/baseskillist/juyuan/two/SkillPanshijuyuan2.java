@@ -26,11 +26,6 @@ public class SkillPanshijuyuan2 extends BaseSkillItem {
     }
 
     @Override
-    public int getCooldownTicks() {
-        return 400; // 20秒冷却 (20 * 20)
-    }
-
-    @Override
     public float getDamageMultiplier() {
         return 0f;
     }
