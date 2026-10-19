@@ -37,6 +37,31 @@ public class CoinDropHandler {
     }
 
     public static void tryDropCoins(LivingEntity entity, long nianxian, Player player) {
+        doDropCoins(entity, nianxian, player, 0.0D, 0.0D, 0.0D, 0);
+    }
+
+    /**
+     * 挑战塔专用：触发率 / 钱袋率 / 品质 / 数量都随层数线性提升。
+     *
+     * <p>加成用<b>加在原有数值上的绝对量</b>而不是乘系数：
+     * 原来的触发率已经被 {@code min(0.45, ...)} 压过一次，乘系数在低年限怪身上几乎看不出变化；
+     * 加法才能让"第 1 层 → 第 100 层"有一条稳定可见的曲线。</p>
+     *
+     * @param chanceBonus 触发率加成（0.10+年限加成 之上的绝对百分比）
+     * @param bagBonus    钱袋率加成
+     * @param qualityShift 品质偏移：直接从随机数里减掉，越大越容易出高品质
+     * @param extraCount  额外数量
+     */
+    public static void tryDropCoinsBoosted(LivingEntity entity, long nianxian, Player player,
+                                           double chanceBonus, double bagBonus,
+                                           double qualityShift, int extraCount) {
+        doDropCoins(entity, nianxian, player, chanceBonus, bagBonus, qualityShift, extraCount);
+    }
+
+    /** 唯一实现：普通掉落四项加成全传 0，塔内掉落按层数传值。 */
+    private static void doDropCoins(LivingEntity entity, long nianxian, Player player,
+                                    double chanceBonus, double bagBonus,
+                                    double qualityShift, int extraCount) {
         if (nianxian <= 0) return;
         Boolean testStatus = (player != null) ? COIN_DROP_TEST_MAP.get(player.getUUID()) : null;
         if (testStatus != null) {
@@ -46,7 +71,9 @@ public class CoinDropHandler {
         } else {
             double baseTriggerChance = 0.10;
             double extraChance = getBonusChanceByNianxian(nianxian);
-            double totalTriggerChance = Math.min(0.45, baseTriggerChance + extraChance);
+            // 先按原版上限压到 0.45，再叠加层数加成（普通掉落加成恒为 0，行为与改造前完全一致）
+            double base = Math.min(0.45, baseTriggerChance + extraChance);
+            double totalTriggerChance = Math.min(0.80, base + chanceBonus);
             if (RANDOM.nextDouble() > totalTriggerChance) {
                 return;
             }
@@ -57,20 +84,20 @@ public class CoinDropHandler {
             // 处于 100% 测试模式下，钱袋触发概率提升至 50%（便于快速测试钱袋）
             isBag = RANDOM.nextDouble() < 0.50;
         } else {
-            // 正常逻辑：1% 基础概率，最高15%
-            double bagChance = 0.01 + getBagBonusByNianxian(nianxian);
+            // 正常逻辑：1% 基础概率，最高15%；塔内再叠加层数加成
+            double bagChance = Math.min(0.50, 0.01 + getBagBonusByNianxian(nianxian) + bagBonus);
             isBag = RANDOM.nextDouble() < bagChance;
         }
 
         Item dropItem;
         if (isBag) {
-            dropItem = rollMoneyBag(nianxian, testStatus);
+            dropItem = rollMoneyBag(nianxian, testStatus, qualityShift);
         } else {
-            dropItem = rollSoulCoin(nianxian, testStatus);
+            dropItem = rollSoulCoin(nianxian, testStatus, qualityShift);
         }
 
         if (dropItem != null) {
-            int count = rollDropCount(nianxian, testStatus);
+            int count = rollDropCount(nianxian, testStatus, extraCount);
             ItemStack stack = new ItemStack(dropItem, count);
             entity.spawnAtLocation(stack);
         }
@@ -96,7 +123,12 @@ public class CoinDropHandler {
         return 0.0;
     }
 
-    private static Item rollSoulCoin(long nianxian, Boolean testStatus) {
+    /**
+     * 抽取魂币品质。
+     *
+     * @param qualityShift 品质偏移（塔内按层数从随机数里减掉，越大越容易出高品质）
+     */
+    private static Item rollSoulCoin(long nianxian, Boolean testStatus, double qualityShift) {
         // 测试模式下，概率平分以方便测试每一种品质
         if (Boolean.TRUE.equals(testStatus)) {
             double r = RANDOM.nextDouble();
@@ -105,7 +137,7 @@ public class CoinDropHandler {
             return ModItems.COPPER_SOUL_COIN.get();
         }
 
-        double r = RANDOM.nextDouble();
+        double r = RANDOM.nextDouble() - qualityShift;
         if (nianxian >= 1000000) {
             if (r < 0.70) return ModItems.GOLDEN_SOUL_COIN.get();
             return ModItems.SILVER_SOUL_COIN.get();
@@ -123,7 +155,7 @@ public class CoinDropHandler {
         }
     }
 
-    private static Item rollMoneyBag(long nianxian, Boolean testStatus) {
+    private static Item rollMoneyBag(long nianxian, Boolean testStatus, double qualityShift) {
         if (Boolean.TRUE.equals(testStatus)) {
             double r = RANDOM.nextDouble();
             if (r < 0.33) return ModItems.BIG_MONEY_BAG.get();
@@ -131,7 +163,7 @@ public class CoinDropHandler {
             return ModItems.SMALL_MONEY_BAG.get();
         }
 
-        double r = RANDOM.nextDouble();
+        double r = RANDOM.nextDouble() - qualityShift;
         if (nianxian >= 1000000) {
             if (r < 0.20) return ModItems.BIG_MONEY_BAG.get();
             if (r < 0.50) return ModItems.MIDDLE_MONEY_BAG.get();
@@ -147,11 +179,11 @@ public class CoinDropHandler {
         }
     }
 
-    private static int rollDropCount(long nianxian, Boolean testStatus) {
-        if (Boolean.TRUE.equals(testStatus)) return 3;
-        if (nianxian >= 10000000) return 3 + RANDOM.nextInt(3);
-        if (nianxian >= 100000)  return 2 + RANDOM.nextInt(2);
-        if (nianxian >= 1000)    return 1 + RANDOM.nextInt(2);
-        return 1;
+    private static int rollDropCount(long nianxian, Boolean testStatus, int extraCount) {
+        if (Boolean.TRUE.equals(testStatus)) return 3 + extraCount;
+        if (nianxian >= 10000000) return 3 + RANDOM.nextInt(3) + extraCount;
+        if (nianxian >= 100000)  return 2 + RANDOM.nextInt(2) + extraCount;
+        if (nianxian >= 1000)    return 1 + RANDOM.nextInt(2) + extraCount;
+        return 1 + extraCount;
     }
 }

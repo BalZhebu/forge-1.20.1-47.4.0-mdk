@@ -16,6 +16,23 @@ public class MobTempAttributeManager {
 
     private static final java.util.Set<Mob> ACTIVATED_BINSI = java.util.Collections.newSetFromMap(new java.util.WeakHashMap<>());
 
+    /**
+     * 【回春】词条的登记表：怪物 → 词条等级。
+     *
+     * <p>用 {@link java.util.WeakHashMap} 而不是普通 Map：怪物被卸载/丢弃后
+     * key 自动失效，不需要手动清理，也不会长期持有实体引用导致内存泄漏。</p>
+     */
+    private static final java.util.Map<Mob, Integer> REJUVENATE = new java.util.WeakHashMap<>();
+
+    /** 【回春】的回复间隔（tick）：4 秒一跳。 */
+    private static final int REJUVENATE_INTERVAL = 80;
+
+    /** 登记一条【回春】词条（由 {@code TowerSkillPool} 在注入时调用）。 */
+    public static void registerRejuvenate(Mob mob, int level) {
+        if (mob == null) return;
+        REJUVENATE.put(mob, Math.max(1, Math.min(TowerSkillPool.MAX_LEVEL, level)));
+    }
+
     private static class TempTask {
         final Mob mob;
         final MobAttributeType type; // 改变的属性类型
@@ -91,6 +108,17 @@ public class MobTempAttributeManager {
                     cap.setShengming(Math.min(cap.getShengming(), newMax));
                 }
                 break;
+                // 概率类属性走加算（层数倍率只作用于生命/防御/攻击，副属性不会被倍率放大）
+                // 目前只有「虚影」用 SHANBI，另外两个是给后续词条预留的挂点。
+                case SHANBI:
+                    cap.setShanbi(cap.getShanbi() + amount);
+                    break;
+                case MINGZHONG:
+                    cap.setMingzhong(cap.getMingzhong() + amount);
+                    break;
+                case BAOJILV:
+                    cap.setBaojilv(cap.getBaojilv() + amount);
+                    break;
             }
         });
     }
@@ -100,7 +128,13 @@ public class MobTempAttributeManager {
      */
     @SubscribeEvent
     public static void onServerTick(TickEvent.ServerTickEvent event) {
-        if (event.phase != TickEvent.Phase.END || TASKS.isEmpty()) return;
+        if (event.phase != TickEvent.Phase.END) return;
+
+        // 【回春】与属性任务互不相干：即使一只怪身上只有回春（TASKS 里没有它），也必须被 tick 到，
+        // 所以这一行必须在下面的 TASKS.isEmpty() 早退之前。
+        tickRejuvenate();
+
+        if (TASKS.isEmpty()) return;
 
         Iterator<TempTask> iterator = TASKS.iterator();
         while (iterator.hasNext()) {
@@ -126,6 +160,41 @@ public class MobTempAttributeManager {
                 modifyAttributeValue(task.mob, task.type, -task.amount);
                 SynsAPI.synsEntityAttribute(task.mob);
                 iterator.remove();
+            }
+        }
+    }
+
+    /**
+     * 【回春】被动词条的周期回复。
+     *
+     * <p>直接读 {@code tickCount % 80} 而不是给每只怪维护一个倒计时：
+     * 不需要额外状态，也不会因为怪物中途被 unload 而漏拍。
+     * 死亡/丢弃的怪会在下一次遍历时从 WeakHashMap 里摘掉。</p>
+     */
+    private static void tickRejuvenate() {
+        if (REJUVENATE.isEmpty()) return;
+
+        Iterator<java.util.Map.Entry<Mob, Integer>> iterator = REJUVENATE.entrySet().iterator();
+        while (iterator.hasNext()) {
+            java.util.Map.Entry<Mob, Integer> entry = iterator.next();
+            Mob mob = entry.getKey();
+            if (mob == null || mob.isRemoved() || !mob.isAlive()) {
+                iterator.remove();
+                continue;
+            }
+            if (mob.tickCount % REJUVENATE_INTERVAL != 0) continue;
+            if (mob.getHealth() >= mob.getMaxHealth()) continue;
+
+            var cap = mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY).resolve().orElse(null);
+            float maxHp = cap != null ? cap.getMaxshengming() : mob.getMaxHealth();
+            // 每跳恢复最大生命的 0.8% × 等级系数（10 级约 1.5%）
+            mob.heal(maxHp * 0.008f * TowerSkillPool.levelMultiplier(entry.getValue()));
+            if (cap != null) cap.setShengming(mob.getHealth());
+
+            if (mob.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+                serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.HAPPY_VILLAGER,
+                        mob.getX(), mob.getY() + mob.getBbHeight() * 0.5D, mob.getZ(),
+                        6, 0.3D, 0.4D, 0.3D, 0.0D);
             }
         }
     }

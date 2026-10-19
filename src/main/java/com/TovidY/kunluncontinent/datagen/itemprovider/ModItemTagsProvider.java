@@ -39,5 +39,8 @@ public class ModItemTagsProvider extends ItemTagsProvider {
 
         this.tag(ItemTags.PLANKS)
                 .add(ModBlocks.DIVINE_REALM_PLANKS.get().asItem());
+
+        this.tag(ItemTags.MUSIC_DISCS)
+                .add(ModItems.THRONE_OF_FROZEN_STONE.get());
     }
 }

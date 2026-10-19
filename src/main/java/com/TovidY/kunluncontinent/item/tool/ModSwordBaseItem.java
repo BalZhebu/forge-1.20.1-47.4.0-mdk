@@ -59,21 +59,29 @@ public class ModSwordBaseItem extends SwordItem {
         list.add(Component.translatable("武器附加属性").withStyle(ChatFormatting.DARK_AQUA));
 
         if (gongji > 0) {
-            list.add(Component.translatable("攻击: " + gongji).withStyle(ChatFormatting.YELLOW));
+            list.add(Component.translatable("攻击: +" + num(gongji)).withStyle(ChatFormatting.YELLOW));
         }
+
         if (wuchuan > 0) {
-            list.add(Component.translatable("穿透: " + (int)(wuchuan * 100) + "%").withStyle(ChatFormatting.YELLOW));
+            list.add(Component.translatable("穿透: " + num(wuchuan)).withStyle(ChatFormatting.YELLOW));
         }
+        // 吸血要按战斗公式 x/(x+100) 换算成真实百分比再显示
         if (xixue > 0) {
-            list.add(Component.translatable("吸血: " + (int)(xixue * 100) + "%").withStyle(ChatFormatting.YELLOW));
+            list.add(Component.translatable("吸血: " + String.format("%.1f", xixue / (xixue + 100f) * 100f) + "%")
+                    .withStyle(ChatFormatting.YELLOW));
         }
         if (baoji > 0) {
-            list.add(Component.translatable("暴击率: " + (int)(baoji * 100) + "%").withStyle(ChatFormatting.YELLOW));
+            list.add(Component.translatable("暴击率: " + num(baoji) + "%").withStyle(ChatFormatting.YELLOW));
         }
         if (baojiSh > 0) {
-            list.add(Component.translatable("暴击伤害: " + (int)(baojiSh * 100) + "%").withStyle(ChatFormatting.YELLOW));
+            list.add(Component.translatable("暴击伤害: " + num(baojiSh) + "%").withStyle(ChatFormatting.YELLOW));
         }
 
         list.add(Component.translatable("拿在手上生效").withStyle(ChatFormatting.DARK_GRAY));
+    }
+
+    /** 数值显示：整数不带小数点（60.0 → 60），非整数保留一位。 */
+    private static String num(float value) {
+        return value == (int) value ? String.valueOf((int) value) : String.format("%.1f", value);
     }
 }

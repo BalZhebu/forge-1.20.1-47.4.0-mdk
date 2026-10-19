@@ -22,6 +22,13 @@ import java.util.regex.Pattern;
  *
  * <p><b>注入方式：</b>被动词条写 NBT 标记 / 永久属性，等级同步写入 {@code Skill_XXX_Level} 备用；
  * 主动词条给 goalSelector 挂 AI，等级作为构造参数传入 Goal。</p>
+ *
+ * <p><b>两批词条：</b>第一批是开塔就在用的 13 条（不死/迅速/荆棘/禁空/免伤/壁垒/浑厚/濒死 +
+ * 狂暴/泥沼/瞬移/恢复/恐惧）；第二批 10 条通过 {@link ITowerModifier#getMinFloor()}
+ * 按层数解锁（虚影/回春/噬血/甲鳞/殉爆 + 践踏/缚魂/冰封/玄甲/血祭）。</p>
+ *
+ * <p><b>第二批词条的硬约束：绝不改动任何方块</b> —— 不放冰、不点燃、不生成真正的
+ * {@code Explosion} 实体，全部靠状态/击退/粒子/音效表达。新增词条时请沿用这条约束。</p>
  */
 public class TowerSkillPool {
 
@@ -41,6 +48,16 @@ public class TowerSkillPool {
     public interface ITowerModifier {
         String getName();
         boolean isActive();
+
+        /**
+         * 该词条首次出现的层索引（<b>0 基</b>，即返回 11 表示"第 12 层起才会出现"）。
+         *
+         * <p>默认 0 = 全层可用（老词条全部走默认值，行为不变）。
+         * 新词条靠这个做「随层数解锁」：随机抽取时会过滤掉
+         * {@code getMinFloor() > 当前层} 的条目，手写指定则不受限制
+         * （那是配表时主动决定的，信任配表）。</p>
+         */
+        default int getMinFloor() { return 0; }
 
         /** 1 级注入（兼容老写法）。 */
         void apply(Mob mob);
@@ -298,6 +315,144 @@ public class TowerSkillPool {
                 mob.goalSelector.addGoal(3, new MobKongJuGoal(mob, level));
             }
         });
+
+        // =====================================================================
+        //  第二批词条（随层数解锁）
+        //  getMinFloor 是「0 基层索引」，注释里写的是玩家看到的层数（索引 + 1）。
+        //  共同约束：绝不改动任何方块（不放冰/不点燃/不生成爆炸实体）。
+        // =====================================================================
+
+        // 被动：虚影（第 12 层起）—— 额外闪避 +6% × 等级系数（10 级 +11.4%）
+        SKILL_POOL.add(new ITowerModifier() {
+            @Override public String getName() { return "虚影"; }
+            @Override public boolean isActive() { return false; }
+            @Override public int getMinFloor() { return 11; }
+            @Override public void apply(Mob mob) { apply(mob, 1); }
+            @Override public void apply(Mob mob, int level) {
+                mob.getPersistentData().putInt("Skill_XuYing_Level", level);
+                // 闪避是概率类属性，走加算（层数倍率只放大生命/防御/攻击，闪避不会被乘成"打不中"）
+                MobTempAttributeManager.applyPermanentAttribute(mob, MobAttributeType.SHANBI, 6f * levelMultiplier(level));
+            }
+        });
+
+        // 被动：回春（第 16 层起）—— 每 4 秒回复最大生命 0.8% × 等级系数，
+        // 消费端在 MobTempAttributeManager 的服务器 Tick 里（PERMANENT 属性任务不覆盖它）
+        SKILL_POOL.add(new ITowerModifier() {
+            @Override public String getName() { return "回春"; }
+            @Override public boolean isActive() { return false; }
+            @Override public int getMinFloor() { return 15; }
+            @Override public void apply(Mob mob) { apply(mob, 1); }
+            @Override public void apply(Mob mob, int level) {
+                mob.getPersistentData().putBoolean("Skill_HuiChun_Available", true);
+                mob.getPersistentData().putInt("Skill_HuiChun_Level", level);
+                MobTempAttributeManager.registerRejuvenate(mob, level);
+            }
+        });
+
+        // 被动：噬血（第 20 层起）—— 每次打中玩家回复「本次伤害 20% × 等级系数」的生命，
+        // 消费端在 CombatEventHandler（与属性吸血是两条独立的线）
+        // ⚠️ 基数必须是"造成的伤害"而不是"自身最大生命"：高层怪血量百万级，按百分比回血等于物理免疫
+        SKILL_POOL.add(new ITowerModifier() {
+            @Override public String getName() { return "噬血"; }
+            @Override public boolean isActive() { return false; }
+            @Override public int getMinFloor() { return 19; }
+            @Override public void apply(Mob mob) { apply(mob, 1); }
+            @Override public void apply(Mob mob, int level) {
+                mob.getPersistentData().putBoolean("Skill_ShiXue_Available", true);
+                mob.getPersistentData().putInt("Skill_ShiXue_Level", level);
+            }
+        });
+
+        // 被动：甲鳞（第 24 层起）—— 受到伤害减免 6% × 等级系数（10 级约 11.4%），
+        // 消费端在 CombatEventHandler（在最终伤害算完、写回 event 之前生效）
+        SKILL_POOL.add(new ITowerModifier() {
+            @Override public String getName() { return "甲鳞"; }
+            @Override public boolean isActive() { return false; }
+            @Override public int getMinFloor() { return 23; }
+            @Override public void apply(Mob mob) { apply(mob, 1); }
+            @Override public void apply(Mob mob, int level) {
+                mob.getPersistentData().putBoolean("Skill_JiaLin_Available", true);
+                mob.getPersistentData().putInt("Skill_JiaLin_Level", level);
+            }
+        });
+
+        // 被动：殉爆（第 35 层起）—— 死亡瞬间以自身为圆心爆开，对 5 格内玩家造成
+        // 「玩家最大生命 4% × 等级系数」的魔法伤害；只有粒子与音效，没有 Explosion 实体
+        SKILL_POOL.add(new ITowerModifier() {
+            @Override public String getName() { return "殉爆"; }
+            @Override public boolean isActive() { return false; }
+            @Override public int getMinFloor() { return 34; }
+            @Override public void apply(Mob mob) { apply(mob, 1); }
+            @Override public void apply(Mob mob, int level) {
+                mob.getPersistentData().putBoolean("Skill_XunBao_Available", true);
+                mob.getPersistentData().putInt("Skill_XunBao_Level", level);
+            }
+        });
+
+        // 主动：践踏（第 18 层起）—— 跃向目标，落地砸出 4.5 格冲击波（伤害 + 击退 + 缓慢）
+        SKILL_POOL.add(new ITowerModifier() {
+            @Override public String getName() { return "践踏"; }
+            @Override public boolean isActive() { return true; }
+            @Override public int getMinFloor() { return 17; }
+            @Override public void apply(Mob mob) { apply(mob, 1); }
+            @Override public void apply(Mob mob, int level) {
+                mob.getPersistentData().putBoolean("Skill_JianTa_Active", true);
+                mob.getPersistentData().putInt("Skill_JianTa_Level", level);
+                mob.goalSelector.addGoal(2, new MobJianTaGoal(mob, level));
+            }
+        });
+
+        // 主动：缚魂（第 28 层起）—— 把 12 格内的玩家朝自己拽过来并减速
+        SKILL_POOL.add(new ITowerModifier() {
+            @Override public String getName() { return "缚魂"; }
+            @Override public boolean isActive() { return true; }
+            @Override public int getMinFloor() { return 27; }
+            @Override public void apply(Mob mob) { apply(mob, 1); }
+            @Override public void apply(Mob mob, int level) {
+                mob.getPersistentData().putBoolean("Skill_FuHun_Active", true);
+                mob.getPersistentData().putInt("Skill_FuHun_Level", level);
+                mob.goalSelector.addGoal(2, new MobFuHunGoal(mob, level));
+            }
+        });
+
+        // 主动：冰封（第 33 层起）—— 8 格内玩家缓慢 + 挖掘疲劳（只给状态，不放冰）
+        SKILL_POOL.add(new ITowerModifier() {
+            @Override public String getName() { return "冰封"; }
+            @Override public boolean isActive() { return true; }
+            @Override public int getMinFloor() { return 32; }
+            @Override public void apply(Mob mob) { apply(mob, 1); }
+            @Override public void apply(Mob mob, int level) {
+                mob.getPersistentData().putBoolean("Skill_BingFeng_Active", true);
+                mob.getPersistentData().putInt("Skill_BingFeng_Level", level);
+                mob.goalSelector.addGoal(3, new MobBingFengGoal(mob, level));
+            }
+        });
+
+        // 主动：玄甲（第 40 层起）—— 自身获得抗性提升，短时间硬抗输出
+        SKILL_POOL.add(new ITowerModifier() {
+            @Override public String getName() { return "玄甲"; }
+            @Override public boolean isActive() { return true; }
+            @Override public int getMinFloor() { return 39; }
+            @Override public void apply(Mob mob) { apply(mob, 1); }
+            @Override public void apply(Mob mob, int level) {
+                mob.getPersistentData().putBoolean("Skill_XuanJia_Active", true);
+                mob.getPersistentData().putInt("Skill_XuanJia_Level", level);
+                mob.goalSelector.addGoal(6, new MobXuanJiaGoal(mob, level));
+            }
+        });
+
+        // 主动：血祭（第 46 层起）—— 烧 10% 自身血量，对 6 格内玩家按玩家最大生命 6% 造成真伤
+        SKILL_POOL.add(new ITowerModifier() {
+            @Override public String getName() { return "血祭"; }
+            @Override public boolean isActive() { return true; }
+            @Override public int getMinFloor() { return 45; }
+            @Override public void apply(Mob mob) { apply(mob, 1); }
+            @Override public void apply(Mob mob, int level) {
+                mob.getPersistentData().putBoolean("Skill_XueJi_Active", true);
+                mob.getPersistentData().putInt("Skill_XueJi_Level", level);
+                mob.goalSelector.addGoal(2, new MobXueJiGoal(mob, level));
+            }
+        });
     }
 
     /** 根据词条基础名（不含等级）获取对应的修改器。 */
@@ -309,6 +464,15 @@ public class TowerSkillPool {
     }
 
     /**
+     * 词条池的只读视图，供调试指令（{@code /kunluncontinent tower skills}）与补全使用。
+     * <p>刻意返回不可变视图：外部拿到手就能改池子的话，
+     * "某个词条为什么突然不出现了"会变成一场噩梦。</p>
+     */
+    public static List<ITowerModifier> allSkills() {
+        return Collections.unmodifiableList(SKILL_POOL);
+    }
+
+    /**
      * 词条注入入口（老写法兼容：默认等级 1）。
      *
      * @param mob                 目标怪物
@@ -316,7 +480,7 @@ public class TowerSkillPool {
      * @param randomCount         需要额外随机抽取的数量
      */
     public static void applySkills(Mob mob, List<String> specifiedSkillNames, int randomCount) {
-        applySkills(mob, specifiedSkillNames, randomCount, 1);
+        applySkills(mob, specifiedSkillNames, randomCount, 1, 0);
     }
 
     /**
@@ -332,6 +496,23 @@ public class TowerSkillPool {
      * @param defaultLevel        本层默认词条等级（1~10）
      */
     public static void applySkills(Mob mob, List<String> specifiedSkillNames, int randomCount, int defaultLevel) {
+        applySkills(mob, specifiedSkillNames, randomCount, defaultLevel, 0);
+    }
+
+    /**
+     * 词条注入入口（完整版，带层数）。
+     *
+     * <p>{@code floor} 只影响<b>随机抽取</b>：{@link ITowerModifier#getMinFloor()} 大于当前层的
+     * 词条不会进入随机池，从而实现"新词条随层数解锁"。手写指定（{@code specifiedSkillNames}）
+     * 不受限制 —— 那是配表时的主动决定。</p>
+     *
+     * @param mob                 目标怪物
+     * @param specifiedSkillNames 强制指定的词条名列表
+     * @param randomCount         需要额外随机抽取的数量（随机词条恒为 1 级）
+     * @param defaultLevel        本层默认词条等级（1~10）
+     * @param floor               当前层索引（0 基）；传 0 时仅第一批老词条可随机
+     */
+    public static void applySkills(Mob mob, List<String> specifiedSkillNames, int randomCount, int defaultLevel, int floor) {
         List<SkillRef> finalAppliedSkills = new ArrayList<>();
 
         // 1. 先把强制指定的词条解析并加载进去（无后缀 → 用 defaultLevel；有罗马后缀 → 单点覆盖）
@@ -348,6 +529,8 @@ public class TowerSkillPool {
         // 2. 计算还需要随机抽取多少个（随机词条恒为 1 级）
         if (randomCount > 0 && !SKILL_POOL.isEmpty()) {
             List<ITowerModifier> availablePool = new ArrayList<>(SKILL_POOL);
+            // 层数解锁：还没到登场层的词条不参与随机
+            availablePool.removeIf(modifier -> modifier.getMinFloor() > floor);
             // 【核心去重】：从随机池子里把已经指定的词条无情剔除，绝不重复！
             availablePool.removeIf(modifier -> specifiedSkillNames.stream()
                     .map(raw -> parseSpec(raw).name())

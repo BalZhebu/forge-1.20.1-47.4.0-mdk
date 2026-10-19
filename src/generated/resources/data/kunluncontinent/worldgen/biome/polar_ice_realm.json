@@ -34,7 +34,9 @@
     ],
     [],
     [],
-    [],
+    [
+      "kunluncontinent:polar_spruce"
+    ],
     [
       "minecraft:freeze_top_layer"
     ]

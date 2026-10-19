@@ -58,6 +58,11 @@ public class GuidBookScreen extends AbstractContainerScreen<GuideBookMenu> {
                         + "§c§l请各位玩家务必认真仔细查看§r，基本收录了正常游玩时遇到的§b所有常见攻略§r。 \n\n§c提示：引导书的左侧页面可上下滑动。\n\n"
                         + "§c注意！游玩时尽量用界面尺寸为3进行游玩，否则会出现玩家长按R键呼出技能面板时会出现右侧和左侧的窗口被挡住的BUG！");
 
+        addArticle("游戏技巧攻略",
+                "§l攻略技巧：§r\n"
+                        + "1. §b精神力快速恢复：玩家在黑夜中入睡并成功跳过黑夜时将直接回满精神力§r\n"
+                        + "2. §b§r\n");
+
         addArticle("属性面板系统",
                 "§l属性面板系统：§r\n"
                         + "默认按 §1§lO键§r 打开§b属性面板§r，在属性面板下按住§bShift键§r可查询§b具体数值§r（例如玩家攻击力为10000时自动缩进变为1万，按Shift即可查看具体数值）。");
@@ -114,8 +119,9 @@ public class GuidBookScreen extends AbstractContainerScreen<GuideBookMenu> {
         addArticle("挑战系统",
                 "§l挑战系统：§r\n"
                         + "制作§b挑战石碑§r右键进入维度，右键建筑中心§b战斗石碑§r刷怪。\n"
-                        + "通关层数越高，获得§d神位§r概率越高。\n\n"
-                        + "§c注意：通过挑战塔获得的神位无法自己选择，是§b随机§r从神位库中任选一个神位赋予玩家。");
+                        + "通关层数越高，获得§d神位§r概率越高。"
+                        + "\n当玩家拿到神考再次进行挑战时，此时的挑战塔内生物将正常概率掉落魂环，并且层数越高，掉落的内丹、内丹品质、魂骨、魂币、魂币品质的概率全面提高，最高可提高一倍。"
+                        + "\n\n§c注意：通过挑战塔获得的神位无法自己选择，是§b随机§r从神位库中任选一个神位赋予玩家。");
 
         addArticle("重修与转世",
                 "§l重修&转世系统：§r\n"
@@ -132,6 +138,10 @@ public class GuidBookScreen extends AbstractContainerScreen<GuideBookMenu> {
         addArticle("深海遗迹",
                 "§l深海遗迹：§r\n"
                         + "通过【§b深海之眼§r】寻找，使用方法与§b末影之眼§r一致。 \n\n可用此眼寻找海底祭坛的遗迹。 \n使用物品【深海祭品】右键海底祭坛可召唤【魔鲸】");
+
+        addArticle("废弃丹房遗址",
+                "§l废弃丹房遗址：§r\n"
+                        + "主世界的地表以及高度0格以上都会生成 \n\n遗迹内会随机生成3~7阶的炼丹炉 \n生成的两个箱子内的物品可以更快度过前期");
 
         addArticle("聚灵台阵",
                 "§l聚灵台阵：§r\n"

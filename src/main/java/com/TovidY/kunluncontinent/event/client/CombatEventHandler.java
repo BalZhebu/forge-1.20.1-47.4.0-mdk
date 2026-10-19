@@ -2,12 +2,14 @@ package com.TovidY.kunluncontinent.event.client;
 
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
+import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.potion.ModEffects;
 import com.TovidY.kunluncontinent.render.DamageIndicatorRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
@@ -29,6 +31,14 @@ public class CombatEventHandler {
     private static final float MIANSHANG_PROC_CHANCE = 0.10f;
     private static final float THORNS_PROC_CHANCE = 0.10f;
     private static final float THORNS_REFLECT_RATIO = 0.50f;
+
+    /**
+     * 塔词条【甲鳞】的减伤上限。
+     *
+     * <p>单条词条 1 级只减 6%，10 级约 11.4%（{@code 6% × 1.9}），远远够不到这个上限；
+     * 留着是为了防止以后"多个减伤来源叠加"时把伤害压到 0（同 0.05 的伤害下限思路）。</p>
+     */
+    private static final float JIALIN_MAX_REDUCE = 0.60f;
 
     /**
      * 特殊特效的<b>基础</b>触发概率（0~1）。
@@ -81,6 +91,47 @@ public class CombatEventHandler {
      */
     private static final float MIN_DAMAGE_FACTOR = 0.05f;
 
+    /**
+     * 穿透对防御的<b>半效系数</b>：穿透 = 防御 × 本值时，恰好削掉 50% 防御。
+     *
+     * <h3>为什么穿透不能再用减法</h3>
+     * <p>旧实现是 {@code effectiveFangyu = max(0, fangyu - wuchuan)} —— 纯粹的<b>点数相减</b>。
+     * 于是「穿透 ≥ 防御」时防御归零、减伤系数恒为 {@code 1.0}，
+     * <b>所有防御低于玩家穿透的怪物，伤害数字一模一样</b>。
+     * 实测：陆离剑 280 穿透（点满物穿 557）对上万年以内所有怪（防御上限 300 / 削弱后 105），
+     * 全部被穿成 0，玩家看到的就是"十年、百年、千年、万年，打出来伤害完全相同"。</p>
+     *
+     * <h3>现在的写法</h3>
+     * <p>削减比例取决于「穿透 / 防御」的<b>比值</b>而不是绝对点数：</p>
+     * <pre>
+     *   p = wuchuan / fangyu
+     *   reduce = p / (p + 0.25)          // 0 → 0%，0.25 → 50%，1 → 80%，4 → 94%
+     *   effectiveFangyu = fangyu × (1 - reduce)
+     * </pre>
+     * <p>削减比例永远到不了 100%，防御不会被"清零"，因此每条年限的伤害都不同且连续
+     * （穿透从 {@code f-1} 涨到 {@code f} 时不会再出现断崖）。</p>
+     *
+     * <p>取 0.25 的含义：穿透堆到与目标防御<b>同量级</b>时，能削掉约 80% 防御；
+     * 想进一步逼近"无视防御"需要指数级的溢出，避免一把剑通吃所有档位。</p>
+     */
+    private static final float PIERCE_HALF_RATIO = 0.25f;
+
+    /**
+     * <b>溢出穿透</b>的额外增伤上限（35%）。
+     *
+     * <p>当 {@code 穿透 > 防御}（即把对方防御整段盖过）时，超出的部分不再是"无效溢出"，
+     * 而是转化为对最终伤害的加成 —— 这就是"穿透够高时打脆皮更疼"的手感来源。</p>
+     */
+    private static final float MAX_OVERFLOW_BONUS = 0.35f;
+
+    /**
+     * 溢出增伤的<b>半效点</b>（单位：穿透点数）：溢出该点数时拿到上限的一半。
+     *
+     * <p>用饱和曲线而不是线性，避免高穿透武器在低防目标上无限放大：
+     * 溢出 200 → +11.7%，400 → +17.5%，1200 → +26.3%，永远不超过 +35%。</p>
+     */
+    private static final float OVERFLOW_SOFTNESS = 400f;
+
     private static final float EFFECT_TEAR = 0.225f;      // 撕裂
     private static final float EFFECT_ARMOR_PIERCE = 0.45f; // 破甲
     private static final float EFFECT_SCORCH = 0.675f;    // 燃烧
@@ -96,6 +147,40 @@ public class CombatEventHandler {
     private static float getDamageFactor(float effectiveFangyu) {
         if (effectiveFangyu <= 0.0f) return 1.0f;
         return Math.max(MIN_DAMAGE_FACTOR, 100f / (100f + effectiveFangyu));
+    }
+
+    /**
+     * 穿透削减后的<b>有效防御</b>。
+     *
+     * <p>按「穿透 / 防御」的比值削减（详见 {@link #PIERCE_HALF_RATIO}），
+     * 结果恒 {@code > 0}（除非原本就是 0），因此不会出现"防御被清零 → 伤害完全相同"的饱和。</p>
+     *
+     * @param fangyu  目标原始防御
+     * @param wuchuan 攻击者穿透点数
+     */
+    private static float applyPierce(float fangyu, float wuchuan) {
+        if (fangyu <= 0.0f) return 0.0f;
+        if (wuchuan <= 0.0f) return fangyu;
+        float p = wuchuan / fangyu;
+        float reduce = p / (p + PIERCE_HALF_RATIO);
+        return fangyu * (1.0f - reduce);
+    }
+
+    /**
+     * <b>溢出穿透</b>的伤害倍率（{@code >= 1.0}）。
+     *
+     * <p>只有 {@code 穿透 > 防御} 时才生效：溢出点数走饱和曲线映射到
+     * {@code [1.0, 1 + MAX_OVERFLOW_BONUS]}。这是对"穿光防御"的补偿，
+     * 让高穿透在面对低防目标时有明确收益，而不是只把防御削到 0 就结束。</p>
+     *
+     * @param fangyu  目标原始防御
+     * @param wuchuan 攻击者穿透点数
+     * @return 最终伤害的乘数
+     */
+    private static float getOverflowDamageMultiplier(float fangyu, float wuchuan) {
+        float overflow = wuchuan - fangyu;
+        if (overflow <= 0.0f) return 1.0f;
+        return 1.0f + MAX_OVERFLOW_BONUS * overflow / (overflow + OVERFLOW_SOFTNESS);
     }
 
     private static float getFlyingDamageMultiplier(Player player) {
@@ -153,11 +238,16 @@ public class CombatEventHandler {
 
         boolean isSkillDamage = com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem.isSkillDamage(target);
 
-        float effectiveFangyu = Math.max(0, fangyu - wuchuan);
+        // ==================== 防御减伤：穿透按比例削减 + 溢出增伤 ====================
+        // 旧写法是 max(0, fangyu - wuchuan)：穿透一旦 ≥ 防御就把防御清零，
+        // 所有低防怪的伤害数字完全相同。现在改为比值削减（永不清零）+ 溢出补偿。
+        float effectiveFangyu = applyPierce(fangyu, wuchuan);
         float reductionFactor = getDamageFactor(effectiveFangyu);
+        float overflowMultiplier = getOverflowDamageMultiplier(fangyu, wuchuan);
         float baseDamage = isSkillDamage
                 ? event.getAmount() * reductionFactor
                 : (gongji + event.getAmount()) * reductionFactor;
+        baseDamage *= overflowMultiplier;
 
         if (attacker instanceof Player player) {
             baseDamage *= getFlyingDamageMultiplier(player);
@@ -187,11 +277,38 @@ public class CombatEventHandler {
         }
 
         finalDamage = Math.max(0.1f, finalDamage);
+
+        // ==================== 塔词条【甲鳞】：受到伤害减免 ====================
+        // 放在写回 event 之前：这是最后一道乘法，减伤对"已经算完的最终伤害"生效，
+        // 与攻防公式、暴击、特殊特效都不冲突。
+        if (target.getPersistentData().getBoolean("Skill_JiaLin_Available")) {
+            float reduce = Math.min(JIALIN_MAX_REDUCE,
+                    0.06f * towerSkillLevelMultiplier(target, "Skill_JiaLin_Level"));
+            finalDamage *= (1.0f - reduce);
+        }
+
         event.setAmount(finalDamage);
 
         CombatDamageBackupHandler.record(target, finalDamage);
 
         handleLifesteal(attacker, finalDamage);
+
+        // ==================== 塔词条【噬血】：打中玩家时按"造成的伤害"回血 ====================
+        // ⚠️ 不能按自身最大生命的百分比回：塔内高层怪物血量是百万级，
+        // 每刀回 2% 就是几万血，等于物理免疫。按实际伤害的 20% × 等级系数（10 级 38%）才可控。
+        if (attacker instanceof Mob mob && target instanceof Player
+                && mob.getPersistentData().getBoolean("Skill_ShiXue_Available")) {
+            float maxHp = mob.getMaxHealth();
+            float heal = finalDamage * 0.20f * towerSkillLevelMultiplier(mob, "Skill_ShiXue_Level");
+            if (mob.getHealth() < maxHp) {
+                mob.heal(heal);
+                // 保持 capability 里的生命镜像与真实血量一致（恢复/濒死等逻辑都依赖它）
+                mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY)
+                        .ifPresent(cap -> cap.setShengming(mob.getHealth()));
+                Vec3 healPos = new Vec3(mob.getX(), mob.getY() + mob.getBbHeight() + 0.2D, mob.getZ());
+                DamageIndicatorRenderer.addIndicator("+" + fmt(heal), 0xFF00FF00, healPos);
+            }
+        }
 
         if (attacker instanceof Player player) {
 
@@ -223,6 +340,15 @@ public class CombatEventHandler {
             float healAmount = (xixueValue / (xixueValue + 100f)) * damage;
             attacker.heal(healAmount);
         }
+    }
+
+    /**
+     * 读取塔词条等级并换算成强度系数（1 级 = 1.0，10 级 = 1.9）。
+     * 没写等级（0）按 1 级处理，避免老存档里的怪出现 0 强度词条。
+     */
+    private static float towerSkillLevelMultiplier(LivingEntity entity, String levelKey) {
+        int level = entity.getPersistentData().getInt(levelKey);
+        return com.TovidY.kunluncontinent.tower.skill.TowerSkillPool.levelMultiplier(level <= 0 ? 1 : level);
     }
 
     /**

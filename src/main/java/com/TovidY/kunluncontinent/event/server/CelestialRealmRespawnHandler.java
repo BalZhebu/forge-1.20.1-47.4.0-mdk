@@ -164,19 +164,14 @@ public class CelestialRealmRespawnHandler {
         ServerLevel overworld = player.server.overworld();
         if (overworld == null) return;   // 理论上不会发生，防御性返回
 
-        // 1. 算目标位置：**只在"重生点确实在主世界"时复用它的坐标**。
-        //    否则（例如玩家在末地/下界设过重生点）会拿"别的维度的坐标"传送到主世界 → 传到荒野。
-        //    这种情况一律退回主世界世界出生点。
         BlockPos target = player.getRespawnPosition();
         boolean spawnInOverworld = player.getRespawnDimension() == Level.OVERWORLD;
         if (target == null || !spawnInOverworld) {
             target = overworld.getSharedSpawnPos();
         }
 
-        // 2. 改写重生点为"主世界 + target"，否则下次在神界死亡又会回到失效位置
         player.setRespawnPosition(Level.OVERWORLD, target, player.getYRot(), false, false);
 
-        // 3. 传送（不重置能力、不发死亡消息）
         player.teleportTo(
                 overworld,
                 target.getX() + 0.5D,

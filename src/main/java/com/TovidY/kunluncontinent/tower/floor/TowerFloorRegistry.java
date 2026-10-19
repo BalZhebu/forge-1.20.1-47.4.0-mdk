@@ -9,10 +9,12 @@ import java.util.Map;
 /**
  * 挑战塔关卡表（共 100 层，全部显式手写，无公式生成）。
  *
- * <p>每层 = (基础年限, 限时秒, 全属性倍率, 词条等级, 刷怪配置...)。</p>
+ * <p>每层 = (基础年限, 限时秒, 核心三围倍率, 词条等级, 刷怪配置...)。</p>
  * <ul>
  *   <li><b>基础年限</b>：决定怪物全属性的基础值（{@code MobAttributeCapability.initNianxian}）；</li>
- *   <li><b>全属性倍率</b>：本层所有怪物的 11 项属性整体再乘该系数；</li>
+ *   <li><b>核心三围倍率</b>：本层所有怪物的<b>生命 / 防御 / 攻击</b>再乘该系数。
+ *       ⚠️ 只放大这三项 —— 闪避/吸血/暴击等比率型副属性若也乘倍率会直接把平衡搞崩
+ *       （详见 {@code MobAttributeCapability#applyAttributeMultiplier} 的注释）；</li>
  *   <li><b>词条等级</b>：一个数字管整层（1级=原始强度，每级+10%），显示自动拼罗马数字；
  *       个别词条想脱离整层等级，在名字后手写罗马后缀（{@code "狂暴 V"}）即可覆盖；</li>
  *   <li><b>刷怪配置</b>：每条 {@link MonsterConfig} 自带数量参数，一层的怪物总数 = 各条 count 之和。</li>
@@ -23,6 +25,25 @@ import java.util.Map;
  *
  * <p><b>神位概率</b>（在 {@code KLivingDeathEvent}）：基础 0.5% × 层数，整五层 ×1.5、
  * 整十层 ×2 —— 曲线恰好第 100 层 = 100%（必出），已预留。</p>
+ *
+ * <h3>第二批词条的登场层（"随层数解锁"）</h3>
+ * <p>词条本体在 {@code TowerSkillPool}，每条带 {@code getMinFloor()}：
+ * 随机抽取会自动跳过还没到登场层的条目，所以低层不会莫名其妙冒出高层词条；
+ * 下表是<b>手写指定</b>的登场层（也是该词条第一次能被玩家看到的地方）。</p>
+ * <ul>
+ *   <li>第 12 层 —— 被动【虚影】（额外闪避）</li>
+ *   <li>第 16 层 —— 被动【回春】（周期回血）</li>
+ *   <li>第 18 层 —— 主动【践踏】（跃击 + 冲击波击退）</li>
+ *   <li>第 20 层 —— 被动【噬血】（击中回血，数值爆炸层）</li>
+ *   <li>第 24 层 —— 被动【甲鳞】（受伤减免，属性爆炸层）</li>
+ *   <li>第 28 层 —— 主动【缚魂】（把玩家拽过来）</li>
+ *   <li>第 33 层 —— 主动【冰封】（缓慢 + 挖掘疲劳）</li>
+ *   <li>第 35 层 —— 被动【殉爆】（死亡余波，属性爆炸层）</li>
+ *   <li>第 40 层 —— 主动【玄甲】（自身抗性提升，数值爆炸层）</li>
+ *   <li>第 46 层 —— 主动【血祭】（自伤换范围真伤）</li>
+ *   <li>第 100 层 —— 血祭 / 冰封 / 殉爆 / 玄甲 全上，终局阵容</li>
+ * </ul>
+ * <p>共同约束：<b>这批词条绝不改动任何方块</b>（不放冰、不点燃、不生成 Explosion 实体）。</p>
  */
 public class TowerFloorRegistry {
 
@@ -30,7 +51,7 @@ public class TowerFloorRegistry {
         public final List<MonsterConfig> monsters;
         public final int timeLimitSeconds;
         public final long baseNianxian;
-        /** 本层怪物全属性倍率（1.0 = 原样）。 */
+        /** 本层怪物「生命 / 防御 / 攻击」倍率（1.0 = 原样；副属性不受影响）。 */
         public final float attributeMultiplier;
         /** 本层默认词条等级（1~10），作用于所有未手写罗马后缀的指定词条。 */
         public final int skillLevel;
@@ -51,7 +72,6 @@ public class TowerFloorRegistry {
         return new ResourceLocation("kunluncontinent", path);
     }
 
-    // 常用怪物 id，缩短下面表格的书写
     private static final ResourceLocation ZOMBIE = new ResourceLocation("minecraft", "zombie");
     private static final ResourceLocation HUSK = new ResourceLocation("minecraft", "husk");
     private static final ResourceLocation SKELETON = new ResourceLocation("minecraft", "skeleton");
@@ -122,7 +142,7 @@ public class TowerFloorRegistry {
 
         registerFloor(11, 1200000L, 45, 2.0f, 2,
                 new MonsterConfig(ZOMBIE, 2, 2),
-                new MonsterConfig(SKELETON, 1, 2)
+                new MonsterConfig(SKELETON, 1, 1, "虚影")
         );
 
         registerFloor(12, 1300000L, 40, 2.1f, 2,
@@ -148,7 +168,7 @@ public class TowerFloorRegistry {
         );
 
         registerFloor(16, 1800000L, 45, 2.4f, 2,
-                new MonsterConfig(ZOMBIE, 3, 3),
+                new MonsterConfig(ZOMBIE, 3, 3, "回春"),
                 new MonsterConfig(STRAY, 1, 2, "迅速")
         );
 
@@ -159,7 +179,7 @@ public class TowerFloorRegistry {
 
         registerFloor(18, 2000000L, 50, 2.6f, 2,
                 new MonsterConfig(ZOMBIE, 2, 4),
-                new MonsterConfig(SKELETON, 2, 2, "泥沼"),
+                new MonsterConfig(SKELETON, 2, 1, "泥沼", "践踏"),
                 new MonsterConfig(STRAY, 1, 1)
         );
 
@@ -167,11 +187,11 @@ public class TowerFloorRegistry {
         registerFloor(19, 2150000L, 55, 3.2f, 3,
                 new MonsterConfig(ZOMBIE, 3, 3, "浑厚"),
                 new MonsterConfig(HUSK, 2, 2),
-                new MonsterConfig(WITHER_SKELETON, 1, 2, "恐惧")
+                new MonsterConfig(WITHER_SKELETON, 1, 2, "恐惧", "噬血")
         );
 
         // =====================================================================
-        // 第三阶段（第 21~30 层）：词条 3 级，雪魔登场
+        // 第三阶段（第 21~30 层）：词条 3 级
         // =====================================================================
         registerFloor(20, 2300000L, 55, 2.7f, 3,
                 new MonsterConfig(ZOMBIE, 3, 4),
@@ -201,7 +221,7 @@ public class TowerFloorRegistry {
         registerFloor(24, 3000000L, 65, 3.8f, 4,
                 new MonsterConfig(ZOMBIE, 4, 3),
                 new MonsterConfig(STRAY, 2, 2, "泥沼"),
-                new MonsterConfig(SKELETON, 2, 3, "免伤")
+                new MonsterConfig(SKELETON, 2, 2, "免伤", "甲鳞")
         );
 
         registerFloor(25, 3200000L, 65, 3.1f, 4,
@@ -219,7 +239,7 @@ public class TowerFloorRegistry {
         registerFloor(27, 3600000L, 70, 3.3f, 4,
                 new MonsterConfig(ZOMBIE, 3, 3),
                 new MonsterConfig(SKELETON, 3, 3, "瞬移", "恐惧"),
-                new MonsterConfig(STRAY, 2, 2)
+                new MonsterConfig(STRAY, 2, 2, "缚魂")
         );
 
         registerFloor(28, 3800000L, 70, 3.4f, 4,
@@ -261,7 +281,7 @@ public class TowerFloorRegistry {
                 new MonsterConfig(ZOMBIE, 3, 4),
                 new MonsterConfig(HUSK, 2, 2, "浑厚", "壁垒"),
                 new MonsterConfig(SKELETON, 3, 3, "瞬移"),
-                new MonsterConfig(STRAY, 2, 2)
+                new MonsterConfig(STRAY, 2, 2, "冰封")
         );
 
         // ---- 第 35 层【属性爆炸】 ----
@@ -269,7 +289,7 @@ public class TowerFloorRegistry {
                 new MonsterConfig(ZOMBIE, 3, 4, "狂暴"),
                 new MonsterConfig(HUSK, 2, 2, "浑厚", "壁垒"),
                 new MonsterConfig(SKELETON, 3, 3, "瞬移", "恐惧"),
-                new MonsterConfig(STRAY, 1, 2, "迅速")
+                new MonsterConfig(STRAY, 1, 2, "迅速", "殉爆")
         );
 
         registerFloor(35, 5600000L, 85, 3.9f, 4,
@@ -302,7 +322,7 @@ public class TowerFloorRegistry {
                 new MonsterConfig(ZOMBIE, 3, 4, "狂暴"),
                 new MonsterConfig(HUSK, 2, 2, "浑厚", "壁垒"),
                 new MonsterConfig(WITHER_SKELETON, 3, 3, "瞬移", "恐惧"),
-                new MonsterConfig(STRAY, 2, 2, "迅速")
+                new MonsterConfig(STRAY, 2, 2, "迅速", "玄甲")
         );
 
         // =====================================================================
@@ -346,7 +366,7 @@ public class TowerFloorRegistry {
         );
 
         registerFloor(46, 8200000L, 107, 4.8f, 5,
-                new MonsterConfig(ZOMBIE, 3, 3),
+                new MonsterConfig(ZOMBIE, 3, 3, "血祭"),
                 new MonsterConfig(SKELETON, 2, 2),
                 new MonsterConfig(HUSK, 1, 2, "壁垒")
         );
@@ -656,15 +676,15 @@ public class TowerFloorRegistry {
                 new MonsterConfig(STRAY, 2, 2)
         );
 
-        // ---- 第 100 层【终极数值爆炸】：全属性 ×12，词条满级，通关必出神位 ----
+        // ---- 第 100 层【终极数值爆炸】：生命/防御/攻击 ×12，词条满级，通关必出神位 ----
         registerFloor(99, 18800000L, 160, 12.0f, 10,
-                new MonsterConfig(ZOMBIE, 5, 4, "狂暴"),
-                new MonsterConfig(STRAY, 3, 3, "恐惧"),
-                new MonsterConfig(WITHER_SKELETON, 2, 3, "瞬移")
+                new MonsterConfig(ZOMBIE, 5, 3, "狂暴", "血祭"),
+                new MonsterConfig(STRAY, 3, 3, "恐惧", "冰封"),
+                new MonsterConfig(WITHER_SKELETON, 2, 3, "瞬移", "殉爆", "玄甲")
         );
     }
 
-    /** 完整注册（含全属性倍率 + 词条等级）。 */
+    /** 完整注册（含核心三围倍率 + 词条等级）。 */
     private static void registerFloor(int floorIndex, long nianxian, int timeLimitSeconds,
                                       float attributeMultiplier, int skillLevel, MonsterConfig... monsters) {
         REGISTRY.put(floorIndex, new FloorData(List.of(monsters), timeLimitSeconds, nianxian, attributeMultiplier, skillLevel));

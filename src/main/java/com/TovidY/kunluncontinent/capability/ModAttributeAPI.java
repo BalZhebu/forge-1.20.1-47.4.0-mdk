@@ -44,6 +44,35 @@ public class ModAttributeAPI {
         return AttributePointSpec.applyBonusByKey(key, nakedValue, entity);
     }
 
+    /**
+     * 手持剑（{@link ModSwordBaseItem}）的自定义属性值。
+     *
+     * <p><b>单位约定（改武器数值前务必看）：</b></p>
+     * <ul>
+     *   <li>{@code gongji} —— 点数，并入攻击力；</li>
+     *   <li>{@code wuchuan} —— 点数，战斗里是「目标防御 − 穿透」的减防，<b>不是百分比</b>；</li>
+     *   <li>{@code xixue} —— 点数，实际吸血率 = {@code x / (x + 100)}；</li>
+     *   <li>{@code baojilv} —— 百分点；</li>
+     *   <li>{@code baojishanghai} —— 百分点，100 = 1.0 倍。</li>
+     * </ul>
+     *
+     * <p>耐久只剩 1 点时视为失效（与原实现一致）。目前只有玩家会持剑：
+     * NPC 走 {@code npcAttr} 提前返回，不会走到这里。</p>
+     */
+    private static float mainHandSwordAttr(LivingEntity living, String key) {
+        ItemStack mainHand = living.getMainHandItem();
+        if (mainHand.isEmpty() || !(mainHand.getItem() instanceof ModSwordBaseItem sword)) return 0f;
+        if (mainHand.getMaxDamage() - mainHand.getDamageValue() <= 1) return 0f;
+        return switch (key) {
+            case "gongji" -> sword.getGongji(mainHand);
+            case "wuchuan" -> sword.getWuchuan(mainHand);
+            case "xixue" -> sword.getXixue(mainHand);
+            case "baojilv" -> sword.getBaoji(mainHand);
+            case "baojishanghai" -> sword.getBaojiShanghai(mainHand);
+            default -> 0f;
+        };
+    }
+
     private static float getBoneBonus(Player player, String key) {
         return player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
                 .map(cap -> cap.getBoneOnlyStats().getOrDefault(key, 0f))
@@ -199,8 +228,13 @@ public class ModAttributeAPI {
 
         float value = 0;
         if (entity instanceof Player player) {
-            value += withPoints(entity, "gongji", player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
-                    .map(PlayerAttributeCapability::getGongji).orElse(0f));
+            // ⚠️ 武器攻击必须并入「加点乘算」的基数：
+            //    原实现是先 withPoints(裸基础值)，之后才 += 武器攻击，
+            //    于是 99 点强攻（+148.5%）只放大了几十~几百的裸基础，剑上的 +60~1100 一点没吃到。
+            float baseGongji = player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
+                    .map(PlayerAttributeCapability::getGongji).orElse(0f);
+            baseGongji += mainHandSwordAttr(player, "gongji");
+            value += withPoints(entity, "gongji", baseGongji);
 
             value += getWuhunBonus(player, MobAttributeCapability::getGongji);
             value += getBoneBonus(player, "gongji");
@@ -212,12 +246,6 @@ public class ModAttributeAPI {
         }
 
         if (entity instanceof LivingEntity livingEntity) {
-            ItemStack mainHand = livingEntity.getMainHandItem();
-            if (!mainHand.isEmpty() && mainHand.getItem() instanceof ModSwordBaseItem swordItem) {
-                if (mainHand.getMaxDamage() - mainHand.getDamageValue() > 1) {
-                    value += swordItem.getGongji(mainHand);
-                }
-            }
             Map<MobEffect, MobEffectInstance> activeEffectsMap = livingEntity.getActiveEffectsMap();
             for (Map.Entry<MobEffect, MobEffectInstance> entry : activeEffectsMap.entrySet()) {
                 MobEffect effect = entry.getKey();
@@ -279,12 +307,18 @@ public class ModAttributeAPI {
 
             for (ItemStack armorSlot : armorSlots) {
                 if (armorSlot.isEmpty()
-                        || !(armorSlot.getItem() instanceof ModArmorBaseItem)
+                        || !(armorSlot.getItem() instanceof ModArmorBaseItem armorItem)
                         || armorSlot.getMaxDamage() - armorSlot.getDamageValue() <= 1) {
 
                     isFullArmor = false;
                     break;
                 }
+
+                // 单件防御：剩余耐久 × 0.01。
+                // ⚠️ 这里曾经漏掉 —— ModArmorBaseItem#setWufang 写好了却没有任何调用点，
+                //    于是 tooltip 上写着「防御力：+16」，实际防御聚合里根本没有这一项。
+                //    与 getMaxshengming 的单件循环保持对称：每件独立生效，不要求成套。
+                baseFangyu += armorItem.setWufang(armorSlot, baseFangyu);
             }
 
             if (isFullArmor) {
@@ -437,8 +471,10 @@ public class ModAttributeAPI {
 
         float value = 0;
         if (entity instanceof Player player) {
-            value += withPoints(entity, "baojilv", player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
-                    .map(PlayerAttributeCapability::getBaojilv).orElse(0f));
+            float baseBaojilv = player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
+                    .map(PlayerAttributeCapability::getBaojilv).orElse(0f);
+            baseBaojilv += mainHandSwordAttr(player, "baojilv");
+            value += withPoints(entity, "baojilv", baseBaojilv);
             value += getBoneBonus(player, "baojilv");
             value += getPermanentBonus(player, "baojilv");
         }
@@ -447,15 +483,6 @@ public class ModAttributeAPI {
                     .map(MobAttributeCapability::getBaojilv).orElse(0f);
         }
 
-        if (entity instanceof LivingEntity livingEntity) {
-            ItemStack mainHand = livingEntity.getMainHandItem();
-            if (!mainHand.isEmpty() && mainHand.getItem() instanceof ModSwordBaseItem swordItem) {
-                if (mainHand.getMaxDamage() - mainHand.getDamageValue() > 1) {
-                    value += swordItem.getBaoji(mainHand);
-                }
-            }
-        }
-        
         if (entity instanceof LivingEntity livingEntity) {
             Map<MobEffect, MobEffectInstance> activeEffectsMap = livingEntity.getActiveEffectsMap();
             for (Map.Entry<MobEffect, MobEffectInstance> entry : activeEffectsMap.entrySet()) {
@@ -474,8 +501,10 @@ public class ModAttributeAPI {
 
         float value = 0;
         if (entity instanceof Player player) {
-            value += withPoints(entity, "baojishanghai", player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
-                    .map(PlayerAttributeCapability::getBaojishanghai).orElse(0f));
+            float baseBaojishanghai = player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
+                    .map(PlayerAttributeCapability::getBaojishanghai).orElse(0f);
+            baseBaojishanghai += mainHandSwordAttr(player, "baojishanghai");
+            value += withPoints(entity, "baojishanghai", baseBaojishanghai);
             value += getBoneBonus(player, "baojishanghai");
             value += getPermanentBonus(player, "baojishanghai");
         }
@@ -484,15 +513,6 @@ public class ModAttributeAPI {
                     .map(MobAttributeCapability::getBaojishanghai).orElse(0f);
         }
 
-        if (entity instanceof LivingEntity livingEntity) {
-            ItemStack mainHand = livingEntity.getMainHandItem();
-            if (!mainHand.isEmpty() && mainHand.getItem() instanceof ModSwordBaseItem swordItem) {
-                if (mainHand.getMaxDamage() - mainHand.getDamageValue() > 1) {
-                    value += swordItem.getBaojiShanghai(mainHand);
-                }
-            }
-        }
-        
         if (entity instanceof LivingEntity livingEntity) {
             Map<MobEffect, MobEffectInstance> activeEffectsMap = livingEntity.getActiveEffectsMap();
             for (Map.Entry<MobEffect, MobEffectInstance> entry : activeEffectsMap.entrySet()) {
@@ -511,23 +531,16 @@ public class ModAttributeAPI {
 
         float value = 0;
         if (entity instanceof Player player) {
-            value += withPoints(entity, "xixue", player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
-                    .map(PlayerAttributeCapability::getXixue).orElse(0f));
+            float baseXixue = player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
+                    .map(PlayerAttributeCapability::getXixue).orElse(0f);
+            baseXixue += mainHandSwordAttr(player, "xixue");
+            value += withPoints(entity, "xixue", baseXixue);
             value += getBoneBonus(player, "xixue");
             value += getPermanentBonus(player, "xixue");
         }
         if (entity instanceof Mob mob) {
             value += mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY)
                     .map(MobAttributeCapability::getXixue).orElse(0f);
-        }
-
-        if (entity instanceof LivingEntity livingEntity) {
-            ItemStack mainHand = livingEntity.getMainHandItem();
-            if (!mainHand.isEmpty() && mainHand.getItem() instanceof ModSwordBaseItem swordItem) {
-                if (mainHand.getMaxDamage() - mainHand.getDamageValue() > 1) {
-                    value += swordItem.getXixue(mainHand);
-                }
-            }
         }
 
         if (entity instanceof LivingEntity livingEntity) {
@@ -548,23 +561,16 @@ public class ModAttributeAPI {
 
         float value = 0;
         if (entity instanceof Player player) {
-            value += withPoints(entity, "wuchuan", player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
-                    .map(PlayerAttributeCapability::getWuchuan).orElse(0f));
+            float baseWuchuan = player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
+                    .map(PlayerAttributeCapability::getWuchuan).orElse(0f);
+            baseWuchuan += mainHandSwordAttr(player, "wuchuan");
+            value += withPoints(entity, "wuchuan", baseWuchuan);
             value += getBoneBonus(player, "wuchuan");
             value += getPermanentBonus(player, "wuchuan");
         }
         if (entity instanceof Mob mob) {
             value += mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY)
                     .map(MobAttributeCapability::getWuchuan).orElse(0f);
-        }
-
-        if (entity instanceof LivingEntity livingEntity) {
-            ItemStack mainHand = livingEntity.getMainHandItem();
-            if (!mainHand.isEmpty() && mainHand.getItem() instanceof ModSwordBaseItem swordItem) {
-                if (mainHand.getMaxDamage() - mainHand.getDamageValue() > 1) {
-                    value += swordItem.getWuchuan(mainHand);
-                }
-            }
         }
 
         if (entity instanceof LivingEntity livingEntity) {
@@ -679,9 +685,15 @@ public class ModAttributeAPI {
     }
     
     /**
-     * 获取有效防御力，考虑破甲效果
-     * @param entity 实体
-     * @return 有效防御力
+     * 获取<b>未考虑攻击者穿透</b>的防御力。
+     *
+     * <p>⚠️ 名字容易误解：这里返回的仍是「目标自身的防御」，<b>不扣穿透</b>。
+     * 穿透属于「攻击者 × 目标」的配对计算，只在
+     * {@code CombatEventHandler#onLivingHurt} 里结算
+     * （{@code applyPierce} / {@code getOverflowDamageMultiplier}），
+     * 因为只有在那一步才同时拿得到攻击者与目标。</p>
+     *
+     * <p>给 UI / 怪物面板显示防御时用它；算伤害时不要直接拿它当"已扣穿透的防御"。</p>
      */
     public static float getEffectiveFangyu(LivingEntity entity) {
         return getFangyu(entity);

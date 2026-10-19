@@ -569,8 +569,15 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.ICE_CRYSTAL_SPAWN_EGG.get(), "冰晶刷怪蛋");
         add(ModItems.SNOW_DEMON_SPAWN_EGG.get(), "雪魔刷怪蛋");
         add(ModItems.LONE_BAMBOO_SPAWN_EGG.get(), "孤竹刷怪蛋");
+        add(ModItems.ICE_EMPRESS_SPAWN_EGG.get(), "雪帝刷怪蛋");
+
+        //唱片
+        add(ModItems.THRONE_OF_FROZEN_STONE.get(), "§b音乐唱片");
+        add("item.kunluncontinent.throne_of_frozen_stone.desc", "Fenrisel - 冰封王座");
 
         //实体类
+        add(EntityInit.ICE_EMPRESS.get(), "§b雪帝");
+        add("boss.kunluncontinent.ice_empress", "§b雪帝");
         add(EntityInit.HUNHUAN.get(),"§b魂环");
         add(EntityInit.HUNHE.get(),"§e魂核");
         add(EntityInit.ICE_CRYSTAL.get(), "§b冰晶");
@@ -645,11 +652,18 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModBlocks.SOUL_SOIL.get(),"魂土");
         add("item.demon_whale_badge.tooltip","击杀魔鲸必定掉落");
 
+        add("item.ice_empress_heart.tooltip","击杀雪帝必定掉落");
+
+        add(ModItems.ICE_EMPRESS_HEART.get(), "§b雪帝之心");
+        add(ModItems.EXTREME_COLD_ESSENCE.get(),"§b极寒精华");
+
+        add("item.extreme_cold_essence.tooltip","击杀极寒冰域维度的任何生物概率掉落");
+
         //武魂果实
-        add(ModItems.GUOSHI_POHUNQIANG.get(), "§c武魂果实 - 破魂枪");
-        add(ModItems.GUOSHI_BAHUANGJI.get(), "§c武魂果实 - 八荒戟");
-        add(ModItems.GUOSHI_LEIJINHU.get(), "§c武魂果实 - 裂金虎");
-        add(ModItems.GUOSHI_PANSHIJUYUAN.get(), "§c武魂果实 - 磐石巨猿");
+        add(ModItems.GUOSHI_POHUNQIANG.get(), "§c武魂精华 - 破魂枪");
+        add(ModItems.GUOSHI_BAHUANGJI.get(), "§c武魂精华 - 八荒戟");
+        add(ModItems.GUOSHI_LEIJINHU.get(), "§c武魂精华 - 裂金虎");
+        add(ModItems.GUOSHI_PANSHIJUYUAN.get(), "§c武魂精华 - 磐石巨猿");
         add("服用后觉醒武魂", "§2服用后觉醒%s武魂");
 
         //JEI类

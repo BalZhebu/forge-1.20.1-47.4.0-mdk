@@ -17,7 +17,10 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.Shapes;
 
 /**
  * 孤竹 —— 主世界地表的一株静止景观竹子。
@@ -187,6 +190,36 @@ public class LoneBambooEntity extends PathfinderMob {
     @Override
     public int getMaxSpawnClusterSize() {
         return 1;
+    }
+
+    /**
+     * 生成期的「占地」判定一律用 {@link EntityType} 的原始尺寸，不用缩放后的命中箱。
+     *
+     * <h3>为什么必须这么写（崩服级别的坑）</h3>
+     * 原版 {@code NaturalSpawner#spawnMobsForChunkGeneration} 把候选坐标钳在
+     * {@code [chunkMin + typeWidth, chunkMax - typeWidth]}，这个钳制用的是
+     * {@link EntityType#getWidth()}（注册尺寸），<b>不是</b>实体实际缩放后的宽度；
+     * 但紧接着的 {@code Mob#checkSpawnObstruction} 却拿 {@code getBoundingBox()}
+     * （= 缩放后的命中箱）去 {@code containsAnyLiquid}。正常生物两者一致，永远贴着区块内 ——
+     * 孤竹最大 5 倍体型，半宽 1.5 格 > 注册半宽 0.3 格，
+     * 于是会在区块边界外读方块。
+     *
+     * <p>而 {@code ChunkStatus.SPAWN} 那一步的 {@code WorldGenRegion} 半径是 0
+     * （{@code ChunkStatus#SPAWN} 传的 {@code -1}）——<b>只有中心那一个区块</b>，
+     * 一旦读到隔壁区块就直接</p>
+     * <pre>RuntimeException: We are asking a region for a chunk out of bound | 15 -61</pre>
+     * <p>崩服。这也解释了「指令生成没事、自然生成才炸」：指令走的是已加载区块，
+     * 只有区块生成阶段才有这个 1 区块的窄区域。</p>
+     *
+     * <p>用原始尺寸做判定后，数学上与原版完全同构：钳制下限 {@code minX + 0.6}、
+     * 半宽 0.3 → 包围盒始终落在本区块内。判「能不能站」只关心根部占地，
+     * 视觉放大多少不影响这一点；运行时命中箱仍是 5 倍的（见 {@link #getScale()}）。</p>
+     */
+    @Override
+    public boolean checkSpawnObstruction(LevelReader level) {
+        AABB footprint = this.getType().getDimensions().makeBoundingBox(this.position());
+        return !level.containsAnyLiquid(footprint)
+                && level.isUnobstructed(this, Shapes.create(footprint));
     }
 
     /**

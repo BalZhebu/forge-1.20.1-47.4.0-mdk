@@ -28,6 +28,25 @@ public class ExtremeColdHandler {
     private static final String COLD_TICK_KEY = "kunlun_stay_ticks";
     private static final String LAST_LEVEL_KEY = "kunlun_last_level";
 
+    /**
+     * 御寒护符的耐久消耗间隔（tick）。
+     *
+     * <p><b>暴露</b>（头顶能看到天空）：100 tick = 5 秒扣 1 点 —— 这就是"正常御寒时间"。
+     * 原来这里还有一条"暴风雪时 60 tick"的加速分支，但极冰领域现在由
+     * {@code MixinServerLevel} 强制永久降雪（{@code isRaining()} 恒 true），
+     * 等于只要站在室外就永久按 60 消耗、耐久凭空少 40%，所以把加速移除了。</p>
+     */
+    private static final int AMULET_INTERVAL_EXPOSED = 100;
+
+    /**
+     * <b>遮蔽</b>（头顶有方块挡住）时的消耗间隔：150 tick = 7.5 秒扣 1 点。
+     *
+     * <p>比暴露慢 50%。"找遮蔽处能延长使用时间"这个机制必须保留 ——
+     * 它原先靠"暴露 60 / 遮蔽 100"表达的，移除加速后改成
+     * "暴露 100 / 遮蔽 150"，方向仍是遮蔽更省。</p>
+     */
+    private static final int AMULET_INTERVAL_SHELTERED = 150;
+
     public static final ResourceKey<DamageType> EXTREME_COLD_TYPE = ResourceKey.create(
             Registries.DAMAGE_TYPE,
             new ResourceLocation(KlMain.MOD_ID, "extreme_cold")
@@ -56,7 +75,7 @@ public class ExtremeColdHandler {
                     player.removeEffect(ModEffects.EXTREME_COLD.get());
                 }
                 if (isInPolarIce) {
-                    handleAmuletConsumption(player, amulet, level);
+                    handleAmuletConsumption(player, amulet);
                 }
             }
             if (!isInPolarIce) return;
@@ -85,14 +104,15 @@ public class ExtremeColdHandler {
         }
     }
 
-    private static void handleAmuletConsumption(Player player, ItemStack amulet, Level level) {
-        int interval = 100;
-        if (level.isRaining() && level.canSeeSky(player.blockPosition())) {
-            interval = 60;
-            if (player.tickCount % 120 == 0) {
-                player.displayClientMessage(Component.literal("暴风雪正在加速侵蚀魂导器...").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), true);
-            }
-        }
+    /**
+     * 御寒护符的耐久消耗。
+     *
+     * <p>判定只看<b>有没有遮蔽</b>（头顶能否看到天空），不再看天气 ——
+     * 极冰领域现在全程降雪，用 {@code isRaining()} 做条件等于恒定成立。</p>
+     */
+    private static void handleAmuletConsumption(Player player, ItemStack amulet) {
+        boolean sheltered = !player.level().canSeeSky(player.blockPosition());
+        int interval = sheltered ? AMULET_INTERVAL_SHELTERED : AMULET_INTERVAL_EXPOSED;
         if (player.tickCount % interval == 0) {
             consumeAmuletDurability(player, amulet);
         }

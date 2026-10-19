@@ -11,6 +11,7 @@ import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCap
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerUpgradeSystem;
 import com.TovidY.kunluncontinent.capability.playerattributes.XiulianLogic;
 import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanEntity;
+import com.TovidY.kunluncontinent.entity.icempress.IceEmpressEntity;
 import com.TovidY.kunluncontinent.entity.playernpc.PlayerNpcEntity;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
@@ -122,10 +123,6 @@ public class PWPlayerTickEvent {
 
                 updatePlayerFly(player, capability, gameTime);
 
-                // 1b. 武魂真身的状态机：刷新增益时长 + 三个自动关闭条件。
-                //     ⚠️ 必须放在这里而不是 updatePlayerFly 里 —— 那个方法对
-                //     创造/旁观模式直接 return，放里面会导致真身的增益「5 秒后凭空消失」。
-                //     顺序上排在 updatePlayerFly 之后，保证判断的是刚扣完维持费的精神力。
                 if (gameTime % 20 == 0 && ZhenshenState.isActive(serverPlayer)) {
                     ZhenshenState.tickServer(serverPlayer, capability);
                 }
@@ -160,22 +157,47 @@ public class PWPlayerTickEvent {
         }
     }
 
-    // ==================== 完整睡眠回复精神力 ====================
+    // ==================== 睡眠回复精神力 ====================
 
+    /**
+     * <b>只有"完成跳过黑夜"</b>（原版把时间推进到第二天早上）才回满精神力。
+     *
+     * <h3>为什么不能只看 wakeImmediately</h3>
+     * <p>1.20.1 里 {@code Player#stopSleepInBed(wakeImmediately, updateLevel)} 的调用点：</p>
+     * <pre>
+     * 调用点                                             wakeImmediately  updateLevel
+     * ServerLevel#wakeUpAllPlayers（跳黑夜成功）              false            false   ← 只有这里算数
+     * ServerGamePacketListenerImpl STOP_SLEEPING（点起床）    false            true
+     * Player#tick 天亮自然醒                                false            true
+     * stopSleeping()（受伤打断）/ 传送 / 断线                 true           true / false
+     * </pre>
+     * <p>也就是说 <b>"点起床" 传的是 {@code wakeImmediately = false}</b> ——
+     * 只看这一个标志，提前起床会被当成"睡满了"（上一版就是栽在这里）。
+     * 真正跳黑夜的 {@code wakeUpAllPlayers} 传的是 {@code (false, false)}，
+     * 是<b>唯一同时两个 false</b> 的路径，所以判据是
+     * {@code !wakeImmediately() && !updateLevel()}。</p>
+     *
+     * <h3>回多少</h3>
+     * <p>直接回满（旧实现是 {@code max * 0.8f}，睡前精神力低于 20% 时会差 0~20%，
+     * 表现就是"有时候睡一觉满了、有时候差一截"）。</p>
+     */
     @SubscribeEvent
     public static void onPlayerWakeUp(PlayerWakeUpEvent event) {
         Player player = event.getEntity();
         Level level = player.level();
         if (level.isClientSide) return;
-        if (!event.wakeImmediately()) {
-            player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(capability -> {
-                float maxJingshenli = ModAttributeAPI.getMaxjingshenli(player);
-                float regenAmount = maxJingshenli * 0.8f;
-                float nextJingshenli = Math.min(maxJingshenli, capability.getJingshenli() + regenAmount);
-                capability.setJingshenli(nextJingshenli);
-                SynsAPI.synsPlayerAttribute(player);
-            });
-        }
+
+        // 只有 ServerLevel#wakeUpAllPlayers 这条"跳黑夜"路径会同时给 (false, false)；
+        // 提前点起床是 (false, true)，受伤打断 / 传送是 (true, *)
+        if (event.wakeImmediately() || event.updateLevel()) return;
+
+        player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(capability -> {
+            // 口径与蒲团/自然回复一致：用 ModAttributeAPI（含魂骨/装备/加点加成）
+            float maxJingshenli = ModAttributeAPI.getMaxjingshenli(player);
+            if (maxJingshenli <= 0.0f) return;
+            capability.setJingshenli(maxJingshenli);
+            SynsAPI.synsPlayerAttribute(player);
+        });
     }
 
     // ==================== 雷界闪电 ====================
@@ -966,15 +988,24 @@ public class PWPlayerTickEvent {
                     .anyMatch(mob -> mob.getPersistentData().getBoolean("Skill_JinKong_Available"));
         }
 
+        // 雪帝领域：有仇恨的雪帝 150 格内禁飞。
+        // 每 tick 都算 —— 静态集合里通常只有 0~2 个元素，只是一次距离平方比较，
+        // 比上面那条"扫 40 格实体"的禁空词条便宜得多。脱离范围后本方法会返回 false，
+        // 下面的 else 分支自动把 mayfly 还回去，实现"自动解禁"。
+        boolean iceEmpressNoFly = IceEmpressEntity.isFlightSuppressedNear(player);
+
         if (player.getPersistentData().contains("knocked_down")) {
             player.getAbilities().mayfly = false;
             player.getAbilities().flying = false;
-        } else if (isAntiFlyZone) {
+        } else if (isAntiFlyZone || iceEmpressNoFly) {
             if (player.getAbilities().mayfly || player.getAbilities().flying) {
                 player.getAbilities().mayfly = false;
                 player.getAbilities().flying = false;
                 if (gameTime % 40 == 0) {
-                    player.sendSystemMessage(Component.literal("§4§l【禁空法则】§c 四周有《禁空》词条生物压制，被强制击落！"));
+                    if (iceEmpressNoFly) {
+                    } else {
+                        player.sendSystemMessage(Component.literal("§4§l【禁空法则】§c 四周有《禁空》词条生物压制，被强制击落！"));
+                    }
                 }
             }
         } else if (ModAttributeAPI.getMaxjingshenli(player) > 5000) {

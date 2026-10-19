@@ -68,6 +68,7 @@ public class ModDataGenerator {
             .add(Registries.PLACED_FEATURE, context -> {
                 ModWorldGenOreProvider.placement(context);
                 com.TovidY.kunluncontinent.datagen.worldgenprovider.ModCelestialTreeFeature.placement(context);
+                com.TovidY.kunluncontinent.datagen.worldgenprovider.ModWorldGenProvider.bootstrapPlacedFeature(context);
             })
             .add(Registries.DAMAGE_TYPE, ModDamageTypes::bootstrap)
             .add(Registries.STRUCTURE, ModStructureProvider::bootstrapStructure)

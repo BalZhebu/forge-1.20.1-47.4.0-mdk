@@ -1,6 +1,7 @@
 package com.TovidY.kunluncontinent.datagen.lootprovider;
 
 import com.TovidY.kunluncontinent.KlMain;
+import com.TovidY.kunluncontinent.item.ModItems;
 import net.minecraft.data.loot.LootTableSubProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
@@ -8,7 +9,9 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
+import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceWithLootingCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 
 import java.util.function.BiConsumer;
 
@@ -33,9 +36,14 @@ public class ModEntityLootTablesProvider implements LootTableSubProvider {
     public static final ResourceLocation LONE_BAMBOO =
             new ResourceLocation(KlMain.MOD_ID, "entities/lone_bamboo");
 
+    /** 雪帝掉落表。ID 必须等于 {@code kunluncontinent:entities/ice_empress}。 */
+    public static final ResourceLocation ICE_EMPRESS =
+            new ResourceLocation(KlMain.MOD_ID, "entities/ice_empress");
+
     @Override
     public void generate(BiConsumer<ResourceLocation, LootTable.Builder> output) {
         output.accept(LONE_BAMBOO, loneBamboo());
+        output.accept(ICE_EMPRESS, iceEmpress());
     }
 
     /**
@@ -48,5 +56,34 @@ public class ModEntityLootTablesProvider implements LootTableSubProvider {
                 .setRolls(ConstantValue.exactly(1.0F))
                 .add(LootItem.lootTableItem(Items.BAMBOO)
                         .apply(SetItemCountFunction.setCount(ConstantValue.exactly(1.0F)))));
+    }
+
+    /**
+     * 雪帝：三个独立池子，互相不抢名额。
+     *
+     * <ol>
+     *   <li><b>唱片《冰封王座》</b> —— 100% 必掉 1 张（BOSS 的招牌掉落）；</li>
+     *   <li><b>极寒雪花碎片</b> —— 100% 掉 3~6 个（材料保底）；</li>
+     *   <li><b>金魂币</b> —— 50% 概率，每级抢夺 +2%，1~2 枚。</li>
+     * </ol>
+     */
+    private static LootTable.Builder iceEmpress() {
+        return LootTable.lootTable()
+                // 1. 唱片：必定 1 张
+                .withPool(LootPool.lootPool()
+                        .setRolls(ConstantValue.exactly(1.0F))
+                        .add(LootItem.lootTableItem(ModItems.THRONE_OF_FROZEN_STONE.get())
+                                .apply(SetItemCountFunction.setCount(ConstantValue.exactly(1.0F)))))
+                // 2. 雪帝之心：必定 1 个
+                .withPool(LootPool.lootPool()
+                        .setRolls(ConstantValue.exactly(1.0F))
+                        .add(LootItem.lootTableItem(ModItems.ICE_EMPRESS_HEART.get())
+                                .apply(SetItemCountFunction.setCount(ConstantValue.exactly(1.0F)))))
+                // 3. 金魂币：50%（+2%/级抢夺），1~2 枚
+                .withPool(LootPool.lootPool()
+                        .setRolls(ConstantValue.exactly(1.0F))
+                        .add(LootItem.lootTableItem(ModItems.GOLDEN_SOUL_COIN.get())
+                                .when(LootItemRandomChanceWithLootingCondition.randomChanceAndLootingBoost(0.5F, 0.02F))
+                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 2.0F)))));
     }
 }

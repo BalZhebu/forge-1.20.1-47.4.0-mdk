@@ -12,6 +12,8 @@ import com.TovidY.kunluncontinent.entity.eyetrans.EyeTransformationEntity;
 import com.TovidY.kunluncontinent.entity.hunhe.HunheEntity;
 import com.TovidY.kunluncontinent.entity.hunhe.HunheRender;
 import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanEntity;
+import com.TovidY.kunluncontinent.entity.icempress.IceEmpressEntity;
+import com.TovidY.kunluncontinent.entity.icempress.IceEmpressRenderer;
 import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanRender;
 import com.TovidY.kunluncontinent.entity.lonebamboo.LoneBambooEntity;
 import com.TovidY.kunluncontinent.entity.lonebamboo.LoneBambooModel;
@@ -94,6 +96,15 @@ public class EntityInit {
                     .clientTrackingRange(10)
                     .build("lone_bamboo"));
 
+    /** 雪帝：敌对生物，不自然生成（只靠刷怪蛋 / 指令）。 */
+    public static final RegistryObject<EntityType<IceEmpressEntity>> ICE_EMPRESS =
+            ENTITY_TYPES.register("ice_empress", () -> EntityType.Builder.of(IceEmpressEntity::new, MobCategory.MONSTER)
+                    // 模型在 IceEmpressRenderer 里放大 2 倍（原模型 1.0×2.6），
+                    // 命中箱必须同步放大，否则会出现「看着 5 格高、打不中上半个身子」。
+                    .sized(2.0F, 5.2F)
+                    .clientTrackingRange(10)
+                    .build("ice_empress"));
+
     @Mod.EventBusSubscriber(modid = KlMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {
 
@@ -103,6 +114,8 @@ public class EntityInit {
             event.registerLayerDefinition(SnowDemonNewModel.LAYER_LOCATION, SnowDemonNewModel::createBodyLayer);
             event.registerLayerDefinition(DemonWhaleModel.LAYER_LOCATION, DemonWhaleModel::createBodyLayer);
             event.registerLayerDefinition(LoneBambooModel.LAYER_LOCATION, LoneBambooModel::createBodyLayer);
+            event.registerLayerDefinition(com.TovidY.kunluncontinent.entity.icempress.IceEmpressEntityModel.LAYER_LOCATION,
+                    com.TovidY.kunluncontinent.entity.icempress.IceEmpressEntityModel::createBodyLayer);
         }
 
         @SubscribeEvent
@@ -116,6 +129,9 @@ public class EntityInit {
             EntityRenderers.register(EntityInit.DEMON_WHALE.get(), DemonWhaleRenderer::new);
 
             EntityRenderers.register(EntityInit.LONE_BAMBOO.get(), LoneBambooRenderer::new);
+
+            EntityRenderers.register(EntityInit.ICE_EMPRESS.get(),
+                    com.TovidY.kunluncontinent.entity.icempress.IceEmpressRenderer::new);
 
             EntityRenderers.register(EntityInit.PLAYER_NPC.get(), PlayerNpcRenderer::new);
         }
@@ -136,6 +152,9 @@ public class EntityInit {
             event.put(EntityInit.DEMON_WHALE.get(), DemonWhaleEntity.createAttributes().build());
 
             event.put(EntityInit.LONE_BAMBOO.get(), LoneBambooEntity.createAttributes().build());
+
+            event.put(EntityInit.ICE_EMPRESS.get(),
+                    com.TovidY.kunluncontinent.entity.icempress.IceEmpressEntity.createAttributes().build());
 
             event.put(EntityInit.PLAYER_NPC.get(), PlayerNpcEntity.createAttributes().build());
         }

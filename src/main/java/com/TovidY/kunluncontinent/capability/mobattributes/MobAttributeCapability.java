@@ -126,29 +126,34 @@ public class MobAttributeCapability extends CapabilityAttributeBase implements I
     }
 
     /**
-     * 全属性等比放大（挑战塔层数倍率等场景）。
+     * 挑战塔层数倍率 —— <b>只放大「生命 / 防御 / 攻击」三项核心属性</b>。
      *
-     * <p>把 {@link #applyGrowth} 生成的全部 11 项属性（物攻/物防/上限血量/当前血量/
-     * 暴击率/暴击伤害/抗暴/吸血/命中/闪避/物穿）整体乘以 {@code multiplier}。</p>
+     * <h3>为什么副属性绝对不能乘这个倍率</h3>
+     * <ul>
+     *   <li><b>闪避</b>：闪避判定是 {@code (闪避 − 命中) / (闪避 − 命中 + 100)}。
+     *       闪避乘 12 后（500 → 6000），玩家必须把命中堆到同一量级才可能命中，
+     *       否则就是全程 90%+ 闪避 —— 这不是"更难"，而是<b>根本打不到</b>。</li>
+     *   <li><b>吸血</b>：吸血比例是 {@code x / (x + 100)}，本身就是饱和曲线。
+     *       乘 12 后 55% → 93%，玩家好不容易磨掉的血一刀回满，等于物理免疫。</li>
+     *   <li><b>暴击率 / 暴击伤害 / 抗暴 / 物穿 / 命中</b>同理：它们是<b>比率型</b>属性，
+     *       乘倍率不是线性变强，而是直接跨过阈值，手感和平衡会当场崩掉。</li>
+     * </ul>
+     *
+     * <p>所以层数难度只通过"血更厚、打得更痛、更耐打"这三项线性可读的数值表达；
+     * 副属性保持年限原值 —— 它们本来就随年限成长，已经足够区分层数了。</p>
      *
      * <p><b>调用时机约束：</b>必须在 {@code initNianxian} 之后、
-     * {@code MobTempAttributeManager} / 词条加成（壁垒、浑厚）之前调用——
-     * 词条按放大后的基数再叠加，保证"本层全属性×N"的语义一致。
+     * {@code MobTempAttributeManager} / 词条加成（壁垒、浑厚）之前调用 ——
+     * 词条按放大后的基数再叠加，保证"本层核心×N"的语义一致。
      * 另外此时临时物攻加成（tempWugongModifier）必须仍为 0。</p>
      */
     public void applyAttributeMultiplier(float multiplier) {
         if (multiplier <= 0f || multiplier == 1f) return;
+        // 核心三围：生命 / 防御 / 攻击（当前血量一起放大，保持满血开局）
         this.setWugong(this.getGongji() * multiplier);
         this.setWufang(this.getFangyu() * multiplier);
         this.setMaxshengming(this.getMaxshengming() * multiplier);
         this.setShengming(this.getShengming() * multiplier);
-        this.setBaojilv(this.getBaojilv() * multiplier);
-        this.setBaojishanghai(this.getBaojishanghai() * multiplier);
-        this.setKangbao(this.getKangbao() * multiplier);
-        this.setXixue(this.getXixue() * multiplier);
-        this.setMingzhong(this.getMingzhong() * multiplier);
-        this.setShanbi(this.getShanbi() * multiplier);
-        this.setWuchuan(this.getWuchuan() * multiplier);
     }
 
     @Override

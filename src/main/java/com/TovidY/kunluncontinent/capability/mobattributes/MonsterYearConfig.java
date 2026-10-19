@@ -34,6 +34,8 @@ public class MonsterYearConfig {
         register(EntityInit.DEMON_WHALE.get(), 1000000, 9000000);
         //孤竹
         register(EntityInit.LONE_BAMBOO.get(),10,10);
+        //雪帝
+        register(EntityInit.ICE_EMPRESS.get(),1000000,9990000);
     }
 
     private static void register(EntityType<?> type, int min, int max) {

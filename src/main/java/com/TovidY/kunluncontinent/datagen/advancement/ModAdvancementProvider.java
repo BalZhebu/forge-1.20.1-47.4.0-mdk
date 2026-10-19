@@ -246,7 +246,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
                     ModItems.GOLDEN_SOUL_COIN.get(), AdvancementHelper.event(AchievementAPI.CELESTIAL_REALM_ENTER));
 
             AdvancementHelper.goal(saver, helper, thunderRealm, "polar_ice_realm_enter",
-                    ModItems.THUNDERREALM_SNOWFLAKE.get(), AdvancementHelper.event(AchievementAPI.POLAR_ICE_REALM_ENTER));
+                    ModItems.EXTREME_COLD_SNOWFLAKE.get(), AdvancementHelper.event(AchievementAPI.POLAR_ICE_REALM_ENTER));
 
             AdvancementHelper.goal(saver, helper, thunderRealm, "tower_realm_enter",
                     ModBlocks.SUMMON_TOWER.get(), AdvancementHelper.event(AchievementAPI.TOWER_REALM_ENTER));

@@ -87,6 +87,12 @@ public class KlMain {
         ModEffects.register(modEventBus);
 
         ModParticles.register(modEventBus);
+
+        // 声音事件（雪帝战斗音乐 / 唱片）
+        com.TovidY.kunluncontinent.Init.ModSounds.register(modEventBus);
+
+        // 自定义世界生成放置修饰符（如「剔除水中的树位置」）
+        com.TovidY.kunluncontinent.worldgen.ModPlacementModifiers.register(modEventBus);
     }
 
     /**

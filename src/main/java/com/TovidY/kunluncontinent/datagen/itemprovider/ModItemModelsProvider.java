@@ -171,6 +171,10 @@ public class ModItemModelsProvider extends ItemModelProvider {
             spawnEggItem(itemRegistry.get());
         }
 
+        // 唱片《冰封王座》：用自己画的贴图 assets/kunluncontinent/textures/item/throne_of_frozen_stone.png
+        // （之前是复用原版 music_disc_11 + ItemColor 染色，现已改为独立贴图，不再需要染色）
+        basicItem(ModItems.THRONE_OF_FROZEN_STONE.get());
+
     }
 
     /**

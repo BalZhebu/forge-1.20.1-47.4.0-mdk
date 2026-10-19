@@ -174,7 +174,12 @@ public class ModItems {
                             .nutrition(0)
                             .saturationMod(0)
                             .effect(() -> new MobEffectInstance(ModEffects.STRONG_SOUL.get(), 300, 0), 1.0F)
-                            .build())));
+                            .build())){
+                @Override
+                public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
+                    pTooltipComponents.add(Component.translatable("item.strong_potion.tooltip").withStyle(ChatFormatting.GRAY));
+                }
+            });
 
     //传送门
     public static final RegistryObject<Item> EXTREME_COLD_SNOWFLAKE = ITEMS.register("extreme_cold_snowflake",()->new EngravingKnifeItem(new Item.Properties()){
@@ -192,7 +197,6 @@ public class ModItems {
     });
 
     //武魂果实
-    //武魂果实
     public static final RegistryObject<Item> GUOSHI_POHUNQIANG = ITEMS.register("guoshi_pohunqiang",()->new WuhunguoshiItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setWuhunname(Wuhunname.pohunqiang));
     public static final RegistryObject<Item> GUOSHI_BAHUANGJI = ITEMS.register("guoshi_bahuangji",()->new WuhunguoshiItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setWuhunname(Wuhunname.bahuangji));
     public static final RegistryObject<Item> GUOSHI_LEIJINHU = ITEMS.register("guoshi_leijinhu",()->new WuhunguoshiItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setWuhunname(Wuhunname.liejinhu));
@@ -203,6 +207,20 @@ public class ModItems {
         @Override
         public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
             pTooltipComponents.add(Component.translatable("item.extreme_cold_snowflake_fragment.tooltip").withStyle(ChatFormatting.GRAY));
+        }
+    });
+
+    public static final RegistryObject<Item> ICE_EMPRESS_HEART = ITEMS.register("ice_empress_heart",()->new Item(new Item.Properties()){
+        @Override
+        public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
+            pTooltipComponents.add(Component.translatable("item.ice_empress_heart.tooltip").withStyle(ChatFormatting.DARK_GRAY));
+        }
+    });
+
+    public static final RegistryObject<Item> EXTREME_COLD_ESSENCE = ITEMS.register("extreme_cold_essence",()->new Item(new Item.Properties()){
+        @Override
+        public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
+            pTooltipComponents.add(Component.translatable("item.extreme_cold_essence.tooltip").withStyle(ChatFormatting.DARK_GRAY));
         }
     });
 
@@ -295,6 +313,11 @@ public class ModItems {
     public static final RegistryObject<Item> DEMONWHALE_SPAWN_EGG = ITEMS.register("demonwhale_spawn_egg", () -> new ForgeSpawnEggItem(EntityInit.DEMON_WHALE, 0xB80505, 0x79400B, new Item.Properties()));
     public static final RegistryObject<Item> NPCSOUL_SPAWN_EGG = ITEMS.register("npcsoul_spawn_egg", () -> new ForgeSpawnEggItem(EntityInit.PLAYER_NPC, 0xB70565, 0x79454B, new Item.Properties()));
     public static final RegistryObject<Item> LONE_BAMBOO_SPAWN_EGG = ITEMS.register("lone_bamboo_spawn_egg", () -> new ForgeSpawnEggItem(EntityInit.LONE_BAMBOO, 0x6A8C3A, 0xC8D9A0, new Item.Properties()));
+    public static final RegistryObject<Item> ICE_EMPRESS_SPAWN_EGG = ITEMS.register("ice_empress_spawn_egg", () -> new ForgeSpawnEggItem(EntityInit.ICE_EMPRESS, 0xBFE8FF, 0x3A6EA5, new Item.Properties()));
+
+    public static final RegistryObject<Item> THRONE_OF_FROZEN_STONE = ITEMS.register("throne_of_frozen_stone",
+            () -> new RecordItem(13, com.TovidY.kunluncontinent.Init.ModSounds.MUSIC_DISC_THRONE_OF_FROZEN_STONE,
+                    new Item.Properties().stacksTo(1).rarity(Rarity.RARE), 2000));
 
     //矿石宝石
     public static final RegistryObject<Item> GRAY_IRON_INGOT = ITEMS.register("gray_iron_ingot",()->new Item(new Item.Properties()));
@@ -890,7 +913,10 @@ public class ModItems {
         NORMALITEMSLIST.add(DEMON_WHALE_MEDAL);
         NORMALITEMSLIST.add(DEMON_WHALE_BADGE);
 
+        NORMALITEMSLIST.add(ICE_EMPRESS_HEART);
+
         NORMALITEMSLIST.add(DEEPSEA_JINGHUA);
+        NORMALITEMSLIST.add(EXTREME_COLD_ESSENCE);
 
         NORMALITEMSLIST.add(LIGHTNING_FRAGMENTS);
 
@@ -907,6 +933,7 @@ public class ModItems {
         SPAWNEGGLIST.add(DEMONWHALE_SPAWN_EGG);
         SPAWNEGGLIST.add(NPCSOUL_SPAWN_EGG);
         SPAWNEGGLIST.add(LONE_BAMBOO_SPAWN_EGG);
+        SPAWNEGGLIST.add(ICE_EMPRESS_SPAWN_EGG);
     }
 
     public static ArrayList<RegistryObject<Item>> HUNGULIST = new ArrayList<>();

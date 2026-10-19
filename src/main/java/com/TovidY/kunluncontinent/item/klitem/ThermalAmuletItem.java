@@ -27,16 +27,16 @@ public class ThermalAmuletItem extends Item {
         if (isInfinite) {
             tooltip.add(Component.literal("御寒能量：").withStyle(ChatFormatting.GRAY)
                     .append(Component.literal("无限").withStyle(ChatFormatting.GOLD)));
-            tooltip.add(Component.literal("提示：在雪地中寻找遮蔽处以延长使用时间").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
         } else {
             int remainDurability = stack.getMaxDamage() - stack.getDamageValue();
-            int baseMinutes = (remainDurability * 5) / 60;
-            int snowMinutes = (remainDurability * 3) / 60;
+            int seconds = remainDurability * 5;
+            int minutes = seconds / 60;
+            int restSeconds = seconds % 60;
+            String text = (restSeconds == 0) ? (minutes + " 分钟") : (minutes + " 分 " + restSeconds + " 秒");
             tooltip.add(Component.literal("预计可用：").withStyle(ChatFormatting.GRAY)
-                    .append(Component.literal(baseMinutes + " 分钟").withStyle(ChatFormatting.GREEN)));
-            tooltip.add(Component.literal("若在暴雪中暴露：").withStyle(ChatFormatting.GRAY)
-                    .append(Component.literal(snowMinutes + " 分钟").withStyle(ChatFormatting.RED)));
-            tooltip.add(Component.literal("提示：在雪地中寻找遮蔽处以延长使用时间").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+                    .append(Component.literal(text).withStyle(ChatFormatting.GREEN)));
+            tooltip.add(Component.literal("提示：在雪地中寻找遮蔽处以延长使用时间")
+                    .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
         }
         super.appendHoverText(stack, level, tooltip, flag);
 

@@ -1,0 +1,20 @@
+{
+  "music.ice_empress": {
+    "category": "hostile",
+    "sounds": [
+      {
+        "name": "kunluncontinent:music/throne_of_frozen_stone",
+        "stream": true
+      }
+    ]
+  },
+  "music_disc.throne_of_frozen_stone": {
+    "category": "record",
+    "sounds": [
+      {
+        "name": "kunluncontinent:music/throne_of_frozen_stone",
+        "stream": true
+      }
+    ]
+  }
+}
