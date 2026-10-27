@@ -1,5 +1,6 @@
 package com.TovidY.kunluncontinent.screen.attribute.hungu;
 
+import com.TovidY.kunluncontinent.advancement.AchievementAPI;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.item.ModItems;
 import com.TovidY.kunluncontinent.screen.ModMenuTypes;
@@ -123,6 +124,16 @@ public class HunguMenu extends AbstractContainerMenu {
         if (!this.entity.level().isClientSide()) {
             this.entity.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
                 cap.refreshBoneAttributes(this.entity);
+
+                // 成就：魂骨初得 / 七骨加身。
+                // 这里是「魂骨槽发生变化」的唯一汇聚点，所以统计放在这最省事。
+                int boneCount = 0;
+                for (int i = 0; i < cap.getHunguInventory().getSlots(); i++) {
+                    if (!cap.getHunguInventory().getStackInSlot(i).isEmpty()) {
+                        boneCount++;
+                    }
+                }
+                AchievementAPI.onBoneChanged(this.entity, boneCount);
             });
         }
     }

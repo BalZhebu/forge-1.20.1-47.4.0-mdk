@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.datagen.advancement;
 
 import com.TovidY.kunluncontinent.advancement.AchievementAPI;
 import com.TovidY.kunluncontinent.block.ModBlocks;
+import com.TovidY.kunluncontinent.entity.EntityInit;
 import com.TovidY.kunluncontinent.item.ModItems;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.core.HolderLookup;
@@ -202,7 +203,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
             // ==================================================================
             //  分支：转生 —— 挂在满级之后
             // ==================================================================
-            AdvancementHelper.challenge(saver, helper, lvl99, "reincarnation_first",
+            Advancement reincarnationFirst = AdvancementHelper.challenge(saver, helper, lvl99, "reincarnation_first",
                     ModItems.GUOSHI_POHUNQIANG.get(), AdvancementHelper.event(AchievementAPI.REINCARNATION_FIRST));
 
             // ==================================================================
@@ -233,7 +234,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
             Advancement godStage5 = AdvancementHelper.goal(saver, helper, godStage1, "god_exam_stage5",
                     ModItems.GUOSHI_POHUNQIANG.get(), AdvancementHelper.event(AchievementAPI.GOD_EXAM_STAGE5));
 
-            AdvancementHelper.challenge(saver, helper, godStage5, "god_ascended",
+            Advancement godAscended = AdvancementHelper.challenge(saver, helper, godStage5, "god_ascended",
                     ModItems.HUNHUAN_STORAGE_FIVE.get(), AdvancementHelper.event(AchievementAPI.GOD_ASCENDED));
 
             // ==================================================================
@@ -245,7 +246,7 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
             AdvancementHelper.goal(saver, helper, thunderRealm, "celestial_realm_enter",
                     ModItems.GOLDEN_SOUL_COIN.get(), AdvancementHelper.event(AchievementAPI.CELESTIAL_REALM_ENTER));
 
-            AdvancementHelper.goal(saver, helper, thunderRealm, "polar_ice_realm_enter",
+            Advancement polarIce = AdvancementHelper.goal(saver, helper, thunderRealm, "polar_ice_realm_enter",
                     ModItems.EXTREME_COLD_SNOWFLAKE.get(), AdvancementHelper.event(AchievementAPI.POLAR_ICE_REALM_ENTER));
 
             AdvancementHelper.goal(saver, helper, thunderRealm, "tower_realm_enter",
@@ -259,6 +260,81 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
 
             AdvancementHelper.goal(saver, helper, danyaoFirst, "danyao_batch",
                     ModItems.NEIDAN9.get(), AdvancementHelper.event(AchievementAPI.DANYAO_BATCH));
+
+            // ==================================================================
+            //  分支：魂骨 / 魂导器 / 八卦 —— 挂在第一魂环之后
+            // ==================================================================
+            Advancement boneFirst = AdvancementHelper.task(saver, helper, firstRing, "bone_first",
+                    ModItems.SOUL_BEAST_SKULL.get(), AdvancementHelper.event(AchievementAPI.BONE_FIRST));
+
+            AdvancementHelper.goal(saver, helper, boneFirst, "bone_seven",
+                    ModItems.SOUL_BEAST_EXTERNAL_APPENDAGES.get(), AdvancementHelper.event(AchievementAPI.BONE_SEVEN));
+
+            // 魂导器：背包里出现任意一件即达成（五件都在 HUNGULIST 的前 five 项）
+            AdvancementHelper.task(saver, helper, boneFirst, "hundaoqi_first",
+                    ModItems.FANGSHANHUNDAOQI_1.get(), AdvancementHelper.hasItems(
+                            ModItems.FANGSHANHUNDAOQI_1.get(),
+                            ModItems.FANGSHANHUNDAOQI_2.get(),
+                            ModItems.FANGSHANHUNDAOQI_3.get(),
+                            ModItems.FANGSHANHUNDAOQI_4.get(),
+                            ModItems.FANGSHANHUNDAOQI_5.get()));
+
+            // 分解八卦：同上
+            AdvancementHelper.task(saver, helper, boneFirst, "bagua_first",
+                    ModItems.FIRST_DECOMPOSITION_GOSSIP.get(), AdvancementHelper.hasItems(
+                            ModItems.FIRST_DECOMPOSITION_GOSSIP.get(),
+                            ModItems.TWO_DECOMPOSITION_GOSSIP.get(),
+                            ModItems.THREE_DECOMPOSITION_GOSSIP.get(),
+                            ModItems.FOUR_DECOMPOSITION_GOSSIP.get(),
+                            ModItems.FIVE_DECOMPOSITION_GOSSIP.get()));
+
+            // ==================================================================
+            //  分支：极冰界 —— 极寒精华 / 雪帝 / 唱片
+            // ==================================================================
+            AdvancementHelper.task(saver, helper, polarIce, "extreme_cold_essence",
+                    ModItems.EXTREME_COLD_ESSENCE.get(), AdvancementHelper.hasItems(ModItems.EXTREME_COLD_ESSENCE.get()));
+
+            Advancement iceEmpress = AdvancementHelper.challenge(saver, helper, polarIce, "ice_empress_slain",
+                    ModItems.ICE_EMPRESS_HEART.get(), AdvancementHelper.killEntity(EntityInit.ICE_EMPRESS.get()));
+
+            AdvancementHelper.task(saver, helper, iceEmpress, "ice_empress_heart",
+                    ModItems.ICE_EMPRESS_HEART.get(), AdvancementHelper.hasItems(ModItems.ICE_EMPRESS_HEART.get()));
+
+            AdvancementHelper.task(saver, helper, polarIce, "frozen_throne_disc",
+                    ModItems.THRONE_OF_FROZEN_STONE.get(), AdvancementHelper.hasItems(ModItems.THRONE_OF_FROZEN_STONE.get()));
+
+            // ==================================================================
+            //  分支：神祇进阶 —— 神赐魂环 → 称谓（半神之后一路到神王）
+            // ==================================================================
+            Advancement godRing = AdvancementHelper.goal(saver, helper, godAscended, "god_ring_blessed",
+                    ModItems.HUNHUAN_STORAGE_FIVE.get(), AdvancementHelper.event(AchievementAPI.GOD_RING_BLESSED));
+
+            // 称谓门槛与 GodRank 完全对齐：121 准神 / 141 三级神 / 161 二级神 / 181 一级神 / 196 神王
+            Advancement rankZhun = AdvancementHelper.goal(saver, helper, godRing, "rank_zhun_shen",
+                    ModItems.HUNHUAN_STORAGE_ONE.get(), AdvancementHelper.levelReached(121));
+            Advancement rankSan = AdvancementHelper.goal(saver, helper, rankZhun, "rank_san_ji_shen",
+                    ModItems.HUNHUAN_STORAGE_TWO.get(), AdvancementHelper.levelReached(141));
+            Advancement rankEr = AdvancementHelper.goal(saver, helper, rankSan, "rank_er_ji_shen",
+                    ModItems.HUNHUAN_STORAGE_THREE.get(), AdvancementHelper.levelReached(161));
+            Advancement rankYi = AdvancementHelper.goal(saver, helper, rankEr, "rank_yi_ji_shen",
+                    ModItems.HUNHUAN_STORAGE_FOUR.get(), AdvancementHelper.levelReached(181));
+            AdvancementHelper.challenge(saver, helper, rankYi, "rank_shen_wang",
+                    ModItems.HUNHUAN_STORAGE_FIVE.get(), AdvancementHelper.levelReached(196));
+
+            // ==================================================================
+            //  分支：武魂 / 装备 / 转生
+            // ==================================================================
+            AdvancementHelper.goal(saver, helper, awaken, "wuhun_zhenshen",
+                    ModItems.GUOSHI_POHUNQIANG.get(), AdvancementHelper.event(AchievementAPI.WUHUN_ZHENSHEN));
+
+            AdvancementHelper.goal(saver, helper, firstRing, "special_soul_ring",
+                    ModItems.TOP_HUNHUAN_STORAGE_CORE.get(), AdvancementHelper.event(AchievementAPI.SPECIAL_SOUL_RING));
+
+            AdvancementHelper.goal(saver, helper, coldSteel, "armor_set_full",
+                    ModItems.RINSEI_CHESTPLATE.get(), AdvancementHelper.event(AchievementAPI.ARMOR_SET_FULL));
+
+            AdvancementHelper.challenge(saver, helper, reincarnationFirst, "reincarnation_second",
+                    ModItems.GUOSHI_POHUNQIANG.get(), AdvancementHelper.event(AchievementAPI.REINCARNATION_SECOND));
         }
     }
 }

@@ -175,10 +175,12 @@ public class ModWorldGenProvider {
         HolderGetter<NoiseGeneratorSettings> noiseSettings = context.lookup(Registries.NOISE_SETTINGS);
 
         // 1. 极地冰原
+        //    ⚠️ 用自定义噪声设置（ModPolarWorldGen）：地形主体换成极寒石，
+        //       并且把原版 y0~8 的深板岩带也换成极寒石。直接用 OVERWORLD 会有深板岩。
         LevelStem stem = new LevelStem(types.getOrThrow(ModDimensions.POLAR_ICE_REALM_TYPE),
                 new NoiseBasedChunkGenerator(
                         new FixedBiomeSource(biomes.getOrThrow(ModDimensions.POLAR_ICE_BIOME)),
-                        noiseSettings.getOrThrow(NoiseGeneratorSettings.OVERWORLD)
+                        noiseSettings.getOrThrow(ModDimensions.POLAR_ICE_NOISE)
                 ));
 
         // 2. 万雷天域

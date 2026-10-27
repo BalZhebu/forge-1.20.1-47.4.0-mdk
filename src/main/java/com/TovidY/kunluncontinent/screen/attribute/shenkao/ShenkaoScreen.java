@@ -1,5 +1,7 @@
 package com.TovidY.kunluncontinent.screen.attribute.shenkao;
 
+import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
+import com.TovidY.kunluncontinent.godclass.GodRank;
 import com.TovidY.kunluncontinent.godclass.buff.GodBuff;
 import com.TovidY.kunluncontinent.godclass.buff.GodBuffs;
 import com.TovidY.kunluncontinent.godclass.interfac.GodClientData;
@@ -65,8 +67,8 @@ public class ShenkaoScreen extends AbstractContainerScreen<ShenkaoMenu> implemen
                     Component.literal(inCelestial ? "§6离开神界" : "§b进入神界"),
                     b -> NetworkHandler.INSTANCE.sendToServer(new C2SEnterCelestial()),
                     () -> Collections.singletonList(Component.literal(inCelestial
-                            ? "§7离开天境，返回主世界\n§7有主世界重生点 → 回那里\n§7没有 → 回世界出生点"
-                            : "§7进入天境\n§7有天境重生点 → 回床边\n§7没有 → 寻一处露天陆地"))
+                            ? "§7离开神界，返回主世界\n§7有主世界重生点 → 回那里\n§7没有 → 回世界出生点"
+                            : "§7进入神界\n§7有神界重生点 → 回床边\n§7没有 → 寻一处露天陆地"))
             ));
         }
 
@@ -144,15 +146,17 @@ public class ShenkaoScreen extends AbstractContainerScreen<ShenkaoMenu> implemen
         g.drawString(this.font, "§6当前神位: §e" + godName, textLeft, y, 0xFFFFFF, true);
         y += 14;
 
-        // ② 称谓（占位，等做完称谓系统再接）
-        g.drawString(this.font, "§6称谓: §7— —（尚未开启）", textLeft, y, 0xFFFFFF, true);
+        int level = ModAttributeAPI.getDengji(net.minecraft.client.Minecraft.getInstance().player);
+        GodRank rank = GodRank.of(level);
+        String rankStr = rank == null
+                ? "§7— —（未达 " + GodRank.MIN_LEVEL + " 级）"
+                : rank.display() + " §7(Lv." + level + ")";
+        g.drawString(this.font, "§6称谓: " + rankStr, textLeft, y, 0xFFFFFF, true);
         y += 16;
 
-        // 分割线
         g.fill(this.leftPos + 10, y, this.leftPos + this.imageWidth - 10, y + 1, 0xFF8A6D3B);
         y += 8;
 
-        // ③ 被动增幅
         g.drawString(this.font, "§d◆ 被动增幅", textLeft, y, 0xFFFFFF, true);
         y += 12;
 

@@ -9,6 +9,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.block.Block;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
 import java.util.concurrent.CompletableFuture;
@@ -42,5 +43,15 @@ public class ModItemTagsProvider extends ItemTagsProvider {
 
         this.tag(ItemTags.MUSIC_DISCS)
                 .add(ModItems.THRONE_OF_FROZEN_STONE.get());
+
+        // ==================== 极寒圆石 = 圆石 ====================
+        // 原版石制工具/熔炉等配方走的是 minecraft:stone_crafting_materials / stone_tool_materials，
+        // 模组和数据包找材料走 forge:cobblestone —— 三个都登记，才能真的"当圆石用"。
+        this.tag(ItemTags.STONE_CRAFTING_MATERIALS)
+                .add(ModBlocks.EXTREME_COLD_COBBLESTONE.get().asItem());
+        this.tag(ItemTags.STONE_TOOL_MATERIALS)
+                .add(ModBlocks.EXTREME_COLD_COBBLESTONE.get().asItem());
+        this.tag(Tags.Items.COBBLESTONE)
+                .add(ModBlocks.EXTREME_COLD_COBBLESTONE.get().asItem());
     }
 }

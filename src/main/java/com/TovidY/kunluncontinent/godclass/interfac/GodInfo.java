@@ -1,6 +1,7 @@
 package com.TovidY.kunluncontinent.godclass.interfac;
 
 import com.TovidY.kunluncontinent.advancement.AchievementAPI;
+import com.TovidY.kunluncontinent.capability.hunhuanattributes.HunhuanNianxianUpgrader;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerUpgradeSystem;
@@ -151,7 +152,7 @@ public class GodInfo {
         player.serverLevel().playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 2.0f, 0.5f);
 
-        Component chatMsg = Component.literal("§d§l[神界通报] §b§l" + player.getScoreboardName() + " §f历经磨难，终成 §6§l" + this.name + " §f尊位！");
+        Component chatMsg = Component.literal("§b§l" + player.getScoreboardName() + " §f历经磨难，终成 §6§l" + this.name + " §f尊位！");
         Component titleMsg = Component.literal("§6§l" + this.name + " §b§l传承完成");
         Component subtitleMsg = Component.literal("§f恭喜玩家 §e" + player.getScoreboardName() + " §f成就神位");
         if (player.server != null) {
@@ -166,8 +167,17 @@ public class GodInfo {
         NetworkHandler.sendToClient(new PacketChangeCamera(0), player);
         player.sendSystemMessage(Component.literal("§a§l神格已成，凡躯已脱！"));
 
-        // 成就：成就神位（九考全过）
         AchievementAPI.onGodAscended(player);
+
+        com.TovidY.kunluncontinent.godclass.GodBlessingRing.grant(player);
+
+        HunhuanNianxianUpgrader.Result ringUpgrade = HunhuanNianxianUpgrader.upgradeAll(player);
+        if (ringUpgrade.changed()) {
+            player.sendSystemMessage(Component.literal(
+                    "§d§l【神考完成】§f你体内 §e" + ringUpgrade.ringCount() + " §f枚魂环（§e"
+                            + ringUpgrade.wuhunCount() + " §f个武魂）尽数蜕变，所有武魂魂环年限增加 §e"
+                            + HunhuanNianxianUpgrader.BONUS_NIANXIAN + " §f年！"));
+        }
     }
 
     private void grantStageRewards(int stage, Player player) {
@@ -176,8 +186,6 @@ public class GodInfo {
             rewards.forEach(r -> r.grant(player));
         }
     }
-
-
 
     private String formatRewardDesc(String desc) {
         if (desc == null || desc.length() <= 16) return desc;
@@ -267,12 +275,35 @@ public class GodInfo {
     }
 
     /**
+     * 奖励能把等级顶到的上限：<b>百级</b>。
+     *
+     * <p>百级之上属于「突破」的范畴（{@code PlayerUpgradeSystem.isTupoDengji} 要求魂环数），
+     * 神考奖励不能越权跳级。</p>
+     */
+    private static final int MAX_REWARD_LEVEL = 100;
+
+    private static final String MSG_LEVEL_CAP_BEFORE_GOD =
+            "§d§l【神赐】 §f由于你已达99级巅峰，无法升级百级，但各类属性已强化！";
+    private static final String MSG_LEVEL_CAP_AT_MAX =
+            "§d§l【神赐】 §f你已是百级之躯，无法再升，溢出的等级已折算为属性强化！";
+
+    /**
      * {@code dengji} 奖励：真正把等级顶上去（不是加属性）。
      *
-     * <p><b>为什么看 {@code isGod()}：</b>{@code PlayerUpgradeSystem.isTupoDengji} 里
-     * 99 级在**封神之前**是硬上限（"已经满级，请封神后再突破"），
-     * 所以考试途中拿到的 +1 级卡在 99 时只能折算成属性强化；
+     * <h3>为什么要看 {@code isGod()}</h3>
+     * <p>{@code PlayerUpgradeSystem.isTupoDengji} 里 99 级在<b>封神之前</b>是硬上限
+     * （"已经满级，请封神后再突破"），所以考试途中拿到的 +1 级卡在 99 时只能折算成属性强化；
      * 而飞升动画结束时 {@code isGod} 已经为 true，这时才允许把 99 级顶到 100 级。</p>
+     *
+     * <h3>⚠️ 为什么还要卡 {@link #MAX_REWARD_LEVEL}</h3>
+     * <p><b>这就是"封神后变成 101 级"的根因</b>：积攒型神考（{@code setCumulative(true)}）
+     * 的所有阶段奖励是在飞升动画结束时<b>一次性补发</b>的 ——</p>
+     * <pre>
+     *   99 级 → 第五考「当前等级+1」→ 100 级
+     *         → 神位奖励「百级」+1 → <b>101 级</b> ❌
+     * </pre>
+     * <p>两个 +1 描述的都是"到百级"这件事，叠加就多出一级。现在这里硬封顶 100，
+     * 溢出的等级按 {@link #applyLevelStatsOnly} 折算成属性，不做无声丢弃。</p>
      */
     private static void grantLevels(Player player, PlayerAttributeCapability cap, int levels) {
         if (!(player instanceof ServerPlayer serverPlayer) || levels <= 0) {
@@ -281,16 +312,30 @@ public class GodInfo {
         int currentLevel = cap.getDengji();
         for (int i = 0; i < levels; i++) {
             if (currentLevel >= 99 && !cap.isGod()) {
-                applyLevelStatsOnly(serverPlayer, cap, 99);
-            } else {
-                int nextLevel = currentLevel + 1;
-                PlayerUpgradeSystem.processSuccessfulUpgrade(serverPlayer, cap, nextLevel);
-                currentLevel = nextLevel;
+                applyLevelStatsOnly(serverPlayer, cap, 99, MSG_LEVEL_CAP_BEFORE_GOD);
+                continue;
             }
+            if (currentLevel >= MAX_REWARD_LEVEL) {
+                // 已经是百级：剩余层数全部折算属性，只提示一次
+                for (int rest = i; rest < levels; rest++) {
+                    applyLevelStatsOnly(serverPlayer, cap, MAX_REWARD_LEVEL, null);
+                }
+                serverPlayer.sendSystemMessage(Component.literal(MSG_LEVEL_CAP_AT_MAX));
+                return;
+            }
+            int nextLevel = currentLevel + 1;
+            PlayerUpgradeSystem.processSuccessfulUpgrade(serverPlayer, cap, nextLevel);
+            currentLevel = nextLevel;
         }
     }
 
-    private static void applyLevelStatsOnly(ServerPlayer player, PlayerAttributeCapability capability, int level) {
+    /**
+     * 只加属性、不涨等级的那一档补偿。
+     *
+     * @param message 为 {@code null} 时不发消息（批量折算时避免刷屏）
+     */
+    private static void applyLevelStatsOnly(ServerPlayer player, PlayerAttributeCapability capability,
+                                            int level, String message) {
         capability.setMaxshengming(capability.getMaxshengming() + (level * 1.4f) * 0.7f);
         capability.setFangyu(capability.getFangyu() + (level * 0.3f) * 0.7f);
         capability.setGongji(capability.getGongji() + (level * 0.5f) * 0.65f);
@@ -300,7 +345,9 @@ public class GodInfo {
         capability.setWuchuan(capability.getWuchuan() + 1f);
         capability.setShanbi(capability.getShanbi() + 1f);
         capability.setKangbao(capability.getKangbao() + 1f);
-        player.sendSystemMessage(Component.literal("§d§l【神赐】 §f由于你已达99级巅峰，无法升级百级，但各类属性已强化！"));
+        if (message != null) {
+            player.sendSystemMessage(Component.literal(message));
+        }
     }
 
     public GodTask getRandomTask(int stage, RandomSource random) {

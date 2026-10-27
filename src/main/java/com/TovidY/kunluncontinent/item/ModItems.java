@@ -51,6 +51,7 @@ import com.TovidY.kunluncontinent.special.lonebamboo.SkillPoleVault;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.hungu.BoneItem;
 import com.TovidY.kunluncontinent.item.klitem.*;
+import com.TovidY.kunluncontinent.item.spiritstone.SpiritStoneItem;
 import com.TovidY.kunluncontinent.item.neidanitems.NeidanItem;
 import com.TovidY.kunluncontinent.item.testitemblock.InstantKillSwordItem;
 import com.TovidY.kunluncontinent.item.testitemblock.TestLevelUp;
@@ -103,6 +104,17 @@ public class ModItems {
 
     public static final RegistryObject<Item> INSTANT_KILL_SWORD =
             ITEMS.register("instant_kill_sword", InstantKillSwordItem::new);
+
+    //蕴灵石（阶数 1~9；品质存在 ItemStack 的 NBT 里，见 SpiritStoneQuality）
+    public static final RegistryObject<Item> FIRST_SPIRIT_STONE = ITEMS.register("first_spirit_stone",()->new SpiritStoneItem(new Item.Properties(),1));
+    public static final RegistryObject<Item> TWO_SPIRIT_STONE = ITEMS.register("two_spirit_stone",()->new SpiritStoneItem(new Item.Properties(),2));
+    public static final RegistryObject<Item> THREE_SPIRIT_STONE = ITEMS.register("three_spirit_stone",()->new SpiritStoneItem(new Item.Properties(),3));
+    public static final RegistryObject<Item> FOUR_SPIRIT_STONE = ITEMS.register("four_spirit_stone",()->new SpiritStoneItem(new Item.Properties(),4));
+    public static final RegistryObject<Item> FIVE_SPIRIT_STONE = ITEMS.register("five_spirit_stone",()->new SpiritStoneItem(new Item.Properties(),5));
+    public static final RegistryObject<Item> SIX_SPIRIT_STONE = ITEMS.register("six_spirit_stone",()->new SpiritStoneItem(new Item.Properties(),6));
+    public static final RegistryObject<Item> SEVEN_SPIRIT_STONE = ITEMS.register("seven_spirit_stone",()->new SpiritStoneItem(new Item.Properties(),7));
+    public static final RegistryObject<Item> EIGHT_SPIRIT_STONE = ITEMS.register("eight_spirit_stone",()->new SpiritStoneItem(new Item.Properties(),8));
+    public static final RegistryObject<Item> NINE_SPIRIT_STONE = ITEMS.register("nine_spirit_stone",()->new SpiritStoneItem(new Item.Properties(),9));
 
     //升级模版
     public static final RegistryObject<Item> RINSEI_FORGING_TEMPLATE = ITEMS.register("rinsei_forging_template",()->new Item(new Item.Properties().stacksTo(16)));
@@ -197,10 +209,10 @@ public class ModItems {
     });
 
     //武魂果实
-    public static final RegistryObject<Item> GUOSHI_POHUNQIANG = ITEMS.register("guoshi_pohunqiang",()->new WuhunguoshiItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setWuhunname(Wuhunname.pohunqiang));
-    public static final RegistryObject<Item> GUOSHI_BAHUANGJI = ITEMS.register("guoshi_bahuangji",()->new WuhunguoshiItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setWuhunname(Wuhunname.bahuangji));
-    public static final RegistryObject<Item> GUOSHI_LEIJINHU = ITEMS.register("guoshi_leijinhu",()->new WuhunguoshiItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setWuhunname(Wuhunname.liejinhu));
-    public static final RegistryObject<Item> GUOSHI_PANSHIJUYUAN = ITEMS.register("guoshi_panshijuyuan",()->new WuhunguoshiItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build())).setWuhunname(Wuhunname.panshijuyuan));
+    public static final RegistryObject<Item> GUOSHI_POHUNQIANG = ITEMS.register("guoshi_pohunqiang",()->new WuhunguoshiItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build()).stacksTo(1)).setWuhunname(Wuhunname.pohunqiang));
+    public static final RegistryObject<Item> GUOSHI_BAHUANGJI = ITEMS.register("guoshi_bahuangji",()->new WuhunguoshiItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build()).stacksTo(1)).setWuhunname(Wuhunname.bahuangji));
+    public static final RegistryObject<Item> GUOSHI_LEIJINHU = ITEMS.register("guoshi_leijinhu",()->new WuhunguoshiItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build()).stacksTo(1)).setWuhunname(Wuhunname.liejinhu));
+    public static final RegistryObject<Item> GUOSHI_PANSHIJUYUAN = ITEMS.register("guoshi_panshijuyuan",()->new WuhunguoshiItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build()).stacksTo(1)).setWuhunname(Wuhunname.panshijuyuan));
 
     //材料物品（普通物品）
     public static final RegistryObject<Item> EXTREME_COLD_SNOWFLAKE_FRAGMENT = ITEMS.register("extreme_cold_snowflake_fragment",()->new Item(new Item.Properties()){
@@ -906,6 +918,7 @@ public class ModItems {
 
     public static ArrayList<RegistryObject<Item>> NORMALITEMSLIST = new ArrayList<>();
     static {
+
         NORMALITEMSLIST.add(EXTREME_COLD_SNOWFLAKE_FRAGMENT);
         NORMALITEMSLIST.add(RESET_SCROLL);
         NORMALITEMSLIST.add(GUIDE_BOOK);
@@ -1064,6 +1077,16 @@ public class ModItems {
         MODSTONE.add(AMETHYST);
         MODSTONE.add(SAPPHIRE);
         MODSTONE.add(STARLIGHT_STONE);
+
+        MODSTONE.add(FIRST_SPIRIT_STONE);
+        MODSTONE.add(TWO_SPIRIT_STONE);
+        MODSTONE.add(THREE_SPIRIT_STONE);
+        MODSTONE.add(FOUR_SPIRIT_STONE);
+        MODSTONE.add(FIVE_SPIRIT_STONE);
+        MODSTONE.add(SIX_SPIRIT_STONE);
+        MODSTONE.add(SEVEN_SPIRIT_STONE);
+        MODSTONE.add(EIGHT_SPIRIT_STONE);
+        MODSTONE.add(NINE_SPIRIT_STONE);
     }
 
     public static ArrayList<RegistryObject<Item>> DANYAOITEM = new ArrayList<>();

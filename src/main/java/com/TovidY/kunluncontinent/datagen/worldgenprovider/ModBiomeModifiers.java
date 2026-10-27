@@ -1,6 +1,8 @@
 package com.TovidY.kunluncontinent.datagen.worldgenprovider;
 
 import com.TovidY.kunluncontinent.KlMain;
+import com.TovidY.kunluncontinent.block.ModBlocks;
+import com.TovidY.kunluncontinent.datagen.oredatagen.ModWorldGenOreProvider;
 import com.TovidY.kunluncontinent.entity.EntityInit;
 import com.TovidY.kunluncontinent.worldgen.ModDimensions;
 import net.minecraft.core.HolderSet;
@@ -65,6 +67,28 @@ public class ModBiomeModifiers {
     public static final ResourceKey<BiomeModifier> ADD_DIVINE_REALM_GRASS =
             ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS,
                     new ResourceLocation(KlMain.MOD_ID, "add_divine_realm_grass"));
+
+    // ── 蕴灵矿：按维度分组，一组带多个 placed feature ──────────────
+    /** 1/2/3 阶：主世界。 */
+    public static final ResourceKey<BiomeModifier> ADD_SPIRIT_ORE_OVERWORLD =
+            ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS,
+                    new ResourceLocation(KlMain.MOD_ID, "add_spirit_ore_overworld"));
+    /** 4 阶：下界。 */
+    public static final ResourceKey<BiomeModifier> ADD_SPIRIT_ORE_NETHER =
+            ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS,
+                    new ResourceLocation(KlMain.MOD_ID, "add_spirit_ore_nether"));
+    /** 5 阶：末地。 */
+    public static final ResourceKey<BiomeModifier> ADD_SPIRIT_ORE_END =
+            ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS,
+                    new ResourceLocation(KlMain.MOD_ID, "add_spirit_ore_end"));
+    /** 6 阶：极寒冰域。 */
+    public static final ResourceKey<BiomeModifier> ADD_SPIRIT_ORE_POLAR_ICE =
+            ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS,
+                    new ResourceLocation(KlMain.MOD_ID, "add_spirit_ore_polar_ice"));
+    /** 7 阶：万雷天域。 */
+    public static final ResourceKey<BiomeModifier> ADD_SPIRIT_ORE_THUNDER =
+            ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS,
+                    new ResourceLocation(KlMain.MOD_ID, "add_spirit_ore_thunder"));
 
     public static void bootstrap(BootstapContext<BiomeModifier> context) {
         var biomes = context.lookup(Registries.BIOME);
@@ -138,6 +162,52 @@ public class ModBiomeModifiers {
         context.register(ADD_NPC_END, new ForgeBiomeModifiers.AddSpawnsBiomeModifier(
                 biomes.getOrThrow(BiomeTags.IS_END),
                 List.of(new MobSpawnSettings.SpawnerData(EntityInit.PLAYER_NPC.get(), 3, 1, 1))
+        ));
+
+        // ══════════════════ 蕴灵矿 ══════════════════
+        // 密度/高度全在 ModWorldGenOreProvider.placement() 里，这里只负责「挂到哪些群系」。
+        var step = net.minecraft.world.level.levelgen.GenerationStep.Decoration.UNDERGROUND_ORES;
+
+        // 主世界：1 / 2 / 3 阶
+        context.register(ADD_SPIRIT_ORE_OVERWORLD, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
+                HolderSet.direct(
+                        placedFeatures.getOrThrow(ModWorldGenOreProvider.createPlaceKey(ModBlocks.ONE_SPIRIT_STONE_ORE.get())),
+                        placedFeatures.getOrThrow(ModWorldGenOreProvider.createPlaceKey(ModBlocks.TWO_SPIRIT_STONE_ORE.get())),
+                        placedFeatures.getOrThrow(ModWorldGenOreProvider.createPlaceKey(ModBlocks.THREE_SPIRIT_STONE_ORE.get()))),
+                step
+        ));
+
+        // 下界：4 阶
+        context.register(ADD_SPIRIT_ORE_NETHER, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                biomes.getOrThrow(BiomeTags.IS_NETHER),
+                HolderSet.direct(placedFeatures.getOrThrow(
+                        ModWorldGenOreProvider.createPlaceKey(ModBlocks.FOUR_SPIRIT_STONE_ORE.get()))),
+                step
+        ));
+
+        // 末地：5 阶
+        context.register(ADD_SPIRIT_ORE_END, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                biomes.getOrThrow(BiomeTags.IS_END),
+                HolderSet.direct(placedFeatures.getOrThrow(
+                        ModWorldGenOreProvider.createPlaceKey(ModBlocks.FIVE_SPIRIT_STONE_ORE.get()))),
+                step
+        ));
+
+        // 极寒冰域：6 阶（自定义群系，不是 IS_OVERWORLD）
+        context.register(ADD_SPIRIT_ORE_POLAR_ICE, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                HolderSet.direct(biomes.getOrThrow(ModDimensions.POLAR_ICE_BIOME)),
+                HolderSet.direct(placedFeatures.getOrThrow(
+                        ModWorldGenOreProvider.createPlaceKey(ModBlocks.SIX_SPIRIT_STONE_ORE.get()))),
+                step
+        ));
+
+        // 万雷天域：7 阶
+        context.register(ADD_SPIRIT_ORE_THUNDER, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                HolderSet.direct(biomes.getOrThrow(ModDimensions.THUNDER_BIOME)),
+                HolderSet.direct(placedFeatures.getOrThrow(
+                        ModWorldGenOreProvider.createPlaceKey(ModBlocks.SEVEN_SPIRIT_STONE_ORE.get()))),
+                step
         ));
     }
 }

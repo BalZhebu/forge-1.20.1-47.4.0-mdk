@@ -167,6 +167,8 @@ public final class AttributeTabs {
     public static final int PAGE_CONFIG = 4;
     /** 属性点面板：插在属性面板右侧第二位。 */
     public static final int PAGE_POINT = 5;
+    /** 银行面板：顺序上夹在「魂环配置」和「神考/神祇」中间（id 只是编号，显示顺序看注册顺序）。 */
+    public static final int PAGE_BANK = 6;
 
     /**
      * 神考页签的显示条件 = <b>"这个玩家身上有神考数据"</b>。
@@ -211,6 +213,12 @@ public final class AttributeTabs {
         tab(PAGE_HUNHUAN, "魂环配置",
                 () -> new ItemStack(ModItems.HUNHUAN_BUTTON.get()),
                 new com.TovidY.kunluncontinent.screen.attribute.hunhuan.HunhuanMenu.Provider(), null);
+
+        // ⭐ 银行面板：夹在「魂环配置」和「神考」之间
+        //   用 BankTabMenu.Provider（不绑方块、只支持取钱）→ 190 高的紧凑版
+        tab(PAGE_BANK, "银行面板",
+                () -> new ItemStack(ModItems.GOLDEN_SOUL_COIN.get()),
+                new com.TovidY.kunluncontinent.screen.bank.BankTabMenu.Provider(), null);
 
         // ⭐ 标题动态：未封神叫「神考面板」，封神后变「神祇面板」
         dynamicTab(PAGE_SHENKAO,

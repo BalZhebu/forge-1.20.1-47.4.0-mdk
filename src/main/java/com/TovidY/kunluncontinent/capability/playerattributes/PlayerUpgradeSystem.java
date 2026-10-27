@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.capability.playerattributes;
 
 import com.TovidY.kunluncontinent.advancement.ModTriggers;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapability;
+import com.TovidY.kunluncontinent.godclass.GodRank;
 import com.TovidY.kunluncontinent.network.SynsAPI;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -71,7 +72,13 @@ public class PlayerUpgradeSystem {
         }
         if (level >= 100 && level < 199) {
             int rings = getMaxRings(cap);
-            int required = level / 10;
+            // 突破目标是 level+1，按「神祇称谓段」算所需的环数：
+            // 半神 10、准神 11、三级神 12、二级神 13、一级神 14、神王 15。
+            // 原来这里是 level/10（每 10 级一环），现在只在段末要环 —— 例如 120 级凑够 11 枚才能升 121。
+            int required = GodRank.requiredRingsForLevel(level + 1);
+            if (required < 0) {
+                required = level / 10;
+            }
             if (rings < required) {
                 player.connection.send(new ClientboundSetTitleTextPacket(Component.translatable("不能突破")));
                 return false;

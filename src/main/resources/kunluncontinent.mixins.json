@@ -5,8 +5,12 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "kunluncontinent.refmap.json",
   "mixins": [
+    "MixinMerchantMenu",
     "MixinPlayer",
-    "MixinServerLevel"
+    "MixinServerLevel",
+    "MixinStructurePiecesBuilder",
+    "SinglePoolElementAccessor",
+    "StructureTemplatePoolAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

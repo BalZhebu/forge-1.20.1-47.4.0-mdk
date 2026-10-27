@@ -63,7 +63,6 @@ public class PlayerNpcEntity extends PathfinderMob implements Merchant {
     private static final EntityDataAccessor<Integer> SKIN_INDEX =
             SynchedEntityData.defineId(PlayerNpcEntity.class, EntityDataSerializers.INT);
 
-    public static final int MAX_SKIN_COUNT = 3;
 
     @Nullable private ServerPlayer dialogPlayer;
 
@@ -86,9 +85,8 @@ public class PlayerNpcEntity extends PathfinderMob implements Merchant {
     @SuppressWarnings("deprecation")
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
         SpawnGroupData data = super.finalizeSpawn(level, difficulty, reason, spawnData, dataTag);
-        if (NpcSkinRegistry.getSkinCount() > 0) {
-            this.setSkinIndex(this.random.nextInt(NpcSkinRegistry.getSkinCount()));
-        }
+        // 按"已注册 id 列表"随机，不依赖 id 连续
+        this.setSkinIndex(NpcSkinRegistry.getRandomSkinIndex(this.random));
         // 根据维度生成等级，记录生成时间
         int npcLevel;
         if (level instanceof ServerLevel serverLevel) {
@@ -512,6 +510,15 @@ public class PlayerNpcEntity extends PathfinderMob implements Merchant {
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
+
+        // ⚠️ 这一行以前是**漏的**：{@code addAdditionalSaveData} 每次都写 SkinIndex，
+        //    但读档时不还原 → 区块一卸载重载，所有 NPC 的皮肤就掉回
+        //    {@code defineSynchedData} 的默认值 0（暮雨）。
+        //    表现就是"自然生成的几乎全是暮雨，只有刚生成还没重载的那几个是别的皮肤"。
+        if (compound.contains("SkinIndex")) {
+            int savedSkin = compound.getInt("SkinIndex");
+            this.setSkinIndex(NpcSkinRegistry.isValidIndex(savedSkin) ? savedSkin : 0);
+        }
 
         if (compound.contains("NpcSoulData")) {
             CompoundTag soulTag = compound.getCompound("NpcSoulData");

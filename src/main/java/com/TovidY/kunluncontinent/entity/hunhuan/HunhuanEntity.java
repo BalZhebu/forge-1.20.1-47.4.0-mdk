@@ -157,6 +157,10 @@ public class HunhuanEntity extends Entity {
                         //    普通魂环 → 回落到该武魂的 SkillLibrary 技能池，行为与改动前完全一致。
                         BaseSkillItem rewardSkill = SpecialSoulRingRegistry.resolveSkill(
                                 sourceType, currentWuhun, ringIndex, player.getRandom());
+                        // 这枚环来自特殊生物（注册表里查得到来源）→ 成就「异兽魂环」
+                        if (SpecialSoulRingRegistry.getBySourceId(sourceType) != null) {
+                            com.TovidY.kunluncontinent.advancement.AchievementAPI.onSpecialSoulRing(player);
+                        }
                         if (rewardSkill != null) {
                             playerAttr.setWuhunSkill(currentWuhun, ringIndex - 1, rewardSkill);
 

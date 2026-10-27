@@ -12,6 +12,10 @@ import com.TovidY.kunluncontinent.screen.attribute.point.PointMenu;
 import com.TovidY.kunluncontinent.screen.attribute.point.PointScreen;
 import com.TovidY.kunluncontinent.screen.attribute.shenkao.ShenkaoMenu;
 import com.TovidY.kunluncontinent.screen.attribute.shenkao.ShenkaoScreen;
+import com.TovidY.kunluncontinent.screen.bank.BankMenu;
+import com.TovidY.kunluncontinent.screen.bank.BankScreen;
+import com.TovidY.kunluncontinent.screen.bank.BankStorageScreen;
+import com.TovidY.kunluncontinent.screen.bank.BankTabMenu;
 import com.TovidY.kunluncontinent.screen.guide.GuidBookScreen;
 import com.TovidY.kunluncontinent.screen.guide.GuideBookMenu;
 import com.TovidY.kunluncontinent.screen.liandanlugui.LiandanluMenu;
@@ -68,6 +72,17 @@ public class ModMenuTypes {
     public static final RegistryObject<MenuType<SellMenu>> SELL_MENU =
             registerMenuType("sell_menu", SellMenu::new);
 
+    /** 昆仑银行：无槽位面板，余额存在玩家 capability 里。 */
+    public static final RegistryObject<MenuType<BankMenu>> BANK_MENU =
+            registerMenuType("bank_menu", BankMenu::new);
+
+    /**
+     * 银行的<b>页签版</b>：同一个 {@code BankMenu} 逻辑，但
+     * ① 不绑方块（只能取钱）② 路由到 190 高的紧凑版界面。
+     */
+    public static final RegistryObject<MenuType<BankTabMenu>> BANK_TAB_MENU =
+            registerMenuType("bank_tab_menu", BankTabMenu::create);
+
     private static <T extends AbstractContainerMenu> RegistryObject<MenuType<T>> registerMenuType(String name, IContainerFactory<T> factory) {
         return MENUS.register(name, () -> net.minecraftforge.common.extensions.IForgeMenuType.create(factory));
     }
@@ -90,6 +105,8 @@ public class ModMenuTypes {
             MenuScreens.register(CONFIG_MENU.get(), ConfigScreen::new);
             MenuScreens.register(SPIRITGATHERING_MENU.get(), SpiritGatheringaltarScreen::new);
             MenuScreens.register(SELL_MENU.get(), SellScreen::new);
+            MenuScreens.register(BANK_MENU.get(), BankScreen::new);
+            MenuScreens.register(BANK_TAB_MENU.get(), BankStorageScreen::new);
         }
     }
 }

@@ -16,7 +16,7 @@ import java.util.List;
  * AchievementAPI.onAwakenWuhun(player);                  // 觉醒武魂
  * AchievementAPI.onAbsorbHunhuan(player, nianxian, n);   // 吸收魂环（含年限分档 + 九环圆满）
  * AchievementAPI.onAlchemySuccess(nearbyPlayer, quality);// 炼丹成功（含品质分档）
- * AchievementAPI.onReincarnate(player);                  // 转生
+ * AchievementAPI.onReincarnate(player, times);           // 转生（times = 累计次数，1/2 分档）
  * AchievementAPI.onTowerCleared(player, newFloor);        // 魂塔通关（10/30/50/100 层分档）
  * AchievementAPI.onGodExamStart(player);                 // 开启神考
  * AchievementAPI.onGodExamStagePassed(player, stage);    // 通过某一考
@@ -103,6 +103,28 @@ public final class AchievementAPI {
     public static final String DANYAO_FIRST = "danyao_first";
     /** 批量服用丹药（蹲下右键一次吃多颗）。 */
     public static final String DANYAO_BATCH = "danyao_batch";
+
+    // ---------- 魂骨 ----------
+    /** 第一次装备魂骨。 */
+    public static final String BONE_FIRST = "bone_first";
+    /** 七处魂骨槽全部装满。 */
+    public static final String BONE_SEVEN = "bone_seven";
+
+    // ---------- 神祇进阶 ----------
+    /** 获得封神时赐予的神赐魂环。 */
+    public static final String GOD_RING_BLESSED = "god_ring_blessed";
+
+    // ---------- 转生 / 武魂 ----------
+    /** 完成第二次转生。 */
+    public static final String REINCARNATION_SECOND = "reincarnation_second";
+    /** 第一次开启武魂真身。 */
+    public static final String WUHUN_ZHENSHEN = "wuhun_zhenshen";
+    /** 吸收一枚特殊生物魂环（自带专属魂技）。 */
+    public static final String SPECIAL_SOUL_RING = "special_soul_ring";
+
+    // ---------- 装备 ----------
+    /** 穿齐四件同套本模组盔甲（触发四件套加成）。 */
+    public static final String ARMOR_SET_FULL = "armor_set_full";
 
     // ==================================================================================
     //  分档规则（新增档位只需在这里加一行，运行时会自动多触发一个成就）
@@ -198,10 +220,11 @@ public final class AchievementAPI {
         }
     }
 
-    /** 转生成功。 */
-    public static void onReincarnate(Player player) {
-        trigger(player, REINCARNATION_FIRST);
-    }
+    /**
+     * 转生成功（已经带上本次之后的转生次数）。
+     *
+     * @param times 累计转生次数（1 = 第一次，2 = 第二次……）
+     */
 
     /** 开始挑战魂塔。 */
     public static void onTowerStart(Player player) {
@@ -272,5 +295,52 @@ public final class AchievementAPI {
         if (count >= 2) {
             trigger(player, DANYAO_BATCH);
         }
+    }
+
+    /**
+     * 魂骨槽发生变化后调用（装备 / 卸下都算）。
+     *
+     * @param boneCount 当前 7 个魂骨槽里非空的数量
+     */
+    public static void onBoneChanged(Player player, int boneCount) {
+        if (boneCount <= 0) {
+            return;
+        }
+        trigger(player, BONE_FIRST);
+        if (boneCount >= 7) {
+            trigger(player, BONE_SEVEN);
+        }
+    }
+
+    /** 获得神赐魂环（封神时自动赐予的那一枚）。 */
+    public static void onGodRingBlessed(Player player) {
+        trigger(player, GOD_RING_BLESSED);
+    }
+
+    /**
+     * 转生成功（已经带上本次之后的转生次数）。
+     *
+     * @param times 累计转生次数（1 = 第一次，2 = 第二次……）
+     */
+    public static void onReincarnate(Player player, int times) {
+        trigger(player, REINCARNATION_FIRST);
+        if (times >= 2) {
+            trigger(player, REINCARNATION_SECOND);
+        }
+    }
+
+    /** 第一次开启武魂真身。 */
+    public static void onZhenshenActivate(Player player) {
+        trigger(player, WUHUN_ZHENSHEN);
+    }
+
+    /** 吸收了一枚特殊生物魂环。 */
+    public static void onSpecialSoulRing(Player player) {
+        trigger(player, SPECIAL_SOUL_RING);
+    }
+
+    /** 四件套穿齐。 */
+    public static void onArmorSetFull(Player player) {
+        trigger(player, ARMOR_SET_FULL);
     }
 }

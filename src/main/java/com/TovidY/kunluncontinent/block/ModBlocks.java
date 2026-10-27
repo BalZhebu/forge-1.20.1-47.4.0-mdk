@@ -43,6 +43,43 @@ public class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS =
             DeferredRegister.create(ForgeRegistries.BLOCKS, KlMain.MOD_ID);
 
+    //蕴灵矿
+    public static final RegistryObject<Block> ONE_SPIRIT_STONE_ORE =
+            registerBlock("one_spirit_stone_ore",()->
+                    new Block(BlockBehaviour.Properties.copy(Blocks.IRON_ORE)));
+    public static final RegistryObject<Block> TWO_SPIRIT_STONE_ORE =
+            registerBlock("two_spirit_stone_ore",()->
+                    new Block(BlockBehaviour.Properties.copy(Blocks.IRON_ORE)));
+    public static final RegistryObject<Block> THREE_SPIRIT_STONE_ORE =
+            registerBlock("three_spirit_stone_ore",()->
+                    new Block(BlockBehaviour.Properties.copy(Blocks.IRON_ORE)));
+    public static final RegistryObject<Block> FOUR_SPIRIT_STONE_ORE =
+            registerBlock("four_spirit_stone_ore",()->
+                    new Block(BlockBehaviour.Properties.copy(Blocks.IRON_ORE)));
+    public static final RegistryObject<Block> FIVE_SPIRIT_STONE_ORE =
+            registerBlock("five_spirit_stone_ore",()->
+                    new Block(BlockBehaviour.Properties.copy(Blocks.IRON_ORE)));
+    public static final RegistryObject<Block> SIX_SPIRIT_STONE_ORE =
+            registerBlock("six_spirit_stone_ore",()->
+                    new Block(BlockBehaviour.Properties.copy(Blocks.IRON_ORE)));
+    public static final RegistryObject<Block> SEVEN_SPIRIT_STONE_ORE =
+            registerBlock("seven_spirit_stone_ore",()->
+                    new Block(BlockBehaviour.Properties.copy(Blocks.IRON_ORE)));
+    public static final RegistryObject<Block> EIGHT_SPIRIT_STONE_ORE =
+            registerBlock("eight_spirit_stone_ore",()->
+                    new Block(BlockBehaviour.Properties.copy(Blocks.IRON_ORE)));
+    public static final RegistryObject<Block> NINE_SPIRIT_STONE_ORE =
+            registerBlock("nine_spirit_stone_ore",()->
+                    new Block(BlockBehaviour.Properties.copy(Blocks.IRON_ORE)));
+
+    public static final RegistryObject<Block> EXTREME_COLD_STONE =
+            registerBlock("extreme_cold_stone",()->
+                    new Block(BlockBehaviour.Properties.copy(Blocks.STONE)));
+
+    public static final RegistryObject<Block> EXTREME_COLD_COBBLESTONE =
+            registerBlock("extreme_cold_cobblestone",()->
+                    new Block(BlockBehaviour.Properties.copy(Blocks.STONE)));
+
     public static final RegistryObject<Block> CULTIVATION_PLATFORM =
             registerBlock("cultivation_platform",()->
                     new CultivationPlatformBlock(BlockBehaviour.Properties.of().strength(1.5f,3.0f).noOcclusion()));
@@ -195,6 +232,12 @@ public class ModBlocks {
                         }
                     });
 
+    public static final RegistryObject<Block> BANK_BLOCK =
+            registerBlock("bank_block", () ->
+                   new BankBlock(BlockBehaviour.Properties.copy(Blocks.HAY_BLOCK)
+                            .strength(-1.0F, 3600000.0F)
+                            .noLootTable()));
+
     public static final RegistryObject<Block> PUTUAN_BLOCK =
             registerBlock("putuan_block",()->
                     new PutuanBlock(BlockBehaviour.Properties.copy(Blocks.HAY_BLOCK).noOcclusion()));
@@ -295,6 +338,20 @@ public class ModBlocks {
     public static final RegistryObject<Block> RINSEI_BLOCK = registerBlock("rinsei_block", () ->
             new Block(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK)));
 
+    //蕴灵矿
+    public static final ArrayList<RegistryObject<Block>> YUNLINGKUANG = new ArrayList<>();
+    static{
+        YUNLINGKUANG.add(ONE_SPIRIT_STONE_ORE);
+        YUNLINGKUANG.add(TWO_SPIRIT_STONE_ORE);
+        YUNLINGKUANG.add(THREE_SPIRIT_STONE_ORE);
+        YUNLINGKUANG.add(FOUR_SPIRIT_STONE_ORE);
+        YUNLINGKUANG.add(FIVE_SPIRIT_STONE_ORE);
+        YUNLINGKUANG.add(SIX_SPIRIT_STONE_ORE);
+        YUNLINGKUANG.add(SEVEN_SPIRIT_STONE_ORE);
+        YUNLINGKUANG.add(EIGHT_SPIRIT_STONE_ORE);
+        YUNLINGKUANG.add(NINE_SPIRIT_STONE_ORE);
+    }
+
     //块
     public static ArrayList<RegistryObject<Block>> BLOCKLIST = new ArrayList<>();
     static{
@@ -347,6 +404,9 @@ public class ModBlocks {
         MODBLOCKS.add(SPIRIT_GATHERING_STONE_2);
         MODBLOCKS.add(DROSS_BLOCK);
         MODBLOCKS.add(SOUL_SOIL);
+        MODBLOCKS.add(EXTREME_COLD_STONE);
+        MODBLOCKS.add(EXTREME_COLD_COBBLESTONE);
+        MODBLOCKS.add(BANK_BLOCK);
 
         MODBLOCKS.add(DIVINE_REALM_LOG);
         MODBLOCKS.add(DIVINE_REALM_PLANKS);

@@ -23,6 +23,23 @@ public class BahuangjiItem extends SwordItem {
         super(ModToolTiers.COLD_HEARTED_STEEL, 0, -1.8F, new Item.Properties().stacksTo(1).fireResistant());
     }
 
+    /**
+     * 无法破坏：耐久永远不消耗，也不会因为耐久耗尽而碎裂。
+     *
+     * <p><b>为什么写在这里而不是 {@code Item.Properties}</b>：{@code SwordItem} 的构造会走
+     * {@code TieredItem}，内部执行 {@code defaultDurability(tier.getUses())} ——
+     * 属性里的耐久会被档位覆盖，管不住。{@code ItemStack#hurt} 唯一的入口是
+     * {@code isDamageableItem()}，而它缓存的就是这个方法，所以这里返回 {@code false}
+     * 才是最彻底的关法（顺带耐久条也不再显示）。</p>
+     *
+     * <p>⚠️ 只挡「耐久耗尽」这一条；{@code inventoryTick} 里
+     * 「非所有者 / 精神力不足就 {@code setCount(0)}」是另一套主动销毁逻辑，不受影响。</p>
+     */
+    @Override
+    public boolean canBeDepleted() {
+        return false;
+    }
+
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
         if (level.isClientSide || !(entity instanceof Player player)) {

@@ -73,6 +73,7 @@ public class ModCreativeModelTab {
                                         ModItems.EQUIPMENT.stream(),
                                         ModItems.TOOL.stream(),
                                         ModBlocks.BLOCKLIST.stream(),
+                                        ModBlocks.YUNLINGKUANG.stream(),
                                         Stream.of(ModItems.THRONE_OF_FROZEN_STONE),
                                         ModItems.SPAWNEGGLIST.stream()
 

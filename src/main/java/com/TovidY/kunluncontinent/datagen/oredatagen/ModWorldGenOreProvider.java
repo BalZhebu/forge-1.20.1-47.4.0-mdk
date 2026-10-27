@@ -59,6 +59,16 @@ public class ModWorldGenOreProvider {
         //寒心钢
         registerOre(context, ModBlocks.COLD_HEARTED_STEEL_ORE.get(), 3);
 
+        // ==================== 蕴灵矿（1~7 阶；8/9 阶不生成，只写了掉落） ====================
+        // size 是「一坨多少个」，高阶矿团略小一点、显得更稀有
+        registerOre(context, ModBlocks.ONE_SPIRIT_STONE_ORE.get(), 6);
+        registerOre(context, ModBlocks.TWO_SPIRIT_STONE_ORE.get(), 5);
+        registerOre(context, ModBlocks.THREE_SPIRIT_STONE_ORE.get(), 5);
+        registerOre(context, ModBlocks.FOUR_SPIRIT_STONE_ORE.get(), 6);
+        registerOre(context, ModBlocks.FIVE_SPIRIT_STONE_ORE.get(), 5);
+        registerOre(context, ModBlocks.SIX_SPIRIT_STONE_ORE.get(), 6);
+        registerOre(context, ModBlocks.SEVEN_SPIRIT_STONE_ORE.get(), 6);
+
         //药草
         context.register(RED_SPIDER_LILY_CONFIG, new ConfiguredFeature<>(Feature.SIMPLE_BLOCK,
                 new SimpleBlockConfiguration(BlockStateProvider.simple(ModBlocks.RED_SPIDER_LILY_BLOCK.get()))));
@@ -93,6 +103,23 @@ public class ModWorldGenOreProvider {
         registerPlacement(context, configuredFeatures, ModBlocks.SAPPHIRE_ORE, 0, 110, 5);
         //星辰石
         registerPlacement(context, configuredFeatures, ModBlocks.STARLIGHT_STONE_ORE, -64, 0, 3);
+
+        // ==================== 蕴灵矿 ====================
+        // 参考：灰铁矿 count=15（模拟原版铁）；原版钻石 count=7；下界石英 count=16
+        // 1 阶：主世界 y ≥ -2，密度略低于灰铁矿
+        registerPlacement(context, configuredFeatures, ModBlocks.ONE_SPIRIT_STONE_ORE, -2, 80, 12);
+        // 2 阶：主世界 y < 0，比钻石稍高，且明显高于 3 阶
+        registerPlacement(context, configuredFeatures, ModBlocks.TWO_SPIRIT_STONE_ORE, -64, -1, 9);
+        // 3 阶：主世界 y < 0，密度约为 2 阶的一半
+        registerPlacement(context, configuredFeatures, ModBlocks.THREE_SPIRIT_STONE_ORE, -64, -1, 4);
+        // 4 阶：下界，比石英略低
+        registerPlacement(context, configuredFeatures, ModBlocks.FOUR_SPIRIT_STONE_ORE, 10, 117, 14);
+        // 5 阶：末地，不高不低
+        registerPlacement(context, configuredFeatures, ModBlocks.FIVE_SPIRIT_STONE_ORE, 20, 90, 6);
+        // 6 阶：极寒冰域，同灰铁矿
+        registerPlacement(context, configuredFeatures, ModBlocks.SIX_SPIRIT_STONE_ORE, -60, 60, 15);
+        // 7 阶：万雷天域，同灰铁矿
+        registerPlacement(context, configuredFeatures, ModBlocks.SEVEN_SPIRIT_STONE_ORE, -60, 60, 15);
 
         // 注册彼岸花的放置：
         context.register(RED_SPIDER_LILY_PLACED, new PlacedFeature(

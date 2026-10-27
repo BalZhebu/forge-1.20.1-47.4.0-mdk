@@ -30,12 +30,6 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(ModBlocks.DROSS_BLOCK.get())
                 // ⭐ 神界草：用锄子铲（同原版草）
                 .add(ModBlocks.DIVINE_REALM_GRASS.get());
-
-        // ⭐ 神界草的行为标签 —— 缺了这些它就只是个"装饰方块"。
-        //   ⚠️ 常量名以**本项目 mappings 里真实存在的**为准：
-        //      · REPLACEABLE / DIRT / REPLACEABLE_BY_TREES / MINEABLE_WITH_HOE 都已验证可用
-        //      · BLOCKS_PLACEABLE_BY_TREES 和 COMBUSTIBLE 在本映射里不存在（编译报"找不到符号"），
-        //        它们的等价标签是 Tags.Blogs（Forge 的可燃标签），按需再加。
         tag(BlockTags.REPLACEABLE)
                 .add(ModBlocks.DIVINE_REALM_GRASS.get());
         tag(BlockTags.REPLACEABLE_BY_TREES)
@@ -104,6 +98,21 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(ModBlocks.SPIRIT_GATHERING_STONE_0.get())
                 .add(ModBlocks.SPIRIT_GATHERING_STONE_1.get())
                 .add(ModBlocks.SPIRIT_GATHERING_STONE_2.get())
+                //蕴灵矿（九阶全部都要在这里，否则镐子不算「有效工具」：
+                //     挖掘速度退回 1.0、且破坏进度按 /100 算，表现就是"挖半天还挖不动、也挖不出东西"）
+                .add(ModBlocks.ONE_SPIRIT_STONE_ORE.get())
+                .add(ModBlocks.TWO_SPIRIT_STONE_ORE.get())
+                .add(ModBlocks.THREE_SPIRIT_STONE_ORE.get())
+                .add(ModBlocks.FOUR_SPIRIT_STONE_ORE.get())
+                .add(ModBlocks.FIVE_SPIRIT_STONE_ORE.get())
+                .add(ModBlocks.SIX_SPIRIT_STONE_ORE.get())
+                .add(ModBlocks.SEVEN_SPIRIT_STONE_ORE.get())
+                .add(ModBlocks.EIGHT_SPIRIT_STONE_ORE.get())
+                .add(ModBlocks.NINE_SPIRIT_STONE_ORE.get())
+
+                .add(ModBlocks.EXTREME_COLD_STONE.get())
+                .add(ModBlocks.EXTREME_COLD_COBBLESTONE.get())
+
                 //矿物块
                 .add(ModBlocks.GRAY_BLOCK.get())
                 .add(ModBlocks.CLOUD_PATTERNED_BRONZE_BLOCK.get())
@@ -113,6 +122,14 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(ModBlocks.RINSEI_BLOCK.get())
 
         ;
+        // 极寒圆石：登记为「圆石」，让按 forge:cobblestone 找材料的配方/数据包能直接用它
+        tag(Tags.Blocks.COBBLESTONE)
+                .add(ModBlocks.EXTREME_COLD_COBBLESTONE.get());
+
+        // 极寒石要能被矿石特征替换（6 阶蕴灵矿用 STONE_ORE_REPLACEABLES 当替换目标）
+        tag(BlockTags.STONE_ORE_REPLACEABLES)
+                .add(ModBlocks.EXTREME_COLD_STONE.get());
+
         //需要铁镐破坏
         tag(BlockTags.NEEDS_IRON_TOOL)
                 .add(ModBlocks.GRAY_IRON_ORE.get())
@@ -133,6 +150,11 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(ModBlocks.LIANDANLU5.get())
                 .add(ModBlocks.LIANDANLU6.get())
                 .add(ModBlocks.POLAR_ICE_PORTAL_BLOCK.get())
+
+                .add(ModBlocks.FOUR_SPIRIT_STONE_ORE.get())
+                .add(ModBlocks.FIVE_SPIRIT_STONE_ORE.get())
+                .add(ModBlocks.SIX_SPIRIT_STONE_ORE.get())
+
                 .add(ModBlocks.RED_FIRE_BLOCK.get())
                 .add(ModBlocks.SUNKEN_SILVER_BLOCK.get())
                 .add(ModBlocks.COLD_HEARTED_STEEL_BLOCK.get())
@@ -151,6 +173,11 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(ModBlocks.STARLIGHT_STONE_ORE.get())
                 .add(ModBlocks.SUNKEN_SILVER_ORE.get())
                 .add(ModBlocks.COLD_HEARTED_STEEL_ORE.get())
+
+                .add(ModBlocks.SEVEN_SPIRIT_STONE_ORE.get())
+                .add(ModBlocks.EIGHT_SPIRIT_STONE_ORE.get())
+                .add(ModBlocks.NINE_SPIRIT_STONE_ORE.get())
+
                 .add(ModBlocks.LIANDANLU7.get())
                 .add(ModBlocks.LIANDANLU8.get())
                 .add(ModBlocks.LIANDANLU9.get())

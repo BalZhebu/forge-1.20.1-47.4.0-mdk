@@ -24,6 +24,11 @@ public class PohunqiangItem extends SwordItem {
     }
 
     @Override
+    public boolean canBeDepleted() {
+        return false;
+    }
+
+    @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
         if (level.isClientSide || !(entity instanceof Player player)) {
             return;

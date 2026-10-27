@@ -1,6 +1,5 @@
 package com.TovidY.kunluncontinent.item.klitem;
 
-import com.TovidY.kunluncontinent.advancement.AchievementAPI;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerHunhuanAPI;
@@ -97,7 +96,7 @@ public class ZhuanShengTestItem extends Item{
         SynsAPI.synsPlayerAttribute(player);
         player.removeEffect(MobEffects.GLOWING);
         player.sendSystemMessage(Component.literal("转生成功！").withStyle(ChatFormatting.LIGHT_PURPLE));
-        AchievementAPI.onReincarnate(player);
+        // 成就在 zhuansheng() 里触发（那里能拿到累计转生次数，用来点亮"二世重修"）
     }
 
     private static void addReincarnationDebuffs(ServerPlayer player) {

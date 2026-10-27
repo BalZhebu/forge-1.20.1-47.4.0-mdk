@@ -395,6 +395,50 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("adv.kunlun.danyao_batch.title","批量服丹");
         add("adv.kunlun.danyao_batch.desc","蹲下右键，一次服用多颗丹药。");
 
+        // ===== 魂骨 / 魂导器 / 八卦 =====
+        add("adv.kunlun.bone_first.title","魂骨初得");
+        add("adv.kunlun.bone_first.desc","装上第一枚魂骨，身体开始承载魂兽的力量。");
+        add("adv.kunlun.bone_seven.title","七骨加身");
+        add("adv.kunlun.bone_seven.desc","七处魂骨槽全部装满。");
+        add("adv.kunlun.hundaoqi_first.title","魂导器");
+        add("adv.kunlun.hundaoqi_first.desc","获得一件来自方山的魂导器。");
+        add("adv.kunlun.bagua_first.title","分解八卦");
+        add("adv.kunlun.bagua_first.desc","获得一枚分解八卦。");
+
+        // ===== 极冰界 / 雪帝 =====
+        add("adv.kunlun.extreme_cold_essence.title","极寒精华");
+        add("adv.kunlun.extreme_cold_essence.desc","在极寒冰域中从生物身上取得极寒精华。");
+        add("adv.kunlun.ice_empress_slain.title","雪帝陨落");
+        add("adv.kunlun.ice_empress_slain.desc","击杀极寒冰域的统治者——雪帝。");
+        add("adv.kunlun.ice_empress_heart.title","雪帝之心");
+        add("adv.kunlun.ice_empress_heart.desc","取得雪帝之心。");
+        add("adv.kunlun.frozen_throne_disc.title","冰封王座");
+        add("adv.kunlun.frozen_throne_disc.desc","获得雪帝掉落的唱片《Throne of Frozen Stone》。");
+
+        // ===== 神祇进阶 =====
+        add("adv.kunlun.god_ring_blessed.title","神赐魂环");
+        add("adv.kunlun.god_ring_blessed.desc","封神之时，神格凝结出专属于你的魂环。");
+        add("adv.kunlun.rank_zhun_shen.title","准神");
+        add("adv.kunlun.rank_zhun_shen.desc","达到 121 级，正式踏入准神之境。");
+        add("adv.kunlun.rank_san_ji_shen.title","三级神");
+        add("adv.kunlun.rank_san_ji_shen.desc","达到 141 级，位列三级神。");
+        add("adv.kunlun.rank_er_ji_shen.title","二级神");
+        add("adv.kunlun.rank_er_ji_shen.desc","达到 161 级，位列二级神。");
+        add("adv.kunlun.rank_yi_ji_shen.title","一级神");
+        add("adv.kunlun.rank_yi_ji_shen.desc","达到 181 级，位列一级神。");
+        add("adv.kunlun.rank_shen_wang.title","神王");
+        add("adv.kunlun.rank_shen_wang.desc","达到 196 级，登临神王之位。");
+
+        // ===== 武魂 / 装备 / 转生 =====
+        add("adv.kunlun.wuhun_zhenshen.title","武魂真身");
+        add("adv.kunlun.wuhun_zhenshen.desc","第一次开启武魂真身。");
+        add("adv.kunlun.special_soul_ring.title","异兽魂环");
+        add("adv.kunlun.special_soul_ring.desc","吸收一枚来自特殊生物的魂环，获得它独有的魂技。");
+        add("adv.kunlun.armor_set_full.title","四件成套");
+        add("adv.kunlun.armor_set_full.desc","穿齐四件本模组盔甲，激活套装加成。");
+        add("adv.kunlun.reincarnation_second.title","二世重修");
+        add("adv.kunlun.reincarnation_second.desc","完成第二次转生。");
+
 
         //魂骨类
         add(ModItems.SOUL_BEAST_SKULL.get(), "§c§k------§r §e《魂骨 · 头骨》 §r§c§k------");
@@ -475,6 +519,8 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModBlocks.LIANDANLU8.get(),"八阶炼丹炉");
         add(ModBlocks.LIANDANLU9.get(),"§c九§b阶§5炼§a丹§e炉");
         add("tooltip.kunluncontinent.liandanlu","不同等阶的炼丹炉只不过是炼丹速度上的差异");
+        add("tooltip.kunluncontinent.bank_block","右键打开昆仑银行");
+        add("container.kunluncontinent.bank","昆仑银行");
 
         //测试物品类
         add(ModItems.DANYAO_TEST.get(),"测试物品---经验+999999999");
@@ -630,6 +676,16 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.DEMON_WHALE_BADGE.get(), "§b魔鲸徽章");
         add(ModItems.LIGHTNING_FRAGMENTS.get(),"§e闪电碎片");
 
+        add(ModItems.FIRST_SPIRIT_STONE.get(), "一阶蕴灵石");
+        add(ModItems.TWO_SPIRIT_STONE.get(), "二阶蕴灵石");
+        add(ModItems.THREE_SPIRIT_STONE.get(), "§e三阶蕴灵石");
+        add(ModItems.FOUR_SPIRIT_STONE.get(), "§e四阶蕴灵石");
+        add(ModItems.FIVE_SPIRIT_STONE.get(), "§e五阶蕴灵石");
+        add(ModItems.SIX_SPIRIT_STONE.get(), "§5六阶蕴灵石");
+        add(ModItems.SEVEN_SPIRIT_STONE.get(), "§5七阶蕴灵石");
+        add(ModItems.EIGHT_SPIRIT_STONE.get(), "§c八阶蕴灵石");
+        add(ModItems.NINE_SPIRIT_STONE.get(), "§c九阶蕴灵石");
+
         //方块类
         add(ModBlocks.CULTIVATION_PLATFORM.get(),"重修台");
         add(ModBlocks.GRAY_IRON_ORE.get(),"灰铁矿");
@@ -639,6 +695,20 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModBlocks.COLD_HEARTED_STEEL_ORE.get(), "寒心钢矿");
 
         add(ModBlocks.UNDERWATER_ALTAR.get(), "海底祭坛");
+
+        add(ModBlocks.ONE_SPIRIT_STONE_ORE.get(), "一阶蕴灵石矿");
+        add(ModBlocks.TWO_SPIRIT_STONE_ORE.get(), "二阶蕴灵石矿");
+        add(ModBlocks.THREE_SPIRIT_STONE_ORE.get(), "三阶蕴灵石矿");
+        add(ModBlocks.FOUR_SPIRIT_STONE_ORE.get(), "四阶蕴灵石矿");
+        add(ModBlocks.FIVE_SPIRIT_STONE_ORE.get(), "五阶蕴灵石矿");
+        add(ModBlocks.SIX_SPIRIT_STONE_ORE.get(), "六阶蕴灵石矿");
+        add(ModBlocks.SEVEN_SPIRIT_STONE_ORE.get(), "七阶蕴灵石矿");
+        add(ModBlocks.EIGHT_SPIRIT_STONE_ORE.get(), "八阶蕴灵石矿");
+        add(ModBlocks.NINE_SPIRIT_STONE_ORE.get(), "九阶蕴灵石矿");
+
+        add(ModBlocks.EXTREME_COLD_STONE.get(),"极寒石");
+        add(ModBlocks.EXTREME_COLD_COBBLESTONE.get(),"极寒圆石");
+        add(ModBlocks.BANK_BLOCK.get(),"银行方块");
 
         add(ModBlocks.RUBY_ORE.get(), "深层红宝石原矿");
         add(ModBlocks.AMETHYST_ORE.get(),"紫瑛原矿");

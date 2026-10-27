@@ -57,8 +57,11 @@ public class ModDataGenerator {
                 com.TovidY.kunluncontinent.datagen.worldgenprovider.ModWorldGenProvider.bootstrapStem(context);
                 com.TovidY.kunluncontinent.datagen.worldgenprovider.ModCelestialWorldGen.bootstrapCelestialStem(context);
             })
-            // 神界的岛屿地形噪声（独立注册表，可以单独add）
-            .add(Registries.NOISE_SETTINGS, com.TovidY.kunluncontinent.datagen.worldgenprovider.ModCelestialWorldGen::bootstrapCelestialNoise)
+            // 噪声设置（同一个注册表只能 add 一次，所以几个维度的都串在这里）
+            .add(Registries.NOISE_SETTINGS, context -> {
+                com.TovidY.kunluncontinent.datagen.worldgenprovider.ModCelestialWorldGen.bootstrapCelestialNoise(context);
+                com.TovidY.kunluncontinent.datagen.worldgenprovider.ModPolarWorldGen.bootstrapPolarNoise(context);
+            })
             // ⚠️ 同一个注册表只能 .add() 一次，所以把神界树和矿物合并在一次调用里
             .add(Registries.CONFIGURED_FEATURE, context -> {
                 ModWorldGenOreProvider.bootstrap(context);

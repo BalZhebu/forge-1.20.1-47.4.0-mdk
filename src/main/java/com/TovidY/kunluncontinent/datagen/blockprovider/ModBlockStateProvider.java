@@ -24,6 +24,16 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
+        //蕴灵矿
+        simpleBlockWithItem(ModBlocks.ONE_SPIRIT_STONE_ORE.get(), cubeAll(ModBlocks.ONE_SPIRIT_STONE_ORE.get()));
+        simpleBlockWithItem(ModBlocks.TWO_SPIRIT_STONE_ORE.get(), cubeAll(ModBlocks.TWO_SPIRIT_STONE_ORE.get()));
+        simpleBlockWithItem(ModBlocks.THREE_SPIRIT_STONE_ORE.get(), cubeAll(ModBlocks.THREE_SPIRIT_STONE_ORE.get()));
+        simpleBlockWithItem(ModBlocks.FOUR_SPIRIT_STONE_ORE.get(), cubeAll(ModBlocks.FOUR_SPIRIT_STONE_ORE.get()));
+        simpleBlockWithItem(ModBlocks.FIVE_SPIRIT_STONE_ORE.get(), cubeAll(ModBlocks.FIVE_SPIRIT_STONE_ORE.get()));
+        simpleBlockWithItem(ModBlocks.SIX_SPIRIT_STONE_ORE.get(), cubeAll(ModBlocks.SIX_SPIRIT_STONE_ORE.get()));
+        simpleBlockWithItem(ModBlocks.SEVEN_SPIRIT_STONE_ORE.get(), cubeAll(ModBlocks.SEVEN_SPIRIT_STONE_ORE.get()));
+        simpleBlockWithItem(ModBlocks.EIGHT_SPIRIT_STONE_ORE.get(), cubeAll(ModBlocks.EIGHT_SPIRIT_STONE_ORE.get()));
+        simpleBlockWithItem(ModBlocks.NINE_SPIRIT_STONE_ORE.get(), cubeAll(ModBlocks.NINE_SPIRIT_STONE_ORE.get()));
         //矿石方块
         simpleBlockWithItem(ModBlocks.GRAY_IRON_ORE.get(), cubeAll(ModBlocks.GRAY_IRON_ORE.get()));
         simpleBlockWithItem(ModBlocks.CLOUD_PATTERNED_BRONZE_ORE.get(), cubeAll(ModBlocks.CLOUD_PATTERNED_BRONZE_ORE.get()));
@@ -44,6 +54,24 @@ public class ModBlockStateProvider extends BlockStateProvider {
         simpleBlockWithItem(ModBlocks.STARLIGHT_STONE_ORE.get(), cubeAll(ModBlocks.STARLIGHT_STONE_ORE.get()));
         //丹渣块
         simpleBlockWithItem(ModBlocks.DROSS_BLOCK.get(), cubeAll(ModBlocks.DROSS_BLOCK.get()));
+        simpleBlockWithItem(ModBlocks.EXTREME_COLD_STONE.get(), cubeAll(ModBlocks.EXTREME_COLD_STONE.get()));
+        simpleBlockWithItem(ModBlocks.EXTREME_COLD_COBBLESTONE.get(), cubeAll(ModBlocks.EXTREME_COLD_COBBLESTONE.get()));
+        //银行方块：正面（放置时朝向玩家的那一面）用 bank_block.png，其余五面 bank_block1.png
+        //  用原版 block/orientable_with_bottom 模型：front = 北面（靠 blockstate 的 y 旋转对准 facing）、
+        //  side = 东/南/西、top / bottom 各一张。这里四个非正面槽位全部显式写成 bank_block1，
+        //  不走 orientable 的「bottom 继承 top」默认值 —— 以后单独改顶面才不会连带改底面。
+        //  ⚠️ Forge 没有 horizontalBlockWithItem，item model 要自己 withExistingParent
+        {
+            ResourceLocation bankFront = modLoc("block/bank_block");
+            ResourceLocation bankOther = modLoc("block/bank_block1");
+            ModelFile bankModel = models().orientableWithBottom("bank_block",
+                    bankOther,   // side（东 / 南 / 西）
+                    bankFront,   // front（北面 = 正面）
+                    bankOther,   // bottom
+                    bankOther);  // top
+            horizontalBlock(ModBlocks.BANK_BLOCK.get(), bankModel);
+            itemModels().withExistingParent("bank_block", modLoc("block/bank_block"));
+        }
         //传送门方块
         simpleBlockWithItem(ModBlocks.POLAR_ICE_PORTAL_BLOCK.get(), cubeAll(ModBlocks.POLAR_ICE_PORTAL_BLOCK.get()));
         simpleBlockWithItem(ModBlocks.THUNDER_REALM_PORTAL_BLOCK.get(), cubeAll(ModBlocks.THUNDER_REALM_PORTAL_BLOCK.get()));

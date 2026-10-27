@@ -68,10 +68,8 @@ public final class NpcDeathWhisper {
         String npcName = npc.getName().getString();
         Component text = Component.literal("§8[§c亡语§8] §7\"" + npcName + "\" §f" + line);
 
-        // ActionBar：击杀者屏幕上显示一行
         killer.displayClientMessage(text, true);
 
-        // 同时给全场附近的玩家看一眼（亡语是"世界的声音"）
         if (npc.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
             serverLevel.players().forEach(p -> {
                 if (p != killer && p.distanceToSqr(npc) < 256.0) {

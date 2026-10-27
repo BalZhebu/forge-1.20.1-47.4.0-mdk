@@ -6,6 +6,9 @@ import com.TovidY.kunluncontinent.capability.mobattributes.HunhuanWeakener;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapability;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanEntity;
+import com.TovidY.kunluncontinent.godclass.GodRank;
+import com.TovidY.kunluncontinent.item.baseskillist.zhenshen.ZhenshenState;
+import com.TovidY.kunluncontinent.screen.attribute.skill.SkillBatchRelease;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.SynsAPI;
 import com.TovidY.kunluncontinent.network.client.SyncWuhunDataPacket;
@@ -151,15 +154,31 @@ public class PlayerHunhuanAPI {
             List<MobAttributeCapability> currentRingsList = capability.getMonsterCapabilityLists().get(currentWuhun);
             int currentRings = (currentRingsList != null) ? currentRingsList.size() : 0;
             int maxRingsInHistory = getMaxRings(capability);
-            int allowedRingsByLevel = (playerLevel >= 199) ? 20 : (playerLevel / 10);
-            if (playerLevel < 10 && playerLevel >= 1) allowedRingsByLevel = 1;
+            int allowedRingsByLevel;
+            if (playerLevel >= 199) {
+                allowedRingsByLevel = 20;
+            } else if (playerLevel >= GodRank.MIN_LEVEL) {
+                // 100 级以后按「神祇称谓段」放开：120 级可吸到第 11 枚（用来升 121），
+                // 121~139 级额度仍是 11 → 要等 140 级才能吸第 12 枚。
+                allowedRingsByLevel = GodRank.requiredRingsForLevel(playerLevel + 1);
+                if (allowedRingsByLevel < 0) {
+                    allowedRingsByLevel = playerLevel / 10;   // 兜底，理论上不会走到
+                }
+            } else {
+                allowedRingsByLevel = playerLevel / 10;
+                if (playerLevel < 10 && playerLevel >= 1) allowedRingsByLevel = 1;
+            }
             if (currentRings >= allowedRingsByLevel) {
                 player.sendSystemMessage(Component.literal("等级不足").withStyle(ChatFormatting.RED));
                 return false;
             }
             if (currentRings >= maxRingsInHistory) {
-                boolean isBreakthroughLevel = (playerLevel % 10 == 0 && playerLevel >= 10) || playerLevel == 199;
-                if (!isBreakthroughLevel) {
+                // 只有「段末」才允许吸环跨段（120 / 140 / 160 / 180 / 195）；
+                // 100 级以下沿用原来的「每 10 级一个突破点」。
+                boolean isBreakthroughLevel = playerLevel >= GodRank.MIN_LEVEL
+                        ? GodRank.isStageBoundary(playerLevel)
+                        : (playerLevel % 10 == 0 && playerLevel >= 10);
+                if (!isBreakthroughLevel && playerLevel != 199) {
                     player.sendSystemMessage(Component.literal("阶段等级不足，无法突破吸收").withStyle(ChatFormatting.YELLOW));
                     return false;
                 }
@@ -352,6 +371,13 @@ public class PlayerHunhuanAPI {
             newplayerCapability.setZhuanshengshu(newplayerCapability.getZhuanshengshu()+oldItemCapability.getZhuanshengshu()+1);
             newplayerCapability.getHunguInventory().deserializeNBT(oldItemCapability.getHunguInventory().serializeNBT());
 
+            // 银行余额：转生的写法是 oldCap.deserializeNBT(newCap.serializeNBT())，
+            // 新 cap 这三个字段是 0 → 不显式拷回，玩家一转生整副家产就被清零。
+            // （钱是账号资产，不属于"修为"，不该跟着转生重置。）
+            newplayerCapability.setBankGold(oldItemCapability.getBankGold());
+            newplayerCapability.setBankSilver(oldItemCapability.getBankSilver());
+            newplayerCapability.setBankCopper(oldItemCapability.getBankCopper());
+
             // ==================== 属性点：清空并按总数 10%~30% 折算继承 ====================
             int spentPoints = oldItemCapability.getAllocatedPointsTotal();
             int inherited = AttributePoints.inheritOnZhuansheng(newplayerCapability, oldItemCapability);
@@ -368,6 +394,44 @@ public class PlayerHunhuanAPI {
             newplayerCapability.getMonsterCapabilityLists().clear();
             newplayerCapability.setInitialized(false);
             newplayerCapability.setHunhuankuaiguan(-1);
+
+            // =====================================================================
+            // 以下字段**不写进 NBT**，靠 newCap 覆盖 oldCap 是带不走的，必须直接清 oldCap。
+            // （这就是"转生后有些数据没重置"的根因：存档覆盖只覆盖序列化过的东西。）
+            // =====================================================================
+            // 吟唱状态：清技能引用、槽位、进度，并摘掉 -70% 移速修饰符
+            oldItemCapability.stopCasting(player);
+            // 每个武魂"选中第几技能槽"（运行时手感状态，不序列化）
+            oldItemCapability.clearSelectedSkillSlots();
+            // 强制天赋：不清的话转生重新觉醒会被上一次的 roll 结果顶掉
+            oldItemCapability.setForcedTalent("");
+            // 调试开关（public 字段，同样不序列化）
+            oldItemCapability.debugIgnoreTianfu = false;
+            oldItemCapability.debugForceSuccess = false;
+
+            // 武魂真身：状态存在 player.persistentData（KL_ZhenshenActive / Effect / Wuhun），
+            // 不在存档覆盖范围里 → 不主动关的话，转生后还会挂着真身增益和 20 倍维持费。
+            if (ZhenshenState.isActive(player)) {
+                ZhenshenState.deactivate(player);
+            }
+            // 一键释放队列里可能还有没放完的槽位（新的武魂/技能表已经不认识了）
+            SkillBatchRelease.cancel(player.getUUID());
+
+            // 魂骨属性快照：魂骨背包是整份带过来的，但 boneOnlyStats 被新存档的空表覆盖成空了，
+            // 不重算的话转生后魂骨全部失效（要重新穿一次才恢复）。
+            PlayerAttributeCapability.collectBoneAttributes(newplayerCapability);
+
+            // 武魂永久属性的"本次已结算"标记挂在 capability 对象上（WeakHashMap），
+            // 不清掉的话转生后第一次按等级结算会被跳过，永久属性不再增长。
+            WuhunPermanent.clearSettledFlag(oldItemCapability);
+            WuhunPermanent.clearSettledFlag(newplayerCapability);
+
+            // 当前生命值字段跟最大生命对齐（玩家实体血量在下面 setHealth 里设）
+            newplayerCapability.setShengming(newplayerCapability.getMaxshengming());
+
+            // 成就：第一次转生 / 第二次转生（次数已经 +1 过了）
+            AchievementAPI.onReincarnate(player, newplayerCapability.getZhuanshengshu());
+
             SynsAPI.synsPlayerAttribute(player);
             player.setHealth(newplayerCapability.getMaxshengming());
 
@@ -404,16 +468,20 @@ public class PlayerHunhuanAPI {
         }
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(capability -> {
             List<Integer> nianxianList = new ArrayList<>();
+            // 与 nianxianList 一一对应：这枚环来自哪个神位（空串 = 普通环，客户端据此选神环贴图）
+            List<String> shenciGodList = new ArrayList<>();
             if (capability.getWuhunList() != null) {
                 for (MobAttributeCapability wuhun : capability.getWuhunList()) {
                     if (wuhun != null) {
                         nianxianList.add((int) wuhun.getNianxian());
+                        shenciGodList.add(wuhun.getShenciGodOrDefault());
                     }
                 }
             }
             long startTime = playAnimation ? player.level().getGameTime() : 0L;
             SyncWuhunDataPacket packet = new SyncWuhunDataPacket(
-                    player.getUUID(), nianxianList, playAnimation, startTime, capability.getHunhuanOpenAnim());
+                    player.getUUID(), nianxianList, shenciGodList, capability.isGod(),
+                    playAnimation, startTime, capability.getHunhuanOpenAnim());
             for (ServerPlayer target : ((ServerLevel) player.level()).getPlayers(p -> true)) {
                 NetworkHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> target), packet);
             }

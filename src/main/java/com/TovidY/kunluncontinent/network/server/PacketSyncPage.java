@@ -51,6 +51,10 @@ public class PacketSyncPage {
 
     /** 按页签 id 打开面板。抽成 public 便于其它地方直接调用（如命令/指令）。 */
     public static void openPage(ServerPlayer player, int pageIndex) {
+        // 页签注册表原本只在客户端 buildTabs 时初始化；专用服务端上没人调 → byId 恒为 null，
+        // 表现就是"页签点了没反应"。这里补一次（幂等）。
+        AttributeTabs.ensureRegistered();
+
         // 配置面板特殊：复用 AttributeMenu 但换 MenuType，让 MenuScreens 路由到 ConfigScreen
         if (pageIndex == AttributeTabs.PAGE_CONFIG) {
             NetworkHooks.openScreen(player, new MenuProvider() {

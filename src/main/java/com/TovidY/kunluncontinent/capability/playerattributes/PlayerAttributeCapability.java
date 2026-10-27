@@ -103,6 +103,18 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
     private String forcedTalent = "";
     private int xiantianTalent = 0;
 
+    /**
+     * 「神考全过后全部魂环 +5 万年」这个一次性奖励是否已经发过。
+     *
+     * <p>为什么需要一个字段：封神流程（{@code GodInfo#finalizeAscension}）在积攒型神考、
+     * debug 命令、以及以后可能的"重跑奖励"里都可能被重复触发，而年限提升是<b>纯加法</b>，
+     * 重跑一次就多 5 万年。用标记保证幂等。</p>
+     *
+     * <p>存进 NBT 而不放 persistentData：转生时会连同新 cap 一起被重置成 {@code false}，
+     * 玩家重修后再次封神可以重新获得 —— 这正是期望行为。</p>
+     */
+    private boolean godNianxianBonus = false;
+
     private int damageDisplayMode = 0;
     /** 魂环开启动画样式：0 逐环展开 / 1 天降落位 / 2 魂环升腾。 */
     private int hunhuanOpenAnim = 0;
@@ -130,7 +142,10 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
     private static final long DEFAULT_CONFIG_FLAGS =
             0xFFL          // index 1~7 历史默认全开
                     | (1L << 11)   // index 11 NPC魂环显示   ← 默认开启
-                    | (1L << 13);  // index 13 技能特效优化 ← 默认开启 = 走粒子表现
+                    | (1L << 13)   // index 13 技能特效优化 ← 默认开启 = 走粒子表现
+                    | (1L << 14)   // index 14 神环渐变     ← 默认开启
+                    | (1L << 15)   // index 15 普通魂环显示 ← 默认开启
+                    | (1L << 16);  // index 16 交易自动取币 ← 默认开启（见 BankAccount#CONFIG_AUTO_TRADE）
 
     private long configFlags = DEFAULT_CONFIG_FLAGS;
 
@@ -143,11 +158,55 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
      *
      * <ul>
      *   <li>v1 —— 补 index 13「技能特效优化」（该位语义反向：开启 = 粒子、关闭 = 着色器）</li>
+     *   <li>v2 —— 补 index 14「神环渐变」+ index 15「普通魂环显示」</li>
+     *   <li>v3 —— 补 index 16「交易自动取币」（不在配置面板里，开关在商人界面右侧）</li>
      * </ul>
      */
-    private static final int CONFIG_FLAGS_VERSION = 1;
+    private static final int CONFIG_FLAGS_VERSION = 3;
 
     private int zhuanshengshu = 0;
+
+    // ==================== 昆仑银行（个人金库） ====================
+
+    /**
+     * 银行里存着的金 / 银 / 铜魂币数量，各自的硬上限 {@code BankAccount.MAX_STORED}（2000 万）。
+     *
+     * <p><b>为什么存在玩家 capability 而不是方块的 BlockEntity</b>：
+     * 银行是「<b>个人账户</b>」—— 结构生成的每一座银行都只是同一个账户的入口，
+     * 玩家换一座银行不用"搬家"。同时它随玩家 NBT 走，所以<b>死亡不掉钱</b>。</p>
+     *
+     * <p><b>为什么转生要显式继承</b>：转生的机制是
+     * {@code oldCap.deserializeNBT(newCap.serializeNBT())}，新 cap 里这三个字段是 0，
+     * 会把旧值覆盖掉。{@code PlayerHunhuanAPI#zhuansheng} 里已手动拷回，
+     * 否则玩家一转生家产就全没了。</p>
+     *
+     * <p>用 {@code int}：2000 万远小于 {@code Integer.MAX_VALUE}，够用且省存档体积。</p>
+     */
+    private int bankGold = 0;
+    private int bankSilver = 0;
+    private int bankCopper = 0;
+
+    /**
+     * 当日汇率的<b>显示缓存</b>（1 金 = ? 银 / 1 银 = ? 铜）。
+     *
+     * <p>汇率本身是 `BankRates` 里由「汇率日序号」算出来的纯函数，不需要存。
+     * 这里存一份只是为了<b>让客户端能显示</b>：服务端在「开面板 / 换完钱」时按当前时间写一次，
+     * 随 {@code SPacketPlayerAttribute} 一起同步过去。客户端显示时若发现是 0（老存档/没同步过），
+     * 会退回用本地 {@code level.getDayTime()} 自己算。</p>
+     */
+    private int bankRateSilverPerGold = 0;
+    private int bankRateCopperPerSilver = 0;
+
+    /**
+     * 每日换钱次数：{@link #bankTradeDay} 是这些计数所属的「汇率日」，key = 交易方向名（如 {@code GOLD_TO_SILVER}）。
+     *
+     * <p>跨日由 `BankExchange` 调 {@link #resetBankTradeCounts()} 清零 —— 这里只负责存，
+     * 不自己判断时间（capability 不该知道世界时间）。</p>
+     *
+     * <p>用 Map 而不是 int[]：以后加交易方向不用改存档结构，旧存档缺的 key 读出来就是 0。</p>
+     */
+    private long bankTradeDay = Long.MIN_VALUE;
+    private final Map<String, Integer> bankTradeCounts = new HashMap<>();
 
     private final ItemStackHandler hunguInventory = new ItemStackHandler(7) {
         @Override
@@ -212,6 +271,7 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         tag.putInt("DamageDisplayMode", damageDisplayMode);
         tag.putInt("HunhuanOpenAnim", hunhuanOpenAnim);
         tag.putInt("FlySpeedLevel", flySpeedLevel);
+        tag.putBoolean("GodNianxianBonus", godNianxianBonus);
         tag.putInt("AttributePoints", attributePoints);
         tag.putInt("PointsGrantedLevel", pointsGrantedLevel);
         tag.putIntArray("AllocatedPoints", allocatedPoints);
@@ -287,6 +347,18 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         }
         tag.put("WuhunSkillsData", allSkillsTag);
 
+        // 银行余额（同时用于客户端面板显示：SPacketPlayerAttribute 传的就是这份 NBT）
+        tag.putInt("BankGold", bankGold);
+        tag.putInt("BankSilver", bankSilver);
+        tag.putInt("BankCopper", bankCopper);
+        tag.putInt("BankRateSilver", bankRateSilverPerGold);
+        tag.putInt("BankRateCopper", bankRateCopperPerSilver);
+
+        tag.putLong("BankTradeDay", bankTradeDay);
+        CompoundTag tradeCounts = new CompoundTag();
+        bankTradeCounts.forEach(tradeCounts::putInt);
+        tag.put("BankTradeCounts", tradeCounts);
+
         return tag;
     }
 
@@ -319,6 +391,7 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         this.damageDisplayMode = nbt.getInt("DamageDisplayMode");
         setHunhuanOpenAnim(nbt.getInt("HunhuanOpenAnim"));
         setFlySpeedLevel(nbt.getInt("FlySpeedLevel"));
+        this.godNianxianBonus = nbt.getBoolean("GodNianxianBonus");
         this.attributePoints = Math.max(0, nbt.getInt("AttributePoints"));
         this.pointsGrantedLevel = nbt.contains("PointsGrantedLevel")
                 ? nbt.getInt("PointsGrantedLevel") : Integer.MIN_VALUE;
@@ -346,6 +419,16 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         //     ⚠️ 只对版本号 < 1 的存档补，玩家手动关掉之后重进不会被强行打开。
         if (nbt.getInt("ConfigFlagsVersion") < 1) {
             this.configFlags |= (1L << 13);
+        }
+        // v2：index 14「神环渐变」、index 15「普通魂环显示」—— 都是后加的位，默认开。
+        //     同样只对旧存档补，玩家自己关掉后重进不会被强行打开。
+        if (nbt.getInt("ConfigFlagsVersion") < 2) {
+            this.configFlags |= (1L << 14);
+            this.configFlags |= (1L << 15);
+        }
+        // v3：index 16「交易自动取币」—— 同样是后加的位，默认开。
+        if (nbt.getInt("ConfigFlagsVersion") < 3) {
+            this.configFlags |= (1L << 16);
         }
 
         // 读取神祇系统数据
@@ -413,9 +496,11 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
                 }
                 tempSkillsMap.put(wuhunName, skills);
             }
-            if (!tempSkillsMap.isEmpty()) {
-                this.wuhunSkillsMap = tempSkillsMap;
-            }
+            // ⚠️ 必须**无条件赋值**（含空表）。原来写的是 `if (!tempSkillsMap.isEmpty())`，
+            //    于是"新存档序列化出来的空表"不会覆盖旧表 —— 转生走的就是这条路
+            //    （newCap 是全新对象 → 空表 → oldCap.deserializeNBT 时被跳过），
+            //    结果旧武魂技能残留，玩家重新觉醒同名武魂直接白得技能。
+            this.wuhunSkillsMap = tempSkillsMap;
         }
         this.monsterCapabilityLists.clear();
         this.wuhunListsname.clear();
@@ -445,6 +530,23 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
                 if (Float.isFinite(v) && v > 0f) {
                     this.wuhunPermanentStats.put(key, v);
                 }
+            }
+        }
+
+        // 银行余额：老存档没有这几个 tag → 保持 0（不是"清空"，新对象本来就是 0）
+        this.bankGold = Math.max(0, nbt.getInt("BankGold"));
+        this.bankSilver = Math.max(0, nbt.getInt("BankSilver"));
+        this.bankCopper = Math.max(0, nbt.getInt("BankCopper"));
+        this.bankRateSilverPerGold = Math.max(0, nbt.getInt("BankRateSilver"));
+        this.bankRateCopperPerSilver = Math.max(0, nbt.getInt("BankRateCopper"));
+
+        // 每日换钱次数：老存档没有这两个 tag → day 为 MIN_VALUE，等第一次换钱时再初始化
+        this.bankTradeDay = nbt.contains("BankTradeDay") ? nbt.getLong("BankTradeDay") : Long.MIN_VALUE;
+        this.bankTradeCounts.clear();
+        if (nbt.contains("BankTradeCounts")) {
+            CompoundTag counts = nbt.getCompound("BankTradeCounts");
+            for (String key : counts.getAllKeys()) {
+                this.bankTradeCounts.put(key, Math.max(0, counts.getInt(key)));
             }
         }
     }
@@ -671,6 +773,11 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
     /** 飞行速度档位（0 ~ {@link FlySpeedTuning#MAX_LEVEL}）。 */
     public int getFlySpeedLevel() { return flySpeedLevel; }
 
+    /** 「神考全过后全部魂环 +5 万年」是否已发放（幂等标记，见 {@code HunhuanNianxianUpgrader}）。 */
+    public boolean isGodNianxianBonus() { return godNianxianBonus; }
+
+    public void setGodNianxianBonus(boolean value) { this.godNianxianBonus = value; }
+
     /** 调整飞行档位，自动夹回合法区间。 */
     public void setFlySpeedLevel(int value) {
         this.flySpeedLevel = Math.max(0, Math.min(FlySpeedTuning.MAX_LEVEL, value));
@@ -725,6 +832,46 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
     public int getZhuanshengshu() {return zhuanshengshu;}
     public void setZhuanshengshu(int zhuanshengshu) {
         this.zhuanshengshu = zhuanshengshu;
+    }
+
+    // ==================== 银行余额读写 ====================
+
+    public int getBankGold() { return bankGold; }
+    public int getBankSilver() { return bankSilver; }
+    public int getBankCopper() { return bankCopper; }
+
+    /**
+     * 直接写入余额（内部用，<b>不做上限/负数校验</b>）。
+     *
+     * <p>业务逻辑一律走 {@code BankAccount}，那里会钳制到 0 ~ {@code MAX_STORED}。</p>
+     */
+    public void setBankGold(int v) { this.bankGold = Math.max(0, v); }
+    public void setBankSilver(int v) { this.bankSilver = Math.max(0, v); }
+    public void setBankCopper(int v) { this.bankCopper = Math.max(0, v); }
+
+    /** 汇率显示缓存（服务端写，客户端读）。 */
+    public int getBankRateSilverPerGold() { return bankRateSilverPerGold; }
+    public void setBankRateSilverPerGold(int v) { this.bankRateSilverPerGold = Math.max(0, v); }
+    public int getBankRateCopperPerSilver() { return bankRateCopperPerSilver; }
+    public void setBankRateCopperPerSilver(int v) { this.bankRateCopperPerSilver = Math.max(0, v); }
+
+    // ---------- 每日换钱次数 ----------
+
+    public long getBankTradeDay() { return bankTradeDay; }
+    public void setBankTradeDay(long day) { this.bankTradeDay = day; }
+
+    /** 某个交易方向今天已经换了几次（没换过 → 0）。 */
+    public int getBankTradeCount(String tradeKey) {
+        return bankTradeCounts.getOrDefault(tradeKey, 0);
+    }
+
+    public void setBankTradeCount(String tradeKey, int count) {
+        bankTradeCounts.put(tradeKey, Math.max(0, count));
+    }
+
+    /** 跨日清零（由 `BankExchange` 在日期变化时调用）。 */
+    public void resetBankTradeCounts() {
+        this.bankTradeCounts.clear();
     }
 
     public float getShengming() { return shengming; }
@@ -839,6 +986,16 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
 
     public Map<String, BaseSkillItem[]> getWuhunSkillsMap() {
         return wuhunSkillsMap;
+    }
+
+    /**
+     * 清空「每个武魂当前选中的技能槽」。
+     *
+     * <p>{@code selectedSkillIndexMap} <b>不写进 NBT</b>（选了第几槽属于运行时手感状态），
+     * 所以转生时 {@code newCap → oldCap} 的存档覆盖<b>带不走它</b>，必须单独清。</p>
+     */
+    public void clearSelectedSkillSlots() {
+        this.selectedSkillIndexMap.clear();
     }
 
     public int getSelectedSkillSlot() {

@@ -6,6 +6,6 @@
       "type": "minecraft:fixed",
       "biome": "kunluncontinent:polar_ice_realm"
     },
-    "settings": "minecraft:overworld"
+    "settings": "kunluncontinent:polar_ice_realm"
   }
 }

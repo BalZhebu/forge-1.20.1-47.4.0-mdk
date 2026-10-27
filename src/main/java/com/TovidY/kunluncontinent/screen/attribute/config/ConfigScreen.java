@@ -97,6 +97,8 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
             ));
 
             List<ConfigItemData> rawItems = List.of(
+                    new ConfigItemData("神环渐变", 14),
+                    new ConfigItemData("普通魂环显示", 15),
                     new ConfigItemData("生物魂环显示", 1),
                     new ConfigItemData("玩家魂环显示", 2),
                     new ConfigItemData("吸收经验提示", 3),
@@ -473,6 +475,24 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
                             : "§c[关闭] §f技能用着色器渲染"),
                     Component.literal("§8注意！用着色器版时若看不到任何特效（多半因为开着光影）"),
                     Component.literal("§8把这个开关打开就能退回粒子版。")
+            );
+            case 14 -> List.of(
+                    Component.literal("神环渐变").withStyle(ChatFormatting.GOLD),
+                    Component.literal("§7成神（封神）后，从第 §e10 §7枚魂环起改用"),
+                    Component.literal("§7四色相顶点渐变 + 自转流光，与普通年限色区分。"),
+                    Component.literal("§7未成神的玩家不受影响。"),
+                    Component.literal(isOpen
+                            ? "§a[开启] §f神环使用渐变换色"
+                            : "§c[关闭] §f神环仍按年限配色渲染")
+            );
+            case 15 -> List.of(
+                    Component.literal("普通魂环显示").withStyle(ChatFormatting.GOLD),
+                    Component.literal("§7控制前 §e9 §7枚魂环（年限配色那一层）是否渲染。"),
+                    Component.literal("§7关掉后只显示第 10 环起的神环层，"),
+                    Component.literal("§7适合只看神环、或想减轻渲染负担时使用。"),
+                    Component.literal(isOpen
+                            ? "§a[开启] §f显示前 9 枚魂环"
+                            : "§c[关闭] §f隐藏前 9 枚魂环")
             );
             default -> List.of();
         };

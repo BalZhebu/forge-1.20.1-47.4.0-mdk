@@ -1,6 +1,7 @@
 package com.TovidY.kunluncontinent.datagen.oredatagen;
 
 import com.TovidY.kunluncontinent.KlMain;
+import com.TovidY.kunluncontinent.worldgen.ModBiomeTags;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
@@ -208,5 +209,6 @@ public class ModStructureProvider {
                         20261009
                 )
         ));
+
     }
 }

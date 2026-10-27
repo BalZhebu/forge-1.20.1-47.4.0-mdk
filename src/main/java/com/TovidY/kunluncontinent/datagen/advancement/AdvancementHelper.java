@@ -6,10 +6,13 @@ import com.TovidY.kunluncontinent.advancement.LevelTrigger;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.CriterionTriggerInstance;
 import net.minecraft.advancements.FrameType;
+import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
+import net.minecraft.advancements.critereon.KilledTrigger;
 import net.minecraft.advancements.critereon.PlayerTrigger;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
@@ -99,6 +102,16 @@ public final class AdvancementHelper {
     /** 达到指定等级。 */
     public static CriterionTriggerInstance levelReached(int level) {
         return LevelTrigger.Instance.levelReached(level);
+    }
+
+    /**
+     * 玩家击杀指定实体（原版触发器，不需要在死亡事件里手写触发）。
+     *
+     * <p>判定的是「killer 是玩家」，因此宠物 / 铁傀儡代杀不计入。</p>
+     */
+    public static CriterionTriggerInstance killEntity(EntityType<?> type) {
+        return KilledTrigger.TriggerInstance.playerKilledEntity(
+                EntityPredicate.Builder.entity().of(type));
     }
 
     /** 进入世界（用于根成就）。 */

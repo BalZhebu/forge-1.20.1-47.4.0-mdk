@@ -84,6 +84,8 @@ public final class ZhenshenState {
         data.putString(NBT_WUHUN, wuhun);
 
         player.addEffect(new MobEffectInstance(effect, EFFECT_DURATION, 0, false, false, true));
+        // 成就：第一次开启武魂真身
+        com.TovidY.kunluncontinent.advancement.AchievementAPI.onZhenshenActivate(player);
         SynsAPI.synsPlayerAttribute(player);
     }
 

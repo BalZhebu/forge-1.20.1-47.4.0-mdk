@@ -1,6 +1,7 @@
 package com.TovidY.kunluncontinent.capability.mobattributes;
 
 import com.TovidY.kunluncontinent.capability.CapabilityAttributeBase;
+import com.TovidY.kunluncontinent.capability.hunhuanattributes.HunhuanNianxianUpgrader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
@@ -13,6 +14,14 @@ import java.util.concurrent.ThreadLocalRandom;
 public class MobAttributeCapability extends CapabilityAttributeBase implements INBTSerializable<CompoundTag> {
     private long nianxian;
     private boolean shenci;
+    /**
+     * 神赐魂环来自哪个神位（{@code GodRegistry} 的 id，如 {@code sea_god}）；空串 = 不是神赐环。
+     *
+     * <p>为什么不能只用 {@link #shenci}：不同神位赐的环要用**各自的专属贴图**，
+     * 只用一个 boolean 的话所有神位都会画成海神环。{@code shenci} 保留作旧存档兼容 + 快捷判定，
+     * 贴图选择一律看这个字段。</p>
+     */
+    private String shenciGod = "";
     private float tempWugongModifier = 0f;
     private boolean isWeakened = false;
 
@@ -63,49 +72,17 @@ public class MobAttributeCapability extends CapabilityAttributeBase implements I
         }
     }
 
+    /**
+     * 按年限重算 11 项属性。
+     *
+     * <p>数值分档<b>唯一定义</b>在 {@link HunhuanNianxianUpgrader#baselineOf(long)} ——
+     * 这里只负责加上攻击的随机浮动并写回字段，改平衡时请改那边，别在这里再抄一份表。</p>
+     */
     private void updateAttributesByNianxian() {
         ThreadLocalRandom random = ThreadLocalRandom.current();
-
-        float g;
-        float l;
-        float gMult = 1f;
-        float hpMult = 10f;
-        float hpBase = 10f;
-
-        if (nianxian < 100) {
-            g = 2 + (float) nianxian / 7 + random.nextInt(10);
-            l = 5 + (float) nianxian / 20;
-        } else if (nianxian < 1000) {
-            g = 35 + (float) nianxian / 10 + random.nextInt(50);
-            l = 15 + (float) nianxian / 1000 * 10;
-            gMult = 2; hpMult = 10; hpBase = 10;
-        } else if (nianxian < 10000) {
-            g = 150 + (float) nianxian / 20 + random.nextInt(250);
-            l = 20 + (float) nianxian / 10000 * 10;
-            gMult = 2; hpMult = 25; hpBase = 10;
-        } else if (nianxian < 100000) {
-            g = 400 + (float) nianxian / 67 + random.nextInt(750);
-            l = 40 + (float) nianxian / 100000 * 10;
-            gMult = 3; hpMult = 40; hpBase = 10;
-        } else if (nianxian < 1000000) {
-            g = 888 + (float) nianxian / 133 + random.nextInt(3750);
-            l = 50 + (float) nianxian / 1000000 * 10;
-            gMult = 5; hpMult = 60; hpBase = 10;
-        } else if (nianxian < 10000000) {
-            g = 2560 + (float) nianxian / 500 + random.nextInt(15000);
-            l = 100 + (float) nianxian / 10000000 * 20;
-            gMult = 10; hpMult = 200; hpBase = 150;
-        } else if (nianxian < 100000000) {
-            g = 6400 + (float) nianxian / 1000 + random.nextInt(100000);
-            l = 200 + (float) nianxian / 100000000 * 50;
-            gMult = 25; hpMult = 500; hpBase = 400;
-        } else {
-            g = 15000 + (float) nianxian / 2000 + random.nextInt(500000);
-            l = 500 + (float) nianxian / 1000000000 * 100;
-            gMult = 60; hpMult = 1200; hpBase = 1000;
-        }
-
-        applyGrowth(g, l, gMult, hpMult, hpBase);
+        HunhuanNianxianUpgrader.Baseline baseline = HunhuanNianxianUpgrader.baselineOf(this.nianxian);
+        applyGrowth(baseline.gJittered(random), baseline.l(),
+                baseline.gMult(), baseline.hpMult(), baseline.hpBase());
     }
 
     private void applyGrowth(float g, float l, float gMult, float hpMult, float hpBase) {
@@ -161,6 +138,7 @@ public class MobAttributeCapability extends CapabilityAttributeBase implements I
         CompoundTag nbt = super.serializeNBT();
         nbt.putLong("nianxian", nianxian);
         nbt.putBoolean("shenci", shenci);
+        nbt.putString("shenciGod", getShenciGod());
         nbt.putFloat("tempWugongModifier", tempWugongModifier);
         nbt.putBoolean("isWeakened", isWeakened); // 保存削弱标记
         nbt.putString("towerSkillsTag", towerSkillsTag); // 挑战塔词条标签（同步给客户端画词条行）
@@ -173,6 +151,7 @@ public class MobAttributeCapability extends CapabilityAttributeBase implements I
         super.deserializeNBT(nbt);
         if (nbt.contains("nianxian")) this.nianxian = nbt.getLong("nianxian");
         if (nbt.contains("shenci")) this.shenci = nbt.getBoolean("shenci");
+        if (nbt.contains("shenciGod")) this.shenciGod = nbt.getString("shenciGod");
         if (nbt.contains("tempWugongModifier")) this.tempWugongModifier = nbt.getFloat("tempWugongModifier");
         if (nbt.contains("isWeakened")) this.isWeakened = nbt.getBoolean("isWeakened"); // 读取削弱标记
         this.towerSkillsTag = nbt.getString("towerSkillsTag");
@@ -198,9 +177,49 @@ public class MobAttributeCapability extends CapabilityAttributeBase implements I
     public boolean isShenci() { return shenci; }
     public void setShenci(boolean shenci) { this.shenci = shenci; }
 
+    /** 神赐魂环的神位 id（{@code sea_god} / {@code asura_god} / {@code angel_god}…），空串 = 不是神赐环。 */
+    public String getShenciGod() { return shenciGod == null ? "" : shenciGod; }
+
+    public void setShenciGod(String godId) { this.shenciGod = godId == null ? "" : godId; }
+
+    /**
+     * 渲染 / 同步用的口径：非神赐环返回空串；神赐环一律给出具体神位。
+     *
+     * <p>旧存档里只有 {@code shenci=true}、没有神位字段的环（那时只有海神一个有图）
+     * 按 {@code sea_god} 处理，否则会掉回普通神环贴图。</p>
+     */
+    public String getShenciGodOrDefault() {
+        if (!shenci) {
+            return "";
+        }
+        String god = getShenciGod();
+        return god.isEmpty() ? "sea_god" : god;
+    }
+
     public long getNianxian() { return nianxian; }
     public void setNianxian(long nianxian) {
         this.nianxian = nianxian;
         updateAttributesByNianxian();
+    }
+
+    /**
+     * <b>只改年限，不重算属性</b>。
+     *
+     * <p>给 {@code HunhuanNianxianUpgrader} 用：它要把「新年限应得的属性」按比例算到现有属性上，
+     * 而 {@link #setNianxian(long)} 会走 {@link #updateAttributesByNianxian()} ——
+     * 那里面是 {@code ThreadLocalRandom}，一重算就会把玩家当年吸收时的随机浮动与削减比例全部冲掉。</p>
+     */
+    public void setNianxianWithoutRecalc(long nianxian) {
+        this.nianxian = nianxian;
+    }
+
+    /**
+     * 不含「临时物攻加成」的裸物攻。
+     *
+     * <p>{@link #getGongji()} 会把 {@code tempWugongModifier} 加进去（挑战塔词条用），
+     * 但那是<b>临时状态</b>，不该参与「年限提升」的等比放大 —— 否则会把临时增益也永久放大。</p>
+     */
+    public float getGongjiWithoutTemp() {
+        return super.getGongji();
     }
 }

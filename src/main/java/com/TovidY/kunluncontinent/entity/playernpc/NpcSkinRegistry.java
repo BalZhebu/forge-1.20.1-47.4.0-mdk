@@ -4,7 +4,9 @@ import com.TovidY.kunluncontinent.KlMain;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class NpcSkinRegistry {
@@ -31,10 +33,32 @@ public class NpcSkinRegistry {
     }
 
     /**
-     * 获取总皮肤数量（用于实体生成时在 0 ~ 数量-1 之间取随机数）
+     * 获取总皮肤数量（用于循环遍历 / 命令补全）。
+     *
+     * <p>⚠️ 只有在 id 是 {@code 0 ~ count-1} 连续时，才能拿它当"随机上限"用 ——
+     * 随机请用 {@link #getRandomSkinIndex(net.minecraft.util.RandomSource)}，
+     * 否则以后中间删掉一个 id 就会随机到不存在的皮肤。</p>
      */
     public static int getSkinCount() {
         return Math.max(1, SKIN_MAP.size());
+    }
+
+    /** 这个 id 是否真的注册过（读档时用来挡脏数据）。 */
+    public static boolean isValidIndex(int index) {
+        return SKIN_MAP.containsKey(index);
+    }
+
+    /**
+     * 从已注册的 id 里随机挑一个。
+     *
+     * <p>不依赖 id 连续：从 {@link #SKIN_MAP} 的 key 里取，以后增删皮肤不会踩空。</p>
+     */
+    public static int getRandomSkinIndex(net.minecraft.util.RandomSource random) {
+        if (SKIN_MAP.isEmpty()) {
+            return 0;
+        }
+        List<Integer> ids = new ArrayList<>(SKIN_MAP.keySet());
+        return ids.get(random.nextInt(ids.size()));
     }
 
     /**

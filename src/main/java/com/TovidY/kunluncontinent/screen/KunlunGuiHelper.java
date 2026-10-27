@@ -93,7 +93,10 @@ public class KunlunGuiHelper {
 
         @Override
         protected void renderWidget(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
-            boolean hovered = this.isHoveredOrFocused();
+            // ⚠️ 只用 isHovered()，不要用 isHoveredOrFocused()：
+            //    点过按钮后原版会把焦点留在它身上 → isHoveredOrFocused() 恒 true，
+            //    鼠标移开后按钮还"高亮"、tooltip 还粘在鼠标上。
+            boolean hovered = this.isHovered();
 
             int bgColor = hovered ? 0xFF2A364F : 0xFF181F2C;
             int borderColor = hovered ? 0xFFE6B800 : 0xFF4A5568;
@@ -113,7 +116,8 @@ public class KunlunGuiHelper {
         }
 
         public void renderTooltip(GuiGraphics gui, int mouseX, int mouseY) {
-            if (this.tooltipSupplier != null && this.isHoveredOrFocused()) {
+            // 同上：必须真的悬停才画，否则点过的那颗按钮的提示会一直跟着鼠标
+            if (this.tooltipSupplier != null && this.visible && this.isHovered()) {
                 List<Component> tooltip = this.tooltipSupplier.get();
                 if (tooltip != null && !tooltip.isEmpty()) {
                     gui.renderComponentTooltip(this.font, tooltip, mouseX, mouseY);

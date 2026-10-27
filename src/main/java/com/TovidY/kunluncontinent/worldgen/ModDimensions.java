@@ -75,4 +75,15 @@ public class ModDimensions {
      */
     public static final ResourceKey<NoiseGeneratorSettings> CELESTIAL_NOISE = ResourceKey.create(
             Registries.NOISE_SETTINGS, new ResourceLocation(KlMain.MOD_ID, "celestial_realm"));
+
+    /**
+     * 极寒冰域的<b>噪声设置</b>。
+     *
+     * <p>和主世界同一套地形（复制的 {@code minecraft:overworld}），只改两处：
+     * 底层方块换成<b>极寒石</b>，并把原版 y=0~8 的深板岩带也换成极寒石。</p>
+     *
+     * <p>见 {@code ModPolarWorldGen}。</p>
+     */
+    public static final ResourceKey<NoiseGeneratorSettings> POLAR_ICE_NOISE = ResourceKey.create(
+            Registries.NOISE_SETTINGS, new ResourceLocation(KlMain.MOD_ID, "polar_ice_realm"));
 }
