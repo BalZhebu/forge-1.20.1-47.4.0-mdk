@@ -71,7 +71,7 @@ public class SigilEffect extends SkillEffect {
 
         float pulse = (elapsedSeconds % PULSE_PERIOD_SECONDS) / PULSE_PERIOD_SECONDS;
 
-        Vec3 center = anchor();
+        Vec3 center = anchor(partialTick);
         float cx = (float) (center.x - cameraPos.x);
         float cy = (float) (center.y - cameraPos.y) + GROUND_LIFT;
         float cz = (float) (center.z - cameraPos.z);

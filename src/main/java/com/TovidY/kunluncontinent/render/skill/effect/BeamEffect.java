@@ -50,6 +50,14 @@ public class BeamEffect extends SkillEffect {
     /** 光刃：月牙轮廓 + 锐利刃口 + 白热核心线。 */
     public static final String SHADER_BLADE = "skill_blade";
 
+    /**
+     * 长枪：枪杆 + 三角枪头 + 尾缨，并带「枪尖向外推进」的动画。
+     *
+     * <p>几何与 {@code skill_beam} 完全一样（沿视线的带状），只是逐像素图案不同，
+     * 所以共用这个类、只换 fsh。</p>
+     */
+    public static final String SHADER_SPEAR = "skill_spear";
+
     /** 白热阶段（tick）：刚成形那几刻最亮。 */
     private static final float FLASH_TICKS = 3.0F;
 
@@ -107,11 +115,11 @@ public class BeamEffect extends SkillEffect {
         }
         Vec3 side = computeSide(direction);
 
-        // ---- 起点：施法者位置 + 预设的高度偏移，转成相机相对坐标 ----
-        Vec3 anchor = anchor();
-        double sx = anchor.x - cameraPos.x;
-        double sy = anchor.y - cameraPos.y + preset.startHeight();
-        double sz = anchor.z - cameraPos.z;
+        // ---- 起点：施法者位置（帧间插值，否则走动时整条带子会跳）+ 预设的高度偏移 ----
+        Vec3 anchorPos = anchor(partialTick);
+        double sx = anchorPos.x - cameraPos.x;
+        double sy = anchorPos.y - cameraPos.y + preset.startHeight();
+        double sz = anchorPos.z - cameraPos.z;
 
         setUniform(shader, "Start", (float) sx, (float) sy, (float) sz);
         setUniform(shader, "Dir", (float) direction.x, (float) direction.y, (float) direction.z);

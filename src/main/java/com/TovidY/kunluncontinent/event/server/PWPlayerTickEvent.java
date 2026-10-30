@@ -18,6 +18,7 @@ import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import com.TovidY.kunluncontinent.item.baseskillist.liejinhu.eight.SkillLeijinhu8;
 import com.TovidY.kunluncontinent.item.baseskillist.liejinhu.nine.SkillLeijinhu9;
 import com.TovidY.kunluncontinent.item.baseskillist.zhenshen.ZhenshenState;
+import com.TovidY.kunluncontinent.item.baseskillist.tianshi.AngelWings;
 import com.TovidY.kunluncontinent.render.skill.SkillEffectStyles;
 import com.TovidY.kunluncontinent.render.skill.SkillFieldFx;
 import com.TovidY.kunluncontinent.render.skill.SkillFxToggle;
@@ -976,6 +977,11 @@ public class PWPlayerTickEvent {
         // 撞墙爆炸冷却递减（服务端权威状态，客户端只负责检测并发包）
         FlyCrashBlast.tickCooldown(player);
 
+        // 天使之翼：精神力见底 → 自动收翼（状态存 capability，客户端也要读，见 AngelWings）
+        if (player instanceof ServerPlayer serverPlayer) {
+            AngelWings.tickServer(serverPlayer, capability);
+        }
+
         // 禁空扫描：每 10 tick 一次，用 UUID 错开不同玩家的扫描时机，减轻服务器单 tick 压力
         boolean isAntiFlyZone = false;
         int flyOffset = Math.abs(player.getUUID().hashCode() % 10);
@@ -1008,7 +1014,7 @@ public class PWPlayerTickEvent {
                     }
                 }
             }
-        } else if (ModAttributeAPI.getMaxjingshenli(player) > 5000) {
+        } else if (AngelWings.isActive(player) || ModAttributeAPI.getMaxjingshenli(player) > 5000) {
             player.getAbilities().mayfly = true;
         } else {
             player.getAbilities().mayfly = false;

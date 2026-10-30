@@ -83,7 +83,7 @@ public class ShockwaveEffect extends SkillEffect {
             return;
         }
 
-        Vec3 center = anchor();
+        Vec3 center = anchor(partialTick);
         float cx = (float) (center.x - cameraPos.x);
         float cy = (float) (center.y - cameraPos.y) + GROUND_LIFT;
         float cz = (float) (center.z - cameraPos.z);

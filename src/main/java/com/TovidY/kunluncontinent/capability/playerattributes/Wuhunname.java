@@ -9,4 +9,5 @@ public class Wuhunname {
     //兽武魂
     public static final String liejinhu = "裂金虎";
     public static final String panshijuyuan = "磐石巨猿";
+    public static final String tianshi = "天使";
 }

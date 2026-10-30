@@ -92,10 +92,29 @@ public abstract class SkillEffect {
         return owner != null && owner.isAlive() ? owner : null;
     }
 
-    /** 当前锚点：优先跟随施法者，取不到就退回发包时的坐标。 */
-    protected Vec3 anchor() {
+    /**
+     * 当前锚点：优先跟随施法者，取不到就退回发包时的坐标。
+     *
+     * <h3>⚠️ 必须做帧间插值</h3>
+     * <p>{@code Entity#getX()} 是<b>上一个 tick</b> 的离散位置：每 tick 之间整体跳一次。
+     * 而相机位置（{@link net.minecraft.client.Camera#getPosition()}）是<b>插值</b>过的。
+     * 两者不同步 → 玩家一走动，跟随式特效就会"每 tick 抖一格"，
+     * 叠加上渲染帧率看起来就是<b>疯狂闪烁 / 抖动</b>（翅膀、地阵、雷柱全中）。</p>
+     *
+     * <p>修法就是这里用 {@code partialTick} 把 {@code xOld → x} 插值一次，
+     * 和相机走同一个时间点。</p>
+     *
+     * @param partialTick 帧间插值系数（{@code RenderLevelStageEvent#getPartialTick()}）
+     */
+    protected Vec3 anchor(float partialTick) {
         Entity owner = ownerEntity();
-        return owner != null ? owner.position() : fallbackOrigin;
+        if (owner == null) {
+            return fallbackOrigin;
+        }
+        return new Vec3(
+                Mth.lerp(partialTick, owner.xOld, owner.getX()),
+                Mth.lerp(partialTick, owner.yOld, owner.getY()),
+                Mth.lerp(partialTick, owner.zOld, owner.getZ()));
     }
 
     /**

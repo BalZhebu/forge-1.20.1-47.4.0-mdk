@@ -1,5 +1,6 @@
 package com.TovidY.kunluncontinent.capability.playerattributes;
 
+import com.TovidY.kunluncontinent.advancement.AchievementAPI;
 import com.TovidY.kunluncontinent.advancement.ModTriggers;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapability;
 import com.TovidY.kunluncontinent.godclass.GodRank;
@@ -17,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import static com.TovidY.kunluncontinent.capability.playerattributes.PlayerHunhuanAPI.addWuHun;
 import net.minecraft.ChatFormatting;
 import org.jetbrains.annotations.NotNull;
 
@@ -142,6 +142,18 @@ public class PlayerUpgradeSystem {
             r = random.nextInt(100);
         }
 
+        // ⚠️ 先觉醒武魂，才能决定资质走哪一档：
+        //    · 双生武魂（一次觉醒出两个，含吃了两枚精华的情况）→ 必天才
+        //    · 天使武魂 → 必天才
+        //    · 其余单武魂 → 按上面的强制值 / 随机值
+        //    资质值决定起始等级 1 + 9 = 10 级。
+        List<String> awakened = PlayerHunhuanAPI.awakenAtRitual(player, capability);
+        boolean duo = awakened.size() >= 2;
+        boolean isTianshi = awakened.contains(Wuhunname.tianshi);
+        if (duo || isTianshi) {
+            r = 0;
+        }
+
         if (r < 10) {
             talentLevel = 9;
             talentName = "天才资质";
@@ -173,7 +185,6 @@ public class PlayerUpgradeSystem {
         applyGrowthAndBonus(capability, finalLevel, bonusHP, bonusAtk, bonusDef);
         AttributePoints.grantOnLevelUp(player, capability, finalLevel);
         ModTriggers.LEVEL_TRIGGER.trigger(player, finalLevel);
-        addWuHun(player);
 
         capability.setXiantianTalent(talentLevel);
 
@@ -181,6 +192,30 @@ public class PlayerUpgradeSystem {
         player.sendSystemMessage(Component.literal("检测到资质：").append(Component.literal(talentName).withStyle(color))
                 .append(" §f(先天等级: +" + talentLevel + ")"));
         syncAttributesToClient(player, capability);
+
+        boolean triple = awakened.size() >= 3;
+        // 天使不额外刷聊天栏：资质与起始等级已经由上面的「觉醒仪式」那两行统一说明了。
+        if (!isTianshi) {
+            if (triple) {
+                player.sendSystemMessage(Component.literal(
+                        "§d§l【三生武魂】§f三魂同生，" + String.join("§f、§d", awakened)
+                                + " §f一息同醒 —— 万古难遇的资质，锁定为 §6天才资质§f！"));
+            } else if (duo) {
+                player.sendSystemMessage(Component.literal(
+                        "§d§l【双生武魂】§f你天生双魂，" + String.join("§f、§d", awakened)
+                                + " §f同时苏醒 —— 资质锁定为 §6天才资质§f！"));
+            }
+        }
+
+        // 成就：双生 / 三生（三生的玩家会同时点亮双生，做成递进链）
+        if (duo) {
+            AchievementAPI.onAwakenDuo(player);
+        }
+        if (triple) {
+            AchievementAPI.onAwakenTriple(player);
+        }
+        // 天使：万一是高等级换武魂（debug / 精华），这里也顺手补一次神考（内部幂等）
+        TianshiWuhun.maybeGrantTrial(player, capability);
     }
     private static void sendGlobalAnnouncement(ServerPlayer player) {
         MinecraftServer server = player.getServer();
@@ -266,6 +301,24 @@ public class PlayerUpgradeSystem {
         WuhunPermanent.grantPermanentByLevel(player, capability);
 
         ModTriggers.LEVEL_TRIGGER.trigger(player, newLevel);
+
+        // 天使武魂：到 70 级自动开天使神神考（内部幂等，已开过/已封神直接跳过）
+        TianshiWuhun.maybeGrantTrial(player, capability);
+    }
+
+    /**
+     * <b>不走突破判定</b>，直接连升 {@code levels} 级（天使武魂的奖励等级用）。
+     *
+     * <p>逐级调 {@link #processSuccessfulUpgrade} 而不是一次算总账，是为了让每一级该给的
+     * 属性、属性点、成就触发器、武魂永久加成全部照常结算 —— 等价于玩家自己点了 10 次突破成功。</p>
+     *
+     * @param levels 想升几级；到 199 封顶自动停
+     */
+    public static void grantLevelsDirectly(ServerPlayer player, PlayerAttributeCapability capability, int levels) {
+        for (int i = 0; i < levels && capability.getDengji() < 199; i++) {
+            processSuccessfulUpgrade(player, capability, capability.getDengji() + 1);
+        }
+        SynsAPI.synsPlayerAttribute(player);
     }
 
     private static void checkGodGlimpseEntry(ServerPlayer player, PlayerAttributeCapability capability, int level) {

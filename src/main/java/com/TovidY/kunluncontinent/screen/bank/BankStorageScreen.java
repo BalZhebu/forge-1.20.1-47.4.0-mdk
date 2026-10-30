@@ -19,10 +19,12 @@ import java.util.List;
 /**
  * 属性面板里的「银行」页签界面（<b>330×190，和属性/魂环面板一样大</b>）。
  *
- * <h3>和方块版（{@link BankScreen}）的区别</h3>
+ * <h3>和方块版（{@link BankScreen}）的关系</h3>
  * <ul>
+ *   <li><b>两套完全独立</b>：本界面配 {@link BankTabMenu}，方块版配 {@code BankMenu}；
+ *       容器、按钮 id、槽位坐标都各有一份，互不继承 —— 改一边不会牵连另一边。</li>
  *   <li><b>只能取钱</b>：没有存入口、没有换钱页 —— 存钱和换汇必须走到真正的银行方块前。
- *       服务端 {@code BankMenu#clickMenuButton} 也会按 {@code isWithdrawOnly()} 拒掉那些按钮 id。</li>
+ *       {@link BankTabMenu#clickMenuButton} 本身就不认识「存入 / 换钱」的按钮 id。</li>
  *   <li>版式紧凑：上面三行「金/银/铜 储量」，中间数量档，下面居中放背包，左下角一块提示框。</li>
  * </ul>
  *
@@ -90,7 +92,7 @@ public class BankStorageScreen extends AbstractContainerScreen<BankTabMenu> impl
             this.addRenderableWidget(new KunlunGuiHelper.HandDrawnButton(
                     this.font, this.leftPos + BTN_X, rowY + 3, BTN_W, BTN_H,
                     Component.literal("取出"),
-                    b -> send(BankMenu.BTN_WITHDRAW_BASE + coin.ordinal()),
+                    b -> send(BankTabMenu.BTN_WITHDRAW_BASE + coin.ordinal()),
                     () -> List.of(
                             Component.literal("§7从银行取出" + coin.displayName()),
                             Component.literal("§7本次数量: §e" + presetText()),
@@ -98,14 +100,14 @@ public class BankStorageScreen extends AbstractContainerScreen<BankTabMenu> impl
         }
 
         // 数量档（和方块版储蓄页一致：×1 / ×10 / ×100 / ×1000 / 全部）
-        for (int i = 0; i < BankMenu.SAVE_PRESET_LABELS.length; i++) {
+        for (int i = 0; i < BankTabMenu.PRESET_LABELS.length; i++) {
             final int index = i;
             this.addRenderableWidget(new KunlunGuiHelper.HandDrawnButton(
                     this.font, this.leftPos + PRESET_X0 + i * PRESET_STEP, this.topPos + PRESET_Y, 40, 15,
-                    Component.literal(BankMenu.SAVE_PRESET_LABELS[i]),
+                    Component.literal(BankTabMenu.PRESET_LABELS[i]),
                     b -> {
-                        this.menu.setSavePresetIndex(index);
-                        send(BankMenu.BTN_PRESET_BASE + index);
+                        this.menu.setPresetIndex(index);
+                        send(BankTabMenu.BTN_PRESET_BASE + index);
                     },
                     () -> List.of(Component.literal("§7每次取出的数量"))));
         }
@@ -128,7 +130,7 @@ public class BankStorageScreen extends AbstractContainerScreen<BankTabMenu> impl
     }
 
     private String presetText() {
-        int amount = BankMenu.SAVE_PRESETS[this.menu.getSavePresetIndex()];
+        int amount = BankTabMenu.PRESETS[this.menu.getPresetIndex()];
         return amount <= 0 ? "全部" : BankAccount.fmt(amount);
     }
 
@@ -180,7 +182,7 @@ public class BankStorageScreen extends AbstractContainerScreen<BankTabMenu> impl
 
         // 数量档 + 选中框
         gui.drawString(this.font, "§7每次操作", this.leftPos + 12, this.topPos + PRESET_Y + 4, 0xFFFFFF, true);
-        gui.renderOutline(this.leftPos + PRESET_X0 - 1 + this.menu.getSavePresetIndex() * PRESET_STEP,
+        gui.renderOutline(this.leftPos + PRESET_X0 - 1 + this.menu.getPresetIndex() * PRESET_STEP,
                 this.topPos + PRESET_Y - 1, 42, 17, 0xFFE6B800);
 
         renderHintBox(gui);
@@ -240,14 +242,14 @@ public class BankStorageScreen extends AbstractContainerScreen<BankTabMenu> impl
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
                 KunlunGuiHelper.renderSlotBackground(gui,
-                        this.leftPos + BankMenu.TAB_INV_X + col * 18 - 1,
-                        this.topPos + BankMenu.TAB_INV_Y + row * 18 - 1, false);
+                        this.leftPos + BankTabMenu.INV_X + col * 18 - 1,
+                        this.topPos + BankTabMenu.INV_Y + row * 18 - 1, false);
             }
         }
         for (int col = 0; col < 9; col++) {
             KunlunGuiHelper.renderSlotBackground(gui,
-                    this.leftPos + BankMenu.TAB_INV_X + col * 18 - 1,
-                    this.topPos + BankMenu.TAB_HOTBAR_Y - 1, false);
+                    this.leftPos + BankTabMenu.INV_X + col * 18 - 1,
+                    this.topPos + BankTabMenu.HOTBAR_Y - 1, false);
         }
     }
 

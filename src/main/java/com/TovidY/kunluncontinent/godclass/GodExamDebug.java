@@ -103,8 +103,8 @@ public final class GodExamDebug {
                         return fail(player, "§c玩家等级仅 " + lv + " 级，需达到 §e99级 §c才能承载神位。");
                     }
 
-                    // 初始化九考数据（为让面板/存档结构完整）
-                    cap.initializeGodExam(player, target);
+                    // 初始化九考数据（为让面板/存档结构完整）—— debug 绕开「天使只认天使神」的校验
+                    cap.forceInitializeGodExam(player, target);
 
                     // ⚠️ isGod 只在 nextGodStage() 从第 9 考再推一次时置位，
                     //   没有 setter。所以要把 1~9 考全部走完（nextGodStage 9 次）才封神。

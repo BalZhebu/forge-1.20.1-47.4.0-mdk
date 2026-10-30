@@ -16,10 +16,13 @@ import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-import javax.annotation.Nullable;
-
 /**
- * 昆仑银行面板的容器。
+ * <b>银行方块</b>右键打开的面板容器（330×240，储蓄 + 换钱两页）。
+ *
+ * <p>⚠️ 它和属性面板里的「银行」页签是<b>两套完全独立的东西</b>：
+ * 本类只管「站在银行方块前能做的事」，页签那套是 {@link BankTabMenu}（只能取钱、永不绑定方块）。
+ * 以前两者共用一个容器类、靠 {@code pos == null} 分支区分，结果任何一处改动都会同时影响两边，
+ * 所以拆开了 —— <b>别再往这里加"页签专用"的分支</b>。</p>
  *
  * <h3>为什么是容器（而不是直接开一个 Screen）</h3>
  * <ul>
@@ -33,23 +36,16 @@ import javax.annotation.Nullable;
  * <p>存取魂币是<b>直接操作玩家背包</b>的。原版只同步「当前打开的那个容器」的槽位：
  * 如果银行菜单里没有背包槽，服务端改完背包，客户端那份 ItemStack 还是旧的 ——
  * 玩家会看到"存进去的魂币还在手里"（幽灵物品），下次用就和服务端对不上。</p>
- * <p>把 36 个背包槽放进这个菜单后，{@code ServerPlayer} 每 tick 的
- * {@code containerMenu.broadcastChanges()} 就会自动把改动推回客户端。</p>
  *
  * <h3>金额怎么同步给客户端</h3>
  * <p><b>不走 {@code ContainerData}</b>：原版 {@code ClientboundContainerSetDataPacket}
  * 把值写成 short（±32767），2000 万的余额会被截断。
- * 余额写在 capability 的 NBT 里，{@code SPacketPlayerAttribute} 每次同步都会一起带过去，
- * 客户端面板直接读 capability 就行。</p>
+ * 余额写在 capability 的 NBT 里，{@code SPacketPlayerAttribute} 每次同步都会一起带过去。</p>
  *
  * <h3>为什么「数量档」要存在服务端</h3>
  * <p>按钮只带得回一个 int（{@code clickMenuButton(id)}），带不回金额。
  * 所以点「×100」时服务端也记下下标（{@link #savePresetIndex} / {@link #tradePresetIndex}），
  * 之后点「取出 / 卖出」用服务端这份值算 —— 客户端那一份只负责高亮选中项。</p>
- *
- * <p><b>两页各存一份</b>：储蓄页是 1/10/100/1000/全部，换钱页是 1/10/30/50/全部
- * （每个方向每天只有 {@code BankExchange.DAILY_LIMIT} 次，大额走「全部」）。
- * 档位表不同，所以按钮 id 也分成 {@link #BTN_PRESET_BASE} 与 {@link #BTN_TPRESET_BASE} 两段。</p>
  */
 public class BankMenu extends AbstractContainerMenu {
 
@@ -77,20 +73,14 @@ public class BankMenu extends AbstractContainerMenu {
     public static final int BTN_WITHDRAW_BASE = 20; // 20 ~ 22
     public static final int BTN_TRADE_BASE = 30;    // 30 ~ 33（换钱四方向）
 
-    // ---- 背包槽位：方块版（面板 240 高，背包靠右下，左侧让信息区）----
+    // ---- 背包槽位：面板 240 高，背包靠右下，左侧让给信息区 ----
     public static final int INV_X = 150;
     public static final int INV_Y = 158;
     public static final int HOTBAR_Y = 216;
 
-    // ---- 背包槽位：页签版（面板 190 高，背包居中偏下）----
-    public static final int TAB_INV_X = 84;
-    public static final int TAB_INV_Y = 108;
-    public static final int TAB_HOTBAR_Y = 166;
-
-    /** 打开这块方块对应的银行时为方块位置；<b>从页签打开时为 {@code null}</b>（不做距离校验）。 */
-    @Nullable
+    /** 打开这块方块对应的银行时用，负责「离方块太远自动关」的判定。 */
     private final ContainerLevelAccess access;
-    @Nullable
+    /** 方块位置（仅用于日志/调试，业务上用不到）。 */
     private final BlockPos pos;
 
     /** 储蓄页与换钱页各存一份数量档 —— 两页的档位表不一样，不能共用一个下标。 */
@@ -98,56 +88,28 @@ public class BankMenu extends AbstractContainerMenu {
     private int tradePresetIndex = 0;
 
     public BankMenu(int id, Inventory inv, FriendlyByteBuf buf) {
-        this(id, inv, readPos(buf));
+        this(id, inv, buf.readBlockPos());
     }
 
-    /**
-     * 从网络包读方块位置。
-     *
-     * <p>两条打开路径：方块版由 {@code NetworkHooks.openScreen(player, provider, pos)} 写了 8 字节；
-     * 页签版（{@link Provider}）<b>不带额外数据</b>，缓冲区是空的 —— 直接 {@code readBlockPos()} 会越界。</p>
-     */
-    @Nullable
-    private static BlockPos readPos(FriendlyByteBuf buf) {
-        return buf == null || buf.readableBytes() < Long.BYTES ? null : buf.readBlockPos();
-    }
-
-    public BankMenu(int id, Inventory inv, @Nullable BlockPos pos) {
+    public BankMenu(int id, Inventory inv, BlockPos pos) {
         super(ModMenuTypes.BANK_MENU.get(), id);
         this.pos = pos;
-        this.access = pos == null ? null : ContainerLevelAccess.create(inv.player.level(), pos);
-
-        // 两种版式的背包位置不同：方块版在右下（左边放信息区），页签版居中偏下（面板只有 190 高）
-        boolean tabLayout = pos == null;
-        int invX = tabLayout ? TAB_INV_X : INV_X;
-        int invY = tabLayout ? TAB_INV_Y : INV_Y;
-        int hotY = tabLayout ? TAB_HOTBAR_Y : HOTBAR_Y;
+        this.access = ContainerLevelAccess.create(inv.player.level(), pos);
 
         // 玩家背包 3×9
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
-                this.addSlot(new Slot(inv, col + row * 9 + 9, invX + col * 18, invY + row * 18));
+                this.addSlot(new Slot(inv, col + row * 9 + 9, INV_X + col * 18, INV_Y + row * 18));
             }
         }
         // 快捷栏
         for (int col = 0; col < 9; col++) {
-            this.addSlot(new Slot(inv, col, invX + col * 18, hotY));
+            this.addSlot(new Slot(inv, col, INV_X + col * 18, HOTBAR_Y));
         }
     }
 
-    @Nullable
     public BlockPos getPos() {
         return pos;
-    }
-
-    /**
-     * 页签版（不绑方块）= <b>只能取钱</b>。
-     *
-     * <p>玩家面板里的银行只是"取钱窗口"：存入、换钱都必须走到真正的银行方块前。
-     * 服务端在 {@link #clickMenuButton} 里据此拦掉存入 / 换钱的按钮 id。</p>
-     */
-    public boolean isWithdrawOnly() {
-        return pos == null;
     }
 
     public int getSavePresetIndex() {
@@ -179,17 +141,12 @@ public class BankMenu extends AbstractContainerMenu {
     /**
      * 客户端点按钮 → 原版发 {@code ServerboundContainerButtonClickPacket} → 落到这里（服务端线程）。
      *
-     * <p>只做三件互斥的事：切数量档 / 存入 / 取出。做完立刻把 capability 同步给客户端，
+     * <p>只做三件互斥的事：切数量档 / 存入 / 取出 / 换钱。做完立刻把 capability 同步给客户端，
      * 面板上的余额数字就会自己刷新，不需要额外的回包。</p>
      */
     @Override
     public boolean clickMenuButton(Player player, int id) {
         if (!(player instanceof ServerPlayer sp)) {
-            return false;
-        }
-
-        // 页签版只有「数量档 + 取出」两类按钮；存入 / 换钱一律拒掉（防改包）
-        if (isWithdrawOnly() && !isAllowedInWithdrawOnly(id)) {
             return false;
         }
 
@@ -234,13 +191,6 @@ public class BankMenu extends AbstractContainerMenu {
         return false;
     }
 
-    /** 页签版（只取钱）允许的按钮 id：储蓄页数量档 + 取出。 */
-    private static boolean isAllowedInWithdrawOnly(int id) {
-        boolean preset = id >= BTN_PRESET_BASE && id < BTN_PRESET_BASE + SAVE_PRESETS.length;
-        boolean withdraw = id >= BTN_WITHDRAW_BASE && id < BTN_WITHDRAW_BASE + BankAccount.Coin.values().length;
-        return preset || withdraw;
-    }
-
     /** 操作结果：成功绿、失败黄。走聊天栏（面板左下不会被面板盖住）。 */
     private static void feedback(ServerPlayer player, BankAccount.Result result) {
         player.sendSystemMessage(Component.literal(
@@ -258,7 +208,6 @@ public class BankMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        // 页签打开的没有方块 → 永远有效；方块打开的沿用原版「8 格内」判定
-        return this.access == null || stillValid(this.access, player, ModBlocks.BANK_BLOCK.get());
+        return stillValid(this.access, player, ModBlocks.BANK_BLOCK.get());
     }
 }

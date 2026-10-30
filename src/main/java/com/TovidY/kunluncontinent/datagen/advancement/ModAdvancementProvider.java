@@ -154,6 +154,15 @@ public class ModAdvancementProvider extends ForgeAdvancementProvider {
             Advancement awaken = AdvancementHelper.task(saver, helper, root, "wuhun_awaken",
                     ModItems.HUNHUAN_BUTTON.get(), AdvancementHelper.event(AchievementAPI.WUHUN_AWAKEN));
 
+            // 双生 / 三生：一次觉醒出 2 个 / 3 个武魂（三生的玩家会同时点亮双生）
+            // ⚠️ 图标别用 GUOSHI_TIANSHI —— 天使精华的贴图还没画，runData 会直接报
+            //    "Texture kunluncontinent:item/tianshi does not exist"。
+            Advancement wuhunDuo = AdvancementHelper.challenge(saver, helper, awaken, "wuhun_duo",
+                    ModItems.GUOSHI_BAHUANGJI.get(), AdvancementHelper.event(AchievementAPI.WUHUN_DUO));
+
+            AdvancementHelper.challenge(saver, helper, wuhunDuo, "wuhun_triple",
+                    ModItems.GUOSHI_PANSHIJUYUAN.get(), AdvancementHelper.event(AchievementAPI.WUHUN_TRIPLE));
+
             Advancement firstRing = AdvancementHelper.task(saver, helper, awaken, "hunhuan_first",
                     ModItems.LOW_HUNHUAN_STORAGE_CORE.get(), AdvancementHelper.event(AchievementAPI.HUNHUAN_FIRST));
 

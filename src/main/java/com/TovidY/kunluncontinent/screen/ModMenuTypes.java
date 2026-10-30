@@ -77,8 +77,11 @@ public class ModMenuTypes {
             registerMenuType("bank_menu", BankMenu::new);
 
     /**
-     * 银行的<b>页签版</b>：同一个 {@code BankMenu} 逻辑，但
-     * ① 不绑方块（只能取钱）② 路由到 190 高的紧凑版界面。
+     * 银行的<b>页签版</b>（属性面板里的「银行」页签）。
+     *
+     * <p>和 {@link #BANK_MENU}（方块右键）是<b>两套独立实现</b>：容器类不同、按钮 id 不同、
+     * 槽位坐标不同，只是恰好长得像。页签版永不绑方块 → 只能取钱，界面走 190 高的
+     * {@code BankStorageScreen}。</p>
      */
     public static final RegistryObject<MenuType<BankTabMenu>> BANK_TAB_MENU =
             registerMenuType("bank_tab_menu", BankTabMenu::create);

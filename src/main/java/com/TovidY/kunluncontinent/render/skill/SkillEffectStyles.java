@@ -117,6 +117,86 @@ public final class SkillEffectStyles {
      */
     public static final int VORTEX_POJIE_LIGHT = 14;
 
+    // =====================================================================
+    //  天使系（1~9 魂技）
+    //  ⚠️ 这几条全部复用现有 5 条 fsh（sigil / beam / blade / burst / shock），
+    //     只加预设与 id —— 没有新 GLSL，所以不用跑 check_shaders.py
+    // =====================================================================
+
+    /**
+     * 圣光斩（天使 1）：绕施法者扫出的 120° 金色弧光，半径 7 格。
+     *
+     * <p>实现 {@code ArcEffect} + fsh {@code skill_arc}；{@code radius} = 弧带半径（格）。
+     * 用的是<b>竖直柱面弧带</b>而不是水平扇形 —— 水平扇形在平视时会退化成一条线。</p>
+     */
+    public static final int SLASH_ANGEL = 15;
+
+    /**
+     * 天使之翼（天使 2）：展开瞬间贴在<b>施法者身上</b>的光爆。
+     *
+     * <p>实现 {@code BurstEffect}（屏幕对齐、体内爆裂）；{@code radius} = 四边形半边长（格）。
+     * 锚点是施法者本人。</p>
+     */
+    public static final int BURST_ANGEL_WINGS = 16;
+
+    /** 圣愈之光（天使 3）：半径 5 的地面治疗阵。锚点钉在释放点（{@code atPoint}）。 */
+    public static final int SIGIL_ANGEL_HEAL = 17;
+
+    /** 审判之矛（天使 4）：20 格金色长枪（枪尖会"飞出去"）。实现 {@code BeamEffect} + {@code skill_spear}。 */
+    public static final int BEAM_JUDGMENT_SPEAR = 18;
+
+    /** 神圣庇护（天使 5）：脚下十四边庇护阵，锚点跟随施法者。 */
+    public static final int SIGIL_ANGEL_BLESS = 19;
+
+    /** 武魂真身（天使 7）：8 格竖直白金光柱，锚点跟随施法者。 */
+    public static final int BEAM_ANGEL_PILLAR = 20;
+
+    /**
+     * 圣光锁链（天使 6）：半径 30 的锁链大阵。锚点钉在释放点。
+     *
+     * <p>⚠️ 这是本套里视觉半径最大的地面阵（30 格），
+     * 但几何仍然只是一个四边形，逐像素图案在 fsh 里算 —— 不会因为半径大就多画顶点。</p>
+     */
+    public static final int SIGIL_ANGEL_CHAIN = 21;
+
+    /** 武魂真身（天使 7）开启瞬间的「神临」阵，锚点跟随施法者。 */
+    public static final int SIGIL_ANGEL_ZHENSHEN = 22;
+
+    /**
+     * 圣裁之域（天使 8）：半径 20、持续 400 tick 的常驻领域阵。
+     *
+     * <p>生命周期必须和服务端的 {@code HolyJudgmentField} 对齐（20 秒），
+     * 锚点用 {@code atPoint} 钉死 —— 领域不会跟着玩家跑。</p>
+     */
+    public static final int SIGIL_ANGEL_JUDGMENT = 23;
+
+    /** 终焉救赎（天使 9）：36 格天降光柱。锚点钉在落点。 */
+    public static final int BEAM_JUDGMENT_COLUMN = 24;
+
+    /**
+     * 终焉救赎（天使 9）：从落点向外推开的冲击光波，半径 = 判定半径 30。
+     *
+     * <p>⚠️ 参数 {@code radius} 是<b>光波最终扩散到的半径</b>。
+     * 实现 {@code ShockwaveEffect}（{@code skill_shock}），颜色沿用该 fsh 内置的金色。</p>
+     */
+    public static final int SHOCK_ANGEL = 25;
+
+    /**
+     * 终焉救赎（天使 9）：天降的巨大发光体（9 格宽、从 34 格高处砸下来）。
+     *
+     * <p>实现 {@code FallEffect} + fsh {@code skill_fall}；{@code radius} 被忽略。
+     * 锚点钉在落点，时长 {@code FallEffect.DURATION_TICKS}。</p>
+     */
+    public static final int FALL_ANGEL_SWORD = 26;
+
+    /**
+     * 圣裁之域（天使 8）：每一波扫到目标时，贴在它身上的金色命中光。
+     *
+     * <p>实现 {@code BurstEffect}（屏幕对齐、体内爆裂）；{@code radius} = 四边形半边长（格），
+     * 锚点是<b>被命中的生物</b>。一波可能对十几个目标各发一次，所以时长给得很短。</p>
+     */
+    public static final int BURST_ANGEL_HIT = 27;
+
     private SkillEffectStyles() {
     }
 }

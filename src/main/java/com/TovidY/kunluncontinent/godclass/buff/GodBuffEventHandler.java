@@ -4,6 +4,7 @@ import com.TovidY.kunluncontinent.KlMain;
 import net.minecraftforge.event.entity.living.LivingChangeTargetEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -17,14 +18,16 @@ import net.minecraftforge.fml.common.Mod;
 public class GodBuffEventHandler {
 
     /**
-     * 伤害事件：天使神加伤走这里。
+     * 伤害事件：天使神加伤、罗刹神吸血走这里。
      *
-     * <p>⚠️ <b>优先级说明</b>：项目里 {@code CombatEventHandler} 也在改这个事件，
-     * 默认优先级相同 → <b>注册顺序决定谁后执行</b>。这里用
-     * {@link SubscribeEvent#priority()} 的默认优先级并<b>读取当前 amount 再乘</b>，
-     * 所以无论谁先谁后都不会把对方的结果覆盖掉（乘算是可交换的）。</p>
+     * <p>⚠️ <b>必须是 LOWEST</b>（排在所有监听器之后）。原因：
+     * {@code CombatEventHandler#onLivingHurt} 是 {@code HIGHEST}，它会用
+     * {@code (攻击 + amount) × 防御系数} <b>整体重算</b>并 {@code setAmount(...)}。
+     * 如果这里用默认优先级（NORMAL），buff 的加伤会先跑、然后被那边直接覆盖 ——
+     * 表现就是「天使神的 +1000% 对亡灵从来没生效过」。
+     * 放在 LOWEST 才能乘在<b>最终伤害</b>上，且各 buff 之间仍然是纯乘算、与顺序无关。</p>
      */
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onLivingHurt(LivingHurtEvent event) {
         for (GodBuff buff : GodBuffs.ALL_PASSIVES) {
             float newAmount = buff.onLivingHurt(event);

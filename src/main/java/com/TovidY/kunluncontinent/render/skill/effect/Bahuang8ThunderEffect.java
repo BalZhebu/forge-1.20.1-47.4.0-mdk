@@ -95,7 +95,7 @@ public class Bahuang8ThunderEffect extends SkillEffect {
         }
 
         float halfWidth = Math.max(radius(), 0.2F);
-        Vec3 base = anchor();
+        Vec3 base = anchor(partialTick);
         float bx = (float) (base.x - cameraPos.x);
         float by = (float) (base.y - cameraPos.y);
         float bz = (float) (base.z - cameraPos.z);

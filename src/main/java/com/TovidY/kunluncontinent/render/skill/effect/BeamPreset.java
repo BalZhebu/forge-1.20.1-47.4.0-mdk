@@ -72,4 +72,40 @@ public record BeamPreset(
             1.62F,
             0.0F, 2.2F,
             0xFFEDB8, 0x9E1220);
+
+    // =====================================================================
+    //  天使系（白金配色）
+    // =====================================================================
+
+    /**
+     * 审判之矛（天使 4）：20 格长枪。
+     *
+     * <p>走专用着色器 {@code skill_spear} —— 同一个 {@code BeamEffect} 几何，
+     * fsh 里画枪杆 / 枪头 / 尾缨，并按 {@code Age} 让枪尖"射出去"。
+     * ⚠️ 内部图案全按 {@code beamUV} 的 0~1 归一化算，所以 {@code halfWidth}
+     * 只决定"枪有多粗"，改长度也不会让枪变形。</p>
+     */
+    public static final BeamPreset JUDGMENT_LANCE = new BeamPreset(
+            1.6F, 20.0F, false, false,
+            1.20F,
+            0.0F, 2.4F,
+            0xFFF6D0, 0xD8A93A);
+
+    /** 武魂真身（天使 7）：8 格高、几乎不抖的白金光柱，从脚下升起。 */
+    public static final BeamPreset ANGEL_PILLAR = new BeamPreset(
+            1.8F, 8.0F, true, false,
+            0.0F,
+            0.04F, 1.6F,
+            0xFFF8DC, 0xC8A038);
+
+    /**
+     * 终焉救赎（天使 9）：36 格高的天降光柱。
+     *
+     * <p>比真身那条粗得多（{@code halfWidth} 3.0）—— 它要撑满 30 格判定范围的气势。</p>
+     */
+    public static final BeamPreset JUDGMENT_COLUMN = new BeamPreset(
+            3.0F, 36.0F, true, false,
+            0.0F,
+            0.02F, 1.2F,
+            0xFFFFF2, 0xD8B34A);
 }

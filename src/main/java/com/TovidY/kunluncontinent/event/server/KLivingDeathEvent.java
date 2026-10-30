@@ -10,6 +10,7 @@ import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapabilit
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerHunhuanAPI;
+import com.TovidY.kunluncontinent.capability.playerattributes.TianshiWuhun;
 import com.TovidY.kunluncontinent.command.tovid.HunguAdminStatus;
 import com.TovidY.kunluncontinent.drop.DropExecutor;
 import com.TovidY.kunluncontinent.entity.EntityInit;
@@ -311,6 +312,7 @@ public class KLivingDeathEvent {
                                                     {"sea_god", "§b海神"},
                                                     {"angel_god", "§e天使神"},
                                                     {"asura_god", "§c修罗神"},
+                                                    {"luosha_god", "§4罗刹神"},
                                             };
                                             int randomIndex = RANDOM.nextInt(godPool.length);
                                             String selectedGodId = godPool[randomIndex][0];
@@ -577,6 +579,11 @@ public class KLivingDeathEvent {
                 return;
             }
 
+            // 天使武魂：只认天使神 —— 随机的「神明的注视」一律跳过（70 级由 TianshiWuhun 自动授予）
+            if (TianshiWuhun.has(cap)) {
+                return;
+            }
+
             boolean isQualified = cap.debugIgnoreTianfu || (cap.getDengji() > 75 && cap.getXiantianTalent() >= 7);
 
             if (isQualified) {
@@ -604,6 +611,19 @@ public class KLivingDeathEvent {
                     float chance = cap.debugForceSuccess ? 1.0f : (isLevel99 ? 0.01f : 0.0055f);
                     if (RANDOM.nextFloat() < chance) {
                         triggerGodExam(player, cap, "asura_god", "§c修罗神");
+                        resetDebugStatus(cap);
+                        return;
+                    }
+                }
+
+                // 罗刹神：杀戮之道 —— 击杀凋灵 / 劫掠兽这种"纯粹的恶"才引来的注视。
+                // （不能写成「击杀玩家」：玩家没有 MobAttributeCapability，
+                //   这个回调根本不会对玩家触发，写了也是死代码。）
+                if (victim instanceof net.minecraft.world.entity.boss.wither.WitherBoss
+                        || victim instanceof net.minecraft.world.entity.raid.Raider) {
+                    float chance = cap.debugForceSuccess ? 1.0f : (isLevel99 ? 0.01f : 0.005f);
+                    if (RANDOM.nextFloat() < chance) {
+                        triggerGodExam(player, cap, "luosha_god", "§4罗刹神");
                         resetDebugStatus(cap);
                         return;
                     }

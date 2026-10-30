@@ -130,6 +130,43 @@ public class GodRegistry {
                 .addFinalAttrReward("baojishanghai", 300.0f, "§b神位奖励：暴击伤害+300%")
 
                 ;
+
+        register("luosha_god", "罗刹神")
+
+                .addTask(1, GodTaskType.ITEM_CHECK, "minecraft:wither_skeleton_skull", 30, "第一考：献上30个凋灵骷髅头")
+                .addAttrReward(1, "gongji", 1000.0f, "§4攻击力提升：1000点")
+
+                .addTask(2, GodTaskType.KILL, "kunluncontinent:ice_crystal", 30, "第二考：击杀30只冰晶")
+                .addAttrReward(2, "maxshengming", 20000.0f, "§4最大生命值提升：20000点")
+
+                .addTask(3, GodTaskType.KILL, "minecraft:warden", 20, "第三考：击杀20只循声守卫（坚守者）")
+                .addAttrReward(3, "baojishanghai", 100.0f, "§4暴击伤害提升：100%")
+
+                .addTask(4, GodTaskType.ATTRIBUTE, "gongji", 200000, "第四考：攻击力达到200000以上")
+                .addAttrReward(4, "dengji", 1.0f, "§4等级提升：1")
+
+                .addTask(5, GodTaskType.KILL, "minecraft:wither", 15, "第五考：击杀15只凋灵")
+                .addAttrReward(5, "maxjingshenli", 2500.0f, "§4最大精神力提升：2500点")
+
+                .addTask(6, GodTaskType.KILL, "kunluncontinent:snow_demon", 150, "第六考：击杀150只雪魔")
+                .addAttrReward(6, "gongji", 5000.0f, "§4攻击力提升：5000点")
+
+                .addTask(7, GodTaskType.HUNHUAN_NIANXIAN, "any", 1000000, "第七考：拥有一枚100万年以上魂环")
+                .addAttrReward(7, "fangyu", 2500.0f, "§4防御提升：2500点")
+
+                .addTask(8, GodTaskType.HUNHUAN_NIANXIAN, "any", 4000000, "第八考：拥有一枚400万年以上魂环")
+                .addAttrReward(8, "baojishanghai", 200.0f, "§4暴击伤害提升：200%")
+
+                .addTask(9, GodTaskType.ATTRIBUTE, "gongji", 600000, "第九考：攻击力达到600000以上")
+                .addAttrReward(9, "baojishanghai", 250.0f, "§4暴击伤害提升：250%")
+
+                .addFinalAttrReward("dengji", 1f, "§4神位奖励：百级")
+                .addFinalAttrReward("gongji", 60000f, "§4神位奖励：攻击力+6万")
+                .addFinalAttrReward("maxshengming", 600000f, "§4神位奖励：生命值+60万")
+                .addFinalAttrReward("fangyu", 4000f, "§4神位奖励：防御+4000点")
+                .addFinalAttrReward("baojishanghai", 400f, "§4神位奖励：暴击伤害+400%")
+
+                ;
     }
 
 

@@ -30,7 +30,8 @@ public final class GodBuffs {
     public static final java.util.List<GodBuff> ALL_PASSIVES = java.util.List.of(
             SeaGodBuff.INSTANCE,
             AngelGodBuff.INSTANCE,
-            AsuraGodBuff.INSTANCE
+            AsuraGodBuff.INSTANCE,
+            LuoshaGodBuff.INSTANCE
     );
 
     /** 按神位 id 取被动；没有实现被动就返回 null。 */

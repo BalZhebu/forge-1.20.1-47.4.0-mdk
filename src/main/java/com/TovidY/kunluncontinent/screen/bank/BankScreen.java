@@ -5,10 +5,7 @@ import com.TovidY.kunluncontinent.bank.BankExchange;
 import com.TovidY.kunluncontinent.bank.BankRates;
 import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
 import com.TovidY.kunluncontinent.screen.KunlunGuiHelper;
-import com.TovidY.kunluncontinent.screen.attribute.AttributeTabs;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ServerboundContainerButtonClickPacket;
@@ -22,6 +19,11 @@ import java.util.List;
 /**
  * 昆仑银行面板（<b>储蓄 / 换钱 两页</b>），版式沿用属性面板那套：
  * 黑底金边（{@link KunlunGuiHelper#renderKunlunBackground}）、标题 {@code §6} + 金色分隔线、手绘按钮。
+ *
+ * <h3>它<b>不是</b>属性面板的一员</h3>
+ * <p>右键银行方块 → 直接就是这一个界面，<b>上面没有魂骨/魂环/神考那一排页签</b>。
+ * 属性面板里的「银行」页签是另一个类 {@link BankStorageScreen}（只能取、下面 190 高），
+ * 那边才是页签链的一环。两边唯一的共同点是长得像 —— 所以别把 {@code buildTabs} 加回来。</p>
  *
  * <h3>整体分区</h3>
  * <pre>
@@ -49,7 +51,7 @@ import java.util.List;
  *       菜单里带 36 个背包槽，原版才会把改动同步回客户端（否则会出"幽灵物品"）。</li>
  * </ul>
  */
-public class BankScreen extends AbstractContainerScreen<BankMenu> implements AttributeTabs.Host {
+public class BankScreen extends AbstractContainerScreen<BankMenu> {
 
     private static final int PAGE_SAVE = 0;
     private static final int PAGE_EXCHANGE = 1;
@@ -100,8 +102,9 @@ public class BankScreen extends AbstractContainerScreen<BankMenu> implements Att
         this.titleLabelY = 10000;
         super.init();
 
-        // 顶部页签：银行是从属性面板那条页签链进来的，必须能切走
-        AttributeTabs.buildTabs(this, AttributeTabs.PAGE_BANK);
+        // ⚠️ 这里**故意不画那排属性面板页签**：银行方块右键是一个独立的银行界面，
+        //    不是属性面板链的一环。想切到魂骨/魂环/神考请自己开属性面板，别从这里跳。
+        //    （属性面板里的「银行」页签是另一个界面 BankStorageScreen，那边才挂页签。）
 
         // 顶部两页签（始终存在）
         this.addRenderableWidget(new KunlunGuiHelper.HandDrawnButton(
@@ -256,33 +259,6 @@ public class BankScreen extends AbstractContainerScreen<BankMenu> implements Att
     /** 币种单字简称：金魂币 → 金。 */
     private static String shortName(BankAccount.Coin coin) {
         return coin.displayName().substring(0, 1);
-    }
-
-    // ==================== AttributeTabs.Host 实现（页签需要访问 protected 成员） ====================
-
-    @Override
-    public int leftPos() {
-        return this.leftPos;
-    }
-
-    @Override
-    public int topPos() {
-        return this.topPos;
-    }
-
-    @Override
-    public int imageWidth() {
-        return this.imageWidth;
-    }
-
-    @Override
-    public Font font() {
-        return this.font;
-    }
-
-    @Override
-    public void addWidget(AbstractWidget widget) {
-        this.addRenderableWidget(widget);
     }
 
     // ==================================================================================

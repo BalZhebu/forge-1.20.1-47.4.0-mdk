@@ -8,8 +8,10 @@ import com.TovidY.kunluncontinent.potion.skilleffect.wuhun.BhuanjiEffect;
 import com.TovidY.kunluncontinent.potion.skilleffect.wuhun.LiejinhuEffect;
 import com.TovidY.kunluncontinent.potion.skilleffect.wuhun.PanshijuYuanEffect;
 import com.TovidY.kunluncontinent.potion.skilleffect.wuhun.PohunEffect;
+import com.TovidY.kunluncontinent.potion.skilleffect.wuhun.TianshiEffect;
 import com.TovidY.kunluncontinent.potion.specialeffects.ArmorPiercingEffect;
 import com.TovidY.kunluncontinent.potion.specialeffects.DizzinessEffect;
+import com.TovidY.kunluncontinent.potion.specialeffects.JinguEffect;
 import com.TovidY.kunluncontinent.potion.specialeffects.RedSpiderEffect;
 import com.TovidY.kunluncontinent.potion.specialeffects.ScorchingEffect;
 import com.TovidY.kunluncontinent.potion.specialeffects.coldeffect.ExtremeColdEffect;
@@ -43,6 +45,10 @@ public class ModEffects {
     public static final RegistryObject<MobEffect> BHUANGJI = REGISTER.register("bhuangji", BhuanjiEffect::new);
     public static final RegistryObject<MobEffect> LIEJINHU = REGISTER.register("liejinhu", LiejinhuEffect::new);
     public static final RegistryObject<MobEffect> PANSHIJUYUAN = REGISTER.register("panshijuyuan", PanshijuYuanEffect::new);
+    public static final RegistryObject<MobEffect> TIANSHI = REGISTER.register("tianshi", TianshiEffect::new);
+
+    //禁锢（圣光锁链 / 圣裁之域）：移速归零 + 无法攻击
+    public static final RegistryObject<MobEffect> JINGU = REGISTER.register("jingu", JinguEffect::new);
 
     //神之凝视
     public static final RegistryObject<MobEffect> THE_GAZE_OF_GOD = REGISTER.register("the_gaze_of_god", TheGazeOfGodEffect::new);

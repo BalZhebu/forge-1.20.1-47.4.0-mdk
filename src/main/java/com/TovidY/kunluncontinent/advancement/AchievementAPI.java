@@ -39,6 +39,10 @@ public final class AchievementAPI {
 
     /** 第一次觉醒武魂。 */
     public static final String WUHUN_AWAKEN = "wuhun_awaken";
+    /** 觉醒仪式上出了两个武魂（双生武魂）。 */
+    public static final String WUHUN_DUO = "wuhun_duo";
+    /** 觉醒仪式上出了三个武魂（三生武魂）。 */
+    public static final String WUHUN_TRIPLE = "wuhun_triple";
     /** 第一次吸收魂环。 */
     public static final String HUNHUAN_FIRST = "hunhuan_first";
     /** 集齐九枚魂环。 */
@@ -187,6 +191,16 @@ public final class AchievementAPI {
     /** 觉醒武魂（含双生武魂）。 */
     public static void onAwakenWuhun(Player player) {
         trigger(player, WUHUN_AWAKEN);
+    }
+
+    /** 一次觉醒出两个及以上武魂。 */
+    public static void onAwakenDuo(Player player) {
+        trigger(player, WUHUN_DUO);
+    }
+
+    /** 一次觉醒出三个武魂。 */
+    public static void onAwakenTriple(Player player) {
+        trigger(player, WUHUN_TRIPLE);
     }
 
     /**

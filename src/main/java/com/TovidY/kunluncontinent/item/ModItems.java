@@ -47,6 +47,15 @@ import com.TovidY.kunluncontinent.item.baseskillist.zhenshen.SkillBahuang7;
 import com.TovidY.kunluncontinent.item.baseskillist.zhenshen.SkillLeijinhu7;
 import com.TovidY.kunluncontinent.item.baseskillist.zhenshen.SkillPanshijuyuan7;
 import com.TovidY.kunluncontinent.item.baseskillist.zhenshen.SkillPohun7;
+import com.TovidY.kunluncontinent.item.baseskillist.tianshi.one.SkillTianshi1;
+import com.TovidY.kunluncontinent.item.baseskillist.tianshi.two.SkillTianshi2;
+import com.TovidY.kunluncontinent.item.baseskillist.tianshi.three.SkillTianshi3;
+import com.TovidY.kunluncontinent.item.baseskillist.tianshi.four.SkillTianshi4;
+import com.TovidY.kunluncontinent.item.baseskillist.tianshi.five.SkillTianshi5;
+import com.TovidY.kunluncontinent.item.baseskillist.tianshi.six.SkillTianshi6;
+import com.TovidY.kunluncontinent.item.baseskillist.tianshi.seven.SkillTianshi7;
+import com.TovidY.kunluncontinent.item.baseskillist.tianshi.eight.SkillTianshi8;
+import com.TovidY.kunluncontinent.item.baseskillist.tianshi.nine.SkillTianshi9;
 import com.TovidY.kunluncontinent.special.lonebamboo.SkillPoleVault;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.hungu.BoneItem;
@@ -213,6 +222,7 @@ public class ModItems {
     public static final RegistryObject<Item> GUOSHI_BAHUANGJI = ITEMS.register("guoshi_bahuangji",()->new WuhunguoshiItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build()).stacksTo(1)).setWuhunname(Wuhunname.bahuangji));
     public static final RegistryObject<Item> GUOSHI_LEIJINHU = ITEMS.register("guoshi_leijinhu",()->new WuhunguoshiItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build()).stacksTo(1)).setWuhunname(Wuhunname.liejinhu));
     public static final RegistryObject<Item> GUOSHI_PANSHIJUYUAN = ITEMS.register("guoshi_panshijuyuan",()->new WuhunguoshiItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build()).stacksTo(1)).setWuhunname(Wuhunname.panshijuyuan));
+    public static final RegistryObject<Item> GUOSHI_TIANSHI = ITEMS.register("guoshi_tianshi", ()-> new WuhunguoshiItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build()).stacksTo(1)).setWuhunname(Wuhunname.tianshi));
 
     //材料物品（普通物品）
     public static final RegistryObject<Item> EXTREME_COLD_SNOWFLAKE_FRAGMENT = ITEMS.register("extreme_cold_snowflake_fragment",()->new Item(new Item.Properties()){
@@ -554,6 +564,17 @@ public class ModItems {
     public static final RegistryObject<SkillPoleVault> SKILL_POLE_VAULT =
             ITEMS.register("skill_pole_vault", SkillPoleVault::new);
 
+    //天使（1~9 魂技已齐）
+    public static final RegistryObject<SkillTianshi1> SKILL_TIANSHI_1 = ITEMS.register("skill_tianshi_1", SkillTianshi1::new);
+    public static final RegistryObject<SkillTianshi2> SKILL_TIANSHI_2 = ITEMS.register("skill_tianshi_2", SkillTianshi2::new);
+    public static final RegistryObject<SkillTianshi3> SKILL_TIANSHI_3 = ITEMS.register("skill_tianshi_3", SkillTianshi3::new);
+    public static final RegistryObject<SkillTianshi4> SKILL_TIANSHI_4 = ITEMS.register("skill_tianshi_4", SkillTianshi4::new);
+    public static final RegistryObject<SkillTianshi5> SKILL_TIANSHI_5 = ITEMS.register("skill_tianshi_5", SkillTianshi5::new);
+    public static final RegistryObject<SkillTianshi6> SKILL_TIANSHI_6 = ITEMS.register("skill_tianshi_6", SkillTianshi6::new);
+    public static final RegistryObject<SkillTianshi7> SKILL_TIANSHI_7 = ITEMS.register("skill_tianshi_7", SkillTianshi7::new);
+    public static final RegistryObject<SkillTianshi8> SKILL_TIANSHI_8 = ITEMS.register("skill_tianshi_8", SkillTianshi8::new);
+    public static final RegistryObject<SkillTianshi9> SKILL_TIANSHI_9 = ITEMS.register("skill_tianshi_9", SkillTianshi9::new);
+
     public record SkillVariantEntry(RegistryObject<? extends BaseSkillItem> skill,
                                     RegistryObject<? extends BaseSkillItem> iconSource) {}
 
@@ -866,38 +887,47 @@ public class ModItems {
         HUNJILIST.add(SKILL_BAHUANG_1);
         HUNJILIST.add(SKILL_LEIJINHU_1);
         HUNJILIST.add(SKILL_PANSHIJUYUAN_1);
+        HUNJILIST.add(SKILL_TIANSHI_1);
         HUNJILIST.add(SKILL_POHUN_2);
         HUNJILIST.add(SKILL_BAHUANG_2);
         HUNJILIST.add(SKILL_LEIJINHU_2);
         HUNJILIST.add(SKILL_PANSHIJUYUAN_2);
+        HUNJILIST.add(SKILL_TIANSHI_2);
         HUNJILIST.add(SKILL_POHUN_3);
         HUNJILIST.add(SKILL_BAHUANG_3);
         HUNJILIST.add(SKILL_LEIJINHU_3);
         HUNJILIST.add(SKILL_PANSHIJUYUAN_3);
+        HUNJILIST.add(SKILL_TIANSHI_3);
         HUNJILIST.add(SKILL_POHUN_4);
         HUNJILIST.add(SKILL_BAHUANG_4);
         HUNJILIST.add(SKILL_LEIJINHU_4);
         HUNJILIST.add(SKILL_PANSHIJUYUAN_4);
+        HUNJILIST.add(SKILL_TIANSHI_4);
         HUNJILIST.add(SKILL_POHUN_5);
         HUNJILIST.add(SKILL_BAHUANG_5);
         HUNJILIST.add(SKILL_LEIJINHU_5);
         HUNJILIST.add(SKILL_PANSHIJUYUAN_5);
+        HUNJILIST.add(SKILL_TIANSHI_5);
         HUNJILIST.add(SKILL_POHUN_6);
         HUNJILIST.add(SKILL_BAHUANG_6);
         HUNJILIST.add(SKILL_LEIJINHU_6);
         HUNJILIST.add(SKILL_PANSHIJUYUAN_6);
+        HUNJILIST.add(SKILL_TIANSHI_6);
         HUNJILIST.add(SKILL_POHUN_7);
         HUNJILIST.add(SKILL_BAHUANG_7);
         HUNJILIST.add(SKILL_LEIJINHU_7);
         HUNJILIST.add(SKILL_PANSHIJUYUAN_7);
+        HUNJILIST.add(SKILL_TIANSHI_7);
         HUNJILIST.add(SKILL_POHUN_8);
         HUNJILIST.add(SKILL_BAHUANG_8);
         HUNJILIST.add(SKILL_LEIJINHU_8);
         HUNJILIST.add(SKILL_PANSHIJUYUAN_8);
+        HUNJILIST.add(SKILL_TIANSHI_8);
         HUNJILIST.add(SKILL_POHUN_9);
         HUNJILIST.add(SKILL_BAHUANG_9);
         HUNJILIST.add(SKILL_LEIJINHU_9);
         HUNJILIST.add(SKILL_PANSHIJUYUAN_9);
+        HUNJILIST.add(SKILL_TIANSHI_9);
         // 特殊魂技也算「魂技类」：贴图 assets/kunluncontinent/textures/item/skill_pole_vault.png，
         // 由 HUNJILIST 统一生成模型（basicItem 用注册名当贴图名，不用在这里再写一遍）
         HUNJILIST.add(SKILL_POLE_VAULT);
@@ -914,6 +944,7 @@ public class ModItems {
         WUHUNGUOSHI.add(GUOSHI_BAHUANGJI);
         WUHUNGUOSHI.add(GUOSHI_LEIJINHU);
         WUHUNGUOSHI.add(GUOSHI_PANSHIJUYUAN);
+        WUHUNGUOSHI.add(GUOSHI_TIANSHI);
     }
 
     public static ArrayList<RegistryObject<Item>> NORMALITEMSLIST = new ArrayList<>();

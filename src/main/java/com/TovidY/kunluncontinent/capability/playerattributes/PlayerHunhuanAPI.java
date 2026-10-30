@@ -37,57 +37,131 @@ public class PlayerHunhuanAPI {
         return PlayerAttributeCapability.wuhunListsnameall;
     }
 
-    static void addWuHun(Player player) {
-        List<String> globalList = getGlobalWuhunList();
-        if (globalList == null || globalList.isEmpty()) {
-            player.sendSystemMessage(Component.literal("§c[错误] 全局武魂池未初始化！请联系作者！"));
-            return;
-        }
+    /** 双生武魂概率（%）：一次觉醒仪式的第一个武魂之后，再白得一个。 */
+    public static final int DUO_WUHUN_CHANCE_PERCENT = 6;
 
-        LazyOptional<PlayerAttributeCapability> capability1 = player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY);
-        if(capability1.isPresent()){
-            PlayerAttributeCapability capability = capability1.orElseThrow(RuntimeException::new);
+    /** 三生武魂概率（%）：<b>成功拿到第二武魂之后</b>再掷一次，中了就再白得一个。 */
+    public static final int TRIPLE_WUHUN_CHANCE_PERCENT = 20;
 
-            Object[] array = globalList.toArray();
-            boolean b = true;
+    /**
+     * 武魂精华最多能预定几个 = 一届觉醒最多能出几个武魂（3）。
+     *
+     * <p>吃满 3 枚 → 觉醒时直接是「三生武魂」，而且到顶了，不再追加、也不再抽双生。
+     * 玩家总武魂数上限同样是 3（见 {@code WuhunguoshiItem} 的拦截）。</p>
+     */
+    public static final int MAX_PENDING_ESSENCES = 3;
 
-            int attempts = 0;
-            while (b && attempts < 100){
-                attempts++;
-                String s = (String) array[random.nextInt(array.length)];
-                List<MobAttributeCapability> monsterAttributeCapabilities = capability.getMonsterCapabilityLists().get(s);
-                if(monsterAttributeCapabilities == null) {
-                    capability.getMonsterCapabilityLists().put(s, new ArrayList<>());
-                    capability.getWuhunSkillsMap().remove(s);
-                    capability.getWuhunListsname().add(s);
-                    capability.setHunhuankuaiguan(capability.getMonsterCapabilityLists().size()-1);
-                    player.sendSystemMessage(Component.literal("成功觉醒武魂: " + s));
-                    ((ServerPlayer)player).connection.send(new ClientboundSetTitleTextPacket(Component.literal("成功觉醒武魂: " + s)));
-                    AchievementAPI.onAwakenWuhun(player);
-                    b = !b;
-                    if(random.nextInt(5) == 0){
-                        juexingShuangsheng(player);
-                    }
-                    Collections.sort(capability.getWuhunListsname());
-                    SynsAPI.synsPlayerAttribute(player);
+    /**
+     * <b>觉醒仪式</b>：决定这次觉醒出哪些武魂，并真的加到玩家身上。
+     *
+     * <h3>四个步骤</h3>
+     * <ol>
+     *   <li><b>武魂精华预定先占位</b>（0~3 个）—— 精华的唯一作用就是「定下这次觉醒的前几个武魂」，
+     *       定完之后<b>后续抽签照常</b>：吃 1 枚也能接着抽双生/三生；吃满 3 枚直接就是三生，不再追加；</li>
+     *   <li>一个都没定下 → 抽第一个：<b>10% 天使</b>（独立概率，不在平均池里），否则池子等概率；</li>
+     *   <li>只有 1 个且不是天使 → 掷 <b>6% 双生</b>，抽第二个（<b>排除已拥有</b>，可以抽到天使）；</li>
+     *   <li>已经 2 个且都不含天使 → 掷 <b>20% 三生</b>，再抽第三个（同样排除已拥有，也可以抽到天使）。</li>
+     * </ol>
+     *
+     * <p><b>天使一旦出现在本次觉醒里就停</b>（不再追加双生/三生）—— 它是「独一无二」的，
+     * 一次觉醒只会出它一个。注意这不影响它作为第二/第三武魂被抽到（前两个都不是它时照样能抽中）。</p>
+     *
+     * <p>一次觉醒最多出 <b>3 个</b>武魂 —— 到 3 个就停，之后不会再有觉醒。</p>
+     *
+     * @return 本次实际觉醒的武魂名（顺序 = 提示顺序）；空表 = 一个都没觉醒
+     */
+    public static List<String> awakenAtRitual(ServerPlayer player, PlayerAttributeCapability cap) {
+        List<String> result = new ArrayList<>();
+
+        // ① 精华预定：先把「定下的」放进去
+        List<String> pending = new ArrayList<>(cap.getPendingWuhunEssences());
+        if (!pending.isEmpty()) {
+            cap.clearPendingWuhunEssences();
+            for (String name : pending) {
+                if (result.size() >= MAX_PENDING_ESSENCES) {
+                    break;
+                }
+                if (cap.getWuhunListsname().contains(name)) {
+                    continue;   // 中间已经通过别的途径拿到这个武魂了
+                }
+                addWuHun(player, name);
+                if (cap.getWuhunListsname().contains(name)) {
+                    result.add(name);
                 }
             }
         }
+
+        // ② 一个都没定下 → 抽第一个：天使 10% → 否则池子等概率
+        if (result.isEmpty()) {
+            String first = rollOneWuhun(player, cap, Collections.emptyList());
+            if (first == null) {
+                player.sendSystemMessage(Component.literal(
+                        "§c[错误] 没有可觉醒的武魂（全局武魂池为空或已被抽干），请联系作者！"));
+                return result;
+            }
+            addWuHun(player, first);
+            if (!cap.getWuhunListsname().contains(first)) {
+                return result;
+            }
+            result.add(first);
+        }
+
+        // ③ 双生：6%，只在「当前恰好 1 个、且不是天使」时掷
+        if (result.size() == 1
+                && !Wuhunname.tianshi.equals(result.get(0))
+                && player.getRandom().nextInt(100) < DUO_WUHUN_CHANCE_PERCENT) {
+            String second = rollOneWuhun(player, cap, new ArrayList<>(cap.getWuhunListsname()));
+            if (second != null) {
+                addWuHun(player, second);
+                if (cap.getWuhunListsname().contains(second)) {
+                    result.add(second);
+                }
+            }
+        }
+
+        // ④ 三生：20%，必须「已经成功拿到 2 个」且两个都不是天使时才再掷一次
+        if (result.size() == 2
+                && !result.contains(Wuhunname.tianshi)
+                && player.getRandom().nextInt(100) < TRIPLE_WUHUN_CHANCE_PERCENT) {
+            String third = rollOneWuhun(player, cap, new ArrayList<>(cap.getWuhunListsname()));
+            if (third != null) {
+                addWuHun(player, third);
+                if (cap.getWuhunListsname().contains(third)) {
+                    result.add(third);
+                }
+            }
+        }
+
+        // 天使的「开局限定」资格：只有在本仪式（0 级觉醒）里拿到天使，
+        // 才会在吸收第一枚魂环时补那 10 级。吃精华 / 命令拿到的不算 —— 见 TianshiWuhun。
+        if (result.contains(Wuhunname.tianshi)) {
+            cap.setTianshiStartAwaken(true);
+        }
+
+        SynsAPI.synsPlayerAttribute(player);
+        return result;
     }
 
-    static void juexingShuangsheng(Player player) {
-        List<String> globalList = getGlobalWuhunList();
-        if (globalList == null || globalList.isEmpty()) return;
-
-        LazyOptional<PlayerAttributeCapability> capability1 = player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY);
-        if(capability1.isPresent()){
-            PlayerAttributeCapability capability = capability1.orElseThrow(RuntimeException::new);
-
-            // 【修改点】改用 globalList
-            Object[] array = globalList.toArray();
-            String s = (String) array[random.nextInt(array.length)];
-            addWuHun(player, s);
+    /**
+     * 抽一个武魂（<b>只抽不加</b>）。
+     *
+     * @param exclude 本次不能抽到的名字（双生抽第二个时传「已拥有」）
+     * @return 抽到的武魂名；{@code null} = 没得抽（池子被排除光了）
+     */
+    private static String rollOneWuhun(ServerPlayer player, PlayerAttributeCapability cap, List<String> exclude) {
+        if (TianshiWuhun.rollIndependentAngel(player, cap, exclude)) {
+            return Wuhunname.tianshi;
         }
+        List<String> pool = new ArrayList<>();
+        for (String name : getGlobalWuhunList()) {
+            if (!exclude.contains(name) && !cap.getWuhunListsname().contains(name)) {
+                pool.add(name);
+            }
+        }
+        if (pool.isEmpty()) {
+            return null;
+        }
+        return pool.get(random.nextInt(pool.size()));
     }
 
     public static void addWuHun(Player player, String name) {
@@ -104,6 +178,10 @@ public class PlayerHunhuanAPI {
                 ((ServerPlayer)player).connection.send(new ClientboundSetTitleTextPacket(Component.literal("成功觉醒武魂: " + name)));
                 AchievementAPI.onAwakenWuhun(player);
                 SynsAPI.synsPlayerAttribute(player);
+                // 天使武魂：等级已经很高时才觉醒（武魂精华 / 双生）→ 立刻补发天使神神考
+                if (player instanceof ServerPlayer sp) {
+                    TianshiWuhun.maybeGrantTrial(sp, capability);
+                }
             }else {
                 player.sendSystemMessage(Component.literal("觉醒失败，已拥有该武魂").withStyle(ChatFormatting.RED));
                 ((ServerPlayer)player).connection.send(new ClientboundSetTitleTextPacket(Component.literal("觉醒失败，已拥有该武魂").withStyle(ChatFormatting.RED)));
@@ -141,6 +219,11 @@ public class PlayerHunhuanAPI {
                 player.sendSystemMessage(Component.literal("成功吸收" + monsterCap.getNianxian() + "年魂环！"));
                 AchievementAPI.onAbsorbHunhuan(player, monsterCap.getNianxian(), listForActive.size());
                 SynsAPI.synsPlayerAttribute(player);
+
+                // 天使武魂：第一枚魂环到手后补发剩下的 10 级（内部幂等）
+                if (player instanceof ServerPlayer sp) {
+                    TianshiWuhun.onRingAbsorbed(sp, capability);
+                }
             });
         });
     }

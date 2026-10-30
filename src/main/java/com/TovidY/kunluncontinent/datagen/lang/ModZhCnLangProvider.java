@@ -90,6 +90,17 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.SKILL_PANSHIJUYUAN_8.get(), "§c《磐石巨猿》第八魂技[撼岳]");
         add(ModItems.SKILL_PANSHIJUYUAN_9.get(), "§c《磐石巨猿》第九魂技[不周倾]");
 
+        //天使（1~9 魂技）
+        add(ModItems.SKILL_TIANSHI_1.get(), "§e《天使》第一魂技[圣光斩]");
+        add(ModItems.SKILL_TIANSHI_2.get(), "§e《天使》第二魂技[天使之翼]");
+        add(ModItems.SKILL_TIANSHI_3.get(), "§e《天使》第三魂技[圣愈之光]");
+        add(ModItems.SKILL_TIANSHI_4.get(), "§e《天使》第四魂技[审判之矛]");
+        add(ModItems.SKILL_TIANSHI_5.get(), "§e《天使》第五魂技[神圣庇护]");
+        add(ModItems.SKILL_TIANSHI_6.get(), "§e《天使》第六魂技[圣光锁链]");
+        add(ModItems.SKILL_TIANSHI_7.get(), "§e《天使》第七魂技[武魂真身]");
+        add(ModItems.SKILL_TIANSHI_8.get(), "§e《天使》第八魂技[圣裁之域]");
+        add(ModItems.SKILL_TIANSHI_9.get(), "§e《天使》第九魂技[终焉救赎]");
+
         //变体魂技：与重击同属第一魂技槽位，获得时随机五选一
         add(ModItems.SKILL_PANSHIJUYUAN_1B.get(), "§c《磐石巨猿》第一魂技[崩拳]");
         add(ModItems.SKILL_PANSHIJUYUAN_1C.get(), "§c《磐石巨猿》第一魂技[石刺]");
@@ -149,6 +160,16 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("skill.panshijuyuan.7.description", "开启磐石巨猿真身：持续增幅自身；维持消耗为普通武魂的10倍，精神力低于上限10%时自动解除，再次释放可提前关闭。开启后进入冷却");
         add("skill.panshijuyuan.eight.description","消耗%s点精神力，释放憾岳：对面自身前5格内敌人造成极高倍率的伤害");
         add("skill.panshijuyuan.nine.description","消耗%s点精神力，释放不周倾：强制跳跃15格，落地后掀起一道冲击光波向外扩散至80格，光波扫过的敌人受到恐怖伤害，并附加缓慢3、虚弱3、反胃、饥饿，持续15秒");
+
+        add("skill.tianshi.one.description", "消耗%s点精神力，圣光斩：向前方挥出一道弧形金色光刃，命中前方 7 格、120° 扇形内的所有敌人");
+        add("skill.tianshi.two.description", "天使之翼：展开圣翼直接获得飞行能力。展开期间飞行不再削减伤害；飞行照常消耗精神力，精神力低于上限 10%% 时自动收拢。再次释放可提前关闭");
+        add("skill.tianshi.three.description", "消耗%s点精神力，圣愈之光：对半径 8 格内的敌人造成低倍率伤害，并按实际造成的总伤害回复自身生命（单次最多回复最大生命的 60%%）");
+        add("skill.tianshi.four.description", "消耗%s点精神力，审判之矛：对前方 20 格长、3 格宽、4 格高范围内的敌人造成高倍率伤害，并有较高概率直接斩杀实力低于你的目标");
+        add("skill.tianshi.five.description", "消耗%s点精神力，神圣庇护：立刻回复最大生命的 30%%~70%%（随等级与魂环年限提升），并获得短暂抗性提升");
+        add("skill.tianshi.six.description", "消耗%s点精神力，圣光锁链：对自身周围 30 格内的所有敌人造成一次伤害，并附加【禁锢】——移速归零、无法攻击，持续时间 3~120 秒（目标越弱锁得越久）");
+        add("skill.tianshi.seven.description", "开启天使真身：攻击 +80%%、最大生命 +50%%、防御 +25%%、暴击率 +15%%、暴击伤害 +35%%、生命回复 +30%%；维持消耗为普通武魂的10倍，精神力低于上限10%%时自动解除，再次释放可提前关闭。开启后进入冷却");
+        add("skill.tianshi.eight.description", "消耗%s点精神力，圣裁之域：展开半径 20 格的圣光领域，持续 20 秒。每 2 秒从中心推翻出一圈光波，被扫到的敌人受到伤害并被禁锢 10 秒；范围内除你以外的生物无法离开");
+        add("skill.tianshi.nine.description", "消耗%s点精神力，终焉救赎：巨大的圣光从天而降砸向准星所指的地面，落地后光波向外扩散至 30 格，扫到的敌人受到极高倍率伤害，并有 1%% 概率无视实力直接斩杀");
 
 
         //锻造模版
@@ -329,6 +350,10 @@ public class ModZhCnLangProvider extends LanguageProvider {
         // ===== 魂师之路 =====
         add("adv.kunlun.wuhun_awaken.title","觉醒武魂");
         add("adv.kunlun.wuhun_awaken.desc","开启武魂面板，觉醒属于你的第一个武魂。");
+        add("adv.kunlun.wuhun_duo.title","双生武魂");
+        add("adv.kunlun.wuhun_duo.desc","一次觉醒仪式上同时觉醒两个武魂。");
+        add("adv.kunlun.wuhun_triple.title","三生武魂");
+        add("adv.kunlun.wuhun_triple.desc","一次觉醒仪式上同时觉醒三个武魂，万古难遇。");
         add("adv.kunlun.hunhuan_first.title","第一魂环");
         add("adv.kunlun.hunhuan_first.desc","成功吸收第一枚魂环，正式踏上魂师之路。");
         add("adv.kunlun.hunhuan_nine.title","九环圆满");
@@ -734,6 +759,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.GUOSHI_BAHUANGJI.get(), "§c武魂精华 - 八荒戟");
         add(ModItems.GUOSHI_LEIJINHU.get(), "§c武魂精华 - 裂金虎");
         add(ModItems.GUOSHI_PANSHIJUYUAN.get(), "§c武魂精华 - 磐石巨猿");
+        add(ModItems.GUOSHI_TIANSHI.get(), "§c武魂精华 - 天使");
         add("服用后觉醒武魂", "§2服用后觉醒%s武魂");
 
         //JEI类
@@ -789,6 +815,8 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModEffects.BHUANGJI.get(),"§c八荒真身");
         add(ModEffects.LIEJINHU.get(),"§c裂虎真身");
         add(ModEffects.PANSHIJUYUAN.get(),"§c巨猿真身");
+        add(ModEffects.TIANSHI.get(),"§e天使真身");
+        add(ModEffects.JINGU.get(),"§6禁锢");
 
         //普通文字
         add("心神受损","你受到攻击，心神受损，被迫停止了修炼！");

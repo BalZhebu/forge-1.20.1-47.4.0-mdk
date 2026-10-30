@@ -3,6 +3,7 @@ package com.TovidY.kunluncontinent.entity.playernpc;
 import com.TovidY.kunluncontinent.capability.mobattributes.HunhuanWeakener;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
+import com.TovidY.kunluncontinent.capability.playerattributes.Wuhunname;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,17 @@ public class NpcSoulGenerator {
 
         List<String> allWuhuns = PlayerAttributeCapability.wuhunListsnameall;
         if (allWuhuns != null && !allWuhuns.isEmpty()) {
-            String chosenWuhun = allWuhuns.get(RANDOM.nextInt(allWuhuns.size()));
+            // 天使是「独一无二」的玩家专属武魂：NPC 不给（否则满地都是天使神候选，而且没有技能）。
+            List<String> candidates = new ArrayList<>();
+            for (String name : allWuhuns) {
+                if (!Wuhunname.tianshi.equals(name)) {
+                    candidates.add(name);
+                }
+            }
+            if (candidates.isEmpty()) {
+                candidates.addAll(allWuhuns);
+            }
+            String chosenWuhun = candidates.get(RANDOM.nextInt(candidates.size()));
             npcCap.getMonsterCapabilityLists().put(chosenWuhun, new ArrayList<>());
             npcCap.getWuhunListsname().add(chosenWuhun);
             npcCap.setHunhuankuaiguan(0);

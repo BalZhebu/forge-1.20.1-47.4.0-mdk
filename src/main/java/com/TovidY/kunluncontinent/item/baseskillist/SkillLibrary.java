@@ -130,6 +130,26 @@ public class SkillLibrary {
         register(Wuhunname.panshijuyuan, 9, List.of(
                 ModItems.SKILL_PANSHIJUYUAN_9
         ));
+
+        //天使（1~9 齐）
+        register(Wuhunname.tianshi, 1, List.of(
+                ModItems.SKILL_TIANSHI_1));
+        register(Wuhunname.tianshi, 2, List.of(
+                ModItems.SKILL_TIANSHI_2));
+        register(Wuhunname.tianshi, 3, List.of(
+                ModItems.SKILL_TIANSHI_3));
+        register(Wuhunname.tianshi, 4, List.of(
+                ModItems.SKILL_TIANSHI_4));
+        register(Wuhunname.tianshi, 5, List.of(
+                ModItems.SKILL_TIANSHI_5));
+        register(Wuhunname.tianshi, 6, List.of(
+                ModItems.SKILL_TIANSHI_6));
+        register(Wuhunname.tianshi, 7, List.of(
+                ModItems.SKILL_TIANSHI_7));
+        register(Wuhunname.tianshi, 8, List.of(
+                ModItems.SKILL_TIANSHI_8));
+        register(Wuhunname.tianshi, 9, List.of(
+                ModItems.SKILL_TIANSHI_9));
     }
     private static void register(String wuhun, int ringIndex, List<RegistryObject<? extends BaseSkillItem>> skills) {
         REGISTRY.computeIfAbsent(wuhun, k -> new HashMap<>()).put(ringIndex, skills);

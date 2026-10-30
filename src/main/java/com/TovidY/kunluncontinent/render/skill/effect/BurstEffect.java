@@ -92,6 +92,25 @@ public class BurstEffect extends SkillEffect {
     public static final Style POJIE_LIGHT =
             new Style(SHADER_VORTEX_LIGHT, true, 0.90F, 0xFFE075, 0x993806);
 
+    /**
+     * 天使之翼（天使 2）：展开瞬间在施法者<b>身上</b>爆开的圣光。
+     *
+     * <p>用「体内爆裂」那套（{@code skill_burst}，加法混合）：核心会被玩家模型挡住，
+     * 只有撑出轮廓的部分露出来 —— 正好是"光从背后张开成翼"的观感，
+     * 不用真去建一对翅膀的几何。</p>
+     */
+    public static final Style ANGEL_WINGS =
+            new Style(SHADER_BURST, false, 0.0F, 0xFFFDF0, 0xC8A038);
+
+    /**
+     * 圣裁之域（天使 8）的命中光：波扫到时在目标身上炸一下。
+     *
+     * <p>比天使之翼更亮更短 —— 它是高频触发（一波可能十几个目标），
+     * 亮一点才在成群的怪身上看得出来，短一点才不会糊成一片。</p>
+     */
+    public static final Style ANGEL_HIT =
+            new Style(SHADER_BURST, false, 0.0F, 0xFFF3C0, 0xE0A83A);
+
     private final Style style;
 
     /** 让同一次技能打到的多个目标"形态"各不相同。 */
@@ -126,7 +145,7 @@ public class BurstEffect extends SkillEffect {
         }
 
         // 中心 = 生物身体中心。它死了 / 消失了就退回发包时的坐标（爆点留在原地）。
-        Vec3 center = anchor().add(0.0D, bodyHeight() * 0.5D, 0.0D);
+        Vec3 center = anchor(partialTick).add(0.0D, bodyHeight() * 0.5D, 0.0D);
 
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
         Vec3 look = new Vec3(camera.getLookVector());

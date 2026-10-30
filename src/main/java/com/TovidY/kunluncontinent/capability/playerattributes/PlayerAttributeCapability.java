@@ -79,6 +79,15 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
 
     private Map<String, List<MobAttributeCapability>> monsterCapabilityLists = new HashMap<>();
     private List<String> wuhunListsname = new ArrayList<>();
+
+    /**
+     * 「已经服下、但还没觉醒」的武魂精华预定名单（顺序 = 吃下的顺序）。
+     *
+     * <p>武魂精华的意义就在这：0 级还觉醒不了武魂时先吃下去，<b>下次觉醒仪式</b>直接觉醒它
+     * （吃两个就一次觉醒两个 = 双生，必天才资质）。见 {@code PlayerHunhuanAPI#awakenAtRitual}。</p>
+     */
+    private List<String> pendingWuhunEssences = new ArrayList<>();
+
     private int hunhuankuaiguan;
 
     private float shengming = 20.0f;  // 当前生命值，默认20.0
@@ -115,6 +124,40 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
      */
     private boolean godNianxianBonus = false;
 
+    /**
+     * 「天使武魂：吸收第一枚魂环后再补发 10 级」是否已经发过。
+     *
+     * <p>觉醒时（天才资质）已经到 10 级；剩下的 10 级必须等玩家真的吸收第一枚魂环之后才发，
+     * 否则会跳过"吸环带来的属性加成"那一段成长（见 {@code TianshiWuhun}）。</p>
+     *
+     * <p>存 NBT：转生后新 cap 是 {@code false}，重修再走一遍 —— 期望行为。</p>
+     */
+    private boolean tianshiRingBonus = false;
+
+    /**
+     * 天使武魂是不是<b>在 0 级觉醒仪式里</b>得到的。
+     *
+     * <p>这一条决定了「吸第一枚魂环补 10 级」到底给不给：
+     * <ul>
+     *   <li>0 级觉醒仪式抽到天使 → 天才资质先给到 10 级，吸第一环再补到 20，{@code true}；</li>
+     *   <li>玩家已经觉醒过别的武魂、后来吃“天使武魂精华”/命令拿到天使 → 只多一个武魂，
+     *       <b>不补任何等级</b>，这里永远是 {@code false}。</li>
+     * </ul>
+     * 旧实现只看「身上有没有魂环」，于是已成型的老玩家一吸环就白拿 10 级（BUG）。</p>
+     *
+     * <p>存 NBT：转生后新 cap 是 {@code false}，重修再走一遍 —— 期望行为。</p>
+     */
+    private boolean tianshiStartAwaken = false;
+
+    /**
+     * 天使之翼（天使武魂第二魂技）是否展开。
+     *
+     * <p>为什么不像武魂真身那样放 {@code persistentData}：它会影响
+     * {@code CombatEventHandler} 的「飞行时伤害削减」判定，而那个事件在<b>客户端也会跑</b>，
+     * 客户端读不到 persistentData → 只能放 capability，靠 {@code SPacketPlayerAttribute} 同步。</p>
+     */
+    private boolean angelWingsActive = false;
+
     private int damageDisplayMode = 0;
     /** 魂环开启动画样式：0 逐环展开 / 1 天降落位 / 2 魂环升腾。 */
     private int hunhuanOpenAnim = 0;
@@ -142,7 +185,10 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
     private static final long DEFAULT_CONFIG_FLAGS =
             0xFFL          // index 1~7 历史默认全开
                     | (1L << 11)   // index 11 NPC魂环显示   ← 默认开启
-                    | (1L << 13)   // index 13 技能特效优化 ← 默认开启 = 走粒子表现
+                    // ⚠️ index 13「技能特效优化」**默认关闭** = 默认走着色器表现。
+                    //    这一位语义是反向的（开 = 粒子、关 = 着色器），
+                    //    默认开着等于"新玩家第一次进游戏看到的还是老粒子"，
+                    //    所以这里不给它默认位 —— 想要粒子的玩家自己去面板打开。
                     | (1L << 14)   // index 14 神环渐变     ← 默认开启
                     | (1L << 15)   // index 15 普通魂环显示 ← 默认开启
                     | (1L << 16);  // index 16 交易自动取币 ← 默认开启（见 BankAccount#CONFIG_AUTO_TRADE）
@@ -157,12 +203,14 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
      * 不这么做的话，老存档那一位是 0，会被当成"玩家主动关掉了"。</p>
      *
      * <ul>
-     *   <li>v1 —— 补 index 13「技能特效优化」（该位语义反向：开启 = 粒子、关闭 = 着色器）</li>
+     *   <li>v1 —— 补 index 13「技能特效优化」（该位语义反向：开启 = 粒子、关闭 = 着色器）
+     *       <b>已被 v4 取代，代码里的 v1 补位段已删</b></li>
      *   <li>v2 —— 补 index 14「神环渐变」+ index 15「普通魂环显示」</li>
      *   <li>v3 —— 补 index 16「交易自动取币」（不在配置面板里，开关在商人界面右侧）</li>
+     *   <li>v4 —— index 13 的默认值<b>整体翻面</b>：默认改为着色器，所以把老存档这一位清 0</li>
      * </ul>
      */
-    private static final int CONFIG_FLAGS_VERSION = 3;
+    private static final int CONFIG_FLAGS_VERSION = 4;
 
     private int zhuanshengshu = 0;
 
@@ -272,6 +320,9 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         tag.putInt("HunhuanOpenAnim", hunhuanOpenAnim);
         tag.putInt("FlySpeedLevel", flySpeedLevel);
         tag.putBoolean("GodNianxianBonus", godNianxianBonus);
+        tag.putBoolean("TianshiRingBonus", tianshiRingBonus);
+        tag.putBoolean("TianshiStartAwaken", tianshiStartAwaken);
+        tag.putBoolean("AngelWingsActive", angelWingsActive);
         tag.putInt("AttributePoints", attributePoints);
         tag.putInt("PointsGrantedLevel", pointsGrantedLevel);
         tag.putIntArray("AllocatedPoints", allocatedPoints);
@@ -312,6 +363,12 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
             wuhunOrderTag.add(StringTag.valueOf(name));
         }
         tag.put("WuhunOrderList", wuhunOrderTag);
+
+        ListTag pendingTag = new ListTag();
+        for (String pendingName : pendingWuhunEssences) {
+            pendingTag.add(StringTag.valueOf(pendingName));
+        }
+        tag.put("PendingWuhunEssences", pendingTag);
 
         for (Map.Entry<String, List<MobAttributeCapability>> entry : monsterCapabilityLists.entrySet()) {
             String wuhunName = entry.getKey();
@@ -392,6 +449,9 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         setHunhuanOpenAnim(nbt.getInt("HunhuanOpenAnim"));
         setFlySpeedLevel(nbt.getInt("FlySpeedLevel"));
         this.godNianxianBonus = nbt.getBoolean("GodNianxianBonus");
+        this.tianshiRingBonus = nbt.getBoolean("TianshiRingBonus");
+        this.tianshiStartAwaken = nbt.getBoolean("TianshiStartAwaken");
+        this.angelWingsActive = nbt.getBoolean("AngelWingsActive");
         this.attributePoints = Math.max(0, nbt.getInt("AttributePoints"));
         this.pointsGrantedLevel = nbt.contains("PointsGrantedLevel")
                 ? nbt.getInt("PointsGrantedLevel") : Integer.MIN_VALUE;
@@ -413,13 +473,8 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         }
 
         // ── 配置位迁移 ──────────────────────────────────────────────
-        // v1：index 13「技能特效优化」是后加的，而且语义反向（开启 = 粒子、关闭 = 着色器）。
-        //     老存档里这一位必然是 0，会被当成"玩家主动切到着色器" —— 与「默认走粒子」的
-        //     预期不符，所以这里补成 1。
-        //     ⚠️ 只对版本号 < 1 的存档补，玩家手动关掉之后重进不会被强行打开。
-        if (nbt.getInt("ConfigFlagsVersion") < 1) {
-            this.configFlags |= (1L << 13);
-        }
+        // （v1 曾经把 index 13 补成 1「默认粒子」，v4 已经把这个默认值整体翻面成
+        //   「默认着色器」并把它清 0 —— 所以 v1 那段补位是多余的，删掉免得误导。）
         // v2：index 14「神环渐变」、index 15「普通魂环显示」—— 都是后加的位，默认开。
         //     同样只对旧存档补，玩家自己关掉后重进不会被强行打开。
         if (nbt.getInt("ConfigFlagsVersion") < 2) {
@@ -429,6 +484,12 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         // v3：index 16「交易自动取币」—— 同样是后加的位，默认开。
         if (nbt.getInt("ConfigFlagsVersion") < 3) {
             this.configFlags |= (1L << 16);
+        }
+        // v4：index 13 的默认值整体翻面 —— 现在「默认 = 着色器」，所以把这一位清掉。
+        //     老存档里它基本是 1（= 粒子），不清的话升级后还是老表现，玩家会以为新特效没做。
+        //     只跑一次；之后再被玩家手动打开（切回粒子）就不会被这条覆盖了。
+        if (nbt.getInt("ConfigFlagsVersion") < 4) {
+            this.configFlags &= ~(1L << 13);
         }
 
         // 读取神祇系统数据
@@ -504,6 +565,16 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         }
         this.monsterCapabilityLists.clear();
         this.wuhunListsname.clear();
+        this.pendingWuhunEssences.clear();
+        if (nbt.contains("PendingWuhunEssences")) {
+            ListTag pendingTag = nbt.getList("PendingWuhunEssences", 8);
+            for (int i = 0; i < pendingTag.size(); i++) {
+                String pendingName = pendingTag.getString(i);
+                if (!pendingName.isEmpty() && !this.pendingWuhunEssences.contains(pendingName)) {
+                    this.pendingWuhunEssences.add(pendingName);
+                }
+            }
+        }
         if (nbt.contains("WuhunOrderList")) {
             ListTag orderList = nbt.getList("WuhunOrderList", 8);
             for (int i = 0; i < orderList.size(); i++) {
@@ -624,6 +695,22 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
 
     // 当玩家开启神考时调用（比如右键祭坛或神的瞥视）
     public void initializeGodExam(Player player, String godId) {
+        // 天使武魂只认天使神：其它神位一律拒掉（规则见 TianshiWuhun#isAllowedGod）
+        if (!TianshiWuhun.isAllowedGod(this, godId)) {
+            player.sendSystemMessage(Component.literal("§c【天使武魂】你只遵循天使神的召唤，无法接受其它神位。")
+                    .withStyle(net.minecraft.ChatFormatting.RED));
+            return;
+        }
+        forceInitializeGodExam(player, godId);
+    }
+
+    /**
+     * <b>跳过「天使只认天使神」的校验</b>，直接写入神考数据。
+     *
+     * <p>只给 debug / 管理命令用（{@code /shenwei}、{@code GodExamDebug}），
+     * 玩法路径请一律调 {@link #initializeGodExam}，否则天使玩家能拿到别的神位。</p>
+     */
+    public void forceInitializeGodExam(Player player, String godId) {
         GodInfo info = GodRegistry.GODS.get(godId);
         if (info == null) return;
         this.godName = godId;
@@ -729,6 +816,18 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
 
     public void setXiantianTalent(int talent) { this.xiantianTalent = talent; }
     public int getXiantianTalent() { return this.xiantianTalent; }
+
+    /** 天使武魂「吸第一枚魂环补发 10 级」是否已发过（见 {@code TianshiWuhun}）。 */
+    public boolean isTianshiRingBonusGiven() { return tianshiRingBonus; }
+    public void setTianshiRingBonusGiven(boolean given) { this.tianshiRingBonus = given; }
+
+    /** 天使武魂是不是在 0 级觉醒仪式里得到的（决定那 10 级补不补，见 {@code TianshiWuhun}）。 */
+    public boolean isTianshiStartAwaken() { return tianshiStartAwaken; }
+    public void setTianshiStartAwaken(boolean start) { this.tianshiStartAwaken = start; }
+
+    /** 天使之翼（第二魂技）是否展开（见 {@code AngelWings}）。 */
+    public boolean isAngelWingsActive() { return angelWingsActive; }
+    public void setAngelWingsActive(boolean active) { this.angelWingsActive = active; }
 
     public int getXiulianTime() {
         return this.xiulianTime;
@@ -1026,6 +1125,9 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         wuhunListsnameall.add(Wuhunname.bahuangji);
         wuhunListsnameall.add(Wuhunname.panshijuyuan);
         wuhunListsnameall.add(Wuhunname.liejinhu);
+        // ⚠️ 天使<b>不</b>在这个池子里：它是「独一无二」武魂，觉醒走独立的 10% 抽签
+        //    （见 TianshiWuhun#tryIndependentAwaken + PlayerHunhuanAPI#addWuHun）。
+        //    放进来会被平均分配（4 个武魂时 25%），和它的稀有度定位不符。
 
         Collections.sort(wuhunListsnameall);
     }
@@ -1124,6 +1226,23 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
 
     public List<String> getWuhunListsname() {
         return wuhunListsname;
+    }
+
+    /** 已服下、但还没觉醒的武魂精华预定名单（可修改，顺序 = 吃下的顺序）。 */
+    public List<String> getPendingWuhunEssences() {
+        return pendingWuhunEssences;
+    }
+
+    /** 预定一个武魂精华；已存在则忽略。 */
+    public void addPendingWuhunEssence(String wuhunName) {
+        if (wuhunName != null && !wuhunName.isEmpty() && !pendingWuhunEssences.contains(wuhunName)) {
+            pendingWuhunEssences.add(wuhunName);
+        }
+    }
+
+    /** 觉醒仪式消费掉预定（不管有没有真的觉醒成，都给清了，避免无限滞留）。 */
+    public void clearPendingWuhunEssences() {
+        pendingWuhunEssences.clear();
     }
 
 

@@ -65,4 +65,54 @@ public record SigilPreset(
             4, 0.0F,
             3,
             0xFFE58A, 0x7A4E0A);
+
+    // =====================================================================
+    //  天使系（白金配色，无爪痕 —— 天使的图案是"芒"不是"爪"）
+    //  半径由发包方给（radius 字段），预设只管图案疏密
+    // =====================================================================
+
+    /** 圣愈之光（天使 3）：十二边 + 六芒，图案偏内收，像一朵收拢的光。 */
+    public static final SigilPreset ANGEL_HEAL = new SigilPreset(
+            12.0F, 0.78F,
+            6.0F, 0.34F, 0.70F,
+            0.28F,
+            0, 0.0F,
+            2,
+            0xFFF7D8, 0x8A6A1E);
+
+    /** 神圣庇护（天使 5）：十四边 + 八芒 + 三重冲击环，向外推的开阔感。 */
+    public static final SigilPreset ANGEL_BLESS = new SigilPreset(
+            14.0F, 0.82F,
+            8.0F, 0.36F, 0.74F,
+            0.30F,
+            0, 0.0F,
+            3,
+            0xFFFCEA, 0x9C7A22);
+
+    /** 圣光锁链（天使 6）：十六边 + 六芒，铺满 30 格，外圈刻度当"锁链环"。 */
+    public static final SigilPreset ANGEL_CHAIN = new SigilPreset(
+            16.0F, 0.88F,
+            6.0F, 0.40F, 0.80F,
+            0.34F,
+            0, 0.0F,
+            2,
+            0xFFEDB6, 0x7A5A12);
+
+    /** 武魂真身（天使 7）：十八边 + 八芒，最密，开启瞬间的"神临"阵。 */
+    public static final SigilPreset ANGEL_ZHENSHEN = new SigilPreset(
+            18.0F, 0.90F,
+            8.0F, 0.42F, 0.82F,
+            0.36F,
+            0, 0.0F,
+            3,
+            0xFFF7D6, 0xA8862A);
+
+    /** 圣裁之域（天使 8）：二十边 + 八芒 + 三重环，半径 20 的常驻领域阵。 */
+    public static final SigilPreset ANGEL_JUDGMENT = new SigilPreset(
+            20.0F, 0.92F,
+            8.0F, 0.44F, 0.86F,
+            0.38F,
+            0, 0.0F,
+            3,
+            0xFFF5CC, 0xB08A20);
 }

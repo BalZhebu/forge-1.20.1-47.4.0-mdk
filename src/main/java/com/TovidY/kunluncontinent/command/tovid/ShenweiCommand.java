@@ -91,7 +91,8 @@ public class ShenweiCommand {
             return 0;
         }
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
-            cap.initializeGodExam(player, godId);
+            // 管理命令：绕开「天使只认天使神」的校验，方便测试
+            cap.forceInitializeGodExam(player, godId);
             NetworkHandler.sendToClient(new PacketSyncGodData(cap), player);
             context.getSource().sendSuccess(() -> Component.literal(
                     "§a成功为玩家 §e" + player.getScoreboardName() + " §a开启 §6" + godId + " §a神试！"), true);

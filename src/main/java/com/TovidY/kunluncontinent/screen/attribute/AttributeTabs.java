@@ -214,8 +214,9 @@ public final class AttributeTabs {
                 () -> new ItemStack(ModItems.HUNHUAN_BUTTON.get()),
                 new com.TovidY.kunluncontinent.screen.attribute.hunhuan.HunhuanMenu.Provider(), null);
 
-        // ⭐ 银行面板：夹在「魂环配置」和「神考」之间
-        //   用 BankTabMenu.Provider（不绑方块、只支持取钱）→ 190 高的紧凑版
+        // ⭐ 银行页签：夹在「魂环配置」和「神考」之间
+        //   用 BankTabMenu.Provider（独立容器、不绑方块、只支持取钱）→ 190 高的紧凑版
+        //   ⚠️ 和银行方块右键的 BankMenu/BankScreen 是两套东西，别互相复用
         tab(PAGE_BANK, "银行面板",
                 () -> new ItemStack(ModItems.GOLDEN_SOUL_COIN.get()),
                 new com.TovidY.kunluncontinent.screen.bank.BankTabMenu.Provider(), null);

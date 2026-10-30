@@ -1,11 +1,13 @@
 package com.TovidY.kunluncontinent.render.skill;
 
 import com.TovidY.kunluncontinent.KlMain;
+import com.TovidY.kunluncontinent.render.skill.effect.ArcEffect;
 import com.TovidY.kunluncontinent.render.skill.effect.Bahuang8ThunderEffect;
 import com.TovidY.kunluncontinent.render.skill.effect.Bahuang9FieldEffect;
 import com.TovidY.kunluncontinent.render.skill.effect.BeamEffect;
 import com.TovidY.kunluncontinent.render.skill.effect.BeamPreset;
 import com.TovidY.kunluncontinent.render.skill.effect.BurstEffect;
+import com.TovidY.kunluncontinent.render.skill.effect.FallEffect;
 import com.TovidY.kunluncontinent.render.skill.effect.SigilEffect;
 import com.TovidY.kunluncontinent.render.skill.effect.SigilPreset;
 import com.TovidY.kunluncontinent.render.skill.effect.ShockwaveEffect;
@@ -128,6 +130,24 @@ public final class SkillEffects {
         register(SkillEffectStyles.BURST_LIETIAN, burst(BurstEffect.LIETIAN_BURST));
         register(SkillEffectStyles.VORTEX_POJIE, burst(BurstEffect.POJIE_VORTEX));
         register(SkillEffectStyles.VORTEX_POJIE_LIGHT, burst(BurstEffect.POJIE_LIGHT));
+
+        // =====================================================================
+        //  天使系 1~9：全部复用上面几条 fsh，只多注册几个预设组合
+        // =====================================================================
+        register(SkillEffectStyles.SLASH_ANGEL, ArcEffect::new);
+        register(SkillEffectStyles.BURST_ANGEL_WINGS, burst(BurstEffect.ANGEL_WINGS));
+        register(SkillEffectStyles.SIGIL_ANGEL_HEAL, sigil(SigilPreset.ANGEL_HEAL));
+        register(SkillEffectStyles.BEAM_JUDGMENT_SPEAR,
+                beam(BeamPreset.JUDGMENT_LANCE, BeamEffect.SHADER_SPEAR));
+        register(SkillEffectStyles.SIGIL_ANGEL_BLESS, sigil(SigilPreset.ANGEL_BLESS));
+        register(SkillEffectStyles.BEAM_ANGEL_PILLAR, beam(BeamPreset.ANGEL_PILLAR));
+        register(SkillEffectStyles.SIGIL_ANGEL_CHAIN, sigil(SigilPreset.ANGEL_CHAIN));
+        register(SkillEffectStyles.SIGIL_ANGEL_ZHENSHEN, sigil(SigilPreset.ANGEL_ZHENSHEN));
+        register(SkillEffectStyles.SIGIL_ANGEL_JUDGMENT, sigil(SigilPreset.ANGEL_JUDGMENT));
+        register(SkillEffectStyles.BEAM_JUDGMENT_COLUMN, beam(BeamPreset.JUDGMENT_COLUMN));
+        register(SkillEffectStyles.SHOCK_ANGEL, ShockwaveEffect::new);
+        register(SkillEffectStyles.FALL_ANGEL_SWORD, FallEffect::new);
+        register(SkillEffectStyles.BURST_ANGEL_HIT, burst(BurstEffect.ANGEL_HIT));
     }
 
     /**

@@ -185,6 +185,12 @@ public class CombatEventHandler {
 
     private static float getFlyingDamageMultiplier(Player player) {
         if (!player.getAbilities().flying) return 1.0f;
+        // 天使之翼（第二魂技）展开期间：飞行不再削减伤害。
+        // 状态存 capability 而不是 persistentData —— 本方法客户端也会跑，必须双端可读。
+        boolean angelWings = player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
+                .map(cap -> cap.isAngelWingsActive())
+                .orElse(false);
+        if (angelWings) return 1.0f;
         // 用 mod 自己的等级（dengji），不是原版 experienceLevel
         int level = ModAttributeAPI.getDengji(player);
         if (level < 70) return 0.6f;
