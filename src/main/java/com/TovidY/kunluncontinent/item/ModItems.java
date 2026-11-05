@@ -199,6 +199,8 @@ public class ModItems {
                 @Override
                 public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
                     pTooltipComponents.add(Component.translatable("item.strong_potion.tooltip").withStyle(ChatFormatting.GRAY));
+                    pTooltipComponents.add(Component.translatable("item.strong_potion.tooltip1").withStyle(ChatFormatting.GRAY));
+                    pTooltipComponents.add(Component.translatable("item.strong_potion.tooltip2").withStyle(ChatFormatting.GRAY));
                 }
             });
 

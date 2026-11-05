@@ -93,7 +93,7 @@ public class IceCrystalEntity extends Monster implements RangedAttackMob {
     @Override
     protected void dropCustomDeathLoot(DamageSource source, int looting, boolean hitByPlayer) {
         super.dropCustomDeathLoot(source, looting, hitByPlayer);
-        if (this.random.nextFloat() < 0.1F) {
+        if (this.random.nextFloat() < 0.3F) {
             this.spawnAtLocation(ModItems.EXTREME_COLD_SNOWFLAKE_FRAGMENT.get());
         }
     }

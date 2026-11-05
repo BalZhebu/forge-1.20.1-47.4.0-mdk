@@ -923,39 +923,16 @@ public class PWRenderPlayerEvent {
                         cache.divine = cap.isGod();
                     });
         } else {
-            // 服务端：把当前魂环列表广播出去，客户端据此刷新渲染缓存并播逐环显现
-            PlayerHunhuanAPI.broadcastWuhunRings((ServerPlayer) player, true);
+            // 服务端：把当前魂环列表广播出去，客户端据此刷新渲染缓存并播逐环显现。
+            // ⚠️ 真正的服务端入口是 PlayerHunhuanAPI#beginWuhunOpenAnimation —— 服务端代码
+            //    不应该依赖本类（Dist.CLIENT），这里只是给老调用点留的转发。
+            PlayerHunhuanAPI.beginWuhunOpenAnimation((ServerPlayer) player);
         }
     }
 
     public static void sendCloseNotification(Player player) {
         if (!player.level().isClientSide) {
-            SyncWuhunDataPacket packet = new SyncWuhunDataPacket(player.getUUID(), Collections.emptyList(), false, 0L, ANIM_EXPAND);
-            for (ServerPlayer serverPlayer : ((ServerLevel) player.level()).getPlayers(p -> true)) {
-                NetworkHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> serverPlayer), packet);
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player) {
-            player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(capability -> {
-                if (capability.getHunhuankuaiguan() >= 0) {
-                    startOpenAnimation(player);
-                }
-            });
-        }
-    }
-
-    @SubscribeEvent
-    public static void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player) {
-            player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(capability -> {
-                if (capability.getHunhuankuaiguan() >= 0) {
-                    startOpenAnimation(player);
-                }
-            });
+            PlayerHunhuanAPI.notifyWuhunClosed((ServerPlayer) player);
         }
     }
 }

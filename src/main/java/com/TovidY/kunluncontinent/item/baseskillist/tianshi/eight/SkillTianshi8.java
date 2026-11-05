@@ -1,6 +1,5 @@
 package com.TovidY.kunluncontinent.item.baseskillist.tianshi.eight;
 
-import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import com.TovidY.kunluncontinent.render.skill.SkillEffectStyles;
@@ -76,7 +75,8 @@ public class SkillTianshi8 extends BaseSkillItem {
             return;
         }
 
-        float pulse = ModAttributeAPI.getGongji(player) * PULSE_GONGJI_RATIO * powerMultiplier;
+        // 每一波 = 魂技基底（点数攻击 + 原版武器攻击）× 比例 × 年限倍率
+        float pulse = BaseSkillItem.getSkillBaseDamage(player) * PULSE_GONGJI_RATIO * powerMultiplier;
         Vec3 center = player.position();
         boolean shader = SkillFxToggle.useShader(player);
 

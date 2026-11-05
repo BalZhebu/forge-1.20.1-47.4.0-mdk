@@ -67,6 +67,27 @@ public class MobTempAttributeManager {
     private static final List<TempTask> TASKS = new ArrayList<>();
 
     /**
+     * tick 遍历期间新登记的任务先落在这里，等本轮遍历结束再并入 {@link #TASKS}。
+     *
+     * <p><b>为什么必须有这张表（社区崩溃的直接原因）：</b>
+     * {@code onServerTick} 用 {@link Iterator} 遍历 {@code TASKS}，而循环体里的
+     * {@link #checkAndTriggerBinSi} 会在「濒死」词条触发时调用
+     * {@link #applyPermanentAttribute} → {@code TASKS.add(...)}。
+     * 在同一个 {@code ArrayList} 上边遍历边 add，下一帧
+     * {@code iterator.next()} 就会抛 {@code ConcurrentModificationException}，
+     * 直接把服务端 tick 打死（崩服）。</p>
+     */
+    private static final List<TempTask> PENDING_TASKS = new ArrayList<>();
+
+    /** 是否正在遍历 {@link #TASKS}（决定新任务是立即入库还是延后）。 */
+    private static boolean ticking = false;
+
+    /** 统一入库口：遍历期间延后，其余情况直写。 */
+    private static void enqueue(TempTask task) {
+        (ticking ? PENDING_TASKS : TASKS).add(task);
+    }
+
+    /**
      * 1. 外部唯一注入入口：原有的限时属性修改（兼容你原本的临时物攻）
      */
     public static void applyTempAttribute(Mob mob, MobAttributeType type, float amount, int durationSeconds) {
@@ -74,7 +95,7 @@ public class MobTempAttributeManager {
 
         // 修改属性值并记录任务
         modifyAttributeValue(mob, type, amount);
-        TASKS.add(new TempTask(mob, type, amount, durationSeconds));
+        enqueue(new TempTask(mob, type, amount, durationSeconds));
         SynsAPI.synsEntityAttribute(mob);
     }
 
@@ -86,7 +107,7 @@ public class MobTempAttributeManager {
         if (mob == null || !mob.isAlive()) return;
 
         modifyAttributeValue(mob, type, amount);
-        TASKS.add(new TempTask(mob, type, amount));
+        enqueue(new TempTask(mob, type, amount));
         SynsAPI.synsEntityAttribute(mob);
     }
 
@@ -134,32 +155,45 @@ public class MobTempAttributeManager {
         // 所以这一行必须在下面的 TASKS.isEmpty() 早退之前。
         tickRejuvenate();
 
-        if (TASKS.isEmpty()) return;
+        if (TASKS.isEmpty() && PENDING_TASKS.isEmpty()) return;
 
-        Iterator<TempTask> iterator = TASKS.iterator();
-        while (iterator.hasNext()) {
-            TempTask task = iterator.next();
+        // ticking = true 期间所有新任务只进 PENDING_TASKS —— 见该字段的注释，
+        // 这是"遍历中 add 同一个 ArrayList → ConcurrentModificationException"的唯一防线。
+        ticking = true;
+        try {
+            Iterator<TempTask> iterator = TASKS.iterator();
+            while (iterator.hasNext()) {
+                TempTask task = iterator.next();
 
-            // 如果怪物死掉了或者被清除了，直接从队列移除（永久任务和限时任务都会在这里优雅死掉，绝不残留垃圾数据）
-            if (task.mob == null || !task.mob.isAlive() || task.mob.isRemoved()) {
-                iterator.remove();
-                continue;
+                // 如果怪物死掉了或者被清除了，直接从队列移除（永久任务和限时任务都会在这里优雅死掉，绝不残留垃圾数据）
+                if (task.mob == null || !task.mob.isAlive() || task.mob.isRemoved()) {
+                    iterator.remove();
+                    continue;
+                }
+
+                checkAndTriggerBinSi(task.mob);
+
+                // 如果是爬塔常驻的被动，不走倒计时，继续保留
+                if (task.isPermanent) {
+                    continue;
+                }
+
+                // 限时任务倒计时
+                task.remainingTicks--;
+                if (task.remainingTicks <= 0) {
+                    // 限时到了：反向扣除属性恢复原状
+                    modifyAttributeValue(task.mob, task.type, -task.amount);
+                    SynsAPI.synsEntityAttribute(task.mob);
+                    iterator.remove();
+                }
             }
-
-            checkAndTriggerBinSi(task.mob);
-
-            // 如果是爬塔常驻的被动，不走倒计时，继续保留
-            if (task.isPermanent) {
-                continue;
-            }
-
-            // 限时任务倒计时
-            task.remainingTicks--;
-            if (task.remainingTicks <= 0) {
-                // 限时到了：反向扣除属性恢复原状
-                modifyAttributeValue(task.mob, task.type, -task.amount);
-                SynsAPI.synsEntityAttribute(task.mob);
-                iterator.remove();
+        } finally {
+            ticking = false;
+            // 遍历期间登记的任务（濒死加攻等）在这一刻统一并入，下一 tick 才开始处理。
+            // 属性本身在 enqueue 之前就已经加上了，这里只是补登记。
+            if (!PENDING_TASKS.isEmpty()) {
+                TASKS.addAll(PENDING_TASKS);
+                PENDING_TASKS.clear();
             }
         }
     }

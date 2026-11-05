@@ -4,12 +4,14 @@ import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
+import com.TovidY.kunluncontinent.capability.playerattributes.TianshiWuhun;
 import com.TovidY.kunluncontinent.potion.ModEffects;
 import com.TovidY.kunluncontinent.render.DamageIndicatorRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
@@ -257,6 +259,17 @@ public class CombatEventHandler {
 
         if (attacker instanceof Player player) {
             baseDamage *= getFlyingDamageMultiplier(player);
+        }
+
+        // ==================== 天使武魂：对亡灵生物增伤 ====================
+        // 条件：武魂处于「开启」状态，且当前开启的武魂就是天使（见 TianshiWuhun#isActiveWuhun）。
+        // 倍率 30%~200%，按玩家等级线性提升；乘在【伤害基底】上、暴击之前 ——
+        // 这样暴击、特殊特效都会跟着放大，而不是在最终值上贴一笔。
+        // 与天使神神位被动（AngelGodBuff 对亡灵 ×11，挂在 LOWEST 乘最终值）是乘算叠加，互不冲突。
+        if (attacker instanceof Player player && target.getMobType() == MobType.UNDEAD) {
+            baseDamage *= player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
+                    .map(TianshiWuhun::undeadDamageMultiplier)
+                    .orElse(1.0F);
         }
 
         float finalDamage = baseDamage;

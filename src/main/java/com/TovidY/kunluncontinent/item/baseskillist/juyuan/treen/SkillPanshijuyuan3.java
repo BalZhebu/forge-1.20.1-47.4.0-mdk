@@ -1,6 +1,5 @@
 package com.TovidY.kunluncontinent.item.baseskillist.juyuan.treen;
 
-import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import static com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem.dealSkillDamage;
@@ -34,8 +33,7 @@ public class SkillPanshijuyuan3 extends BaseSkillItem {
     public void executeEffect(Level level, Player player, float powerMultiplier) {
         if (!level.isClientSide) {
             ServerLevel serverLevel = (ServerLevel) level;
-            float playerGongji = ModAttributeAPI.getGongji(player);
-            float finalDamage = playerGongji * getDamageMultiplier() * powerMultiplier;
+            float finalDamage = getSkillBaseDamage(player) * getDamageMultiplier() * powerMultiplier;
             List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(10.0),
                     e -> e != player && e.isAlive() && e.distanceTo(player) <= 10.0);
 

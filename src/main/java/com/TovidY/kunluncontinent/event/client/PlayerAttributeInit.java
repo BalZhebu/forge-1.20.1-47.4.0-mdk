@@ -4,6 +4,7 @@ import com.TovidY.kunluncontinent.Init.KLConfig;
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
+import com.TovidY.kunluncontinent.capability.playerattributes.PlayerHunhuanAPI;
 import com.TovidY.kunluncontinent.item.ModItems;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -70,6 +71,29 @@ public class PlayerAttributeInit {
             }
             syncMaxHealthToPlayer(player, attributes.getMaxshengming());
             syncAllAttributesToClient(player, attributes);
+            // 武魂处于开启状态 → 重新广播一次魂环，否则别的玩家看不到他的魂环。
+            // ⚠️ 这段原来在 PWRenderPlayerEvent#onPlayerLoggedIn 里，而那个类是
+            //    @Mod.EventBusSubscriber(value = Dist.CLIENT)：专用服务器上根本不会执行。
+            //    服务端侧的逻辑必须放在本类这种公共类里。
+            if (attributes.getHunhuankuaiguan() >= 0) {
+                PlayerHunhuanAPI.beginWuhunOpenAnimation(player);
+            }
+        });
+    }
+
+    /**
+     * 换维度：客户端那边魂环渲染缓存是「按世界」的，换世界后必须重新广播一次。
+     *
+     * <p>原实现同样在 {@code PWRenderPlayerEvent}（Dist.CLIENT）里，专用服务器收不到，
+     * 表现为"传送/换维度后别人的魂环消失"。</p>
+     */
+    @SubscribeEvent
+    public static void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
+            if (cap.getHunhuankuaiguan() >= 0) {
+                PlayerHunhuanAPI.beginWuhunOpenAnimation(player);
+            }
         });
     }
 

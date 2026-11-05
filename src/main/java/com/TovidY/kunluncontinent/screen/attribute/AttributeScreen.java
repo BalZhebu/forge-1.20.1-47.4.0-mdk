@@ -13,7 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import static net.minecraft.client.gui.screens.inventory.InventoryScreen.renderEntityInInventoryFollowsMouse;
 
 //属性面板渲染
-public class AttributeScreen extends AbstractContainerScreen<AttributeMenu> implements AttributeTabs.Host {
+public class AttributeScreen extends AbstractContainerScreen<AttributeMenu> implements AttributeTabBar.Host {
 
     private float xMouse;
     private float yMouse;
@@ -32,11 +32,11 @@ public class AttributeScreen extends AbstractContainerScreen<AttributeMenu> impl
         this.titleLabelY = 10000;
 
         // 顶部页签：全部由注册表统一生成（新增面板只需在 AttributeTabs 注册一行）
-        AttributeTabs.buildTabs(this, AttributeTabs.PAGE_ATTRIBUTE);
-        AttributeTabs.buildConfigButton(this);
+        AttributeTabBar.buildTabs(this, AttributeTabs.PAGE_ATTRIBUTE);
+        AttributeTabBar.buildConfigButton(this);
     }
 
-    // ==================== AttributeTabs.Host 实现（暴露 protected 成员给工具类） ====================
+    // ==================== AttributeTabBar.Host 实现（暴露 protected 成员给工具类） ====================
 
     @Override
     public int leftPos() {

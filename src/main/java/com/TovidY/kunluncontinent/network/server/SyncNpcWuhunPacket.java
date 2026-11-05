@@ -1,10 +1,9 @@
 package com.TovidY.kunluncontinent.network.server;
 
-import com.TovidY.kunluncontinent.entity.playernpc.PlayerNpcEntity;
-import com.TovidY.kunluncontinent.event.client.PWRenderPlayerEvent;
-import net.minecraft.client.Minecraft;
+import com.TovidY.kunluncontinent.network.client.ClientPacketHandlers;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.Entity;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.ArrayList;
@@ -39,16 +38,9 @@ public class SyncNpcWuhunPacket {
     }
 
     public static void handle(SyncNpcWuhunPacket msg, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            // 在客户端收到发包后，把数据更新到客户端缓存里
-            if (Minecraft.getInstance().level != null) {
-                Entity entity = Minecraft.getInstance().level.getEntity(msg.entityId);
-                if (entity instanceof PlayerNpcEntity npc) {
-                    // 更新 NPC 客户端缓存的数据
-                    PWRenderPlayerEvent.updateNpcWuhunCache(npc.getUUID(), msg.nianxianList);
-                }
-            }
-        });
+        // 客户端逻辑统一在 ClientPacketHandlers（本类不能出现 Minecraft）
+        ctx.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
+                () -> () -> ClientPacketHandlers.npcWuhun(msg.entityId, msg.nianxianList)));
         ctx.get().setPacketHandled(true);
     }
 }

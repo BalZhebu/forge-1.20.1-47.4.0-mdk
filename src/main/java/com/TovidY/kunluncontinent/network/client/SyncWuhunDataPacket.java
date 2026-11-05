@@ -1,9 +1,8 @@
 package com.TovidY.kunluncontinent.network.client;
 
-import com.TovidY.kunluncontinent.event.client.PWRenderPlayerEvent;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.ArrayList;
@@ -129,23 +128,12 @@ public class SyncWuhunDataPacket {
     }
 
     public static void handle(SyncWuhunDataPacket pkt, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            Minecraft mc = Minecraft.getInstance();
-            if (mc.level == null) return;
-
-            Player player = mc.level.getPlayerByUUID(pkt.playerUUID);
-            if (player != null) {
-                PWRenderPlayerEvent.updatePlayerWuhunData(
-                        player,
-                        pkt.wuhunNianxianList,
-                        pkt.shenciGodList,
-                        pkt.divine,
-                        pkt.isPlayingAnimation,
-                        pkt.animationStartTime,
-                        pkt.animStyle
-                );
-            }
-        });
+        // 客户端逻辑统一在 ClientPacketHandlers：本类不能出现 Minecraft/ClientLevel，
+        // 否则专用服务器在注册包头时会加载客户端类并崩服。
+        ctx.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
+                () -> () -> ClientPacketHandlers.syncWuhunData(
+                        pkt.playerUUID, pkt.wuhunNianxianList, pkt.shenciGodList, pkt.divine,
+                        pkt.isPlayingAnimation, pkt.animationStartTime, pkt.animStyle)));
         ctx.get().setPacketHandled(true);
     }
 }

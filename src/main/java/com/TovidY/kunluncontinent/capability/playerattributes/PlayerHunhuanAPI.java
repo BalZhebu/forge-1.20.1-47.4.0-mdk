@@ -461,6 +461,23 @@ public class PlayerHunhuanAPI {
             newplayerCapability.setBankSilver(oldItemCapability.getBankSilver());
             newplayerCapability.setBankCopper(oldItemCapability.getBankCopper());
 
+            // ==================== 客户端偏好：不属于"修为"，转生不该洗 ====================
+            // 这几个字段**都在 serializeNBT 里** → newCap 是默认值，不显式拷回就会被
+            // oldCap.deserializeNBT(newCap.serializeNBT()) 覆盖成默认：
+            // 面板缩放/纵向偏移、伤害显示模式、魂环开启动画、飞行速度档，
+            // 以及 configFlags 里的全部开关（技能特效粒子/着色器、NPC 魂环显示、
+            // 神环渐变、普通魂环显示、交易自动取币…）—— 玩家一转生就得重新一项项调。
+            newplayerCapability.setUiScale(oldItemCapability.getUiScale());
+            newplayerCapability.setUiOffsetY(oldItemCapability.getUiOffsetY());
+            newplayerCapability.setDamageDisplayMode(oldItemCapability.getDamageDisplayMode());
+            newplayerCapability.setHunhuanOpenAnim(oldItemCapability.getHunhuanOpenAnim());
+            newplayerCapability.setFlySpeedLevel(oldItemCapability.getFlySpeedLevel());
+            newplayerCapability.setConfigFlags(oldItemCapability.getConfigFlags());
+
+            // 属性点记账基线：newCap 默认 -1，而转生后等级是 0 → AttributePoints#grantOnLogin
+            // 里 `0 > -1` 成立，会白补 1 点。基线必须归 0（0 级 → 不发点）。
+            newplayerCapability.setPointsGrantedLevel(0);
+
             // ==================== 属性点：清空并按总数 10%~30% 折算继承 ====================
             int spentPoints = oldItemCapability.getAllocatedPointsTotal();
             int inherited = AttributePoints.inheritOnZhuansheng(newplayerCapability, oldItemCapability);
@@ -569,5 +586,34 @@ public class PlayerHunhuanAPI {
                 NetworkHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> target), packet);
             }
         });
+    }
+
+    /**
+     * 开启武魂：让周围客户端播「逐环显现」动画。
+     *
+     * <p><b>为什么单独包一层：</b>这段逻辑原来挂在客户端类
+     * {@code PWRenderPlayerEvent#startOpenAnimation} 里，而调用它的
+     * {@code CPacketQiehuanWuhun} 跑在<b>服务端</b> —— 专用服务器上那个类根本不存在，
+     * 玩家一切武魂就 {@code NoClassDefFoundError}。所以服务端路径必须走这个公共入口。</p>
+     */
+    public static void beginWuhunOpenAnimation(ServerPlayer player) {
+        broadcastWuhunRings(player, true);
+    }
+
+    /**
+     * 关闭武魂：广播一个空魂环列表，让所有客户端清掉这个玩家的魂环渲染缓存。
+     *
+     * <p>同样是为了让服务端不必碰客户端类（见 {@link #beginWuhunOpenAnimation}）。</p>
+     */
+    public static void notifyWuhunClosed(ServerPlayer player) {
+        if (player == null) {
+            return;
+        }
+        // 样式下标传 0（逐环展开）：列表是空的，样式不会被用到
+        SyncWuhunDataPacket packet = new SyncWuhunDataPacket(
+                player.getUUID(), Collections.emptyList(), false, 0L, 0);
+        for (ServerPlayer target : ((ServerLevel) player.level()).getPlayers(p -> true)) {
+            NetworkHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> target), packet);
+        }
     }
 }

@@ -13,9 +13,10 @@ import net.minecraft.world.item.ItemStack;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import com.TovidY.kunluncontinent.screen.attribute.AttributeTabBar;
 import com.TovidY.kunluncontinent.screen.attribute.AttributeTabs;
 
-public class HunguScreen extends AbstractContainerScreen<HunguMenu> implements AttributeTabs.Host {
+public class HunguScreen extends AbstractContainerScreen<HunguMenu> implements AttributeTabBar.Host {
 
     public HunguScreen(HunguMenu container, Inventory inventory, Component text) {
         super(container, inventory, text);
@@ -31,7 +32,7 @@ public class HunguScreen extends AbstractContainerScreen<HunguMenu> implements A
         this.titleLabelY = 10000;
 
         // 顶部页签：全部由注册表统一生成（新增面板只需在 AttributeTabs 注册一行）
-        AttributeTabs.buildTabs(this, AttributeTabs.PAGE_HUNGU);
+        AttributeTabBar.buildTabs(this, AttributeTabs.PAGE_HUNGU);
     }
 
     @Override
@@ -137,7 +138,7 @@ public class HunguScreen extends AbstractContainerScreen<HunguMenu> implements A
     }
 
 
-    // ==================== AttributeTabs.Host 实现（暴露 protected 成员给工具类） ====================
+    // ==================== AttributeTabBar.Host 实现（暴露 protected 成员给工具类） ====================
 
     @Override
     public int leftPos() {

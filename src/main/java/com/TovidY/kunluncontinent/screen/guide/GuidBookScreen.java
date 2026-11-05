@@ -61,7 +61,7 @@ public class GuidBookScreen extends AbstractContainerScreen<GuideBookMenu> {
         addArticle("游戏技巧攻略",
                 "§l攻略技巧：§r\n"
                         + "1. §b精神力快速恢复：玩家在黑夜中入睡并成功跳过黑夜时将直接回满精神力§r\n"
-                        + "2. §b§r\n");
+                        + "2. §b本MOD装备具有良好的防御效果在前期容易死的时候可以穿上保命用§r\n");
 
         addArticle("属性面板系统",
                 "§l属性面板系统：§r\n"
@@ -99,7 +99,9 @@ public class GuidBookScreen extends AbstractContainerScreen<GuideBookMenu> {
         addArticle("武魂系统",
                 "§l武魂系统：§r\n"
                         + "默认按 §1§lK键§r 打开§b武魂§r，打开时消耗§9精神力§r，在此状态下方可§b吸收魂环§r。\n"
-                        + "在§b开启武魂§r的状态下可长按默认R键选择技能，而在§c未开启武魂§r的情况下长按R键是没反应的。");
+                        + "在§b开启武魂§r的状态下可长按默认R键选择技能，而在§c未开启武魂§r的情况下长按R键是没反应的。\n"
+                        + "§e天使武魂：§r开启状态下攻击§a亡灵生物§r（僵尸/骷髅/凋灵等）时，伤害额外§c+30%~200%§r，"
+                        + "比例随等级线性提升，§b100级§r封顶。");
 
         addArticle("魂环吸收",
                 "§l魂环吸收：§r\n"

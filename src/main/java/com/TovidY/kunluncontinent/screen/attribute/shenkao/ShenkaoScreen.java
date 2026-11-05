@@ -15,6 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
 import java.util.Collections;
+import com.TovidY.kunluncontinent.screen.attribute.AttributeTabBar;
 import com.TovidY.kunluncontinent.screen.attribute.AttributeTabs;
 
 /**
@@ -29,7 +30,7 @@ import com.TovidY.kunluncontinent.screen.attribute.AttributeTabs;
  *
  * <p>⚠️ 面板<b>没有任何物品栏槽位</b>（见 {@code ShenkaoMenu}）。</p>
  */
-public class ShenkaoScreen extends AbstractContainerScreen<ShenkaoMenu> implements AttributeTabs.Host {
+public class ShenkaoScreen extends AbstractContainerScreen<ShenkaoMenu> implements AttributeTabBar.Host {
 
     public ShenkaoScreen(ShenkaoMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
@@ -47,7 +48,7 @@ public class ShenkaoScreen extends AbstractContainerScreen<ShenkaoMenu> implemen
         super.init();
 
         // 顶部页签：全部由注册表统一生成（新增面板只需在 AttributeTabs 注册一行）
-        AttributeTabs.buildTabs(this, AttributeTabs.PAGE_SHENKAO);
+        AttributeTabBar.buildTabs(this, AttributeTabs.PAGE_SHENKAO);
 
         int top = this.topPos;
 
@@ -181,7 +182,7 @@ public class ShenkaoScreen extends AbstractContainerScreen<ShenkaoMenu> implemen
         // （保留原遍历会有 NPE 风险 —— menu.slots 为空列表时无需处理）
     }
 
-    // ==================== AttributeTabs.Host 实现 ====================
+    // ==================== AttributeTabBar.Host 实现 ====================
 
     @Override
     public int leftPos() {

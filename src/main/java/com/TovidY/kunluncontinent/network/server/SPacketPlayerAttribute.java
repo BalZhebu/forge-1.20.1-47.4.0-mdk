@@ -1,10 +1,10 @@
 package com.TovidY.kunluncontinent.network.server;
 
-import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
-import net.minecraft.client.Minecraft;
+import com.TovidY.kunluncontinent.network.client.ClientPacketHandlers;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -30,19 +30,9 @@ public class SPacketPlayerAttribute {
     }
 
     public static void handle(SPacketPlayerAttribute msg, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            net.minecraftforge.fml.DistExecutor.unsafeRunWhenOn(net.minecraftforge.api.distmarker.Dist.CLIENT, () -> () -> {
-                net.minecraft.client.multiplayer.ClientLevel level = Minecraft.getInstance().level;
-                if (level != null) {
-                    net.minecraft.world.entity.Entity entity = level.getEntity(msg.entityId);
-                    if (entity instanceof net.minecraft.world.entity.player.Player player) {
-                        player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
-                            cap.deserializeNBT(msg.nbt);
-                        });
-                    }
-                }
-            });
-        });
+        // 客户端逻辑统一在 ClientPacketHandlers（本类不能出现 Minecraft/ClientLevel）
+        ctx.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
+                () -> () -> ClientPacketHandlers.playerAttribute(msg.entityId, msg.nbt)));
         ctx.get().setPacketHandled(true);
     }
 }

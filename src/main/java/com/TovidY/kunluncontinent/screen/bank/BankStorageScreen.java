@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.screen.bank;
 
 import com.TovidY.kunluncontinent.bank.BankAccount;
 import com.TovidY.kunluncontinent.screen.KunlunGuiHelper;
+import com.TovidY.kunluncontinent.screen.attribute.AttributeTabBar;
 import com.TovidY.kunluncontinent.screen.attribute.AttributeTabs;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -42,7 +43,7 @@ import java.util.List;
  *   └───────────┘
  * </pre>
  */
-public class BankStorageScreen extends AbstractContainerScreen<BankTabMenu> implements AttributeTabs.Host {
+public class BankStorageScreen extends AbstractContainerScreen<BankTabMenu> implements AttributeTabBar.Host {
 
     // ---- 版式（相对 leftPos / topPos）----
     private static final int ROW_Y0 = 20;
@@ -84,7 +85,7 @@ public class BankStorageScreen extends AbstractContainerScreen<BankTabMenu> impl
         super.init();
 
         // 顶部页签（银行是页签链的一环，必须能切走）
-        AttributeTabs.buildTabs(this, AttributeTabs.PAGE_BANK);
+        AttributeTabBar.buildTabs(this, AttributeTabs.PAGE_BANK);
 
         // 三个「取出」按钮
         for (BankAccount.Coin coin : BankAccount.Coin.values()) {
@@ -253,7 +254,7 @@ public class BankStorageScreen extends AbstractContainerScreen<BankTabMenu> impl
         }
     }
 
-    // ==================== AttributeTabs.Host ====================
+    // ==================== AttributeTabBar.Host ====================
 
     @Override
     public int leftPos() {

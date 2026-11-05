@@ -1,6 +1,5 @@
 package com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.treen;
 
-import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import static com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem.dealSkillDamage;
@@ -28,8 +27,7 @@ public class SkillPohun3 extends BaseSkillItem {
 
     @Override
     public void executeEffect(Level level, Player player, float powerMultiplier) {
-        float playerGongji = ModAttributeAPI.getGongji(player);
-        float finalDamage = playerGongji * getDamageMultiplier() * powerMultiplier;
+        float finalDamage = getSkillBaseDamage(player) * getDamageMultiplier() * powerMultiplier;
         this.runSkillLogic(level, player, powerMultiplier, finalDamage);
     }
 

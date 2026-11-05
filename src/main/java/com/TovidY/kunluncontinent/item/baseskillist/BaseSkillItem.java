@@ -43,6 +43,14 @@ public abstract class BaseSkillItem extends Item {
      */
     public static final float GLOBAL_COST_MULTIPLIER = 2.0f;
 
+    /**
+     * 魂技基底里「原版武器攻击」的折算系数。
+     *
+     * <p>技能伤害 = (点数型攻击力 + 原版 ATTACK_DAMAGE × 本系数) × 技能倍率 × 年限倍率。
+     * 系数 {@code 1.0} = 全额并入；想压前期直接调小（0.6~0.8），<b>只改这一个数</b>。</p>
+     */
+    public static final float WEAPON_DAMAGE_WEIGHT = 1.0f;
+
     public BaseSkillItem() {
         super(new Item.Properties().stacksTo(1).fireResistant());
     }
@@ -98,11 +106,39 @@ public abstract class BaseSkillItem extends Item {
 
     public void executeEffect(Level level, Player player, float powerMultiplier) {
         if (!level.isClientSide) {
-            float playerGongji = ModAttributeAPI.getGongji(player);
-            float finalDamage = playerGongji * getDamageMultiplier() * powerMultiplier;
+            float finalDamage = getSkillBaseDamage(player) * getDamageMultiplier() * powerMultiplier;
 
             this.executeEffect(level, player, powerMultiplier, finalDamage);
         }
+    }
+
+    /**
+     * <b>魂技伤害的基底</b> —— 所有「按攻击力算伤害」的魂技都必须从这里取，不要各自写
+     * {@code ModAttributeAPI.getGongji(player)}。
+     *
+     * <p><b>为什么要加原版武器攻击：</b>{@link ModAttributeAPI#getGongji} 只聚合
+     * 「自定义剑的 {@code gongji} 属性 + 加点 + 武魂 + 魂骨 + 永久属性」，<b>不含</b>
+     * 原版 {@code ATTACK_DAMAGE}（空手 1 / 铁剑 6 / 下界合金 7 / 锋利附魔）。
+     * 而普攻的伤害是 {@code (gongji + 原版伤害)} —— 于是魂技先天少了普攻的那块基底：</p>
+     * <ul>
+     *   <li>前期 {@code gongji} 只有 1~2.5（初始 1.0，强攻满 99 点也才 2.485），
+     *       魂技只有普攻的 60%~90%，还额外吃 3 秒冷却与精神力消耗 —— 玩家反馈的
+     *       「技能打不死怪」就出在这里；</li>
+     *   <li>后期 {@code gongji} 上万后，补的这几点武器伤害可以忽略，不影响魂骨期的平衡。</li>
+     * </ul>
+     *
+     * <p>按 {@link #WEAPON_DAMAGE_WEIGHT} 折算，想让前期弱一点就调小那个常量。</p>
+     */
+    public static float getSkillBaseDamage(Player player) {
+        float gongji = ModAttributeAPI.getGongji(player);
+        if (player == null) {
+            return gongji;
+        }
+        float weapon = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+        if (!Float.isFinite(weapon) || weapon < 0.0F) {
+            weapon = 0.0F;
+        }
+        return gongji + weapon * WEAPON_DAMAGE_WEIGHT;
     }
 
     /**
@@ -197,8 +233,7 @@ public abstract class BaseSkillItem extends Item {
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
             if (cap.getJingshenli() >= finalCost && !player.getCooldowns().isOnCooldown(this)) {
                 float powerMultiplier = getPowerMultiplier(nianxian);
-                float playerGongji = ModAttributeAPI.getGongji(player);
-                float finalDamage = playerGongji * getDamageMultiplier() * powerMultiplier;
+                float finalDamage = getSkillBaseDamage(player) * getDamageMultiplier() * powerMultiplier;
                 executeEffect(level, player, powerMultiplier, finalDamage);
 
                 applyPenalty(player, costMultiplier);

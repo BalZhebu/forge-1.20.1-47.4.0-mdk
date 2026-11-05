@@ -1,12 +1,7 @@
 package com.TovidY.kunluncontinent.network.server;
 
-import com.TovidY.kunluncontinent.render.skill.SkillEffect;
-import com.TovidY.kunluncontinent.render.skill.SkillEffectRenderer;
-import com.TovidY.kunluncontinent.render.skill.SkillEffects;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
+import com.TovidY.kunluncontinent.network.client.ClientPacketHandlers;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
@@ -65,17 +60,10 @@ public class S2CSkillFieldPacket {
     }
 
     public static void handle(S2CSkillFieldPacket msg, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-            ClientLevel level = Minecraft.getInstance().level;
-            if (level == null) {
-                return;
-            }
-            SkillEffect effect = SkillEffects.create(
-                    msg.styleId, msg.ownerEntityId,
-                    new Vec3(msg.x, msg.y, msg.z),
-                    msg.radius, level.getGameTime(), msg.durationTicks);
-            SkillEffectRenderer.spawn(effect);
-        }));
+        // 客户端逻辑统一在 ClientPacketHandlers（本类不能出现 Minecraft/ClientLevel）
+        ctx.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
+                () -> () -> ClientPacketHandlers.skillField(msg.styleId, msg.ownerEntityId,
+                        msg.x, msg.y, msg.z, msg.radius, msg.durationTicks)));
         ctx.get().setPacketHandled(true);
     }
 }

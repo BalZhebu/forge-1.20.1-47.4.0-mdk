@@ -3,11 +3,7 @@ package com.TovidY.kunluncontinent.screen.attribute;
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.godclass.interfac.GodClientData;
 import com.TovidY.kunluncontinent.item.ModItems;
-import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.server.PacketSyncPage;
-import com.TovidY.kunluncontinent.screen.KunlunGuiHelper;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.item.ItemStack;
@@ -36,7 +32,7 @@ public final class AttributeTabs {
     public static final int MARGIN_X = 10;
     public static final int OFFSET_Y = -26;
     /** 选中态额外上抬的像素。 */
-    private static final int SELECTED_LIFT = 2;
+    static final int SELECTED_LIFT = 2;
     /** 页签右对齐时用的按钮尺寸（配置按钮）。 */
     public static final int CONFIG_BTN_SIZE = 18;
     /** 配置按钮右边缘距面板右边距。 */
@@ -71,7 +67,7 @@ public final class AttributeTabs {
 
     /** 全部页签，按显示顺序排列。**新增面板在这里加一行即可。** */
 
-    private static final List<Tab> TABS = new ArrayList<>();
+    static final List<Tab> TABS = new ArrayList<>();
     /**
      * 动态标题的页签 —— 名字会随玩家状态变（如「神考面板」封神后变「神祇面板」）。
      *
@@ -96,7 +92,7 @@ public final class AttributeTabs {
     }
 
     /** 标题会变的页签。 */
-    private static final List<DynamicTab> DYNAMIC_TABS = new ArrayList<>();
+    static final List<DynamicTab> DYNAMIC_TABS = new ArrayList<>();
 
     /**
      * 注册一个<b>标题会随玩家状态变化</b>的页签。
@@ -228,121 +224,5 @@ public final class AttributeTabs {
                 () -> new ItemStack(ModItems.SHENKAO_BUTTON.get()),
                 new com.TovidY.kunluncontinent.screen.attribute.shenkao.ShenkaoMenu.Provider(),
                 AttributeTabs::hasGodExam);
-    }
-    /**
-     * 页签宿主接口 —— 让本工具类能访问 {@code leftPos/topPos/font/imageWidth}
-     * 和 {@code addRenderableWidget}。
-     *
-     * <p>这几个成员在 {@code Screen} / {@code AbstractContainerScreen} 里都是
-     * <b>protected</b>，静态工具类无法直接访问，所以由各 Screen 实现本接口暴露出来。</p>
-     */
-    public interface Host {
-        int leftPos();
-
-        int topPos();
-
-        int imageWidth();
-
-        net.minecraft.client.gui.Font font();
-
-        void addWidget(net.minecraft.client.gui.components.AbstractWidget widget);
-    }
-
-    /**
-     * 在面板顶部生成整排页签按钮。
-     *
-     * <p>调用前请先 {@code super.init()}（要用 {@code leftPos/topPos/imageWidth}）。</p>
-     *
-     * @param host         目标 Screen（实现 {@link Host}）
-     * @param currentPageId 当前面板自己的 id（决定哪个页签高亮）
-     */
-    public static void buildTabs(Host host, int currentPageId) {
-        ensureRegistered();
-        requestGodDataSync();
-        buildTabs(host, host.leftPos() + MARGIN_X, host.topPos() + OFFSET_Y, currentPageId);
-    }
-
-    /**
-     * ⭐ 打开面板时向服务端要一次神考数据（幂等、零副作用）。
-     *
-     * <p><b>修的 bug</b>：神考面板"消失，必须重启游戏才恢复"。
-     * 客户端 {@code GodClientData} 是静态字段，只要某次服务端发包时机不对
-     * （登出 / 换维度 / 发包早于客户端 ready），它就会卡在错误的旧值上，
-     * 而客户端<b>从不主动要</b> → UI 一直错，只有重登才恢复。</p>
-     *
-     * <p>这里在每次打开面板时对账一次，把状态拉回与服务端一致。
-     * <b>不在包里判断"玩家有没有神考"</b> —— 那样又回到"用有问题的字段做判断"的死循环。</p>
-     */
-    private static void requestGodDataSync() {
-        try {
-            NetworkHandler.INSTANCE.sendToServer(
-                    new com.TovidY.kunluncontinent.network.client.C2SRequestGodSync());
-        } catch (Throwable ignored) {
-            // 单机/无网络通道时忽略即可（数据本来就在本地）
-        }
-    }
-
-    /**
-     * 在指定起点生成整排页签按钮（自定义面板可用这个覆盖位置）。
-     *
-     * @param startX 起始 X（面板坐标）
-     * @param startY 起始 Y（面板坐标）
-     */
-    public static void buildTabs(Host host, int startX, int startY, int currentPageId) {
-        ensureRegistered();
-        int currentX = startX;
-        for (Tab tab : TABS) {
-            if (!tab.isVisible()) continue;
-            boolean selected = tab.id() == currentPageId;
-            int size = selected ? SELECTED_SIZE : NORMAL_SIZE;
-            int y = startY - (selected ? SELECTED_LIFT : 0);
-            final int id = tab.id();
-            host.addWidget(new KunlunGuiHelper.KunlunTabButton(
-                    host.font(), currentX, y, size, size,
-                    tab.icon().get(), tab.title(), selected,
-                    b -> {
-                        if (!selected) {
-                            NetworkHandler.INSTANCE.sendToServer(new PacketSyncPage(id));
-                        }
-                    }
-            ));
-            currentX += size + SPACING;
-        }
-
-        // 动态标题页签（当前只有神考/神祇面板）
-        for (DynamicTab tab : DYNAMIC_TABS) {
-            if (!tab.isVisible()) continue;
-            boolean selected = tab.id() == currentPageId;
-            int size = selected ? SELECTED_SIZE : NORMAL_SIZE;
-            int y = startY - (selected ? SELECTED_LIFT : 0);
-            final int id = tab.id();
-            host.addWidget(new KunlunGuiHelper.KunlunTabButton(
-                    host.font(), currentX, y, size, size,
-                    tab.icon().get(), tab.title(), selected,
-                    b -> {
-                        if (!selected) {
-                            NetworkHandler.INSTANCE.sendToServer(new PacketSyncPage(id));
-                        }
-                    }
-            ));
-            currentX += size + SPACING;
-        }
-    }
-
-    /**
-     * 右上角"配置"按钮（原来只有属性面板有，现统一提供）。
-     *
-     * @param host 目标 Screen
-     */
-    public static void buildConfigButton(Host host) {
-        int btnSize = CONFIG_BTN_SIZE;
-        int btnX = host.leftPos() + host.imageWidth() - btnSize - CONFIG_BTN_MARGIN;
-        int btnY = host.topPos() + CONFIG_BTN_TOP;
-        host.addWidget(new KunlunGuiHelper.HandDrawnButton(
-                host.font(), btnX, btnY, btnSize, btnSize,
-                Component.literal("⚙"),
-                b -> NetworkHandler.INSTANCE.sendToServer(new PacketSyncPage(PAGE_CONFIG)),
-                () -> List.of(Component.literal("打开配置界面"))
-        ));
     }
 }

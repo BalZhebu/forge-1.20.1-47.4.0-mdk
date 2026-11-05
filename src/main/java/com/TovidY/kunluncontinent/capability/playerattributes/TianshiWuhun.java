@@ -57,6 +57,23 @@ public final class TianshiWuhun {
     /** 自动开启天使神神考的等级门槛（含）。 */
     public static final int AUTO_TRIAL_LEVEL = 70;
 
+    // ==================== 对亡灵增伤（武魂开启时） ====================
+
+    /** 天使武魂对亡灵的最低增伤：+30%（0 级）。 */
+    public static final float UNDEAD_BONUS_MIN = 0.30F;
+
+    /** 天使武魂对亡灵的满级增伤：+200%（即最终 ×3）。 */
+    public static final float UNDEAD_BONUS_MAX = 2.00F;
+
+    /**
+     * 增伤达到封顶的等级。
+     *
+     * <p>取 100（斗罗里 100 级 = 成神）而不是 99：99 级极限斗罗拿 197%，
+     * 100 级及以后统一 200% 封顶，避免神位玩家继续往上叠。</p>
+     */
+    public static final int UNDEAD_BONUS_MAX_LEVEL = 100;
+
+
     private TianshiWuhun() {
     }
 
@@ -90,6 +107,43 @@ public final class TianshiWuhun {
             }
         }
         return total;
+    }
+
+    // ==================================================================================
+    //  战斗：天使武魂开启时，对亡灵生物增伤
+    // ==================================================================================
+
+    /**
+     * 当前「开启中」的武魂是不是天使。
+     *
+     * <p>{@link PlayerAttributeCapability#getWuhunName()} 在 {@code hunhuankuaiguan < 0}
+     * （玩家把武魂关了）时返回 {@code null}，所以这一个判断同时覆盖
+     * 「有没有天使」和「天使是不是正开着」。</p>
+     */
+    public static boolean isActiveWuhun(PlayerAttributeCapability cap) {
+        return cap != null && Wuhunname.tianshi.equals(cap.getWuhunName());
+    }
+
+    /**
+     * 天使武魂的<b>亡灵增伤倍率</b>（乘在伤害基底上）。
+     *
+     * <p>0 级 +30%（×1.30）→ {@value #UNDEAD_BONUS_MAX_LEVEL} 级 +200%（×3.00），
+     * 中间按等级<b>线性</b>插值，超等级封顶。改数值只动
+     * {@link #UNDEAD_BONUS_MIN} / {@link #UNDEAD_BONUS_MAX} / {@link #UNDEAD_BONUS_MAX_LEVEL}。</p>
+     *
+     * <p>与天使神神位被动（{@code AngelGodBuff} 对亡灵 ×11）不冲突也不重复判定：
+     * 那个是「封神」奖励，挂在 {@code LivingHurtEvent} 的 LOWEST 上乘最终值；
+     * 这里乘的是 {@code CombatEventHandler} 里的伤害基底，两者是乘算叠加。</p>
+     *
+     * @return 伤害倍率；武魂没开 / 不是天使 → {@code 1.0}
+     */
+    public static float undeadDamageMultiplier(PlayerAttributeCapability cap) {
+        if (!isActiveWuhun(cap)) {
+            return 1.0F;
+        }
+        int level = Math.max(0, cap.getDengji());
+        float t = Math.min(1.0F, level / (float) UNDEAD_BONUS_MAX_LEVEL);
+        return 1.0F + UNDEAD_BONUS_MIN + (UNDEAD_BONUS_MAX - UNDEAD_BONUS_MIN) * t;
     }
 
     // ==================================================================================

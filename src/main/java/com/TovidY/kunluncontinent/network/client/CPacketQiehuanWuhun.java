@@ -20,7 +20,7 @@
 package com.TovidY.kunluncontinent.network.client;
 
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
-import com.TovidY.kunluncontinent.event.client.PWRenderPlayerEvent;
+import com.TovidY.kunluncontinent.capability.playerattributes.PlayerHunhuanAPI;
 import com.TovidY.kunluncontinent.network.SynsAPI;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
@@ -59,12 +59,13 @@ public class CPacketQiehuanWuhun {
           capability.setHunhuankuaiguan(++hunhuankuaiguan);
           sender.connection.send(new ClientboundSetActionBarTextPacket(
                   Component.translatable("武魂已开启", capability.getWuhunListsname().get(hunhuankuaiguan))));
-          PWRenderPlayerEvent.startOpenAnimation(sender);
+          // ⚠️ 这里跑在服务端：不能调 PWRenderPlayerEvent（Dist.CLIENT 类，专用服务器上不存在）
+          PlayerHunhuanAPI.beginWuhunOpenAnimation(sender);
         } else {
           capability.setHunhuankuaiguan(-1);
           sender.connection.send(new ClientboundSetActionBarTextPacket(
                   Component.translatable("武魂已关闭")));
-          PWRenderPlayerEvent.sendCloseNotification(sender);
+          PlayerHunhuanAPI.notifyWuhunClosed(sender);
         }
         SynsAPI.synsPlayerAttribute(sender);
       });

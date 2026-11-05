@@ -15,9 +15,10 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.List;
+import com.TovidY.kunluncontinent.screen.attribute.AttributeTabBar;
 import com.TovidY.kunluncontinent.screen.attribute.AttributeTabs;
 
-public class HunhuanScreen extends AbstractContainerScreen<HunhuanMenu> implements AttributeTabs.Host {
+public class HunhuanScreen extends AbstractContainerScreen<HunhuanMenu> implements AttributeTabBar.Host {
     private static final ResourceLocation HUNHUAN_ICON = new ResourceLocation(KlMain.MOD_ID, "textures/picture/particletext.png");
 
     // 翻页与武魂选择逻辑
@@ -46,7 +47,7 @@ public class HunhuanScreen extends AbstractContainerScreen<HunhuanMenu> implemen
         this.titleLabelY = 10000;
 
         // 顶部页签：全部由注册表统一生成（新增面板只需在 AttributeTabs 注册一行）
-        AttributeTabs.buildTabs(this, AttributeTabs.PAGE_HUNHUAN);
+        AttributeTabBar.buildTabs(this, AttributeTabs.PAGE_HUNHUAN);
 
         // 初始化默认选中的武魂索引
         if (this.minecraft != null && this.minecraft.player != null) {
@@ -262,7 +263,7 @@ public class HunhuanScreen extends AbstractContainerScreen<HunhuanMenu> implemen
     }
 
 
-    // ==================== AttributeTabs.Host 实现（暴露 protected 成员给工具类） ====================
+    // ==================== AttributeTabBar.Host 实现（暴露 protected 成员给工具类） ====================
 
     @Override
     public int leftPos() {

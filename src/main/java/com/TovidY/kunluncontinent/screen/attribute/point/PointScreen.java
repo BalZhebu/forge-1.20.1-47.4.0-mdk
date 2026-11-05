@@ -7,6 +7,7 @@ import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.client.CPacketAllocatePoint;
 import com.TovidY.kunluncontinent.network.client.CPacketResetPoints;
 import com.TovidY.kunluncontinent.screen.KunlunGuiHelper;
+import com.TovidY.kunluncontinent.screen.attribute.AttributeTabBar;
 import com.TovidY.kunluncontinent.screen.attribute.AttributeTabs;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -40,7 +41,7 @@ import java.util.List;
  * 行高 18 → 17，列宽 182 → 150、列间距 8 → 10，重置按钮挪到面板内底部右侧。
  * 13 条属性仍然 7 + 6 分两列，不需要滚动。</p>
  */
-public class PointScreen extends AbstractContainerScreen<PointMenu> implements AttributeTabs.Host {
+public class PointScreen extends AbstractContainerScreen<PointMenu> implements AttributeTabBar.Host {
 
     // ==================== 布局常量 ====================
     private static final int PANEL_W = 330;
@@ -105,7 +106,7 @@ public class PointScreen extends AbstractContainerScreen<PointMenu> implements A
         super.init();
         this.inventoryLabelY = 10000;
         this.titleLabelY = 10000;
-        AttributeTabs.buildTabs(this, AttributeTabs.PAGE_POINT);
+        AttributeTabBar.buildTabs(this, AttributeTabs.PAGE_POINT);
 
         // 每条属性一个「+」
         for (AttributePointSpec spec : AttributePointSpec.values()) {

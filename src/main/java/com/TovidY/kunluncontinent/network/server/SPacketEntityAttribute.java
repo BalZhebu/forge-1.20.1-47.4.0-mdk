@@ -19,12 +19,11 @@
 
 package com.TovidY.kunluncontinent.network.server;
 
-import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapabilityProvider;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
+import com.TovidY.kunluncontinent.network.client.ClientPacketHandlers;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.Entity;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.HashMap;
@@ -52,21 +51,9 @@ public class SPacketEntityAttribute {
   }
 
     public static void handle(SPacketEntityAttribute msg, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            // 确保在客户端运行
-            ClientLevel world = Minecraft.getInstance().level;
-            if (world != null) {
-                Entity entity = world.getEntity(msg.entityId);
-                if (entity != null) {
-                    entity.getCapability(MobAttributeCapabilityProvider.CAPABILITY).ifPresent(capability -> {
-                        capability.deserializeNBT(msg.nbt);
-                        // 调试用：如果控制台打印出年限，说明同步成功了
-                        // System.out.println("同步成功: " + entity.getName().getString() + " 年限: " + capability.getNianxian());
-                    });
-                }
-                // 注意：删掉了 else 里的 monsterHashMapCapability.put，因为这种方式很容易造成内存泄漏且难以维护
-            }
-        });
+        // 客户端逻辑统一在 ClientPacketHandlers（本类不能出现 Minecraft/ClientLevel）
+        ctx.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
+                () -> () -> ClientPacketHandlers.entityAttribute(msg.entityId, msg.nbt)));
         ctx.get().setPacketHandled(true);
     }
 }
