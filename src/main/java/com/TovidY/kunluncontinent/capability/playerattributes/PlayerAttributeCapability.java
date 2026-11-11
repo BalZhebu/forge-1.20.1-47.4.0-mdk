@@ -212,6 +212,30 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
      */
     private static final int CONFIG_FLAGS_VERSION = 4;
 
+    /**
+     * 配置位 17：<b>数值显示模式反转</b>。
+     *
+     * <ul>
+     *   <li>{@code false}（默认）= 缩写为主：面板里显示 {@code 1.2M}，<b>按住 Shift</b> 看完整数值</li>
+     *   <li>{@code true} = 完整为主：面板里显示 {@code 1,234,567}，<b>按住 Shift</b> 看缩写</li>
+     * </ul>
+     *
+     * <p>默认位不置 1，所以老存档（该位为 0）的行为与加这个开关之前完全一致，
+     * 不需要 {@code CONFIG_FLAGS_VERSION} 迁移。</p>
+     *
+     * <p>后续占用的位（都默认 0，同样不需要迁移）：</p>
+     * <ul>
+     *   <li>18 —— 魂环分解器放在背包里也生效（{@code SoulGatheringBottleItem#CONFIG_INV_DECOMPOSITION}）</li>
+     *   <li>19 —— 聚魂瓶放在背包里也生效（{@code SoulGatheringBottleItem#CONFIG_INV_SOUL_BOTTLE}）</li>
+     * </ul>
+     */
+    public static final int CONFIG_NUMBER_MODE_INVERTED = 17;
+
+    /** 数值显示是否「完整为主 / Shift 看缩写」（配置位见 {@link #CONFIG_NUMBER_MODE_INVERTED}）。 */
+    public boolean isNumberModeInverted() {
+        return isConfigOpen(CONFIG_NUMBER_MODE_INVERTED);
+    }
+
     private int zhuanshengshu = 0;
 
     // ==================== 昆仑银行（个人金库） ====================

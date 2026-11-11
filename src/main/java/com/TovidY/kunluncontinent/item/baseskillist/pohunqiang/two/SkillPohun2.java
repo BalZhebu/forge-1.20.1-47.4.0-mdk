@@ -1,5 +1,9 @@
 package com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.two;
 
+import com.TovidY.kunluncontinent.render.skill.SkillEffectStyles;
+import com.TovidY.kunluncontinent.render.skill.SkillFieldSender;
+import com.TovidY.kunluncontinent.render.skill.SkillFxToggle;
+import net.minecraft.server.level.ServerPlayer;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import static com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem.dealSkillDamage;
@@ -40,7 +44,7 @@ public class SkillPohun2 extends BaseSkillItem {
     }
 
     @Override
-    public void executeEffect(Level level, Player player, float powerMultiplier) {
+    public void executeEffect(Level level, Player player, float powerMultiplier, float finalDamage) {
         if (!level.isClientSide) {
             ServerLevel serverLevel = (ServerLevel) level;
             Vec3 lookDirection = player.getLookAngle().normalize();
@@ -48,7 +52,13 @@ public class SkillPohun2 extends BaseSkillItem {
             player.hurtMarked = true;
 
             // ---- 特效：突进轴线上的锥形枪芒 + 环绕螺旋气流 ----
-            ParticleFx fx = ParticleFx.of(level, player);
+            boolean shaderFx = SkillFxToggle.useShader(player) && player instanceof ServerPlayer;
+            if (shaderFx) {
+                ServerPlayer sp = (ServerPlayer) player;
+                SkillFieldSender.send(sp, SkillEffectStyles.BEAM_POHUN_RAY, sp.getX(), sp.getY(), sp.getZ(), 1.0F, 12);
+                SkillFieldSender.send(sp, SkillEffectStyles.SHOCK_POHUN, sp.getX(), sp.getY(), sp.getZ(), 3.0F, 12);
+            }
+            ParticleFx fx = shaderFx ? null : ParticleFx.of(level, player);
             Vec3 origin = player.getEyePosition();
             double rot = serverLevel.getGameTime() * 0.35;
             if (fx != null) {
@@ -62,7 +72,7 @@ public class SkillPohun2 extends BaseSkillItem {
             AABB damageArea = player.getBoundingBox().inflate(2.0, 1.0, 2.0).expandTowards(lookDirection.scale(4.0));
             List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class, damageArea,
                     entity -> entity != player && entity.isAlive());
-            float finalDamage = 10.0f * getDamageMultiplier() * powerMultiplier;
+            
             for (LivingEntity target : targets) {
                 dealSkillDamage(target, finalDamage, player.damageSources().mobAttack(player));
                 target.knockback(0.5, -lookDirection.x, -lookDirection.z);

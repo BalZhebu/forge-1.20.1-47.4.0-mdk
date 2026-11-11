@@ -1,6 +1,7 @@
 package com.TovidY.kunluncontinent.item.tool;
 
 import com.TovidY.kunluncontinent.block.ModBlocks;
+import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.entity.hunhe.HunheEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -32,6 +33,35 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class SoulGatheringBottleItem extends Item implements Nengliang {
+
+    // ==================================================================================
+    //  两个「背包内生效」的配置位
+    //
+    //  配置面板（ConfigScreen）里的两个按钮分别控制它们，互不影响：
+    //    · index 18 → 分解器（DecompositionItem）
+    //    · index 19 → 聚魂瓶（本类）
+    //  开关按玩家存档走（configFlags），换世界/重登都保留。
+    //
+    //  ⚠️ 0~17 已被占用（17 = 数值显示模式），新位从 18 起。
+    //     真正的可点击按钮在 ConfigScreen#initMainPage，这里只负责"位号 + 判定"。
+    // ==================================================================================
+
+    /** 配置位 18：魂环分解器放在背包里也能生效（不必拿在手上）。 */
+    public static final int CONFIG_INV_DECOMPOSITION = 18;
+
+    /** 配置位 19：聚魂瓶放在背包里也能生效（不必拿在手上）。 */
+    public static final int CONFIG_INV_SOUL_BOTTLE = 19;
+
+    /** 读某个玩家的配置位（服务端权威，客户端取本地 player 也成立）。 */
+    public static boolean configOn(Player player, int index) {
+        if (player == null) {
+            return false;
+        }
+        return player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
+                .map(cap -> cap.isConfigOpen(index))
+                .orElse(false);
+    }
+
     private final int absorbRangeLevel;
     private int maxnengliang = 1200;
 
@@ -109,8 +139,50 @@ public class SoulGatheringBottleItem extends Item implements Nengliang {
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END || event.player.level().isClientSide) return;
         Player player = event.player;
-        checkAndAbsorb(player, player.getMainHandItem());
-        checkAndAbsorb(player, player.getOffhandItem());
+
+        // ① 拿在手上：永远可用（与原逻辑一致）
+        ItemStack mainHand = player.getMainHandItem();
+        ItemStack offHand = player.getOffhandItem();
+        checkAndAbsorb(player, mainHand);
+        checkAndAbsorb(player, offHand);
+
+        // ② 配置位 19 打开时：背包里放着也生效
+        if (!configOn(player, CONFIG_INV_SOUL_BOTTLE)) return;
+        ItemStack inBag = findActiveBottleInInventory(player, mainHand, offHand);
+        if (inBag != null) {
+            checkAndAbsorb(player, inBag);
+        }
+    }
+
+    /**
+     * 在背包里找第一个「自动吸收已开启」的聚魂瓶。
+     *
+     * <p>只返回一个：{@link #performAbsorb} 每 tick 只吸最近的魂合，
+     * 如果背包里两个瓶子都跑一遍，一 tick 就会吸走两个魂合，等于凭空加速。</p>
+     *
+     * @param excludeMain 已处理过的主手，避免同一 stack 被跑两次
+     * @param excludeOff  已处理过的副手
+     */
+    private static ItemStack findActiveBottleInInventory(Player player, ItemStack excludeMain, ItemStack excludeOff) {
+        for (ItemStack stack : player.getInventory().items) {
+            if (stack == excludeMain || stack == excludeOff) continue;
+            if (isActiveBottle(stack)) return stack;
+        }
+        for (ItemStack stack : player.getInventory().offhand) {
+            if (stack == excludeMain || stack == excludeOff) continue;
+            if (isActiveBottle(stack)) return stack;
+        }
+        for (ItemStack stack : player.getInventory().armor) {
+            if (isActiveBottle(stack)) return stack;
+        }
+        return null;
+    }
+
+    /** 是聚魂瓶且自动吸收开着。⚠️ 用 hasTag 而不是 getOrCreateTag —— 扫描背包时不能顺手给每个格子塞空 NBT。 */
+    private static boolean isActiveBottle(ItemStack stack) {
+        return stack.getItem() instanceof SoulGatheringBottleItem
+                && stack.hasTag()
+                && stack.getTag().getBoolean("auto_absorb");
     }
 
     private static void checkAndAbsorb(Player player, ItemStack stack) {

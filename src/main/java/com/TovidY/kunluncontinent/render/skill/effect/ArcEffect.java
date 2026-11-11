@@ -59,12 +59,36 @@ public class ArcEffect extends SkillEffect {
      */
     private static final float OUTER_DROP = 0.40F;
 
+    /** 刃身 / 刃边配色（默认值的赋值在构造器里）。 */
+    private final float[] coreColor;
+    private final float[] edgeColor;
+
     private static final float FADE_IN_TICKS = 2.0F;
     private static final float FADE_OUT_TICKS = 9.0F;
 
+    /** 默认（天使）配色：白金刃身 + 金边。 */
     public ArcEffect(int ownerEntityId, Vec3 origin, float radius,
                      long startTick, int durationTicks) {
+        this(ownerEntityId, origin, radius, startTick, durationTicks, 0xFFF5C7, 0xDB9E1F);
+    }
+
+    /**
+     * 自定义配色版本 —— 七杀剑的"红色剑波"就是靠这个复用同一套 fsh。
+     *
+     * @param coreRgb 刃身色 0xRRGGBB
+     * @param edgeRgb 刃边色 0xRRGGBB
+     */
+    public ArcEffect(int ownerEntityId, Vec3 origin, float radius,
+                     long startTick, int durationTicks, int coreRgb, int edgeRgb) {
         super(ownerEntityId, origin, radius, startTick, durationTicks);
+        this.coreColor = rgb(coreRgb);
+        this.edgeColor = rgb(edgeRgb);
+    }
+
+    private static float[] rgb(int rgb) {
+        return new float[]{ ((rgb >> 16) & 0xFF) / 255.0F,
+                            ((rgb >> 8) & 0xFF) / 255.0F,
+                            (rgb & 0xFF) / 255.0F };
     }
 
     @Override
@@ -108,8 +132,8 @@ public class ArcEffect extends SkillEffect {
         setUniform(shader, "Age", progress(gameTime, partialTick));
         setUniform(shader, "Fade", fade);
         setUniform(shader, "Intensity", 1.35F);
-        setUniform(shader, "CoreColor", 1.00F, 0.96F, 0.78F);
-        setUniform(shader, "EdgeColor", 0.86F, 0.62F, 0.12F);
+        setUniform(shader, "CoreColor", coreColor[0], coreColor[1], coreColor[2]);
+        setUniform(shader, "EdgeColor", edgeColor[0], edgeColor[1], edgeColor[2]);
 
         RenderSystem.setShader(() -> shader);
         RenderSystem.enableBlend();

@@ -1,5 +1,9 @@
 package com.TovidY.kunluncontinent.item.baseskillist.juyuan.five;
 
+import com.TovidY.kunluncontinent.render.skill.SkillEffectStyles;
+import com.TovidY.kunluncontinent.render.skill.SkillFieldSender;
+import com.TovidY.kunluncontinent.render.skill.SkillFxToggle;
+import net.minecraft.server.level.ServerPlayer;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import com.TovidY.kunluncontinent.potion.ModEffects;
@@ -30,7 +34,13 @@ public class SkillPanshijuyuan5 extends BaseSkillItem {
             player.addEffect(new MobEffectInstance(ModEffects.STONE_ARMOR.get(), 400, 1));
 
             // ---- 特效：石铠 —— 环绕旋转的石板阵列逐块合体成甲 ----
-            ParticleFx fx = ParticleFx.of(level, player);
+            boolean shaderFx = SkillFxToggle.useShader(player) && player instanceof ServerPlayer;
+            if (shaderFx) {
+                ServerPlayer sp = (ServerPlayer) player;
+                SkillFieldSender.send(sp, SkillEffectStyles.SIGIL_JUYUAN_FIELD, sp.getX(), sp.getY(), sp.getZ(), 7.0F, 40);
+                SkillFieldSender.send(sp, SkillEffectStyles.SHOCK_JUYUAN, sp.getX(), sp.getY(), sp.getZ(), 6.0F, 16);
+            }
+            ParticleFx fx = shaderFx ? null : ParticleFx.of(level, player);
             if (fx != null) {
                 ServerLevel serverLevel = (ServerLevel) level;
                 Vec3 base = player.position();

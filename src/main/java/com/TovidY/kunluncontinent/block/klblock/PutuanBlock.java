@@ -41,9 +41,12 @@ public class PutuanBlock extends Block {
         if (!level.isClientSide) {
             if (!player.isPassenger()) {
                 player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(cap -> {
-                    ArmorStand seat = new ArmorStand(level, pos.getX() + 0.5D, pos.getY() - 0.65D, pos.getZ() + 0.5D);
+                    ArmorStand seat = new ArmorStand(level, pos.getX() + 0.5D, pos.getY() + 0.1D, pos.getZ() + 0.5D);
                     CompoundTag nbt = new CompoundTag();
                     nbt.putBoolean("Small", true);
+
+                    nbt.putBoolean("Marker", true);
+                    nbt.putBoolean("NoAI", true);
                     seat.readAdditionalSaveData(nbt);
 
                     seat.setInvisible(true);
@@ -54,10 +57,11 @@ public class PutuanBlock extends Block {
                     level.addFreshEntity(seat);
                     player.startRiding(seat);
 
+                    player.getPersistentData().putInt("PutuanSeatId", seat.getId());
+
                     int xiulianTime = cap.getXiulianTime();
                     if (xiulianTime > 0) {
                         player.sendSystemMessage(Component.literal("§e你盘膝而坐，开始感受天地灵气..."));
-
                         if (player instanceof ServerPlayer serverPlayer) {
                             NetworkHandler.INSTANCE.send(
                                     PacketDistributor.PLAYER.with(() -> serverPlayer),

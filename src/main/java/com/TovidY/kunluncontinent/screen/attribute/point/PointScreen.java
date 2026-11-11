@@ -1,5 +1,6 @@
 package com.TovidY.kunluncontinent.screen.attribute.point;
 
+import com.TovidY.kunluncontinent.screen.KunlunContainerScreen;
 import com.TovidY.kunluncontinent.capability.playerattributes.AttributePointSpec;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
@@ -41,7 +42,7 @@ import java.util.List;
  * 行高 18 → 17，列宽 182 → 150、列间距 8 → 10，重置按钮挪到面板内底部右侧。
  * 13 条属性仍然 7 + 6 分两列，不需要滚动。</p>
  */
-public class PointScreen extends AbstractContainerScreen<PointMenu> implements AttributeTabBar.Host {
+public class PointScreen extends KunlunContainerScreen<PointMenu> implements AttributeTabBar.Host {
 
     // ==================== 布局常量 ====================
     private static final int PANEL_W = 330;
@@ -198,9 +199,9 @@ public class PointScreen extends AbstractContainerScreen<PointMenu> implements A
     // ==================== 渲染 ====================
 
     @Override
-    public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTicks) {
+    protected void renderPanel(GuiGraphics gui, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(gui);
-        super.render(gui, mouseX, mouseY, partialTicks);
+        super.renderPanel(gui, mouseX, mouseY, partialTicks);
 
         for (var child : this.children()) {
             if (child instanceof KunlunGuiHelper.HandDrawnButton btn

@@ -49,7 +49,34 @@ public class KlMain {
 
     public static final Logger LOGGER = LogManager.getLogger();
 
+    /**
+     * 打印一行<b>构建指纹</b>：模组版本 + jar 文件的修改时间。
+     *
+     * <p><b>为什么需要它：</b>排查玩家崩溃时最常见的坑是「他装的是旧包」——
+     * 而 {@code mod_version} 经常连着几个修复版本都不改，光看版本号根本分不出新旧
+     * （曾有过：玩家崩在早已修好的 CME 上，日志里却只写着同一个 1.20.1_0.6.1）。
+     * 带上 jar 的修改时间后，对比一次就能确认他有没有换包。</p>
+     *
+     * <p>只用于排查，任何异常都吞掉，绝不影响启动。</p>
+     */
+    private static void logBuildFingerprint() {
+        try {
+            var modFile = net.minecraftforge.fml.ModList.get().getModFileById(MOD_ID);
+            if (modFile == null) {
+                return;
+            }
+            java.nio.file.Path path = modFile.getFile().getFilePath();
+            String stamp = java.nio.file.Files.isRegularFile(path)
+                    ? java.nio.file.Files.getLastModifiedTime(path).toString()
+                    : "开发环境（目录加载）";
+            LOGGER.info("[昆仑大陆] 构建指纹：版本 {} / jar 时间 {}", modFile.versionString(), stamp);
+        } catch (Throwable ignored) {
+        }
+    }
+
     public KlMain() {
+        logBuildFingerprint();
+
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         MinecraftForge.EVENT_BUS.register(this);

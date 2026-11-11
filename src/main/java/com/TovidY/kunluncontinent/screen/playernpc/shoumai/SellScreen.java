@@ -1,5 +1,6 @@
 package com.TovidY.kunluncontinent.screen.playernpc.shoumai;
 
+import com.TovidY.kunluncontinent.screen.KunlunContainerScreen;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.client.C2SNpcSellPacket;
 import net.minecraft.client.gui.GuiGraphics;
@@ -17,7 +18,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  */
 
 @OnlyIn(Dist.CLIENT)
-public class SellScreen extends AbstractContainerScreen<SellMenu> {
+public class SellScreen extends KunlunContainerScreen<SellMenu> {
 
     // 【修改点 1】：压缩整体面板高度从 166 降到 146
     private static final int PANEL_W = 220;
@@ -61,9 +62,9 @@ public class SellScreen extends AbstractContainerScreen<SellMenu> {
     }
 
     @Override
-    public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+    protected void renderPanel(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         this.renderBackground(g);
-        super.render(g, mouseX, mouseY, partialTick);
+        super.renderPanel(g, mouseX, mouseY, partialTick);
         this.renderTooltip(g, mouseX, mouseY);
     }
 

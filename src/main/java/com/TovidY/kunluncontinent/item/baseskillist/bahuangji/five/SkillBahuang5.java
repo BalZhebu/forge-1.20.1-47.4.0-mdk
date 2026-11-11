@@ -1,5 +1,9 @@
 package com.TovidY.kunluncontinent.item.baseskillist.bahuangji.five;
 
+import com.TovidY.kunluncontinent.render.skill.SkillEffectStyles;
+import com.TovidY.kunluncontinent.render.skill.SkillFieldSender;
+import com.TovidY.kunluncontinent.render.skill.SkillFxToggle;
+import net.minecraft.server.level.ServerPlayer;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import static com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem.dealSkillDamage;
@@ -33,7 +37,13 @@ public class SkillBahuang5 extends BaseSkillItem {
             ServerLevel serverLevel = (ServerLevel) level;
             player.displayClientMessage(Component.literal("§4§l第五魂技：镇岳！"), true);
 
-            ParticleFx fx = ParticleFx.of(level, player);
+            boolean shaderFx = SkillFxToggle.useShader(player) && player instanceof ServerPlayer;
+            if (shaderFx) {
+                ServerPlayer sp = (ServerPlayer) player;
+                SkillFieldSender.send(sp, SkillEffectStyles.SIGIL_BAHUANG_FIELD, sp.getX(), sp.getY(), sp.getZ(), 8.0F, 40);
+                SkillFieldSender.send(sp, SkillEffectStyles.SHOCK_BAHUANG, sp.getX(), sp.getY(), sp.getZ(), 6.0F, 18);
+            }
+            ParticleFx fx = shaderFx ? null : ParticleFx.of(level, player);
             double rot = serverLevel.getGameTime() * 0.3;
 
             List<LivingEntity> slowTargets = level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(30.0), e -> e != player && e.isAlive());

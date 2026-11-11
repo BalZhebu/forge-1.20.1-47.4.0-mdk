@@ -1,10 +1,14 @@
 package com.TovidY.kunluncontinent.screen;
 
+import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
+import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
@@ -13,6 +17,36 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class KunlunGuiHelper {
+
+    /**
+     * 配置面板里的「数值显示模式」是否被玩家反转成<b>完整为主 / Shift 看缩写</b>。
+     *
+     * <p>读的是本地玩家 capability 的配置位（服务端权威，切换时走 PacketToggleConfig 同步过来）。</p>
+     */
+    public static boolean isNumberModeInverted() {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc == null || mc.player == null) {
+            return false;
+        }
+        return mc.player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
+                .map(PlayerAttributeCapability::isNumberModeInverted)
+                .orElse(false);
+    }
+
+    /**
+     * 此刻是否应该显示<b>完整数值</b>（而不是缩写）。
+     *
+     * <ul>
+     *   <li>默认模式：按住 Shift → 完整；</li>
+     *   <li>反转模式（配置面板打开开关）：默认完整，按住 Shift → 缩写。</li>
+     * </ul>
+     *
+     * <p>两种模式刚好互为取反，所以一行 {@code inverted != shift} 就够了。</p>
+     */
+    public static boolean shouldShowFullNumbers() {
+        return isNumberModeInverted() != Screen.hasShiftDown();
+    }
+
     public static String formatLargeNumber(double value) {
         if (value < 100000) {
             if (value == (long) value) return String.format("%d", (long) value);

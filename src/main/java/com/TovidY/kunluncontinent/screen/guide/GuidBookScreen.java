@@ -1,5 +1,6 @@
 package com.TovidY.kunluncontinent.screen.guide;
 
+import com.TovidY.kunluncontinent.screen.KunlunContainerScreen;
 import com.TovidY.kunluncontinent.KlMain;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
@@ -17,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GuidBookScreen extends AbstractContainerScreen<GuideBookMenu> {
+public class GuidBookScreen extends KunlunContainerScreen<GuideBookMenu> {
 
     private static final ResourceLocation BOOK_TEXTURE = new ResourceLocation(KlMain.MOD_ID, "textures/gui/guide_book.png");
     private static final ResourceLocation LEFT_BUTTON = new ResourceLocation(KlMain.MOD_ID, "textures/gui/right_book.png");
@@ -55,13 +56,20 @@ public class GuidBookScreen extends AbstractContainerScreen<GuideBookMenu> {
         addArticle("欢迎来到昆仑",
                 "§1§l《欢迎来到昆仑大陆！祝您玩的愉快 ~ 》§r\n"
                         + "[本引导书更新于’§b1.0§r‘版本]\n\n"
-                        + "§c§l请各位玩家务必认真仔细查看§r，基本收录了正常游玩时遇到的§b所有常见攻略§r。 \n\n§c提示：引导书的左侧页面可上下滑动。\n\n"
+                        + "§c§l请各位玩家务必认真仔细查看§r，基本收录了正常游玩时遇到的§b所有常见攻略§r。 \n§c提示：引导书的左侧页面可上下滑动。\n\n"
                         + "§c注意！游玩时尽量用界面尺寸为3进行游玩，否则会出现玩家长按R键呼出技能面板时会出现右侧和左侧的窗口被挡住的BUG！");
+
+        addArticle("作者的话",
+                "§l作者的话：§r\n"
+                        + "本MOD持续更新中，目前没有停更的打算，建议游玩时请更新至最新版本。\n最新版可进入QQ群下载或者在0.5.2版本更新后有个更新提示功能，点击提示的链接即可跳转网盘进行升级。§r\n\n"
+                        + "有BUG反馈可反馈到QQ群或者MC百科之中，我都会去看的。\n"
+                        + "若有新奇的想法可以加入我们的QQ群一起探讨哦~ \n"
+                        + "QQ群为：1097367123 \n");
 
         addArticle("游戏技巧攻略",
                 "§l攻略技巧：§r\n"
-                        + "1. §b精神力快速恢复：玩家在黑夜中入睡并成功跳过黑夜时将直接回满精神力§r\n"
-                        + "2. §b本MOD装备具有良好的防御效果在前期容易死的时候可以穿上保命用§r\n");
+                        + "1. 精神力快速恢复：玩家在黑夜中入睡并成功跳过黑夜时将直接回满精神力§r\n"
+                        + "2. 本MOD装备具有良好的防御效果在前期容易死的时候可以穿上保命用§r\n");
 
         addArticle("属性面板系统",
                 "§l属性面板系统：§r\n"
@@ -94,7 +102,9 @@ public class GuidBookScreen extends AbstractContainerScreen<GuideBookMenu> {
 
         addArticle("天赋系统",
                 "§l天赋系统：§r\n"
-                        + "玩家§b觉醒武魂§r时出现，基本出现在玩家等级从0进行升级时会触发§b天赋赋予§r，§7普通天赋最为常见§r，不同天赋略微影响数值，但后期均可通过§6更高年限的魂环§r提升。");
+                        + "玩家§b觉醒武魂§r时出现，基本出现在玩家等级从0进行升级时会触发§b天赋赋予§r，§7普通天赋最为常见§r，不同天赋略微影响数值，但后期均可通过§6更高年限的魂环§r提升。\n"
+                        + "§6转生重修§r会让资质判定整体上移：§b每转生一次，天才资质概率 +16%§r，"
+                        + "废物资质在第一次转生后不再出现；§b第 5 次转生§r起稳定 §690% 天才 / 10% 卓越§r。");
 
         addArticle("武魂系统",
                 "§l武魂系统：§r\n"
@@ -133,7 +143,7 @@ public class GuidBookScreen extends AbstractContainerScreen<GuideBookMenu> {
                         + "1.地狱门遗迹采§d彼岸花§r炼制【§d忘川渡§r】并喝下获得‘§d彼岸§r’buff。\n"
                         + "2.用【§b重修之眼§r】找到§b重修遗迹§r，在玩家拥有‘§d彼岸§r’buff时对着§b重修台§r右键就会开启§c雷劫§r，总需遭受§c99道雷劫§r，雷劫数量不是固定99道，而是看玩家当前§c生命值§r情况，玩家的生命值§c低于20§r后方可完成转世重修。\n"
                         + "3.§4§l切勿用任何手段回血！§r血量降至§c20以内§r才可转世成功，若99道天雷无法降低你的生命值那你的转生就会失败。\n"
-                        + "重修会§b重置所有武魂属性§r并给予对应【§d武魂精华§r】。\n\n"
+                        + "重修会§b重置所有武魂属性§r并给予对应【§d武魂精华§r】。\n转生后根据玩家转生数可让玩家下一次觉醒武魂时大幅度提高高品质天赋出现的概率。\n\n"
                         + "§c注意：雷劫不会劈死玩家！不需要恐惧被雷劈死！尽量不要去回血！");
 
         addArticle("重修遗迹",
@@ -143,6 +153,13 @@ public class GuidBookScreen extends AbstractContainerScreen<GuideBookMenu> {
         addArticle("深海遗迹",
                 "§l深海遗迹：§r\n"
                         + "通过【§b深海之眼§r】寻找，使用方法与§b末影之眼§r一致。 \n\n可用此眼寻找海底祭坛的遗迹。 \n使用物品【深海祭品】右键海底祭坛可召唤【魔鲸】");
+
+        addArticle("魂币与银行",
+                "§l魂币与银行：§r\n"
+                        + "在村庄大概率生成银行结构。 \n内部有个银行方块，右键打开可进行存储魂币。 "
+                        + "\n右上角的【换钱】按钮可让金魂币，银魂币，铜魂币经过一定比例进行换算，换算价格不一。"
+                        + "\n每一个游戏时间5点可刷新汇率，高级魂币向下换算时可随意换算，但低级魂币向上换算时必须达到某个等级才行。"
+                        + "\n另外不管怎么换魂币，每一种交换只能换100次。");
 
         addArticle("废弃丹房遗址",
                 "§l废弃丹房遗址：§r\n"
@@ -193,6 +210,17 @@ public class GuidBookScreen extends AbstractContainerScreen<GuideBookMenu> {
                         + "最大§9精神力≥5000§r解锁，飞行时加快消耗§9精神力§r。\n"
                         + "飞行时伤害§c削弱40%§r(§b70级后递减至10%§r)。\n"
                         + "玩家等级越高，消耗的§9精神力§r越低。");
+
+        addArticle("炼丹炉系统",
+                "§l炼丹炉系统：§r\n"
+                        + "炼丹炉面板的左上方的5个槽位是放入内丹区，必须防止阶级一样的内丹，不限品级，但要求阶数一致。\n"
+                        + "炼丹炉面板的右上方12个槽位为输出区，炼制好的丹药会输出到这个里面。\n"
+                        + "炼丹炉左下角的第一个槽位为丹渣块区，放入丹渣块可降低炼制丹药时出现丹渣的概率。\n"
+                        + "不同等级的炼丹炉的差异是炼制同等阶级的内丹炼制速度为正常，炼制低于当前等级的炼丹炉的内丹炼丹速度加快，炼制高于当前等级的炼丹炉的内丹炼丹速度减慢。\n"
+                        + "炼丹炉有两种炼丹模式，一种是自动炼丹，一种是手动炼丹。§r。\n"
+                        + "自动炼丹顾名思义就是纯自动，将内丹放入炼丹炉内，炼丹炉会扣除一定的能量进行自动炼丹，炼丹后的品质不可控。\n"
+                        + "手动炼丹则需要玩家点击炼丹炉面板左侧的手段炼丹的切换按钮，点击后左侧出现两个新按钮，一个是判定，一个是收丹，点击判定按钮后炼丹炉内部有个小游戏，需要将移动的光标对齐判定区后按下判定键即可成功，每次成功会提升丹药的品级，失败将退回一个品级。\n"
+                        + "手动炼丹时需要消耗玩家的精神力，精神力不足则立刻停止炼丹。");
 
         addArticle("维度传送门的建造",
                 "§l维度传送门的建造：§r\n"
@@ -413,9 +441,9 @@ public class GuidBookScreen extends AbstractContainerScreen<GuideBookMenu> {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderPanel(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(graphics);
-        super.render(graphics, mouseX, mouseY, partialTicks);
+        super.renderPanel(graphics, mouseX, mouseY, partialTicks);
         this.renderTooltip(graphics, mouseX, mouseY);
     }
 

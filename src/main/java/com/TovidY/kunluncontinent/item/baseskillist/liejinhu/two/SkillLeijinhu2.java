@@ -1,5 +1,9 @@
 package com.TovidY.kunluncontinent.item.baseskillist.liejinhu.two;
 
+import com.TovidY.kunluncontinent.render.skill.SkillEffectStyles;
+import com.TovidY.kunluncontinent.render.skill.SkillFieldSender;
+import com.TovidY.kunluncontinent.render.skill.SkillFxToggle;
+import net.minecraft.server.level.ServerPlayer;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import static com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem.dealSkillDamage;
@@ -44,13 +48,19 @@ public class SkillLeijinhu2 extends BaseSkillItem {
     }
 
     @Override
-    public void executeEffect(Level level, Player player, float powerMultiplier) {
+    public void executeEffect(Level level, Player player, float powerMultiplier, float finalDamage) {
         if (!level.isClientSide) {
             ServerLevel serverLevel = (ServerLevel) level;
             double maxRange = 20.0;
 
             // ---- 特效：虎啸冲击波 —— 五重贴地声浪环 + 前方扇形气浪 + 咆哮冲击面 ----
-            ParticleFx fx = ParticleFx.of(level, player);
+            boolean shaderFx = SkillFxToggle.useShader(player) && player instanceof ServerPlayer;
+            if (shaderFx) {
+                ServerPlayer sp = (ServerPlayer) player;
+                SkillFieldSender.send(sp, SkillEffectStyles.SHOCK_TIGER, sp.getX(), sp.getY(), sp.getZ(), 3.0F, 12);
+                SkillFieldSender.send(sp, SkillEffectStyles.BURST_LIETIAN, sp.getX(), sp.getY(), sp.getZ(), 1.3F, 12);
+            }
+            ParticleFx fx = shaderFx ? null : ParticleFx.of(level, player);
             double rot = serverLevel.getGameTime() * 0.4;
             if (fx != null) {
                 Vec3 base = player.position();

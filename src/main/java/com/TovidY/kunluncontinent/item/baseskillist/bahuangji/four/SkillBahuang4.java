@@ -1,5 +1,9 @@
 package com.TovidY.kunluncontinent.item.baseskillist.bahuangji.four;
 
+import com.TovidY.kunluncontinent.render.skill.SkillEffectStyles;
+import com.TovidY.kunluncontinent.render.skill.SkillFieldSender;
+import com.TovidY.kunluncontinent.render.skill.SkillFxToggle;
+import net.minecraft.server.level.ServerPlayer;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import static com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem.dealSkillDamage;
@@ -19,7 +23,7 @@ import java.util.List;
 public class SkillBahuang4 extends BaseSkillItem {
     @Override public float getBaseCost() { return 230f; }
     @Override public float getDamageMultiplier() { return 2.8f; }
-    @Override public int getCastTime() { return 60; }
+    @Override public int getCastTime() { return 20; }
 
     @Override
     public String getDescriptionKey() {
@@ -34,7 +38,13 @@ public class SkillBahuang4 extends BaseSkillItem {
             Vec3 right = new Vec3(-look.z, 0, look.x); // 计算右向量
 
             // ---- 特效：一道沿前方推进的“斩浪之墙” —— 十道竖直月牙 + 顶缘亮线 + 水面裂线 ----
-            ParticleFx fx = ParticleFx.of(level, player);
+            boolean shaderFx = SkillFxToggle.useShader(player) && player instanceof ServerPlayer;
+            if (shaderFx) {
+                ServerPlayer sp = (ServerPlayer) player;
+                SkillFieldSender.send(sp, SkillEffectStyles.BEAM_BAHUANG_RAY, sp.getX(), sp.getY(), sp.getZ(), 1.0F, 12);
+                SkillFieldSender.send(sp, SkillEffectStyles.BURST_BAHUANG, sp.getX(), sp.getY(), sp.getZ(), 1.2F, 10);
+            }
+            ParticleFx fx = shaderFx ? null : ParticleFx.of(level, player);
             double rot = serverLevel.getGameTime() * 0.55;
             if (fx != null) {
                 fx.budget(2400);

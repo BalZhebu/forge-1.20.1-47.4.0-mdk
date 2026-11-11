@@ -1,5 +1,9 @@
 package com.TovidY.kunluncontinent.item.baseskillist.liejinhu.one;
 
+import com.TovidY.kunluncontinent.render.skill.SkillEffectStyles;
+import com.TovidY.kunluncontinent.render.skill.SkillFieldSender;
+import com.TovidY.kunluncontinent.render.skill.SkillFxToggle;
+import net.minecraft.server.level.ServerPlayer;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
@@ -60,7 +64,13 @@ public class SkillLeijinhu1 extends BaseSkillItem {
             List<Entity> targets = level.getEntities(player, player.getBoundingBox().inflate(range));
 
             // ---- 特效：三道平行虎爪痕（竖直弧） + 金色爆点 ----
-            ParticleFx fx = ParticleFx.of(level, player);
+            boolean shaderFx = SkillFxToggle.useShader(player) && player instanceof ServerPlayer;
+            if (shaderFx) {
+                ServerPlayer sp = (ServerPlayer) player;
+                SkillFieldSender.send(sp, SkillEffectStyles.SIGIL_LIETIAN, sp.getX(), sp.getY(), sp.getZ(), 5.0F, 40);
+                SkillFieldSender.send(sp, SkillEffectStyles.BURST_LIETIAN, sp.getX(), sp.getY(), sp.getZ(), 1.4F, 14);
+            }
+            ParticleFx fx = shaderFx ? null : ParticleFx.of(level, player);
             double rot = serverLevel.getGameTime() * 0.5;
             if (fx != null) {
                 Vec3 look = player.getLookAngle();

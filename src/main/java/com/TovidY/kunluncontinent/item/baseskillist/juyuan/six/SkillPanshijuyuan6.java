@@ -1,5 +1,9 @@
 package com.TovidY.kunluncontinent.item.baseskillist.juyuan.six;
 
+import com.TovidY.kunluncontinent.render.skill.SkillEffectStyles;
+import com.TovidY.kunluncontinent.render.skill.SkillFieldSender;
+import com.TovidY.kunluncontinent.render.skill.SkillFxToggle;
+import net.minecraft.server.level.ServerPlayer;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -33,7 +37,14 @@ public class SkillPanshijuyuan6 extends BaseSkillItem {
             nbt.putFloat("LieDiDamage", finalDamage);
 
             // ---- 起跳特效：大地被踏碎的上升气流（落地由服务端 Tick 事件接力）----
-            ParticleFx fx = ParticleFx.of(level, player);
+            boolean shaderFx = SkillFxToggle.useShader(player) && player instanceof ServerPlayer;
+            if (shaderFx) {
+                ServerPlayer sp = (ServerPlayer) player;
+                SkillFieldSender.send(sp, SkillEffectStyles.BEAM_STONE_PILLAR, sp.getX(), sp.getY(), sp.getZ(), 1.0F, 20);
+                SkillFieldSender.send(sp, SkillEffectStyles.SHOCK_JUYUAN, sp.getX(), sp.getY(), sp.getZ(), 3.2F, 14);
+                SkillFieldSender.send(sp, SkillEffectStyles.BURST_JUYUAN, sp.getX(), sp.getY(), sp.getZ(), 1.3F, 12);
+            }
+            ParticleFx fx = shaderFx ? null : ParticleFx.of(level, player);
             if (fx != null) {
                 ServerLevel serverLevel = (ServerLevel) level;
                 Vec3 base = player.position();

@@ -1,5 +1,8 @@
 package com.TovidY.kunluncontinent.item.baseskillist.zhenshen;
 
+import com.TovidY.kunluncontinent.render.skill.SkillEffectStyles;
+import com.TovidY.kunluncontinent.render.skill.SkillFieldSender;
+import com.TovidY.kunluncontinent.render.skill.SkillFxToggle;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.potion.ModEffects;
 import net.minecraft.core.particles.ParticleTypes;
@@ -34,7 +37,10 @@ public class SkillPohun7 extends BaseZhenshenSkill {
         player.displayClientMessage(Component.literal("§c§l第七魂技：破魂枪真身！"), true);
 
         // ---- 特效：真身降临 —— 立体法阵塔 + 环绕上升魂焰 ----
-        ParticleFx fx = ParticleFx.of(level, player);
+        if (SkillFxToggle.useShader(player)) {
+            SkillFieldSender.send(player, SkillEffectStyles.SIGIL_POHUN_SUMMON, player.getX(), player.getY(), player.getZ(), 2.4F, 60);
+        }
+        ParticleFx fx = SkillFxToggle.useShader(player) ? null : ParticleFx.of(level, player);
         if (fx != null) {
             Vec3 base = player.position();
             double rot = level.getGameTime() * 0.34;
@@ -57,7 +63,10 @@ public class SkillPohun7 extends BaseZhenshenSkill {
 
     @Override
     protected void playDeactivateFx(ServerLevel level, ServerPlayer player) {
-        ParticleFx fx = ParticleFx.of(level, player);
+        if (SkillFxToggle.useShader(player)) {
+            SkillFieldSender.send(player, SkillEffectStyles.SHOCK_POHUN, player.getX(), player.getY(), player.getZ(), 3.0F, 10);
+        }
+        ParticleFx fx = SkillFxToggle.useShader(player) ? null : ParticleFx.of(level, player);
         if (fx != null) {
             Vec3 base = player.position();
             fx.budget(360);

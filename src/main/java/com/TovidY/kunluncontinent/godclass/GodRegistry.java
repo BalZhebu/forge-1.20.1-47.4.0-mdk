@@ -167,6 +167,28 @@ public class GodRegistry {
                 .addFinalAttrReward("baojishanghai", 400f, "§4神位奖励：暴击伤害+400%")
 
                 ;
+
+        // ============================================================
+        // 孤竹神（彩蛋路，见 LoneBambooGodPath / LoneBambooTrial）
+        //
+        // 前八考都是「吸收第 N+1 枚孤竹魂环」，由吸收回调自动判定（GodTaskType.TRIAL）；
+        // 第九考是事件考（幽冥登天），只能靠面板上的「开启试炼考核」启动。
+        // 这里的 task 文字只用于面板显示，判定逻辑不在本类。
+        // ============================================================
+        String[] cn = {"", "一", "二", "三", "四", "五", "六", "七", "八"};
+        GodInfo loneBamboo = register(LoneBambooGodPath.GOD_ID, LoneBambooGodPath.GOD_NAME);
+        for (int stage = 1; stage <= 8; stage++) {
+            loneBamboo
+                    .addTask(stage, GodTaskType.TRIAL, "any", 1,
+                            "第" + cn[stage] + "考：吸收第 " + (stage + 1) + " 枚孤竹魂环")
+                    .addItemReward(stage, Items.BAMBOO, 1, "§a竹子 x1");
+        }
+        loneBamboo
+                .addTask(9, GodTaskType.TRIAL, "any", 1,
+                        "第九考：幽冥登天 —— 在 Y ≤ -60 处以孤竹之力升至 Y ≥ 500（面板点「开启试炼考核」）")
+                .addFinalAttrReward("maxshengming", 200000f, "§2神位奖励：生命值+20万")
+                .addFinalAttrReward("maxjingshenli", 3000f, "§2神位奖励：精神力+3000")
+                .addFinalAttrReward("dengji", 1f, "§2神位奖励：百级");
     }
 
 

@@ -44,35 +44,8 @@ public class ModZhCnLangProvider extends LanguageProvider {
 
         //别忘了写分配技能的类
         //技能代码
-        add(ModItems.SKILL_POHUN_1.get(), "§c《破魂枪》第一魂技[破魂枪]");
-        add(ModItems.SKILL_POHUN_2.get(), "§c《破魂枪》第二魂技[枪芒]");
-        add(ModItems.SKILL_POHUN_3.get(), "§c《破魂枪》第三魂技[破甲]");
-        add(ModItems.SKILL_POHUN_4.get(), "§c《破魂枪》第四魂技[贯日]");
-        add(ModItems.SKILL_POHUN_5.get(), "§c《破魂枪》第五魂技[碎星]");
-        add(ModItems.SKILL_POHUN_6.get(), "§c《破魂枪》第六魂技[巨枪]");
-        add(ModItems.SKILL_POHUN_7.get(), "§c《破魂枪》第七魂技[武魂真身]");
-        add(ModItems.SKILL_POHUN_8.get(), "§c《破魂枪》第八魂技[裂空]");
-        add(ModItems.SKILL_POHUN_9.get(), "§c《破魂枪》第九魂技[弑神]");
 
-        add(ModItems.SKILL_BAHUANG_1.get(), "§c《八荒戟》第一魂技[八荒戟]");
-        add(ModItems.SKILL_BAHUANG_2.get(), "§c《八荒戟》第二魂技[横扫]");
-        add(ModItems.SKILL_BAHUANG_3.get(), "§c《八荒戟》第三魂技[劈山]");
-        add(ModItems.SKILL_BAHUANG_4.get(), "§c《八荒戟》第四魂技[断江]");
-        add(ModItems.SKILL_BAHUANG_5.get(), "§c《八荒戟》第五魂技[镇岳]");
-        add(ModItems.SKILL_BAHUANG_6.get(), "§c《八荒戟》第六魂技[破军]");
-        add(ModItems.SKILL_BAHUANG_7.get(), "§c《八荒戟》第七魂技[武魂真身]");
-        add(ModItems.SKILL_BAHUANG_8.get(), "§c《八荒戟》第八魂技[降雷]");
-        add(ModItems.SKILL_BAHUANG_9.get(), "§c《八荒戟》第九魂技[八荒寂灭]");
 
-        add(ModItems.SKILL_LEIJINHU_1.get(), "§c《裂金虎》第一魂技[横爪]");
-        add(ModItems.SKILL_LEIJINHU_2.get(), "§c《裂金虎》第二魂技[虎啸]");
-        add(ModItems.SKILL_LEIJINHU_3.get(), "§c《裂金虎》第三魂技[裂石]");
-        add(ModItems.SKILL_LEIJINHU_4.get(), "§c《裂金虎》第四魂技[碎金]");
-        add(ModItems.SKILL_LEIJINHU_5.get(), "§c《裂金虎》第五魂技[扑杀]");
-        add(ModItems.SKILL_LEIJINHU_6.get(), "§c《裂金虎》第六魂技[啸月]");
-        add(ModItems.SKILL_LEIJINHU_7.get(), "§c《裂金虎》第七魂技[武魂真身]");
-        add(ModItems.SKILL_LEIJINHU_8.get(), "§c《裂金虎》第八魂技[裂天]");
-        add(ModItems.SKILL_LEIJINHU_9.get(), "§c《裂金虎》第九魂技[猛虎破界]");
 
         //变体魂技：与横爪同属第一魂技槽位，获得时随机五选一
         add(ModItems.SKILL_LEIJINHU_1B.get(), "§c《裂金虎》第一魂技[金牙连斩]");
@@ -80,26 +53,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.SKILL_LEIJINHU_1D.get(), "§c《裂金虎》第一魂技[噬金]");
         add(ModItems.SKILL_LEIJINHU_1E.get(), "§c《裂金虎》第一魂技[虎爪裂地]");
 
-        add(ModItems.SKILL_PANSHIJUYUAN_1.get(), "§c《磐石巨猿》第一魂技[重击]");
-        add(ModItems.SKILL_PANSHIJUYUAN_2.get(), "§c《磐石巨猿》第二魂技[石肤]");
-        add(ModItems.SKILL_PANSHIJUYUAN_3.get(), "§c《磐石巨猿》第三魂技[震地]");
-        add(ModItems.SKILL_PANSHIJUYUAN_4.get(), "§c《磐石巨猿》第四魂技[搬山]");
-        add(ModItems.SKILL_PANSHIJUYUAN_5.get(), "§c《磐石巨猿》第五魂技[撼地]");
-        add(ModItems.SKILL_PANSHIJUYUAN_6.get(), "§c《磐石巨猿》第六魂技[裂地]");
-        add(ModItems.SKILL_PANSHIJUYUAN_7.get(), "§c《磐石巨猿》第七魂技[武魂真身]");
-        add(ModItems.SKILL_PANSHIJUYUAN_8.get(), "§c《磐石巨猿》第八魂技[撼岳]");
-        add(ModItems.SKILL_PANSHIJUYUAN_9.get(), "§c《磐石巨猿》第九魂技[不周倾]");
 
-        //天使（1~9 魂技）
-        add(ModItems.SKILL_TIANSHI_1.get(), "§e《天使》第一魂技[圣光斩]");
-        add(ModItems.SKILL_TIANSHI_2.get(), "§e《天使》第二魂技[天使之翼]");
-        add(ModItems.SKILL_TIANSHI_3.get(), "§e《天使》第三魂技[圣愈之光]");
-        add(ModItems.SKILL_TIANSHI_4.get(), "§e《天使》第四魂技[审判之矛]");
-        add(ModItems.SKILL_TIANSHI_5.get(), "§e《天使》第五魂技[神圣庇护]");
-        add(ModItems.SKILL_TIANSHI_6.get(), "§e《天使》第六魂技[圣光锁链]");
-        add(ModItems.SKILL_TIANSHI_7.get(), "§e《天使》第七魂技[武魂真身]");
-        add(ModItems.SKILL_TIANSHI_8.get(), "§e《天使》第八魂技[圣裁之域]");
-        add(ModItems.SKILL_TIANSHI_9.get(), "§e《天使》第九魂技[终焉救赎]");
 
         //变体魂技：与重击同属第一魂技槽位，获得时随机五选一
         add(ModItems.SKILL_PANSHIJUYUAN_1B.get(), "§c《磐石巨猿》第一魂技[崩拳]");
@@ -110,6 +64,22 @@ public class ModZhCnLangProvider extends LanguageProvider {
         // ===== 特殊魂技（com.TovidY.kunluncontinent.special 包）=====
         add(ModItems.SKILL_POLE_VAULT.get(), "§b《孤竹》特殊魂技[撑杆跳]");
         add("skill.pole_vault.description", "消耗%s点精神力，撑杆一跃，原地弹起约6格，落地不会受伤。");
+
+        // ===== 声明式武魂：魂技名自动生成，不用再手写一行行 add =====
+        String[] cn = {"", "一", "二", "三", "四", "五", "六", "七", "八", "九"};
+        for (com.TovidY.kunluncontinent.item.wuhun.WuhunDef def
+                : com.TovidY.kunluncontinent.item.wuhun.WuhunRegistry.all()) {
+            for (int slot = 1; slot <= 9; slot++) {
+                String skillName = def.skillName(slot);
+                if (skillName == null) {
+                    continue;
+                }
+                for (var skillItem : def.ownedSkills(slot)) {
+                    add(skillItem.get(), def.color() + "《" + def.displayName() + "》第" + cn[slot]
+                            + "魂技[" + skillName + "]");
+                }
+            }
+        }
 
         add("无技能","暂无技能描述");
 
@@ -124,6 +94,19 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("skill.pohunqiang.nine.description","消耗%s点精神力，释放弑神：对身前路径上所有生物造成巨额伤害，并附加虚弱2，各有5%%的概率直接斩杀；目标为玩家时，玩家等级越高斩杀概率越高");
 
         add("skill.bakuangji.one.description", "消耗%s点精神力，凝结武魂实体化。");
+
+        // ===== 七杀剑 =====
+        add("tooltip.kunluncontinent.qishajian",
+                "拿在副手或主手上时每3秒扣除1点精神力 \n持有时玩家最终攻击力增加1.25% \n增加的百分比根据玩家等级变化 \n最高增幅4.5%");
+        add("skill.qishajian.one.description", "消耗%s点精神力，凝结七杀剑本体（优先放入副手），断剑之前杀意不散。");
+        add("skill.qishajian.two.description", "消耗%s点精神力，挥出一道红色剑波横扫身前扇形（最远 5 格），命中者附加裂伤。");
+        add("skill.qishajian.three.description", "消耗%s点精神力，向前冲刺 12 格，路径上的敌人受到伤害并被减速，身后留下暗红残影。");
+        add("skill.qishajian.four.description", "消耗%s点精神力，在脚下展开暗红法阵，阵内生物受到高额伤害并被减速 III。");
+        add("skill.qishajian.five.description", "消耗%s点精神力，天降一剑砸在身前，对落点周围 8 格内生物造成高额伤害并施加虚弱 I（10 秒）。");
+        add("skill.qishajian.six.description", "展开半径 20 格的暗红结界，持续 5 秒，每 0.5 秒对结界内生物造成一次伤害。");
+        add("skill.qishajian.seven.description", "开启七杀真身（可再次释放关闭）：物攻翻倍，其余属性不变。");
+        add("skill.qishajian.eight.description", "锁定 30 格内所有敌人，5 秒内每只各被 7 道剑影逐次命中（每 0.5 秒一剑），期间无法移动。");
+        add("skill.qishajian.nine.description", "消耗%s点精神力，对 80 格内生物造成巨额伤害，随后每 0.1 秒追加一次伤害，持续 3 秒。");
         add("skill.bahuangji.two.description", "消耗%s点精神力，释放横扫：对面前扇形范围敌人造成伤害");
         add("skill.bahuangji.three.description", "消耗%s点精神力，释放劈山：跳劈对范围敌人造成巨额伤害");
         add("skill.bahuangji.four.description", "消耗%s点精神力，释放断江：横向挥出，化作一道半月形光刃，宽4格可向前飞行10格。");
@@ -167,7 +150,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("skill.tianshi.four.description", "消耗%s点精神力，审判之矛：对前方 20 格长、3 格宽、4 格高范围内的敌人造成高倍率伤害，并有较高概率直接斩杀实力低于你的目标");
         add("skill.tianshi.five.description", "消耗%s点精神力，神圣庇护：立刻回复最大生命的 30%%~70%%（随等级与魂环年限提升），并获得短暂抗性提升");
         add("skill.tianshi.six.description", "消耗%s点精神力，圣光锁链：对自身周围 30 格内的所有敌人造成一次伤害，并附加【禁锢】——移速归零、无法攻击，持续时间 3~120 秒（目标越弱锁得越久）");
-        add("skill.tianshi.seven.description", "开启天使真身：攻击 +80%%、最大生命 +50%%、防御 +25%%、暴击率 +15%%、暴击伤害 +35%%、生命回复 +30%%；维持消耗为普通武魂的10倍，精神力低于上限10%%时自动解除，再次释放可提前关闭。开启后进入冷却");
+        add("skill.tianshi.seven.description", "开启天使真身：全属性提升；维持消耗为普通武魂的10倍，精神力低于上限10%%时自动解除，再次释放可提前关闭。开启后进入冷却");
         add("skill.tianshi.eight.description", "消耗%s点精神力，圣裁之域：展开半径 20 格的圣光领域，持续 20 秒。每 2 秒从中心推翻出一圈光波，被扫到的敌人受到伤害并被禁锢 10 秒；范围内除你以外的生物无法离开");
         add("skill.tianshi.nine.description", "消耗%s点精神力，终焉救赎：巨大的圣光从天而降砸向准星所指的地面，落地后光波向外扩散至 30 格，扫到的敌人受到极高倍率伤害，并有 1%% 概率无视实力直接斩杀");
 
@@ -443,16 +426,16 @@ public class ModZhCnLangProvider extends LanguageProvider {
         // ===== 神祇进阶 =====
         add("adv.kunlun.god_ring_blessed.title","神赐魂环");
         add("adv.kunlun.god_ring_blessed.desc","封神之时，神格凝结出专属于你的魂环。");
-        add("adv.kunlun.rank_zhun_shen.title","准神");
-        add("adv.kunlun.rank_zhun_shen.desc","达到 121 级，正式踏入准神之境。");
-        add("adv.kunlun.rank_san_ji_shen.title","三级神");
-        add("adv.kunlun.rank_san_ji_shen.desc","达到 141 级，位列三级神。");
-        add("adv.kunlun.rank_er_ji_shen.title","二级神");
-        add("adv.kunlun.rank_er_ji_shen.desc","达到 161 级，位列二级神。");
-        add("adv.kunlun.rank_yi_ji_shen.title","一级神");
-        add("adv.kunlun.rank_yi_ji_shen.desc","达到 181 级，位列一级神。");
-        add("adv.kunlun.rank_shen_wang.title","神王");
-        add("adv.kunlun.rank_shen_wang.desc","达到 196 级，登临神王之位。");
+        add("adv.kunlun.rank_zhun_shen.title","三级神");
+        add("adv.kunlun.rank_zhun_shen.desc","达到 121 级，正式踏入三级神之境。");
+        add("adv.kunlun.rank_san_ji_shen.title","二级神");
+        add("adv.kunlun.rank_san_ji_shen.desc","达到 141 级，位列二级神。");
+        add("adv.kunlun.rank_er_ji_shen.title","一级神");
+        add("adv.kunlun.rank_er_ji_shen.desc","达到 161 级，位列一级神。");
+        add("adv.kunlun.rank_yi_ji_shen.title","神王");
+        add("adv.kunlun.rank_yi_ji_shen.desc","达到 181 级，位列神王。");
+        add("adv.kunlun.rank_shen_wang.title","至高神王");
+        add("adv.kunlun.rank_shen_wang.desc","达到 196 级，登临至高神王之位。");
 
         // ===== 武魂 / 装备 / 转生 =====
         add("adv.kunlun.wuhun_zhenshen.title","武魂真身");
@@ -507,6 +490,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.EXTREME_COLD_SNOWFLAKE_FRAGMENT.get(), "§b雪晶碎片");
         add(ModItems.POHUNQIANG.get(), "§c破魂枪");
         add(ModItems.BAHUANGJI.get(), "§c八荒戟");
+        add(ModItems.QISHAJIAN.get(), "§c七杀剑");
 
         //矿石类
         add(ModItems.GRAY_IRON_INGOT.get(),"§8灰铁锭");
@@ -757,6 +741,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         //武魂果实
         add(ModItems.GUOSHI_POHUNQIANG.get(), "§c武魂精华 - 破魂枪");
         add(ModItems.GUOSHI_BAHUANGJI.get(), "§c武魂精华 - 八荒戟");
+        add(ModItems.GUOSHI_QISHAJIAN.get(), "§c武魂精华 - 七杀剑");
         add(ModItems.GUOSHI_LEIJINHU.get(), "§c武魂精华 - 裂金虎");
         add(ModItems.GUOSHI_PANSHIJUYUAN.get(), "§c武魂精华 - 磐石巨猿");
         add(ModItems.GUOSHI_TIANSHI.get(), "§c武魂精华 - 天使");
@@ -783,6 +768,8 @@ public class ModZhCnLangProvider extends LanguageProvider {
 
         //GUI
         add("gui.kunluncontinent.shift_hint","§e 提示：按住Shift键查看详细数值信息");
+        // 配置面板把「数值显示模式」反转成"完整为主"之后，命中提示要说明 Shift 变成看缩写
+        add("gui.kunluncontinent.shift_hint_compact","§e 提示：按住Shift键查看缩写数值信息");
 
         //武魂类
         add("未开启或觉醒武魂", "§c未开启或觉醒武魂");

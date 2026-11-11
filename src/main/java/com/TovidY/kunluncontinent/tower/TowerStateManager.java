@@ -1,75 +1,110 @@
-package com.TovidY.kunluncontinent.tower; // 请对齐你原本的包名
+package com.TovidY.kunluncontinent.tower;
 
+import com.TovidY.kunluncontinent.KlMain;
+import com.TovidY.kunluncontinent.worldgen.ModDimensions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class TowerStateManager {
-    // 【核心账本】记录每座塔当前是谁在挑战 (KEY: 塔ID, VALUE: 玩家的UUID)
-    // 初始可能是 0-99，满了之后会自动追加 100, 101, 102...
+/**
+ * 幻境塔的<b>占用账本</b>：记录每一座塔当前被哪位玩家占用。
+ *
+ * <h3>这次改了什么</h3>
+ * <ul>
+ *   <li><b>不再缓存"总塔数"</b>：原来 {@code currentTotalTowers} 在类初始化时读一次
+ *       {@code TowerPreBuilder.getTotalTowers()} 就固定了。而预生成实际只建
+ *       10（客户端）/ 50（服务器）座 —— 如果账本先于预生成器初始化（例如玩家在大世界
+ *       就按下了石印），它就会以为有 100 座塔，把玩家分到<b>根本没建过的空塔</b>里，
+ *       传送过去直接掉虚空。现在每次分配都现读 {@link TowerPreBuilder#getBuiltTowers()}，
+ *       只扫"确实已经建好"的区间。</li>
+ *   <li><b>扩容建塔建到塔维度去</b>：原来用 {@code player.serverLevel()}（= 玩家当前所在维度，
+ *       通常是大世界）当目标维度，池子满了就会把一座塔<b>盖在大世界的 x=towerId*300 处</b>。
+ *       现在固定取塔维度。</li>
+ *   <li>日志从 {@code System.out} 换成 {@link KlMain#LOGGER}。</li>
+ * </ul>
+ *
+ * <p>分配/释放都加了 {@code synchronized}（与原实现一致）：账本被玩家进塔、死亡、
+ * 换维度多条路径同时动，虽然都在主线程，但保持串行更不容易出错。</p>
+ */
+public final class TowerStateManager {
+
+    /** 每座塔当前是谁在挑战（KEY: 塔 id，VALUE: 玩家 UUID）。 */
     private static final Map<Integer, UUID> TOWER_OCCUPANCY = new HashMap<>();
 
-    // 自定义一个当前服务器最大的塔总数变量，初始值对应独立服务器的 100
-    private static int currentTotalTowers = TowerPreBuilder.getTotalTowers();
+    private TowerStateManager() {
+    }
 
     /**
-     * 为准备进入的玩家寻找并抢占一座空闲的塔
-     * @return 返回分配的塔 ID（如果满了会自动现场扩建并返回新 ID）
+     * 为准备进入的玩家挑一座空闲塔并立刻占用。
+     *
+     * @return 塔 id；<b>-1</b> 表示现在一座都进不去（还在预生成 / 塔维度没加载）
      */
     public static synchronized int allocateFreeTower(ServerPlayer player) {
         UUID playerUUID = player.getUUID();
 
-        // 1. 防呆机制：如果这个修士已经在某座塔里了（比如掉线重连），直接送他回他原本占用的那座塔
+        // 1. 防呆：已经在某座塔里的（掉线重连等）直接回原塔
         for (Map.Entry<Integer, UUID> entry : TOWER_OCCUPANCY.entrySet()) {
             if (entry.getValue().equals(playerUUID)) {
                 return entry.getKey();
             }
         }
 
-        // 2. 动态扫描当前的公共池（i < currentTotalTowers）
-        // 关键点：因为离开时会 removeIf，所以前人退出来的扩容塔（比如第 101 座）会在这里直接被后续其他人扫描并复用！
-        for (int i = 0; i < currentTotalTowers; i++) {
+        // 2. 只在【已建成】的区间里找空位 —— 未建好的塔分出去就是掉虚空
+        int built = TowerPreBuilder.getBuiltTowers();
+        for (int i = 0; i < built; i++) {
             if (!TOWER_OCCUPANCY.containsKey(i)) {
-                TOWER_OCCUPANCY.put(i, playerUUID); // 立刻登记锁定占领！
-                System.out.println("[昆仑大陆] 分配成功：玩家 " + player.getName().getString() + " 抢占了现成的第 " + (i + 1) + " 号幻境塔");
+                TOWER_OCCUPANCY.put(i, playerUUID);
+                KlMain.LOGGER.info("[昆仑大陆] 幻境塔分配：{} → 第 {} 座", player.getName().getString(), i + 1);
                 return i;
             }
         }
 
-        ServerLevel towerLevel = player.serverLevel(); // 获取当前虚空维度的上下文
-        int newTowerId = currentTotalTowers;
+        // 3. 池子满了：预生成还没跑完就先别给（否则给的是空塔）
+        if (TowerPreBuilder.isGenerating()) {
+            KlMain.LOGGER.info("[昆仑大陆] 幻境塔分配失败：{} 想进塔，但预生成尚未完成（已建 {} 座）",
+                    player.getName().getString(), built);
+            return -1;
+        }
 
-        System.out.println("[昆仑大陆] 警告：当前幻境负载！正在为玩家 " + player.getName().getString() + " 动态筑造第 " + (newTowerId + 1) + " 座幻境塔...");
+        // 4. 现场扩容：⚠️ 目标维度必须是【塔维度】，不是玩家当前所在的大世界
+        ServerLevel towerLevel = player.server.getLevel(ModDimensions.TOWER_REALM_LEVEL_KEY);
+        if (towerLevel == null) {
+            KlMain.LOGGER.error("[昆仑大陆] 幻境塔分配失败：塔维度未加载，无法为 {} 扩建",
+                    player.getName().getString());
+            return -1;
+        }
+
+        int newTowerId = built;
+        KlMain.LOGGER.info("[昆仑大陆] 幻境塔已满（{} 座），为 {} 现场扩建第 {} 座",
+                built, player.getName().getString(), newTowerId + 1);
 
         TowerPreBuilder.buildSingleTowerDirectly(towerLevel, newTowerId);
-
-        currentTotalTowers++;
-
         TOWER_OCCUPANCY.put(newTowerId, playerUUID);
-        System.out.println("[昆仑大陆] 扩容成功：玩家 " + player.getName().getString() + " 成功入驻新筑造的第 " + (newTowerId + 1) + " 号幻境塔");
-
         return newTowerId;
     }
 
     /**
-     * 当玩家挑战成功离开、死亡或者退出游戏时，必须调用此方法释放塔的占用
-     * 你原本的代码已经非常完美，不需要做任何变动！人走茶凉，塔自动变回公开状态！
+     * 玩家离开（挑战完成 / 死亡 / 退出）时释放他的塔。
+     *
+     * <p>人走茶凉：塔立刻回到公共池，后面的人可以复用。</p>
      */
     public static synchronized void releaseTower(ServerPlayer player) {
         UUID playerUUID = player.getUUID();
         TOWER_OCCUPANCY.entrySet().removeIf(entry -> {
             if (entry.getValue().equals(playerUUID)) {
-                System.out.println("[昆仑大陆] 释放成功：玩家 " + player.getName().getString() + " 离开了第 " + (entry.getKey() + 1) + " 号幻境塔，该塔已转为公开可用");
+                KlMain.LOGGER.info("[昆仑大陆] 幻境塔释放：{} 离开第 {} 座，该塔转为空闲",
+                        player.getName().getString(), entry.getKey() + 1);
                 return true;
             }
             return false;
         });
     }
 
+    /** 清空所有占用（服务器关服/重载时用）。 */
     public static synchronized void clearAllOccupancy() {
         TOWER_OCCUPANCY.clear();
     }
-
 }

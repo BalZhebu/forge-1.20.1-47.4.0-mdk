@@ -95,31 +95,55 @@ public class DecompositionItem extends Item {
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END || event.player.level().isClientSide) return;
         Player player = event.player;
+        if (player.level().getGameTime() % 10 != 0) return;
+
         ItemStack mainHand = player.getMainHandItem();
         ItemStack offHand = player.getOffhandItem();
+
+        // ① 拿在手上：永远可用（与原逻辑一致）
         for (ItemStack stack : new ItemStack[]{mainHand, offHand}) {
-            if (stack.getItem() instanceof DecompositionItem decomposer) {
-                CompoundTag tag = stack.getOrCreateTag();
-                if (!tag.getBoolean("decomposition_active")) continue;
-                if (player.level().getGameTime() % 10 != 0) continue;
-                int range = decomposer.getDecompositionRange();
-                AABB area = new AABB(
-                        player.getX() - range, player.getY() - 5, player.getZ() - range,
-                        player.getX() + range, player.getY() + 5, player.getZ() + range
-                );
-                List<HunhuanEntity> hunhuans = player.level().getEntitiesOfClass(
-                        HunhuanEntity.class, area,
-                        e -> e.isAlive() && !e.isVehicle()
-                );
-                hunhuans.forEach(hunhuan -> {
-                    hunhuan.livetime += 1000;
-                    player.level().playSound(
-                            null, hunhuan.getX(), hunhuan.getY(), hunhuan.getZ(),
-                            SoundEvents.ITEM_BREAK, SoundSource.PLAYERS, 0.7F, 1.0F
-                    );
-                });
+            if (stack.getItem() instanceof DecompositionItem decomposer && isActive(stack)) {
+                applyDecomposition(player, decomposer);
             }
         }
+
+        // ② 配置位 18 打开时：背包里放着也生效
+        if (!SoulGatheringBottleItem.configOn(player, SoulGatheringBottleItem.CONFIG_INV_DECOMPOSITION)) {
+            return;
+        }
+        for (ItemStack stack : player.getInventory().items) {
+            if (stack == mainHand || stack == offHand) continue;
+            if (stack.getItem() instanceof DecompositionItem decomposer && isActive(stack)) {
+                applyDecomposition(player, decomposer);
+                // 一只就够：效果是"范围内魂环加速消失"，背包里放两只会让每只魂环重复播音效
+                break;
+            }
+        }
+    }
+
+    /** 分解器是否处于开启状态（右键两次开启后写在 NBT 里）。用 hasTag 扫描背包，别顺手创建空 NBT。 */
+    private static boolean isActive(ItemStack stack) {
+        return stack.hasTag() && stack.getTag().getBoolean("decomposition_active");
+    }
+
+    /** 把范围内所有魂环实体的存活时间 +1000 tick（= 立刻进入消散）。 */
+    private static void applyDecomposition(Player player, DecompositionItem decomposer) {
+        int range = decomposer.getDecompositionRange();
+        AABB area = new AABB(
+                player.getX() - range, player.getY() - 5, player.getZ() - range,
+                player.getX() + range, player.getY() + 5, player.getZ() + range
+        );
+        List<HunhuanEntity> hunhuans = player.level().getEntitiesOfClass(
+                HunhuanEntity.class, area,
+                e -> e.isAlive() && !e.isVehicle()
+        );
+        hunhuans.forEach(hunhuan -> {
+            hunhuan.livetime += 1000;
+            player.level().playSound(
+                    null, hunhuan.getX(), hunhuan.getY(), hunhuan.getZ(),
+                    SoundEvents.ITEM_BREAK, SoundSource.PLAYERS, 0.7F, 1.0F
+            );
+        });
     }
 
     @Override

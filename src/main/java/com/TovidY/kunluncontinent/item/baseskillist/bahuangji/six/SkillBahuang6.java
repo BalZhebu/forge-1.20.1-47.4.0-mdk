@@ -1,5 +1,9 @@
 package com.TovidY.kunluncontinent.item.baseskillist.bahuangji.six;
 
+import com.TovidY.kunluncontinent.render.skill.SkillEffectStyles;
+import com.TovidY.kunluncontinent.render.skill.SkillFieldSender;
+import com.TovidY.kunluncontinent.render.skill.SkillFxToggle;
+import net.minecraft.server.level.ServerPlayer;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import static com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem.dealSkillDamage;
@@ -32,7 +36,14 @@ public class SkillBahuang6 extends BaseSkillItem {
             player.hurtMarked = true;
 
             // ---- 特效：三十格影杀突进 —— 缠绕暗影的螺旋轨迹 + 每隔五格一道爆裂环 ----
-            ParticleFx fx = ParticleFx.of(level, player);
+            boolean shaderFx = SkillFxToggle.useShader(player) && player instanceof ServerPlayer;
+            if (shaderFx) {
+                ServerPlayer sp = (ServerPlayer) player;
+                SkillFieldSender.send(sp, SkillEffectStyles.BEAM_BAHUANG_PILLAR, sp.getX(), sp.getY(), sp.getZ(), 1.7F, 18);
+                SkillFieldSender.send(sp, SkillEffectStyles.SHOCK_BAHUANG, sp.getX(), sp.getY(), sp.getZ(), 3.4F, 14);
+                SkillFieldSender.send(sp, SkillEffectStyles.BURST_BAHUANG, sp.getX(), sp.getY(), sp.getZ(), 1.3F, 12);
+            }
+            ParticleFx fx = shaderFx ? null : ParticleFx.of(level, player);
             double rot = serverLevel.getGameTime() * 0.6;
             if (fx != null) {
                 Vec3 origin = player.position().add(0, 1.0, 0);

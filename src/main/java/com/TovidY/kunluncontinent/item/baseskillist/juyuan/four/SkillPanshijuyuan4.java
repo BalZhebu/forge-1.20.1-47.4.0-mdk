@@ -1,5 +1,9 @@
 package com.TovidY.kunluncontinent.item.baseskillist.juyuan.four;
 
+import com.TovidY.kunluncontinent.render.skill.SkillEffectStyles;
+import com.TovidY.kunluncontinent.render.skill.SkillFieldSender;
+import com.TovidY.kunluncontinent.render.skill.SkillFxToggle;
+import net.minecraft.server.level.ServerPlayer;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import com.TovidY.kunluncontinent.potion.ModEffects;
@@ -32,7 +36,13 @@ public class SkillPanshijuyuan4 extends BaseSkillItem {
             ServerLevel serverLevel = (ServerLevel) level;
 
             // ---- 特效：搬山 —— 头顶悬浮巨石阵 + 地脉光柱 + 抬升气流 ----
-            ParticleFx fx = ParticleFx.of(level, player);
+            boolean shaderFx = SkillFxToggle.useShader(player) && player instanceof ServerPlayer;
+            if (shaderFx) {
+                ServerPlayer sp = (ServerPlayer) player;
+                SkillFieldSender.send(sp, SkillEffectStyles.SHOCK_JUYUAN, sp.getX(), sp.getY(), sp.getZ(), 3.0F, 10);
+                SkillFieldSender.send(sp, SkillEffectStyles.BURST_JUYUAN, sp.getX(), sp.getY(), sp.getZ(), 1.2F, 10);
+            }
+            ParticleFx fx = shaderFx ? null : ParticleFx.of(level, player);
             if (fx != null) {
                 Vec3 base = player.position();
                 double rot = serverLevel.getGameTime() * 0.26;

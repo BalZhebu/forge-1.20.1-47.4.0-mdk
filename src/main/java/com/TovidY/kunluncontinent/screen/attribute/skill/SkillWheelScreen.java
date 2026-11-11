@@ -1,5 +1,6 @@
 package com.TovidY.kunluncontinent.screen.attribute.skill;
 
+import com.TovidY.kunluncontinent.screen.KunlunScreenBase;
 import com.TovidY.kunluncontinent.Init.KeyMappingInit;
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.FlySpeedTuning;
@@ -12,7 +13,6 @@ import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -23,7 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SkillWheelScreen extends Screen {
+public class SkillWheelScreen extends KunlunScreenBase {
     private final PlayerAttributeCapability cap;
     private int hoveredSlot = -1;
 
@@ -43,8 +43,15 @@ public class SkillWheelScreen extends Screen {
     /** −/+ 按钮宽度。 */
     private static final int FLY_BTN_W = 20;
 
+    /**
+     * 布局设计基准：左侧按键面板（中心左移 250）+ 右侧技能详情（中心右移 270），
+     * 总宽约 525、总高约 222 —— 取 560×260 留出边距。
+     */
+    private static final int DESIGN_WIDTH = 560;
+    private static final int DESIGN_HEIGHT = 260;
+
     public SkillWheelScreen(PlayerAttributeCapability cap) {
-        super(Component.literal("Skill Wheel"));
+        super(Component.literal("Skill Wheel"), DESIGN_WIDTH, DESIGN_HEIGHT);
         this.cap = cap;
     }
 
@@ -57,12 +64,12 @@ public class SkillWheelScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    protected void renderContent(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         if (this.minecraft != null && this.minecraft.mouseHandler.isMouseGrabbed()) {
             this.minecraft.mouseHandler.releaseMouse();
         }
 
-        graphics.fill(0, 0, this.width, this.height, 0x66000000);
+        // 整屏暗化由基类在缩放外画（见 KunlunScreenBase#renderBackdrop）
 
         int centerX = this.width / 2;
         int centerY = this.height / 2;
@@ -278,7 +285,13 @@ public class SkillWheelScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(double screenX, double screenY, int button) {
+        // 面板可能被整体缩放过：先把屏幕坐标换算成"内容坐标"再做命中判断。
+        // ⚠️ super 仍然要传原始的 screenX/screenY —— 基类内部还会再换算一次，
+        //    这里传已经换算过的会变成"换算两次"。
+        double mouseX = panelX(screenX);
+        double mouseY = panelY(screenY);
+
         int centerX = this.width / 2;
         int centerY = this.height / 2;
         int panelX = centerX - 120 - LEFT_PANEL_WIDTH;
@@ -312,7 +325,7 @@ public class SkillWheelScreen extends Screen {
                 return true;
             }
         }
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(screenX, screenY, button);
     }
 
     @Override

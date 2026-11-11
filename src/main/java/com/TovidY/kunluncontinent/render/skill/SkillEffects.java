@@ -8,6 +8,8 @@ import com.TovidY.kunluncontinent.render.skill.effect.BeamEffect;
 import com.TovidY.kunluncontinent.render.skill.effect.BeamPreset;
 import com.TovidY.kunluncontinent.render.skill.effect.BurstEffect;
 import com.TovidY.kunluncontinent.render.skill.effect.FallEffect;
+import com.TovidY.kunluncontinent.render.skill.effect.QishaGlyphSigilEffect;
+import com.TovidY.kunluncontinent.render.skill.effect.QishaSwordFallEffect;
 import com.TovidY.kunluncontinent.render.skill.effect.SigilEffect;
 import com.TovidY.kunluncontinent.render.skill.effect.SigilPreset;
 import com.TovidY.kunluncontinent.render.skill.effect.ShockwaveEffect;
@@ -148,6 +150,67 @@ public final class SkillEffects {
         register(SkillEffectStyles.SHOCK_ANGEL, ShockwaveEffect::new);
         register(SkillEffectStyles.FALL_ANGEL_SWORD, FallEffect::new);
         register(SkillEffectStyles.BURST_ANGEL_HIT, burst(BurstEffect.ANGEL_HIT));
+
+        // =====================================================================
+        //  四大武魂 1~7：破魂枪（虚空紫金）
+        // =====================================================================
+        register(SkillEffectStyles.SHOCK_POHUN, ShockwaveEffect::new);
+        register(SkillEffectStyles.SIGIL_POHUN_SUMMON, sigil(SigilPreset.POHUN_SUMMON));
+        register(SkillEffectStyles.SIGIL_POHUN_FIELD, sigil(SigilPreset.POHUN_FIELD));
+        register(SkillEffectStyles.BEAM_POHUN_RAY, beam(BeamPreset.POHUN_RAY));
+        register(SkillEffectStyles.BEAM_POHUN_PILLAR, beam(BeamPreset.POHUN_PILLAR));
+        register(SkillEffectStyles.BURST_POHUN, burst(BurstEffect.POHUN_BURST));
+        // ---- 八荒戟（熔岩金）----
+        register(SkillEffectStyles.SHOCK_BAHUANG, ShockwaveEffect::new);
+        register(SkillEffectStyles.SIGIL_BAHUANG_SUMMON, sigil(SigilPreset.BAHUANG_SUMMON));
+        register(SkillEffectStyles.SIGIL_BAHUANG_FIELD, sigil(SigilPreset.BAHUANG_FIELD));
+        register(SkillEffectStyles.BEAM_BAHUANG_RAY, beam(BeamPreset.BAHUANG_RAY));
+        register(SkillEffectStyles.BEAM_BAHUANG_PILLAR, beam(BeamPreset.BAHUANG_PILLAR));
+        register(SkillEffectStyles.BURST_BAHUANG, burst(BurstEffect.BAHUANG_BURST));
+        register(SkillEffectStyles.SLASH_BAHUANG,
+                (owner, origin, radius, startTick, duration) ->
+                        new ArcEffect(owner, origin, radius, startTick, duration,
+                                0xFFD75C, 0x8A4B00));
+        // ---- 磐石巨猿（大地黄）----
+        register(SkillEffectStyles.SHOCK_JUYUAN, ShockwaveEffect::new);
+        register(SkillEffectStyles.SIGIL_JUYUAN_SUMMON, sigil(SigilPreset.JUYUAN_SUMMON));
+        register(SkillEffectStyles.SIGIL_JUYUAN_FIELD, sigil(SigilPreset.JUYUAN_FIELD));
+        register(SkillEffectStyles.BEAM_JUYUAN_RAY, beam(BeamPreset.JUYUAN_RAY));
+        register(SkillEffectStyles.BURST_JUYUAN, burst(BurstEffect.JUYUAN_BURST));
+        // ---- 裂金虎（金白）----
+        register(SkillEffectStyles.SHOCK_TIGER, ShockwaveEffect::new);
+        register(SkillEffectStyles.BEAM_TIGER_RAY, beam(BeamPreset.TIGER_RAY));
+
+        // =====================================================================
+        //  七杀剑 1~9：复用 sigil / beam / burst / shock，只加自己的预设
+        // =====================================================================
+        register(SkillEffectStyles.SIGIL_QISHA_SUMMON, sigil(SigilPreset.QISHA_SUMMON));
+        register(SkillEffectStyles.SIGIL_QISHA_FIELD, sigil(SigilPreset.QISHA_FIELD));
+        register(SkillEffectStyles.SIGIL_QISHA_ZHENSHEN, sigil(SigilPreset.QISHA_ZHENSHEN));
+        register(SkillEffectStyles.BEAM_QISHA_RAY, beam(BeamPreset.QISHA_RAY));
+        register(SkillEffectStyles.BEAM_QISHA_PILLAR, beam(BeamPreset.QISHA_PILLAR));
+        register(SkillEffectStyles.BURST_QISHA, burst(BurstEffect.QISHA_BURST));
+        register(SkillEffectStyles.BURST_QISHA_MARK, burst(BurstEffect.QISHA_MARK));
+        register(SkillEffectStyles.SHOCK_QISHA, ShockwaveEffect::new);
+        // 血刃斩：红色剑波（复用天使的 ArcEffect，只换配色）
+        register(SkillEffectStyles.SIGIL_QISHA_GLYPH, QishaGlyphSigilEffect::new);
+        register(SkillEffectStyles.SIGIL_QISHA_PENTA,
+                (owner, origin, radius, startTick, duration) ->
+                        new QishaGlyphSigilEffect(owner, origin, radius, startTick, duration,
+                                QishaGlyphSigilEffect.Shape.PENTA));
+        register(SkillEffectStyles.SIGIL_QISHA_OCTA,
+                (owner, origin, radius, startTick, duration) ->
+                        new QishaGlyphSigilEffect(owner, origin, radius, startTick, duration,
+                                QishaGlyphSigilEffect.Shape.OCTA));
+        register(SkillEffectStyles.SIGIL_QISHA_TRI,
+                (owner, origin, radius, startTick, duration) ->
+                        new QishaGlyphSigilEffect(owner, origin, radius, startTick, duration,
+                                QishaGlyphSigilEffect.Shape.TRIANGLE));
+        register(SkillEffectStyles.FALL_QISHA_SWORD, QishaSwordFallEffect::new);
+        register(SkillEffectStyles.SLASH_QISHA,
+                (ownerEntityId, origin, radius, startTick, durationTicks) ->
+                        new ArcEffect(ownerEntityId, origin, radius, startTick, durationTicks,
+                                0xFF4A5A, 0x8B0016));
     }
 
     /**

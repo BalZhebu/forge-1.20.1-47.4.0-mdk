@@ -1,5 +1,9 @@
 package com.TovidY.kunluncontinent.item.baseskillist.liejinhu.six;
 
+import com.TovidY.kunluncontinent.render.skill.SkillEffectStyles;
+import com.TovidY.kunluncontinent.render.skill.SkillFieldSender;
+import com.TovidY.kunluncontinent.render.skill.SkillFxToggle;
+import net.minecraft.server.level.ServerPlayer;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import com.TovidY.kunluncontinent.potion.ModEffects;
@@ -27,7 +31,13 @@ public class SkillLeijinhu6 extends BaseSkillItem {
             ServerLevel serverLevel = (ServerLevel) level;
             boolean isDay = level.isDay();
 
-            ParticleFx fx = ParticleFx.of(level, player);
+            boolean shaderFx = SkillFxToggle.useShader(player) && player instanceof ServerPlayer;
+            if (shaderFx) {
+                ServerPlayer sp = (ServerPlayer) player;
+                SkillFieldSender.send(sp, SkillEffectStyles.SIGIL_LIETIAN, sp.getX(), sp.getY(), sp.getZ(), 6.0F, 36);
+                SkillFieldSender.send(sp, SkillEffectStyles.BURST_LIETIAN, sp.getX(), sp.getY(), sp.getZ(), 1.3F, 12);
+            }
+            ParticleFx fx = shaderFx ? null : ParticleFx.of(level, player);
             double rot = serverLevel.getGameTime() * 0.3;
             Vec3 base = player.position();
 

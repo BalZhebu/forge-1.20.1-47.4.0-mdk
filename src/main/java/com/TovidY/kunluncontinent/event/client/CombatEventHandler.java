@@ -246,9 +246,6 @@ public class CombatEventHandler {
 
         boolean isSkillDamage = com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem.isSkillDamage(target);
 
-        // ==================== 防御减伤：穿透按比例削减 + 溢出增伤 ====================
-        // 旧写法是 max(0, fangyu - wuchuan)：穿透一旦 ≥ 防御就把防御清零，
-        // 所有低防怪的伤害数字完全相同。现在改为比值削减（永不清零）+ 溢出补偿。
         float effectiveFangyu = applyPierce(fangyu, wuchuan);
         float reductionFactor = getDamageFactor(effectiveFangyu);
         float overflowMultiplier = getOverflowDamageMultiplier(fangyu, wuchuan);
@@ -297,9 +294,6 @@ public class CombatEventHandler {
 
         finalDamage = Math.max(0.1f, finalDamage);
 
-        // ==================== 塔词条【甲鳞】：受到伤害减免 ====================
-        // 放在写回 event 之前：这是最后一道乘法，减伤对"已经算完的最终伤害"生效，
-        // 与攻防公式、暴击、特殊特效都不冲突。
         if (target.getPersistentData().getBoolean("Skill_JiaLin_Available")) {
             float reduce = Math.min(JIALIN_MAX_REDUCE,
                     0.06f * towerSkillLevelMultiplier(target, "Skill_JiaLin_Level"));
@@ -312,16 +306,12 @@ public class CombatEventHandler {
 
         handleLifesteal(attacker, finalDamage);
 
-        // ==================== 塔词条【噬血】：打中玩家时按"造成的伤害"回血 ====================
-        // ⚠️ 不能按自身最大生命的百分比回：塔内高层怪物血量是百万级，
-        // 每刀回 2% 就是几万血，等于物理免疫。按实际伤害的 20% × 等级系数（10 级 38%）才可控。
         if (attacker instanceof Mob mob && target instanceof Player
                 && mob.getPersistentData().getBoolean("Skill_ShiXue_Available")) {
             float maxHp = mob.getMaxHealth();
             float heal = finalDamage * 0.20f * towerSkillLevelMultiplier(mob, "Skill_ShiXue_Level");
             if (mob.getHealth() < maxHp) {
                 mob.heal(heal);
-                // 保持 capability 里的生命镜像与真实血量一致（恢复/濒死等逻辑都依赖它）
                 mob.getCapability(MobAttributeCapabilityProvider.CAPABILITY)
                         .ifPresent(cap -> cap.setShengming(mob.getHealth()));
                 Vec3 healPos = new Vec3(mob.getX(), mob.getY() + mob.getBbHeight() + 0.2D, mob.getZ());

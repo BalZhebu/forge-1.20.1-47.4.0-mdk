@@ -111,6 +111,26 @@ public class BurstEffect extends SkillEffect {
     public static final Style ANGEL_HIT =
             new Style(SHADER_BURST, false, 0.0F, 0xFFF3C0, 0xE0A83A);
 
+    /** 通用血色爆光（七杀剑）：施法者身上的暗红炸开。 */
+    public static final Style QISHA_BURST =
+            new Style(SHADER_BURST, false, 0.0F, 0xFF4455, 0x3A060C);
+
+    /** 印记 / 命中（七杀剑）：目标身上更浓的血爆，带一点暗紫边。 */
+    public static final Style QISHA_MARK =
+            new Style(SHADER_BURST, false, 0.0F, 0xFF2233, 0x4A0410);
+
+    /** 破魂枪爆光：虚空紫。 */
+    public static final Style POHUN_BURST =
+            new Style(SHADER_BURST, false, 0.0F, 0xC9A2FF, 0x1A0B2A);
+
+    /** 八荒戟爆光：熔岩金。 */
+    public static final Style BAHUANG_BURST =
+            new Style(SHADER_BURST, false, 0.0F, 0xFFB347, 0x4A1A08);
+
+    /** 磐石巨猿爆光：大地黄。 */
+    public static final Style JUYUAN_BURST =
+            new Style(SHADER_BURST, false, 0.0F, 0xE8B44C, 0x3A2A10);
+
     private final Style style;
 
     /** 让同一次技能打到的多个目标"形态"各不相同。 */

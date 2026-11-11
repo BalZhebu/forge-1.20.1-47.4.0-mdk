@@ -1,5 +1,9 @@
 package com.TovidY.kunluncontinent.item.baseskillist.liejinhu.five;
 
+import com.TovidY.kunluncontinent.render.skill.SkillEffectStyles;
+import com.TovidY.kunluncontinent.render.skill.SkillFieldSender;
+import com.TovidY.kunluncontinent.render.skill.SkillFxToggle;
+import net.minecraft.server.level.ServerPlayer;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import static com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem.dealSkillDamage;
@@ -34,7 +38,13 @@ public class SkillLeijinhu5 extends BaseSkillItem {
             if (target != null) {
                 player.displayClientMessage(Component.literal("§e§l第五魂技：扑杀！"), true);
 
-                ParticleFx fx = ParticleFx.of(level, player);
+                boolean shaderFx = SkillFxToggle.useShader(player) && player instanceof ServerPlayer;
+                if (shaderFx) {
+                    ServerPlayer sp = (ServerPlayer) player;
+                    SkillFieldSender.send(sp, SkillEffectStyles.BEAM_TIGER_RAY, sp.getX(), sp.getY(), sp.getZ(), 1.0F, 12);
+                    SkillFieldSender.send(sp, SkillEffectStyles.BURST_LIETIAN, sp.getX(), sp.getY(), sp.getZ(), 1.3F, 10);
+                }
+                ParticleFx fx = shaderFx ? null : ParticleFx.of(level, player);
                 double rot = serverLevel.getGameTime() * 0.6;
                 Vec3 hitPos = target.position().add(0, target.getBbHeight() * 0.5, 0);
                 if (fx != null) {

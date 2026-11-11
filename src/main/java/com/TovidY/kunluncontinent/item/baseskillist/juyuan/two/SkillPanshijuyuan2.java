@@ -1,5 +1,9 @@
 package com.TovidY.kunluncontinent.item.baseskillist.juyuan.two;
 
+import com.TovidY.kunluncontinent.render.skill.SkillEffectStyles;
+import com.TovidY.kunluncontinent.render.skill.SkillFieldSender;
+import com.TovidY.kunluncontinent.render.skill.SkillFxToggle;
+import net.minecraft.server.level.ServerPlayer;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import com.TovidY.kunluncontinent.potion.ModEffects;
@@ -41,12 +45,17 @@ public class SkillPanshijuyuan2 extends BaseSkillItem {
     }
 
     @Override
-    public void executeEffect(Level level, Player player, float powerMultiplier) {
+    public void executeEffect(Level level, Player player, float powerMultiplier, float finalDamage) {
         if (!level.isClientSide) {
             player.addEffect(new MobEffectInstance(ModEffects.STONE_SKIN.get(), 200, 0));
 
             // ---- 特效：石肤 —— 环绕岩球汇聚 + 石壳穹顶 + 贴地尘环 ----
-            ParticleFx fx = ParticleFx.of(level, player);
+            boolean shaderFx = SkillFxToggle.useShader(player) && player instanceof ServerPlayer;
+            if (shaderFx) {
+                ServerPlayer sp = (ServerPlayer) player;
+                SkillFieldSender.send(sp, SkillEffectStyles.SHOCK_JUYUAN, sp.getX(), sp.getY(), sp.getZ(), 2.6F, 12);
+            }
+            ParticleFx fx = shaderFx ? null : ParticleFx.of(level, player);
             if (fx != null) {
                 ServerLevel serverLevel = (ServerLevel) level;
                 Vec3 base = player.position();
@@ -60,7 +69,7 @@ public class SkillPanshijuyuan2 extends BaseSkillItem {
                 // 石壳穹顶：一圈圈向上收拢的护罩
                 fx.dome(ParticleTypes.CAMPFIRE_COSY_SMOKE, base, 2.2, 5, 22);
                 fx.dome(ParticleTypes.WHITE_ASH, base, 1.7, 4, 18);
-                // 贴地尘环（自定义高度的环柱，收束成“石”的厚重感）
+
                 fx.ringStack(ParticleTypes.LARGE_SMOKE, base.add(0, 0.08, 0), ParticleFx.Axis.Y, 2.4, 2.4, 3, 26, rot, 0.35, 0.5);
                 fx.shockRing(ParticleTypes.WHITE_ASH, base.add(0, 0.05, 0), 3.0, 1.6, 34);
                 fx.burst(ParticleTypes.SOUL_FIRE_FLAME, hub, 26, 0.7, true);

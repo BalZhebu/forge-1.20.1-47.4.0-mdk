@@ -1,23 +1,10 @@
 package com.TovidY.kunluncontinent.screen.attribute;
 
-import net.minecraft.client.Minecraft;
-import org.lwjgl.glfw.GLFW;
+import com.TovidY.kunluncontinent.screen.KunlunGuiHelper;
 
 // 数值格式化工具类
 public class NumberFormatter {
     private static boolean forceShowFullNumber = false;
-
-    /**
-     * 检查是否按住Shift键
-     */
-    private static boolean isShiftPressed() {
-        Minecraft mc = Minecraft.getInstance();
-        if (mc == null || mc.getWindow() == null) return false;
-
-        long window = mc.getWindow().getWindow();
-        return GLFW.glfwGetKey(window, GLFW.GLFW_KEY_LEFT_SHIFT) == GLFW.GLFW_PRESS ||
-                GLFW.glfwGetKey(window, GLFW.GLFW_KEY_RIGHT_SHIFT) == GLFW.GLFW_PRESS;
-    }
 
     /**
      * 设置是否强制显示完整数值（用于测试或其他用途）
@@ -43,8 +30,10 @@ public class NumberFormatter {
      * 按住Shift键显示完整数值
      */
     public static String formatNumber(double value, int decimalPlaces) {
-        // 检查是否按住Shift键或强制显示完整数值
-        if (forceShowFullNumber || isShiftPressed()) {
+        // ⚠️ 判定统一走 KunlunGuiHelper#shouldShowFullNumbers()：它同时考虑了
+        //    配置面板的「数值显示模式」（默认缩写 / 反转成完整为主）与 Shift 键，
+        //    本类不要再自己判 Shift —— 否则两处口径会漂移（属性面板已经走那个入口）。
+        if (forceShowFullNumber || KunlunGuiHelper.shouldShowFullNumbers()) {
             return formatFullNumber(value, decimalPlaces);
         }
 

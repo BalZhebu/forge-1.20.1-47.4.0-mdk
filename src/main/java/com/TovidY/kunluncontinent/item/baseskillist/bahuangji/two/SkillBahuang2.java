@@ -1,5 +1,9 @@
 package com.TovidY.kunluncontinent.item.baseskillist.bahuangji.two;
 
+import com.TovidY.kunluncontinent.render.skill.SkillEffectStyles;
+import com.TovidY.kunluncontinent.render.skill.SkillFieldSender;
+import com.TovidY.kunluncontinent.render.skill.SkillFxToggle;
+import net.minecraft.server.level.ServerPlayer;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import net.minecraft.core.particles.ParticleTypes;
@@ -41,7 +45,7 @@ public class SkillBahuang2 extends BaseSkillItem {
     }
 
     @Override
-    public void executeEffect(Level level, Player player, float powerMultiplier) {
+    public void executeEffect(Level level, Player player, float powerMultiplier, float finalDamage) {
         if (!level.isClientSide) {
             ServerLevel serverLevel = (ServerLevel) level;
             float radius = 5.0f; // 扇形半径
@@ -49,7 +53,13 @@ public class SkillBahuang2 extends BaseSkillItem {
             Vec3 lookVec = player.getLookAngle();
 
             // ---- 特效：前方 120° 的横扫 —— 多层月牙剑气 + 扇面冲击波 + 碎裂地面 ----
-            ParticleFx fx = ParticleFx.of(level, player);
+            boolean shaderFx = SkillFxToggle.useShader(player) && player instanceof ServerPlayer;
+            if (shaderFx) {
+                ServerPlayer sp = (ServerPlayer) player;
+                SkillFieldSender.send(sp, SkillEffectStyles.SLASH_BAHUANG, sp.getX(), sp.getY(), sp.getZ(), 6.0F, 16);
+                SkillFieldSender.send(sp, SkillEffectStyles.SHOCK_BAHUANG, sp.getX(), sp.getY(), sp.getZ(), 3.5F, 12);
+            }
+            ParticleFx fx = shaderFx ? null : ParticleFx.of(level, player);
             Vec3 origin = player.getEyePosition().add(0, -0.4, 0);
             Vec3 up = new Vec3(0, 1, 0);
             double rot = serverLevel.getGameTime() * 0.5;
@@ -76,7 +86,7 @@ public class SkillBahuang2 extends BaseSkillItem {
             List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class, scanArea,
                     e -> e != player && e.isAlive() && e.distanceTo(player) <= radius);
 
-            float finalDamage = 12.0f * getDamageMultiplier() * powerMultiplier;
+            
 
             for (LivingEntity target : targets) {
                 Vec3 toTarget = target.position().subtract(player.position()).normalize();

@@ -87,6 +87,13 @@ public class ModItemModelsProvider extends ItemModelProvider {
             basicItem(itemRegistry.get());
         }
 
+        // 声明式武魂的魂技：不经过 HUNJILIST，直接按注册表出模型
+        // （贴图约定 textures/item/skill_<武魂id>_<槽位>.png）
+        for (RegistryObject<Item> itemRegistry
+                : com.TovidY.kunluncontinent.item.wuhun.WuhunRegistry.allSkillItems()) {
+            basicItem(itemRegistry.get());
+        }
+
         //特殊魂技（special 包）的图标走 HUNJILIST 的统一生成 —— 贴图在
         //assets/kunluncontinent/textures/item/skill_pole_vault.png，与物品注册名同名即可，无需在这里单独写
 

@@ -1,5 +1,9 @@
 package com.TovidY.kunluncontinent.item.baseskillist.juyuan.one;
 
+import com.TovidY.kunluncontinent.render.skill.SkillEffectStyles;
+import com.TovidY.kunluncontinent.render.skill.SkillFieldSender;
+import com.TovidY.kunluncontinent.render.skill.SkillFxToggle;
+import net.minecraft.server.level.ServerPlayer;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
@@ -28,7 +32,7 @@ public class SkillPanshijuyuan1 extends BaseSkillItem {
     }
 
     @Override
-    public int getCastTime() { return 60; }
+    public int getCastTime() { return 20; }
 
     @Override
     public float getBaseCost() {
@@ -63,7 +67,13 @@ public class SkillPanshijuyuan1 extends BaseSkillItem {
 
             List<Entity> targets = level.getEntities(player, player.getBoundingBox().inflate(range));
 
-            ParticleFx fx = ParticleFx.of(level, player);
+            boolean shaderFx = SkillFxToggle.useShader(player) && player instanceof ServerPlayer;
+            if (shaderFx) {
+                ServerPlayer sp = (ServerPlayer) player;
+                SkillFieldSender.send(sp, SkillEffectStyles.SIGIL_JUYUAN_SUMMON, sp.getX(), sp.getY(), sp.getZ(), 2.4F, 40);
+                SkillFieldSender.send(sp, SkillEffectStyles.BURST_JUYUAN, sp.getX(), sp.getY(), sp.getZ(), 1.2F, 15);
+            }
+            ParticleFx fx = shaderFx ? null : ParticleFx.of(level, player);
             if (fx != null) {
                 fx.budget(2600);
             }

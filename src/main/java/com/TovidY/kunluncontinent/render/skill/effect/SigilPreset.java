@@ -115,4 +115,55 @@ public record SigilPreset(
             0, 0.0F,
             3,
             0xFFF5CC, 0xB08A20);
+
+    /** 召唤（七杀剑 1）：血色七边 + 七芒星，无爪痕，环最内收敛。 */
+    public static final SigilPreset QISHA_SUMMON = new SigilPreset(
+            7.0F, 0.70F,
+            7.0F, 0.24F, 0.58F,
+            0.32F,
+            0, 0.0F,
+            2,
+            0xC21A2B, 0x2A0508);
+
+    /** 剑阵（七杀剑 6）：十六边 + 七芒星 + 三重冲击环，最大的一圈。 */
+    public static final SigilPreset QISHA_FIELD = new SigilPreset(
+            16.0F, 0.84F,
+            7.0F, 0.30F, 0.74F,
+            0.44F,
+            0, 0.0F,
+            3,
+            0xE02438, 0x35060B);
+
+    /** 真身（七杀剑 7）：九边 + 七芒 + 内圈符文，紧凑贴身。 */
+    public static final SigilPreset QISHA_ZHENSHEN = new SigilPreset(
+            9.0F, 0.66F,
+            7.0F, 0.22F, 0.54F,
+            0.30F,
+            0, 0.0F,
+            2,
+            0xFF3B4E, 0x2A0508);
+
+    // ---- 破魂枪（虚空紫金）----
+    public static final SigilPreset POHUN_SUMMON = new SigilPreset(
+            8.0F, 0.70F, 7.0F, 0.24F, 0.58F, 0.32F, 0, 0.0F, 2,
+            0xB05CFF, 0x14061F);
+    public static final SigilPreset POHUN_FIELD = new SigilPreset(
+            16.0F, 0.82F, 7.0F, 0.30F, 0.72F, 0.42F, 0, 0.0F, 3,
+            0xC9A2FF, 0x1A0B2A);
+
+    // ---- 八荒戟（熔岩金）----
+    public static final SigilPreset BAHUANG_SUMMON = new SigilPreset(
+            8.0F, 0.72F, 8.0F, 0.26F, 0.60F, 0.34F, 0, 0.0F, 2,
+            0xF2A63B, 0x4A1A08);
+    public static final SigilPreset BAHUANG_FIELD = new SigilPreset(
+            20.0F, 0.84F, 8.0F, 0.30F, 0.74F, 0.44F, 0, 0.0F, 3,
+            0xFFB347, 0x4A1A08);
+
+    // ---- 磐石巨猿（大地黄）----
+    public static final SigilPreset JUYUAN_SUMMON = new SigilPreset(
+            9.0F, 0.70F, 7.0F, 0.24F, 0.58F, 0.32F, 0, 0.0F, 2,
+            0xD9A13B, 0x3A2A10);
+    public static final SigilPreset JUYUAN_FIELD = new SigilPreset(
+            16.0F, 0.82F, 9.0F, 0.28F, 0.70F, 0.42F, 0, 0.0F, 3,
+            0xE8B44C, 0x3A2A10);
 }

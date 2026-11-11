@@ -808,6 +808,33 @@ public class PWPlayerTickEvent {
         boolean inCelestial = player.level().dimension() == ModDimensions.CELESTIAL_REALM_LEVEL_KEY;
         CompoundTag nbt = player.getPersistentData();
 
+        // ==================== 修炼冷却倒计时 ====================
+        // ⚠️ 必须放在「坐/不坐」两个分支之外。旧实现把倒计时写在「不在蒲团上」的分支里，
+        //    而修炼时间耗尽后玩家往往还坐在蒲团上（代码不会把他请下来）——
+        //    只要一直坐着，冷却永远不倒计时、提示的"3 分钟冷却"形同虚设。
+        if (nbt.contains("XiulianCooldown")) {
+            int cd = nbt.getInt("XiulianCooldown");
+            if (cd > 0) {
+                nbt.putInt("XiulianCooldown", cd - 1);
+            } else {
+                nbt.remove("XiulianCooldown");
+                player.sendSystemMessage(Component.literal("§a【冥想调息】你的修炼时间恢复冷却已结束，开始逐渐恢复修炼时间。"));
+            }
+        }
+
+        // ==================== 蒲团坐骑清理 ====================
+        // 下坐后销毁隐形盔甲架 seat：旧实现每次右键 new 一个且从不回收，
+        // 玩家反复使用后世界里会堆满隐形无敌盔甲架（实体堆积 + 存档膨胀）。
+        // 玩家还坐着时不进这里（isMeditating=true），一下坐下一个 tick 就会清掉。
+        if (!isMeditating && nbt.contains("PutuanSeatId")) {
+            int seatId = nbt.getInt("PutuanSeatId");
+            nbt.remove("PutuanSeatId");
+            Entity seat = player.level().getEntity(seatId);
+            if (seat != null && !seat.isVehicle()) {
+                seat.discard();
+            }
+        }
+
         if (isMeditating) {
             if (gameTime % 20 == 0) {
                 boolean needSync = false;
@@ -855,17 +882,7 @@ public class PWPlayerTickEvent {
                 if (needSync) SynsAPI.synsPlayerAttribute(player);
             }
         } else {
-            // 不在蒲团上：先扣冷却，冷却结束后再恢复修炼时间
-            if (nbt.contains("XiulianCooldown")) {
-                int cd = nbt.getInt("XiulianCooldown");
-                if (cd > 0) {
-                    nbt.putInt("XiulianCooldown", cd - 1);
-                } else {
-                    nbt.remove("XiulianCooldown");
-                    player.sendSystemMessage(Component.literal("§a【冥想调息】你的修炼时间恢复冷却已结束，开始逐渐恢复修炼时间。"));
-                }
-            }
-
+            // 不在蒲团上：修炼时间缓慢恢复（冷却倒计时已挪到方法开头，坐不坐都会走）
             // ⭐ 冷却期间也允许回复（只是慢一些），避免玩家修炼时间耗尽后
             //    必须干站 3 分钟才能继续 —— 那是纯粹的等待惩罚，没有玩法意义。
             //    冷却中按 1/3 速度回复，即每 300 tick 回 1 秒。

@@ -169,7 +169,13 @@ public class GodInfo {
 
         AchievementAPI.onGodAscended(player);
 
-        com.TovidY.kunluncontinent.godclass.GodBlessingRing.grant(player);
+        // ⚠️ 孤竹神是个彩蛋神位：它那一枚「神赐魂环」改成普通的 10 年环，且不走神赐那套
+        //    （不设 shenci 标记、没有专属神环贴图）。所以要跳过通用发放，
+        //    并且在下面的「所有魂环年限增加」**之后**再补 —— 否则刚发的 10 年被一起加上去了。
+        boolean loneBamboo = com.TovidY.kunluncontinent.godclass.LoneBambooGodPath.GOD_ID.equals(this.id);
+        if (!loneBamboo) {
+            com.TovidY.kunluncontinent.godclass.GodBlessingRing.grant(player);
+        }
 
         HunhuanNianxianUpgrader.Result ringUpgrade = HunhuanNianxianUpgrader.upgradeAll(player);
         if (ringUpgrade.changed()) {
@@ -177,6 +183,11 @@ public class GodInfo {
                     "§d§l【神考完成】§f你体内 §e" + ringUpgrade.ringCount() + " §f枚魂环（§e"
                             + ringUpgrade.wuhunCount() + " §f个武魂）尽数蜕变，所有武魂魂环年限增加 §e"
                             + HunhuanNianxianUpgrader.BONUS_NIANXIAN + " §f年！"));
+        }
+
+        // 孤竹神：在「年限提升」之后再补那枚 10 年普通魂环，保证它发下来就是 10 年
+        if (loneBamboo) {
+            com.TovidY.kunluncontinent.godclass.LoneBambooGodPath.grantTenYearRing(player);
         }
     }
 

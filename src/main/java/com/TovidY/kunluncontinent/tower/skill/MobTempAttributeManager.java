@@ -157,17 +157,19 @@ public class MobTempAttributeManager {
 
         if (TASKS.isEmpty() && PENDING_TASKS.isEmpty()) return;
 
-        // ticking = true 期间所有新任务只进 PENDING_TASKS —— 见该字段的注释，
-        // 这是"遍历中 add 同一个 ArrayList → ConcurrentModificationException"的唯一防线。
+        // ticking = true 期间所有新任务只进 PENDING_TASKS —— 见该字段的注释。
         ticking = true;
         try {
-            Iterator<TempTask> iterator = TASKS.iterator();
-            while (iterator.hasNext()) {
-                TempTask task = iterator.next();
-
+            // ⚠️ 用**快照**遍历，而不是 Iterator 直接遍历 TASKS：
+            //    历史上就是「遍历中 add 同一个 ArrayList」把服务端 tick 打成 CME 崩服的。
+            //    PENDING_TASKS 已经挡住了已知的路径（濒死词条给怪加攻），
+            //    但以后再加词条/再加注入点时很容易忘记，所以这里再兜一层：
+            //    快照遍历下即便有人往 TASKS 里 add，本轮也只会看到旧内容，不会抛异常。
+            //    TASKS 规模很小（只有爬塔怪的临时/常驻词条），拷贝开销可以忽略。
+            for (TempTask task : TASKS.toArray(new TempTask[0])) {
                 // 如果怪物死掉了或者被清除了，直接从队列移除（永久任务和限时任务都会在这里优雅死掉，绝不残留垃圾数据）
                 if (task.mob == null || !task.mob.isAlive() || task.mob.isRemoved()) {
-                    iterator.remove();
+                    TASKS.remove(task);
                     continue;
                 }
 
@@ -184,7 +186,7 @@ public class MobTempAttributeManager {
                     // 限时到了：反向扣除属性恢复原状
                     modifyAttributeValue(task.mob, task.type, -task.amount);
                     SynsAPI.synsEntityAttribute(task.mob);
-                    iterator.remove();
+                    TASKS.remove(task);
                 }
             }
         } finally {

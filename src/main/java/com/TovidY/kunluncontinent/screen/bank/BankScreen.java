@@ -1,5 +1,6 @@
 package com.TovidY.kunluncontinent.screen.bank;
 
+import com.TovidY.kunluncontinent.screen.KunlunContainerScreen;
 import com.TovidY.kunluncontinent.bank.BankAccount;
 import com.TovidY.kunluncontinent.bank.BankExchange;
 import com.TovidY.kunluncontinent.bank.BankRates;
@@ -51,7 +52,7 @@ import java.util.List;
  *       菜单里带 36 个背包槽，原版才会把改动同步回客户端（否则会出"幽灵物品"）。</li>
  * </ul>
  */
-public class BankScreen extends AbstractContainerScreen<BankMenu> {
+public class BankScreen extends KunlunContainerScreen<BankMenu> {
 
     private static final int PAGE_SAVE = 0;
     private static final int PAGE_EXCHANGE = 1;
@@ -266,9 +267,9 @@ public class BankScreen extends AbstractContainerScreen<BankMenu> {
     // ==================================================================================
 
     @Override
-    public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
+    protected void renderPanel(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
         this.renderBackground(gui);
-        super.render(gui, mouseX, mouseY, partialTick);
+        super.renderPanel(gui, mouseX, mouseY, partialTick);
 
         // 手绘按钮的 tooltip 要自己画（它们不是原版 Button）
         for (var child : this.children()) {

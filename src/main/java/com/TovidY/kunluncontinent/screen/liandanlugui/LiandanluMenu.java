@@ -45,13 +45,14 @@ public class LiandanluMenu extends AbstractContainerMenu {
     private final ContainerData data;
 
     public LiandanluMenu(int id, Inventory inv, FriendlyByteBuf extraData) {
-        this(id, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(3));
+        this(id, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(16));
     }
 
     public LiandanluMenu(int id, Inventory inv, BlockEntity entity, ContainerData data) {
         super(ModMenuTypes.LIANDANLU_MENU.get(), id);
 
-        checkContainerDataCount(data, 3);
+        // 0 进度 / 1 总进度 / 2 是否有聚魂瓶 / 3-9 手动小游戏（见 LiandanluBlockEntity#data）
+        checkContainerDataCount(data, 16);
         this.blockEntity = entity;
         this.data = data;
         this.access = ContainerLevelAccess.create(inv.player.level(), entity.getBlockPos());
@@ -78,7 +79,22 @@ public class LiandanluMenu extends AbstractContainerMenu {
         this.addSlot(new SlotItemHandler(internal, AlchemicalCalculator.DROSS_SLOT, 8, 41) {
             @Override
             public boolean mayPlace(ItemStack stack) {
+                // 手动炼丹没有药渣这个玩法，直接禁放
+                if (!LiandanluMenu.this.isAutoMode()) return false;
                 return stack.is(ModBlocks.DROSS_BLOCK.get().asItem());
+            }
+
+            // ---- 手动模式整体隐藏：不画、不悬停、不参与任何搬运 ----
+            // isActive() 控制"这个槽位是否存在于界面上"（AbstractContainerScreen 渲染前会查它）
+            @Override
+            public boolean isActive() {
+                return LiandanluMenu.this.isAutoMode();
+            }
+
+            // 物品本体留在 ItemHandler 里不动，只是这个槽对界面报告"空"
+            @Override
+            public ItemStack getItem() {
+                return LiandanluMenu.this.isAutoMode() ? super.getItem() : ItemStack.EMPTY;
             }
         });
 
@@ -86,12 +102,24 @@ public class LiandanluMenu extends AbstractContainerMenu {
         this.addSlot(new SlotItemHandler(internal, LiandanluBlockEntity.BOTTLE_SLOT, 34, 41) {
             @Override
             public boolean mayPlace(ItemStack stack) {
+                // 手动炼丹不消耗精神力，瓶槽在界面上也隐藏了
+                if (!LiandanluMenu.this.isAutoMode()) return false;
                 for (RegistryObject<Item> bottle : JUHUNPING) {
                     if (stack.is(bottle.get())) {
                         return true;
                     }
                 }
                 return false;
+            }
+
+            @Override
+            public boolean isActive() {
+                return LiandanluMenu.this.isAutoMode();
+            }
+
+            @Override
+            public ItemStack getItem() {
+                return LiandanluMenu.this.isAutoMode() ? super.getItem() : ItemStack.EMPTY;
             }
         });
 
@@ -110,6 +138,105 @@ public class LiandanluMenu extends AbstractContainerMenu {
 
     public ItemStack getBottleStack() {
         return this.slots.get(BOTTLE_MENU_SLOT).getItem();
+    }
+
+    // ==================================================================================
+    //  手动炼丹：开关 / 小游戏状态 / 按钮
+    // ==================================================================================
+
+    /** true = 自动炼丹（原逻辑）；false = 手动小游戏。 */
+    public boolean isAutoMode() {
+        return this.data.get(3) == 1;
+    }
+
+    /** 0 = 未开始，1 = 判定中，2 = 已结束。 */
+    public int getManualPhase() {
+        return this.data.get(4);
+    }
+
+    /** 光标位置 0~1000。 */
+    public int getCursor() {
+        return this.data.get(5);
+    }
+
+    /** 判定区半宽（光标单位）。 */
+    public int getZoneHalf() {
+        return this.data.get(6);
+    }
+
+    /** 当前品质：-1 = 未判定，0~5 = {@code DanYaoQuality} 下标。 */
+    public int getManualQuality() {
+        return this.data.get(8) - 1;
+    }
+
+    /** 上次判定结果：0 无，1 成功，2 失败。 */
+    public int getLastResult() {
+        return this.data.get(9);
+    }
+
+    /** 判定区中心（0~1000），会自己漂移。 */
+    public int getZoneCenter() {
+        return this.data.get(10);
+    }
+
+    /** 本炉累计成功次数（影响光标速度）。 */
+    public int getSuccessCount() {
+        return this.data.get(11);
+    }
+
+    /** 面板状态码（见 {@code LiandanluBlockEntity.STATUS_*}），所有反馈都画在面板上。 */
+    public int getManualStatus() {
+        return this.data.get(12);
+    }
+
+    /** 本轮判定需要的精神力。 */
+    public int getManualCost() {
+        return this.data.get(13);
+    }
+
+    /** 炉难度系数（1.00 = 与丹方同级；<1 更好炼，>1 更难炼）。 */
+    public float getManualDifficulty() {
+        return this.data.get(14) / 100.0f;
+    }
+
+    /** 光标速度（单位/tick），客户端外推用。 */
+    public int getCursorSpeed() {
+        return this.data.get(7);
+    }
+
+    /** 光标当前方向：+1 向右，-1 向左（客户端用来外推显示位置）。 */
+    public int getCursorDir() {
+        return this.data.get(15) == 1 ? 1 : -1;
+    }
+
+    /**
+     * 手动模式下药渣槽 / 聚魂瓶槽是<b>整体隐藏</b>的，这里把点击也一起挡掉。
+     *
+     * <p>只在界面上不画是不够的：槽位还在 Menu 里，玩家点那个位置照样能拿起/放下，
+     * 会出现"凭空拿起一个看不见的瓶子"。物品本身留在 ItemHandler 里不动，
+     * 切回自动模式就原样出现。</p>
+     */
+    @Override
+    public void clicked(int slotId, int button, ClickType clickType, Player player) {
+        if (!isAutoMode() && (slotId == DROSS_MENU_SLOT || slotId == BOTTLE_MENU_SLOT)) {
+            return;
+        }
+        super.clicked(slotId, button, clickType, player);
+    }
+
+    /**
+     * 面板按钮 → 方块实体。
+     *
+     * <p>用 {@code clickMenuButton} 而不是新开网络包：vanilla 的
+     * {@code ServerboundContainerButtonClickPacket} 已经带容器 id 与按钮 id，
+     * 服务端也会校验玩家确实开着这个界面。</p>
+     */
+    @Override
+    public boolean clickMenuButton(Player player, int buttonId) {
+        if (this.blockEntity instanceof LiandanluBlockEntity liandanlu) {
+            return liandanlu.handleButton(player, buttonId);
+        }
+        return false;
     }
 
     /** 取5 个内丹槽的物品快照，供 GUI 计算概率显示。 */

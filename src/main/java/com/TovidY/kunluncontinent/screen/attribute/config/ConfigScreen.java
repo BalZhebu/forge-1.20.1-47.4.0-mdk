@@ -1,8 +1,10 @@
 package com.TovidY.kunluncontinent.screen.attribute.config;
 
+import com.TovidY.kunluncontinent.screen.KunlunContainerScreen;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.event.client.PWRenderPlayerEvent;
+import com.TovidY.kunluncontinent.item.tool.SoulGatheringBottleItem;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
 import com.TovidY.kunluncontinent.network.server.PacketChangeDisplayMode;
 import com.TovidY.kunluncontinent.network.server.PacketChangeHunhuanAnim;
@@ -24,7 +26,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
+public class ConfigScreen extends KunlunContainerScreen<HunhuanMenu> {
 
     private int currentPage = 0;
     private static final int COLS = 3;
@@ -93,6 +95,69 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
                             Component.literal("§f  ① §e逐环展开  §7原地由小放大"),
                             Component.literal("§f  ② §e天降落位  §7自头顶之上垂落，落定带回弹"),
                             Component.literal("§f  ③ §e魂环升腾  §7自脚下破地而出，冲天而起再落位")
+                    )
+            ));
+
+            // 数值显示模式：缩写为主 ⇄ 完整为主（同时反转 Shift 的行为）
+            allConfigItems.add(new ConfigItem(
+                    "数值显示",
+                    PlayerAttributeCapability.CONFIG_NUMBER_MODE_INVERTED,
+                    () -> cap.isNumberModeInverted()
+                            ? Component.literal("§6数值: §e完整为主")
+                            : Component.literal("§6数值: §a缩写为主"),
+                    () -> {
+                        cap.toggleConfig(PlayerAttributeCapability.CONFIG_NUMBER_MODE_INVERTED);
+                        NetworkHandler.INSTANCE.sendToServer(
+                                new PacketToggleConfig(PlayerAttributeCapability.CONFIG_NUMBER_MODE_INVERTED));
+                    },
+                    () -> List.of(
+                            Component.literal("数值显示模式").withStyle(ChatFormatting.GOLD),
+                            Component.literal(cap.isNumberModeInverted()
+                                    ? "§a[完整为主] §f属性面板直接显示完整数值，按住 §eShift §f才切缩写"
+                                    : "§a[缩写为主] §f属性面板默认缩写（1.2M），按住 §eShift §f看完整数值"),
+                            Component.literal("§7影响：属性面板的生命 / 精神 / 经验，以及各项数值属性")
+                    )
+            ));
+
+            allConfigItems.add(new ConfigItem(
+                    "背包分解器",
+                    SoulGatheringBottleItem.CONFIG_INV_DECOMPOSITION,
+                    () -> Component.literal("§6背包分解器: "
+                            + (cap.isConfigOpen(SoulGatheringBottleItem.CONFIG_INV_DECOMPOSITION) ? "§a生效" : "§c关闭")),
+                    () -> {
+                        cap.toggleConfig(SoulGatheringBottleItem.CONFIG_INV_DECOMPOSITION);
+                        NetworkHandler.INSTANCE.sendToServer(
+                                new PacketToggleConfig(SoulGatheringBottleItem.CONFIG_INV_DECOMPOSITION));
+                    },
+                    () -> List.of(
+                            Component.literal("魂环分解器 · 背包内生效").withStyle(ChatFormatting.GOLD),
+                            Component.literal("§7开启后，分解器放在背包里（不必拿在手上）"),
+                            Component.literal("§7也会自动分解范围内的魂环实体。"),
+                            Component.literal("§c使用时必须注意！以防止重要魂环被分解！"),
+                            Component.literal(cap.isConfigOpen(SoulGatheringBottleItem.CONFIG_INV_DECOMPOSITION)
+                                    ? "§a[开启] §f背包里的分解器已生效"
+                                    : "§c[关闭] §f只有拿在手上才生效")
+                    )
+            ));
+
+            allConfigItems.add(new ConfigItem(
+                    "背包聚魂瓶",
+                    SoulGatheringBottleItem.CONFIG_INV_SOUL_BOTTLE,
+                    () -> Component.literal("§6背包聚魂瓶: "
+                            + (cap.isConfigOpen(SoulGatheringBottleItem.CONFIG_INV_SOUL_BOTTLE) ? "§a生效" : "§c关闭")),
+                    () -> {
+                        cap.toggleConfig(SoulGatheringBottleItem.CONFIG_INV_SOUL_BOTTLE);
+                        NetworkHandler.INSTANCE.sendToServer(
+                                new PacketToggleConfig(SoulGatheringBottleItem.CONFIG_INV_SOUL_BOTTLE));
+                    },
+                    () -> List.of(
+                            Component.literal("聚魂瓶 · 背包内生效").withStyle(ChatFormatting.GOLD),
+                            Component.literal("§7开启后，聚魂瓶放在背包里（不必拿在手上）"),
+                            Component.literal("§7也会自动吸收范围内的魂合。"),
+                            Component.literal("§7注意：瓶子自己的「自动模式」也要开着（右键空气切换）。"),
+                            Component.literal(cap.isConfigOpen(SoulGatheringBottleItem.CONFIG_INV_SOUL_BOTTLE)
+                                    ? "§a[开启] §f背包里的聚魂瓶已生效"
+                                    : "§c[关闭] §f只有拿在手上才生效")
                     )
             ));
 
@@ -340,8 +405,8 @@ public class ConfigScreen extends AbstractContainerScreen<HunhuanMenu> {
     }
 
     @Override
-    public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
-        super.render(gui, mouseX, mouseY, partialTick);
+    protected void renderPanel(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
+        super.renderPanel(gui, mouseX, mouseY, partialTick);
         if (this.isOffsetSubPage) {
             String subTitle = "§6修真界面位置微调";
             int titleX = this.leftPos + (this.imageWidth - this.font.width(subTitle)) / 2;

@@ -7,6 +7,7 @@ import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapabilit
 import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.entity.hunhuan.HunhuanEntity;
 import com.TovidY.kunluncontinent.godclass.GodRank;
+import com.TovidY.kunluncontinent.godclass.LoneBambooGodPath;
 import com.TovidY.kunluncontinent.item.baseskillist.zhenshen.ZhenshenState;
 import com.TovidY.kunluncontinent.screen.attribute.skill.SkillBatchRelease;
 import com.TovidY.kunluncontinent.network.NetworkHandler;
@@ -34,7 +35,21 @@ public class PlayerHunhuanAPI {
     private static final Random random = new Random();
 
     private static List<String> getGlobalWuhunList() {
-        return PlayerAttributeCapability.wuhunListsnameall;
+        // 旧的手工池 + 声明式注册表（WuhunRegistry）里的武魂，去重后合并。
+        // 延迟合并（而不是改 wuhunListsnameall 的静态块）是为了避开
+        // 「PlayerAttributeCapability 初始化 → 触发 ModItems 初始化 → 又回头读本类」的静态初始化环。
+        List<String> legacy = PlayerAttributeCapability.wuhunListsnameall;
+        List<String> extra = com.TovidY.kunluncontinent.item.wuhun.WuhunRegistry.names();
+        if (extra.isEmpty()) {
+            return legacy;
+        }
+        List<String> merged = new ArrayList<>(legacy);
+        for (String name : extra) {
+            if (!merged.contains(name)) {
+                merged.add(name);
+            }
+        }
+        return merged;
     }
 
     /** 双生武魂概率（%）：一次觉醒仪式的第一个武魂之后，再白得一个。 */
@@ -223,6 +238,8 @@ public class PlayerHunhuanAPI {
                 // 天使武魂：第一枚魂环到手后补发剩下的 10 级（内部幂等）
                 if (player instanceof ServerPlayer sp) {
                     TianshiWuhun.onRingAbsorbed(sp, capability);
+                    // 孤竹彩蛋：① 已在孤竹路上 → 推进第 1~8 考；② 满足条件 → 弹二选一对话框
+                    LoneBambooGodPath.onRingAbsorbed(sp, capability);
                 }
             });
         });
@@ -232,6 +249,12 @@ public class PlayerHunhuanAPI {
         LazyOptional<PlayerAttributeCapability> capability1 = player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY);
         if (capability1.isPresent()) {
             PlayerAttributeCapability capability = capability1.orElseThrow(RuntimeException::new);
+
+            // 【孤竹之路】立誓之后只能吸孤竹魂环 —— 放在最前面，优先级高于等级/环数判定
+            if (!LoneBambooGodPath.allowRing(player, capability, hunhuanEntity)) {
+                return false;
+            }
+
             int playerLevel = capability.getDengji();
             String currentWuhun = capability.getWuhunName();
             List<MobAttributeCapability> currentRingsList = capability.getMonsterCapabilityLists().get(currentWuhun);

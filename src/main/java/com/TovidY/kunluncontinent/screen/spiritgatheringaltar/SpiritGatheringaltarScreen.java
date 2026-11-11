@@ -1,5 +1,6 @@
 package com.TovidY.kunluncontinent.screen.spiritgatheringaltar;
 
+import com.TovidY.kunluncontinent.screen.KunlunContainerScreen;
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.block.blockentity.SpiritGatheringAltherBlockEntity;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class SpiritGatheringaltarScreen extends AbstractContainerScreen<SpiritGatheringaltarMenu> {
+public class SpiritGatheringaltarScreen extends KunlunContainerScreen<SpiritGatheringaltarMenu> {
     private static final ResourceLocation TEXTURE = new ResourceLocation(KlMain.MOD_ID, "textures/screens/julingtai_gui.png");
 
     public SpiritGatheringaltarScreen(SpiritGatheringaltarMenu container, Inventory inventory, Component text) {
@@ -28,9 +29,9 @@ public class SpiritGatheringaltarScreen extends AbstractContainerScreen<SpiritGa
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderPanel(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(guiGraphics);
-        super.render(guiGraphics, mouseX, mouseY, partialTicks);
+        super.renderPanel(guiGraphics, mouseX, mouseY, partialTicks);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
     }
 

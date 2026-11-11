@@ -27,6 +27,44 @@ public class PlayerUpgradeSystem {
 
     private static final Random random = new Random();
 
+    // ==================================================================================
+    //  转生 → 觉醒资质加成
+    // ==================================================================================
+
+    /**
+     * 每转生一次，资质判定的随机值<b>向下偏移</b>多少点。
+     *
+     * <p>资质是拿一个 {@code 0~99} 的随机数 {@code r} 去对档位（{@code <10} 天才、
+     * {@code <40} 卓越、{@code <90} 优秀、其余废物）。把 {@code r} 往下减，等价于
+     * <b>整条概率分布往高资质那端平移</b>：天才概率直接 +{@value #ZHUANSHENG_TALENT_SHIFT_PER} 个百分点/次，
+     * 优秀概率同步减少，废物在第一次转生后就彻底出不来。</p>
+     *
+     * <p>想更猛就调大这个数，想温柔就调小。</p>
+     */
+    public static final int ZHUANSHENG_TALENT_SHIFT_PER = 16;
+
+    /**
+     * 偏移量上限。
+     *
+     * <p>取 {@value #ZHUANSHENG_TALENT_SHIFT_CAP}：正好在<b>第 5 次转生</b>撞到上限
+     * （5 × 16 = 80 → 天才 90%），之后不再增长，稳定「90% 天才 / 10% 卓越」——
+     * 留 10% 的手气成分，避免转生到后期变成"必定天才"这种毫无波动的结果。</p>
+     */
+    public static final int ZHUANSHENG_TALENT_SHIFT_CAP = 80;
+
+    /**
+     * 转生次数 → 资质判定偏移量。
+     *
+     * @param zhuanshengCount 玩家累计转生次数（{@code PlayerAttributeCapability#getZhuanshengshu()}）
+     * @return {@code 0 ~ ZHUANSHENG_TALENT_SHIFT_CAP}
+     */
+    public static int talentShiftOf(int zhuanshengCount) {
+        if (zhuanshengCount <= 0) {
+            return 0;
+        }
+        return Math.min(ZHUANSHENG_TALENT_SHIFT_CAP, zhuanshengCount * ZHUANSHENG_TALENT_SHIFT_PER);
+    }
+
     public static void checkAndProcessUpgrade(ServerPlayer player, PlayerAttributeCapability capability) {
         if (capability.getJingyan() >= capability.getMaxjingyan()) {
             performUpgrade(player, capability);
@@ -127,6 +165,8 @@ public class PlayerUpgradeSystem {
 
         String forced = capability.getForcedTalent();
         int r;
+        /** 本次觉醒吃了多少「转生加成」（只用于播提示，0 表示没转生过）。 */
+        int talentShift = 0;
 
         if (forced != null && !forced.isEmpty()) {
             switch (forced) {
@@ -140,6 +180,15 @@ public class PlayerUpgradeSystem {
             capability.setForcedTalent("");
         } else {
             r = random.nextInt(100);
+
+            // ==================== 转生加成 ====================
+            // 转生 = 重修一世，资质判定整体上移：每转生一次随机值 -16，
+            // 于是「天才」概率 +16%/次，第 5 次转生就有 90%，卓越/优秀被挤掉，
+            // 废物资质第一次转生后就不再出现。细则见 talentShiftOf。
+            talentShift = talentShiftOf(capability.getZhuanshengshu());
+            if (talentShift > 0) {
+                r = Math.max(0, r - talentShift);
+            }
         }
 
         // ⚠️ 先觉醒武魂，才能决定资质走哪一档：
@@ -191,6 +240,12 @@ public class PlayerUpgradeSystem {
         player.sendSystemMessage(Component.literal("§e【觉醒仪式】§f你的魂力已觉醒！"));
         player.sendSystemMessage(Component.literal("检测到资质：").append(Component.literal(talentName).withStyle(color))
                 .append(" §f(先天等级: +" + talentLevel + ")"));
+        // 让玩家看得见"重修这一世的运气变好了"，否则只会觉得是自己手气好
+        if (talentShift > 0) {
+            player.sendSystemMessage(Component.literal(
+                    "§6【轮回之资】§f第 §e" + capability.getZhuanshengshu() + " §f次转生，资质判定上移 §e+"
+                            + talentShift + "§f 点（越修越接近天才）"));
+        }
         syncAttributesToClient(player, capability);
 
         boolean triple = awakened.size() >= 3;

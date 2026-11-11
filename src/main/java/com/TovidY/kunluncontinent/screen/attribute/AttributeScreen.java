@@ -1,5 +1,6 @@
 package com.TovidY.kunluncontinent.screen.attribute;
 
+import com.TovidY.kunluncontinent.screen.KunlunContainerScreen;
 import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.screen.KunlunGuiHelper;
@@ -13,7 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import static net.minecraft.client.gui.screens.inventory.InventoryScreen.renderEntityInInventoryFollowsMouse;
 
 //属性面板渲染
-public class AttributeScreen extends AbstractContainerScreen<AttributeMenu> implements AttributeTabBar.Host {
+public class AttributeScreen extends KunlunContainerScreen<AttributeMenu> implements AttributeTabBar.Host {
 
     private float xMouse;
     private float yMouse;
@@ -64,9 +65,9 @@ public class AttributeScreen extends AbstractContainerScreen<AttributeMenu> impl
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderPanel(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(guiGraphics);
-        super.render(guiGraphics, mouseX, mouseY, partialTicks);
+        super.renderPanel(guiGraphics, mouseX, mouseY, partialTicks);
 
         this.xMouse = (float) mouseX;
         this.yMouse = (float) mouseY;
@@ -103,22 +104,25 @@ public class AttributeScreen extends AbstractContainerScreen<AttributeMenu> impl
     private void renderFormattedAttributes(GuiGraphics gui, Player player) {
         player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(attributes -> {
 
-            boolean isShift = hasShiftDown();
+            // 显示完整数值还是缩写，由配置面板的「数值显示模式」+ 是否按住 Shift 共同决定：
+            //   · 默认模式：缩写为主，按住 Shift 看完整
+            //   · 反转模式：完整为主，按住 Shift 看缩写
+            boolean showFull = KunlunGuiHelper.shouldShowFullNumbers();
 
             int topStartY = this.topPos + 28;
             int topX = this.leftPos + 12;
             int topWidth = 195;
             int topRowHeight = 13;
 
-            String hpStr = isShift
+            String hpStr = showFull
                     ? String.format("%,d / %,d", (long) player.getHealth(), (long) player.getMaxHealth())
                     : KunlunGuiHelper.formatLargeNumber(player.getHealth()) + " / " + KunlunGuiHelper.formatLargeNumber(player.getMaxHealth());
 
-            String mpStr = isShift
+            String mpStr = showFull
                     ? String.format("%,d / %,d", (long) attributes.getJingshenli(), (long) attributes.getMaxjingshenli())
                     : KunlunGuiHelper.formatLargeNumber(attributes.getJingshenli()) + " / " + KunlunGuiHelper.formatLargeNumber(attributes.getMaxjingshenli());
 
-            String expStr = isShift
+            String expStr = showFull
                     ? String.format("%,d / %,d", (long) attributes.getJingyan(), (long) attributes.getMaxjingyan())
                     : KunlunGuiHelper.formatLargeNumber(attributes.getJingyan()) + " / " + KunlunGuiHelper.formatLargeNumber(attributes.getMaxjingyan());
 
@@ -161,22 +165,26 @@ public class AttributeScreen extends AbstractContainerScreen<AttributeMenu> impl
             for (int i = 0; i < col1Entries.length; i++) {
                 int y = gridStartY + i * gridRowHeight;
                 gui.drawString(this.font, "§7" + col1Entries[i].label, col1X, y, 0xFFFFFF, false);
-                gui.drawString(this.font, "§e" + col1Entries[i].getValue(isShift), col1X + labelWidth, y, 0xFFFFFF, false);
+                gui.drawString(this.font, "§e" + col1Entries[i].getValue(showFull), col1X + labelWidth, y, 0xFFFFFF, false);
             }
 
             // 渲染右列
             for (int i = 0; i < col2Entries.length; i++) {
                 int y = gridStartY + i * gridRowHeight;
                 gui.drawString(this.font, "§7" + col2Entries[i].label, col2X, y, 0xFFFFFF, false);
-                gui.drawString(this.font, "§e" + col2Entries[i].getValue(isShift), col2X + labelWidth, y, 0xFFFFFF, false);
+                gui.drawString(this.font, "§e" + col2Entries[i].getValue(showFull), col2X + labelWidth, y, 0xFFFFFF, false);
             }
 
             int maxRows = Math.max(col1Entries.length, col2Entries.length);
             int hintY = gridStartY + (maxRows * gridRowHeight) + 4;
-            Component hintText = Component.translatable("gui.kunluncontinent.shift_hint");
+            // 提示文案要跟着模式走：默认模式按 Shift 看完整，反转模式按 Shift 看缩写
+            Component hintText = KunlunGuiHelper.isNumberModeInverted()
+                    ? Component.translatable("gui.kunluncontinent.shift_hint_compact")
+                    : Component.translatable("gui.kunluncontinent.shift_hint");
 
-            // Shift 按下时高亮提示文本
-            int hintColor = isShift ? 0xFFFFAA00 : 0x88AAAAAA;
+            // 按住 Shift 时高亮提示文本（两种模式下 Shift 都会改变显示口径）
+            boolean shiftHeld = hasShiftDown();
+            int hintColor = shiftHeld ? 0xFFFFAA00 : 0x88AAAAAA;
             gui.drawString(this.font, hintText, topX, hintY, hintColor, false);
 
             // 右下角基础信息
@@ -225,17 +233,22 @@ public class AttributeScreen extends AbstractContainerScreen<AttributeMenu> impl
             this.isNumeric = true;
         }
 
-        String getValue(boolean isShift) {
+        /**
+         * @param showFull {@code true} = 完整数值（千分位）；{@code false} = 缩写（1.2M / 5.3B）。
+         *                 这个值已经由 {@link KunlunGuiHelper#shouldShowFullNumbers()} 把
+         *                 「配置面板的显示模式」和「是否按住 Shift」合并算好了，本类不再自己判断。
+         */
+        String getValue(boolean showFull) {
             if (!isNumeric) {
                 return rawStringValue;
             }
-            if (isShift) {
+            if (showFull) {
                 if (doubleValue == (long) doubleValue) {
-                    return String.format("%,d", (long) doubleValue); // Shift 按下全显千分位整数
+                    return String.format("%,d", (long) doubleValue); // 完整数值：千分位整数
                 }
                 return String.format("%,.1f", doubleValue); // 小数格式
             }
-            return KunlunGuiHelper.formatLargeNumber(doubleValue); // 默认缩进格式 (1.2M, 5.3B 等)
+            return KunlunGuiHelper.formatLargeNumber(doubleValue); // 缩写格式 (1.2M, 5.3B 等)
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.TovidY.kunluncontinent.screen.attribute.hunhuan;
 
+import com.TovidY.kunluncontinent.screen.KunlunContainerScreen;
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
@@ -18,7 +19,7 @@ import java.util.List;
 import com.TovidY.kunluncontinent.screen.attribute.AttributeTabBar;
 import com.TovidY.kunluncontinent.screen.attribute.AttributeTabs;
 
-public class HunhuanScreen extends AbstractContainerScreen<HunhuanMenu> implements AttributeTabBar.Host {
+public class HunhuanScreen extends KunlunContainerScreen<HunhuanMenu> implements AttributeTabBar.Host {
     private static final ResourceLocation HUNHUAN_ICON = new ResourceLocation(KlMain.MOD_ID, "textures/picture/particletext.png");
 
     // 翻页与武魂选择逻辑
@@ -103,9 +104,9 @@ public class HunhuanScreen extends AbstractContainerScreen<HunhuanMenu> implemen
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderPanel(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(guiGraphics);
-        super.render(guiGraphics, mouseX, mouseY, partialTicks);
+        super.renderPanel(guiGraphics, mouseX, mouseY, partialTicks);
 
         // 动态计算与管理按钮状态
         if (this.minecraft != null && this.minecraft.player != null) {

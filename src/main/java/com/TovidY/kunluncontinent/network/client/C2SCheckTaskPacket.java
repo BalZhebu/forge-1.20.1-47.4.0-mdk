@@ -40,6 +40,22 @@ public class C2SCheckTaskPacket {
 
                 int stage = cap.getCurrentStage();
 
+                // 【孤竹神 · 第九考】这个按钮在这个神位下改作「开启试炼考核」：
+                //   试炼要靠"高度 / 飞行 / 落地"逐 tick 判定，没法用一次性的检查按钮算出来。
+                //   放在最前面，绕开下面"第九考要求 99 级"的通用校验。
+                if (com.TovidY.kunluncontinent.godclass.LoneBambooGodPath.GOD_ID.equals(cap.getGodName())
+                        && stage == 9) {
+                    com.TovidY.kunluncontinent.godclass.LoneBambooTrial.start(player);
+                    return;
+                }
+
+                // 事件考（TRIAL）：只能由代码在合适时机判定，按钮不该误报"未达成"
+                if ("TRIAL".equals(cap.getAssignedTypes()[stage])) {
+                    player.sendSystemMessage(Component.literal(
+                            "§e本考由事件自动判定，无需手动检查。").withStyle(net.minecraft.ChatFormatting.YELLOW));
+                    return;
+                }
+
                 if (stage == 9) {
                     if (cap.getDengji() < 99) {
                         player.sendSystemMessage(Component.literal("§c§l【神祇要求】 §f请将自身等级提升到99级"), true);

@@ -85,6 +85,12 @@ public class NetworkHandler {
 
         register(PacketSyncGodData.class, PacketSyncGodData::encode, PacketSyncGodData::decode, PacketSyncGodData::handle);
 
+        // 孤竹神彩蛋：弹选择框（S2C） + 回传选择（C2S）
+        register(S2COpenLoneBambooChoicePacket.class, S2COpenLoneBambooChoicePacket::encode,
+                S2COpenLoneBambooChoicePacket::decode, S2COpenLoneBambooChoicePacket::handle);
+        register(C2SLoneBambooChoicePacket.class, C2SLoneBambooChoicePacket::encode,
+                C2SLoneBambooChoicePacket::decode, C2SLoneBambooChoicePacket::handle);
+
         register(C2SCheckTaskPacket.class, C2SCheckTaskPacket::encode, C2SCheckTaskPacket::decode, C2SCheckTaskPacket::handle);
 
         register(C2SEnterCelestial.class, C2SEnterCelestial::encode, C2SEnterCelestial::decode, C2SEnterCelestial::handle);

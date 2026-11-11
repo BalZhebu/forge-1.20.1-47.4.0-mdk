@@ -108,4 +108,43 @@ public record BeamPreset(
             0.0F,
             0.02F, 1.2F,
             0xFFFFF2, 0xD8B34A);
+
+    /** 血色射线（七杀剑 5/8/9）：沿视线，细而锐，中心暗两侧亮。 */
+    public static final BeamPreset QISHA_RAY = new BeamPreset(
+            0.55F, 10.0F, false, true,
+            1.2F,
+            0.05F, 2.4F,
+            0xE02438, 0x2A0508);
+
+    /** 血色光柱（七杀剑 7/9）：竖直 6 格，边缘收束。 */
+    public static final BeamPreset QISHA_PILLAR = new BeamPreset(
+            1.3F, 6.0F, true, false,
+            0.0F,
+            0.08F, 1.8F,
+            0xFF4A5A, 0x2A0508);
+
+    /** 破魂枪射线：虚空紫。 */
+    public static final BeamPreset POHUN_RAY = new BeamPreset(
+            0.9F, 14.0F, false, true, 1.2F, 0.30F, 2.0F,
+            0xB05CFF, 0x05010C);
+    /** 破魂枪光柱：虚空紫竖柱。 */
+    public static final BeamPreset POHUN_PILLAR = new BeamPreset(
+            1.3F, 5.5F, true, false, 0.0F, 0.08F, 1.8F,
+            0xC9A2FF, 0x14061F);
+    /** 八荒戟射线：熔岩金。 */
+    public static final BeamPreset BAHUANG_RAY = new BeamPreset(
+            1.0F, 14.0F, false, true, 1.2F, 0.25F, 2.2F,
+            0xFFB347, 0x3A1204);
+    /** 八荒戟光柱：熔岩金竖柱。 */
+    public static final BeamPreset BAHUANG_PILLAR = new BeamPreset(
+            1.5F, 6.5F, true, false, 0.0F, 0.08F, 2.0F,
+            0xFFB347, 0x3A1204);
+    /** 磐石巨猿射线：大地黄。 */
+    public static final BeamPreset JUYUAN_RAY = new BeamPreset(
+            1.1F, 12.0F, false, false, 1.2F, 0.10F, 1.6F,
+            0xE8B44C, 0x3A2A10);
+    /** 裂金虎射线：金白爪光。 */
+    public static final BeamPreset TIGER_RAY = new BeamPreset(
+            0.7F, 12.0F, false, true, 1.1F, 0.18F, 2.6F,
+            0xFFE98A, 0x8A5A00);
 }

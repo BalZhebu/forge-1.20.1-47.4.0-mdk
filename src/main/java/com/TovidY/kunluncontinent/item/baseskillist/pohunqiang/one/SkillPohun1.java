@@ -1,5 +1,9 @@
 package com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.one;
 
+import com.TovidY.kunluncontinent.render.skill.SkillEffectStyles;
+import com.TovidY.kunluncontinent.render.skill.SkillFieldSender;
+import com.TovidY.kunluncontinent.render.skill.SkillFxToggle;
+import net.minecraft.server.level.ServerPlayer;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.ModItems;
@@ -61,7 +65,13 @@ public class SkillPohun1 extends BaseSkillItem {
             player.displayClientMessage(Component.literal("§c§l破魂枪，现！"), true);
 
             // ---- 特效：脚下赤红法阵 → 环身灵魂螺旋 → 枪形光柱收束 ----
-            ParticleFx fx = ParticleFx.of(level, player);
+            boolean shaderFx = SkillFxToggle.useShader(player) && player instanceof ServerPlayer;
+            if (shaderFx) {
+                ServerPlayer sp = (ServerPlayer) player;
+                SkillFieldSender.send(sp, SkillEffectStyles.SIGIL_POHUN_SUMMON, sp.getX(), sp.getY(), sp.getZ(), 2.4F, 40);
+                SkillFieldSender.send(sp, SkillEffectStyles.BURST_POHUN, sp.getX(), sp.getY(), sp.getZ(), 1.2F, 15);
+            }
+            ParticleFx fx = shaderFx ? null : ParticleFx.of(level, player);
             if (fx != null) {
                 Vec3 base = player.position();
                 Vec3 eye = player.getEyePosition();

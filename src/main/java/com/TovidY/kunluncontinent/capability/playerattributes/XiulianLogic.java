@@ -56,14 +56,10 @@ public final class XiulianLogic {
         return minutes;
     }
 
-    /**
-     * 挂机 / 跳过 {@code seconds} 秒能获得多少经验。
-     *
-     * @param level    当前等级
-     * @param seconds  挂机秒数
-     * @param maxJingyan 当前的最大经验（升级门槛）
-     */
-    public static float expFor(int level, int seconds, float maxJingyan) {
-        return maxJingyan / (minutesPerLevel(level) * 60f) * seconds;
-    }
+    // ⚠️ 原来这里有一个 {@code expFor(level, seconds, maxJingyan)} ——「按单一等级费率
+    //    把整段秒数一次性折成经验」。它正是「一键闭关比真挂机多给经验」的根源：
+    //    minutesPerLevel 随等级上涨，起始等级的费率是全程最高的，
+    //    中途每升一级费率都会变低，单一费率折算必然虚高。
+    //    现在跳过修炼改为在 PacketXiulianChoice 里【逐级模拟】（每级用自己的费率），
+    //    这个方法已没有正确的使用方式，故删除 —— 别再把它加回来。
 }

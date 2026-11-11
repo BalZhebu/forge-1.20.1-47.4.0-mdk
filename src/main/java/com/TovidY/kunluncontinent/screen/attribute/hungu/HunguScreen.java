@@ -1,5 +1,6 @@
 package com.TovidY.kunluncontinent.screen.attribute.hungu;
 
+import com.TovidY.kunluncontinent.screen.KunlunContainerScreen;
 import com.TovidY.kunluncontinent.capability.itemattribute.ItemAttributeCapability;
 import com.TovidY.kunluncontinent.capability.itemattribute.ItemAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.screen.KunlunGuiHelper;
@@ -16,7 +17,7 @@ import java.util.Map;
 import com.TovidY.kunluncontinent.screen.attribute.AttributeTabBar;
 import com.TovidY.kunluncontinent.screen.attribute.AttributeTabs;
 
-public class HunguScreen extends AbstractContainerScreen<HunguMenu> implements AttributeTabBar.Host {
+public class HunguScreen extends KunlunContainerScreen<HunguMenu> implements AttributeTabBar.Host {
 
     public HunguScreen(HunguMenu container, Inventory inventory, Component text) {
         super(container, inventory, text);
@@ -36,9 +37,9 @@ public class HunguScreen extends AbstractContainerScreen<HunguMenu> implements A
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderPanel(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(guiGraphics);
-        super.render(guiGraphics, mouseX, mouseY, partialTicks);
+        super.renderPanel(guiGraphics, mouseX, mouseY, partialTicks);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
     }
 

@@ -37,7 +37,7 @@ public enum AttributePointSpec {
     // ==================== 枚举顺序 = 页签/网络包里的下标，改动会导致老存档点错属性 ====================
     // 顺序按用户指定：生命值 → 攻击力 → 防御力 → 暴击率 → 暴击伤害 → 其余随意
 
-    SHENGMING("maxshengming", "强健", "生命值", 3.0f, Mode.MULT, 0xFFFF5555, "§c"),
+    SHENGMING("maxshengming", "气血", "生命值", 3.0f, Mode.MULT, 0xFFFF5555, "§c"),
     GONGJI("gongji", "强攻", "攻击力", 1.5f, Mode.MULT, 0xFFFFA64D, "§6"),
     FANGYU("fangyu", "铁壁", "防御力", 2.0f, Mode.MULT, 0xFF55AAFF, "§b"),
     BAOJILV("baojilv", "锐意", "暴击率", 0.3f, Mode.FLAT, 0xFFFFD700, "§e"),

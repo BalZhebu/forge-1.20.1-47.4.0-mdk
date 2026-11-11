@@ -25,6 +25,16 @@ import com.TovidY.kunluncontinent.item.baseskillist.bahuangji.one.BahuangjiItem;
 import com.TovidY.kunluncontinent.item.baseskillist.bahuangji.one.SkillBahuang1;
 import com.TovidY.kunluncontinent.item.baseskillist.bahuangji.treen.SkillBahuang3;
 import com.TovidY.kunluncontinent.item.baseskillist.bahuangji.two.SkillBahuang2;
+import com.TovidY.kunluncontinent.item.baseskillist.qishajian.one.QishajianItem;
+import com.TovidY.kunluncontinent.item.baseskillist.qishajian.one.SkillQisha1;
+import com.TovidY.kunluncontinent.item.baseskillist.qishajian.two.SkillQisha2;
+import com.TovidY.kunluncontinent.item.baseskillist.qishajian.three.SkillQisha3;
+import com.TovidY.kunluncontinent.item.baseskillist.qishajian.four.SkillQisha4;
+import com.TovidY.kunluncontinent.item.baseskillist.qishajian.five.SkillQisha5;
+import com.TovidY.kunluncontinent.item.baseskillist.qishajian.six.SkillQisha6;
+import com.TovidY.kunluncontinent.item.baseskillist.qishajian.seven.SkillQisha7;
+import com.TovidY.kunluncontinent.item.baseskillist.qishajian.eight.SkillQisha8;
+import com.TovidY.kunluncontinent.item.baseskillist.qishajian.nine.SkillQisha9;
 import com.TovidY.kunluncontinent.item.baseskillist.juyuan.four.SkillPanshijuyuan4;
 import com.TovidY.kunluncontinent.item.baseskillist.juyuan.one.SkillPanshijuyuan1;
 import com.TovidY.kunluncontinent.item.baseskillist.juyuan.treen.SkillPanshijuyuan3;
@@ -114,7 +124,6 @@ public class ModItems {
     public static final RegistryObject<Item> INSTANT_KILL_SWORD =
             ITEMS.register("instant_kill_sword", InstantKillSwordItem::new);
 
-    //蕴灵石（阶数 1~9；品质存在 ItemStack 的 NBT 里，见 SpiritStoneQuality）
     public static final RegistryObject<Item> FIRST_SPIRIT_STONE = ITEMS.register("first_spirit_stone",()->new SpiritStoneItem(new Item.Properties(),1));
     public static final RegistryObject<Item> TWO_SPIRIT_STONE = ITEMS.register("two_spirit_stone",()->new SpiritStoneItem(new Item.Properties(),2));
     public static final RegistryObject<Item> THREE_SPIRIT_STONE = ITEMS.register("three_spirit_stone",()->new SpiritStoneItem(new Item.Properties(),3));
@@ -222,6 +231,7 @@ public class ModItems {
     //武魂果实
     public static final RegistryObject<Item> GUOSHI_POHUNQIANG = ITEMS.register("guoshi_pohunqiang",()->new WuhunguoshiItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build()).stacksTo(1)).setWuhunname(Wuhunname.pohunqiang));
     public static final RegistryObject<Item> GUOSHI_BAHUANGJI = ITEMS.register("guoshi_bahuangji",()->new WuhunguoshiItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build()).stacksTo(1)).setWuhunname(Wuhunname.bahuangji));
+    public static final RegistryObject<Item> GUOSHI_QISHAJIAN = ITEMS.register("guoshi_qishajian",()->new WuhunguoshiItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build()).stacksTo(1)).setWuhunname(Wuhunname.qishajian));
     public static final RegistryObject<Item> GUOSHI_LEIJINHU = ITEMS.register("guoshi_leijinhu",()->new WuhunguoshiItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build()).stacksTo(1)).setWuhunname(Wuhunname.liejinhu));
     public static final RegistryObject<Item> GUOSHI_PANSHIJUYUAN = ITEMS.register("guoshi_panshijuyuan",()->new WuhunguoshiItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build()).stacksTo(1)).setWuhunname(Wuhunname.panshijuyuan));
     public static final RegistryObject<Item> GUOSHI_TIANSHI = ITEMS.register("guoshi_tianshi", ()-> new WuhunguoshiItem(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().build()).stacksTo(1)).setWuhunname(Wuhunname.tianshi));
@@ -396,6 +406,8 @@ public class ModItems {
     //武魂武器
     public static final RegistryObject<Item> POHUNQIANG = ITEMS.register("pohunqiang", PohunqiangItem::new);
     public static final RegistryObject<Item> BAHUANGJI = ITEMS.register("bahuangji", BahuangjiItem::new);
+    /** 七杀剑本体（器武魂实体化武器）。 */
+    public static final RegistryObject<Item> QISHAJIAN = ITEMS.register("qishajian", QishajianItem::new);
 
     public static final RegistryObject<Item> GRAY_IRON_SWORD = ITEMS.register("gray_iron_sword",()->new ModSwordBaseItem(ModToolTiers.GRAY_IRON,3,-1.8F,new Item.Properties()));
     public static final RegistryObject<Item> GRAY_IRON_PICKAXE = ITEMS.register("gray_iron_pickaxe",()->new PickaxeItem(ModToolTiers.GRAY_IRON,1, -2.0F,new Item.Properties()));
@@ -520,62 +532,45 @@ public class ModItems {
 
     //魂技
     //破魂枪
-    public static final RegistryObject<SkillPohun1> SKILL_POHUN_1 = ITEMS.register("skill_pohun_1", SkillPohun1::new);
-    public static final RegistryObject<SkillPohun2> SKILL_POHUN_2 = ITEMS.register("skill_pohun_2", SkillPohun2::new);
-    public static final RegistryObject<SkillPohun3> SKILL_POHUN_3 = ITEMS.register("skill_pohun_3", SkillPohun3::new);
-    public static final RegistryObject<SkillPohun4> SKILL_POHUN_4 = ITEMS.register("skill_pohun_4", SkillPohun4::new);
-    public static final RegistryObject<SkillPohun5> SKILL_POHUN_5 = ITEMS.register("skill_pohun_5", SkillPohun5::new);
-    public static final RegistryObject<SkillPohun6> SKILL_POHUN_6 = ITEMS.register("skill_pohun_6", SkillPohun6::new);
-    public static final RegistryObject<SkillPohun7> SKILL_POHUN_7 = ITEMS.register("skill_pohun_7", SkillPohun7::new);
-    public static final RegistryObject<SkillPohun8> SKILL_POHUN_8 = ITEMS.register("skill_pohun_8", SkillPohun8::new);
-    public static final RegistryObject<SkillPohun9> SKILL_POHUN_9 = ITEMS.register("skill_pohun_9", SkillPohun9::new);
 
     //八荒戟
-    public static final RegistryObject<SkillBahuang1> SKILL_BAHUANG_1 = ITEMS.register("skill_bahuang_1", SkillBahuang1::new);
-    public static final RegistryObject<SkillBahuang2> SKILL_BAHUANG_2 = ITEMS.register("skill_bahuang_2", SkillBahuang2::new);
-    public static final RegistryObject<SkillBahuang3> SKILL_BAHUANG_3 = ITEMS.register("skill_bahuang_3", SkillBahuang3::new);
-    public static final RegistryObject<SkillBahuang4> SKILL_BAHUANG_4 = ITEMS.register("skill_bahuang_4", SkillBahuang4::new);
-    public static final RegistryObject<SkillBahuang5> SKILL_BAHUANG_5 = ITEMS.register("skill_bahuang_5", SkillBahuang5::new);
-    public static final RegistryObject<SkillBahuang6> SKILL_BAHUANG_6 = ITEMS.register("skill_bahuang_6", SkillBahuang6::new);
-    public static final RegistryObject<SkillBahuang7> SKILL_BAHUANG_7 = ITEMS.register("skill_bahuang_7", SkillBahuang7::new);
-    public static final RegistryObject<SkillBahuang8> SKILL_BAHUANG_8 = ITEMS.register("skill_bahuang_8", SkillBahuang8::new);
-    public static final RegistryObject<SkillBahuang9> SKILL_BAHUANG_9 = ITEMS.register("skill_bahuang_9", SkillBahuang9::new);
 
     //裂金虎
     public static final RegistryObject<SkillLeijinhu1> SKILL_LEIJINHU_1 = ITEMS.register("skill_leijinhu_1", SkillLeijinhu1::new);
-    public static final RegistryObject<SkillLeijinhu2> SKILL_LEIJINHU_2 = ITEMS.register("skill_leijinhu_2", SkillLeijinhu2::new);
-    public static final RegistryObject<SkillLeijinhu3> SKILL_LEIJINHU_3 = ITEMS.register("skill_leijinhu_3", SkillLeijinhu3::new);
-    public static final RegistryObject<SkillLeijinhu4> SKILL_LEIJINHU_4 = ITEMS.register("skill_leijinhu_4", SkillLeijinhu4::new);
-    public static final RegistryObject<SkillLeijinhu5> SKILL_LEIJINHU_5 = ITEMS.register("skill_leijinhu_5", SkillLeijinhu5::new);
-    public static final RegistryObject<SkillLeijinhu6> SKILL_LEIJINHU_6 = ITEMS.register("skill_leijinhu_6", SkillLeijinhu6::new);
-    public static final RegistryObject<SkillLeijinhu7> SKILL_LEIJINHU_7 = ITEMS.register("skill_leijinhu_7", SkillLeijinhu7::new);
-    public static final RegistryObject<SkillLeijinhu8> SKILL_LEIJINHU_8 = ITEMS.register("skill_leijinhu_8", SkillLeijinhu8::new);
-    public static final RegistryObject<SkillLeijinhu9> SKILL_LEIJINHU_9 = ITEMS.register("skill_leijinhu_9", SkillLeijinhu9::new);
 
     //磐石巨猿
     public static final RegistryObject<SkillPanshijuyuan1> SKILL_PANSHIJUYUAN_1 = ITEMS.register("skill_panshijuyuan_1", SkillPanshijuyuan1::new);
-    public static final RegistryObject<SkillPanshijuyuan2> SKILL_PANSHIJUYUAN_2 = ITEMS.register("skill_panshijuyuan_2", SkillPanshijuyuan2::new);
-    public static final RegistryObject<SkillPanshijuyuan3> SKILL_PANSHIJUYUAN_3 = ITEMS.register("skill_panshijuyuan_3", SkillPanshijuyuan3::new);
-    public static final RegistryObject<SkillPanshijuyuan4> SKILL_PANSHIJUYUAN_4 = ITEMS.register("skill_panshijuyuan_4", SkillPanshijuyuan4::new);
-    public static final RegistryObject<SkillPanshijuyuan5> SKILL_PANSHIJUYUAN_5 = ITEMS.register("skill_panshijuyuan_5", SkillPanshijuyuan5::new);
-    public static final RegistryObject<SkillPanshijuyuan6> SKILL_PANSHIJUYUAN_6 = ITEMS.register("skill_panshijuyuan_6", SkillPanshijuyuan6::new);
-    public static final RegistryObject<SkillPanshijuyuan7> SKILL_PANSHIJUYUAN_7 = ITEMS.register("skill_panshijuyuan_7", SkillPanshijuyuan7::new);
-    public static final RegistryObject<SkillPanshijuyuan8> SKILL_PANSHIJUYUAN_8 = ITEMS.register("skill_panshijuyuan_8", SkillPanshijuyuan8::new);
-    public static final RegistryObject<SkillPanshijuyuan9> SKILL_PANSHIJUYUAN_9 = ITEMS.register("skill_panshijuyuan_9", SkillPanshijuyuan9::new);
 
     public static final RegistryObject<SkillPoleVault> SKILL_POLE_VAULT =
             ITEMS.register("skill_pole_vault", SkillPoleVault::new);
 
-    //天使（1~9 魂技已齐）
-    public static final RegistryObject<SkillTianshi1> SKILL_TIANSHI_1 = ITEMS.register("skill_tianshi_1", SkillTianshi1::new);
-    public static final RegistryObject<SkillTianshi2> SKILL_TIANSHI_2 = ITEMS.register("skill_tianshi_2", SkillTianshi2::new);
-    public static final RegistryObject<SkillTianshi3> SKILL_TIANSHI_3 = ITEMS.register("skill_tianshi_3", SkillTianshi3::new);
-    public static final RegistryObject<SkillTianshi4> SKILL_TIANSHI_4 = ITEMS.register("skill_tianshi_4", SkillTianshi4::new);
-    public static final RegistryObject<SkillTianshi5> SKILL_TIANSHI_5 = ITEMS.register("skill_tianshi_5", SkillTianshi5::new);
-    public static final RegistryObject<SkillTianshi6> SKILL_TIANSHI_6 = ITEMS.register("skill_tianshi_6", SkillTianshi6::new);
-    public static final RegistryObject<SkillTianshi7> SKILL_TIANSHI_7 = ITEMS.register("skill_tianshi_7", SkillTianshi7::new);
-    public static final RegistryObject<SkillTianshi8> SKILL_TIANSHI_8 = ITEMS.register("skill_tianshi_8", SkillTianshi8::new);
-    public static final RegistryObject<SkillTianshi9> SKILL_TIANSHI_9 = ITEMS.register("skill_tianshi_9", SkillTianshi9::new);
+    // ==================================================================================
+    //  【新式·声明式武魂】天使
+    //
+    //  这一个块 = 以前散在 5 个地方的 36 行样板：
+    //    · 9 个 ITEMS.register(...) 字段
+    //    · HUNJILIST 的 9 行 add
+    //    · SkillLibrary 的 9 行 register
+    //    · 觉醒池 wuhunListsnameall（天使本来就不进池，这里不需要）
+    //    · 语言文件的 9 行技能名
+    //  新增武魂照抄这一段即可，具体见 WuhunDef / WuhunRegistry 的类注释。
+    // ==================================================================================
+    public static final com.TovidY.kunluncontinent.item.wuhun.WuhunDef WUHUN_TIANSHI =
+            com.TovidY.kunluncontinent.item.wuhun.WuhunRegistry
+                    .define("tianshi", Wuhunname.tianshi,
+                            com.TovidY.kunluncontinent.item.wuhun.WuhunDef.Category.SPECIAL, "§e")
+                    .skill(1, "圣光斩", SkillTianshi1::new)
+                    .skill(2, "天使之翼", SkillTianshi2::new)
+                    .skill(3, "圣愈之光", SkillTianshi3::new)
+                    .skill(4, "审判之矛", SkillTianshi4::new)
+                    .skill(5, "神圣庇护", SkillTianshi5::new)
+                    .skill(6, "圣光锁链", SkillTianshi6::new)
+                    .skill(7, "武魂真身", SkillTianshi7::new)
+                    .skill(8, "圣裁之域", SkillTianshi8::new)
+                    .skill(9, "终焉救赎", SkillTianshi9::new)
+                    // 天使走自己的 10% 独立觉醒，不进普通池（否则等于抽两次）
+                    .independentAwaken()
+                    .build();
 
     public record SkillVariantEntry(RegistryObject<? extends BaseSkillItem> skill,
                                     RegistryObject<? extends BaseSkillItem> iconSource) {}
@@ -883,56 +878,105 @@ public class ModItems {
         JUHUNPING.add(SOUL_GATHERING_BOTTLE_4);
     }
 
+    // ==================================================================================
+    //  【声明式武魂】破魂枪 / 八荒戟 / 裂金虎 / 磐石巨猿
+    //
+    //  迁移自老的「9 个字段 + HUNJILIST 9 行 + SkillLibrary 9 行 + lang 9 行」。
+    //  · skillAs(...) 手写物品 id —— 老 id（skill_pohun_1 这类）不能改，改了存档里的旧物品变空气
+    //  · skillRef(...) 接管一个已注册的魂技（裂金虎/磐石巨猿的第一魂技还要被变体当图标来源）
+    //  · extraSkill(...) 把变体挂进随机池（它们由 skillVariant 注册、模型走 SKILL_VARIANTS）
+    // ==================================================================================
+
+    public static final com.TovidY.kunluncontinent.item.wuhun.WuhunDef WUHUN_POHUNQIANG =
+            com.TovidY.kunluncontinent.item.wuhun.WuhunRegistry
+                    .define("pohunqiang", Wuhunname.pohunqiang,
+                            com.TovidY.kunluncontinent.item.wuhun.WuhunDef.Category.WEAPON, "§c")
+                    .skillAs("skill_pohun_1", 1, "破魂枪", SkillPohun1::new)
+                    .skillAs("skill_pohun_2", 2, "枪芒", SkillPohun2::new)
+                    .skillAs("skill_pohun_3", 3, "破甲", SkillPohun3::new)
+                    .skillAs("skill_pohun_4", 4, "贯日", SkillPohun4::new)
+                    .skillAs("skill_pohun_5", 5, "碎星", SkillPohun5::new)
+                    .skillAs("skill_pohun_6", 6, "巨枪", SkillPohun6::new)
+                    .skillAs("skill_pohun_7", 7, "武魂真身", SkillPohun7::new)
+                    .skillAs("skill_pohun_8", 8, "裂空", SkillPohun8::new)
+                    .skillAs("skill_pohun_9", 9, "弑神", SkillPohun9::new)
+                    .build();
+
+    public static final com.TovidY.kunluncontinent.item.wuhun.WuhunDef WUHUN_BAHUANGJI =
+            com.TovidY.kunluncontinent.item.wuhun.WuhunRegistry
+                    .define("bahuangji", Wuhunname.bahuangji,
+                            com.TovidY.kunluncontinent.item.wuhun.WuhunDef.Category.WEAPON, "§c")
+                    .skillAs("skill_bahuang_1", 1, "八荒戟", SkillBahuang1::new)
+                    .skillAs("skill_bahuang_2", 2, "横扫", SkillBahuang2::new)
+                    .skillAs("skill_bahuang_3", 3, "劈山", SkillBahuang3::new)
+                    .skillAs("skill_bahuang_4", 4, "断江", SkillBahuang4::new)
+                    .skillAs("skill_bahuang_5", 5, "镇岳", SkillBahuang5::new)
+                    .skillAs("skill_bahuang_6", 6, "破军", SkillBahuang6::new)
+                    .skillAs("skill_bahuang_7", 7, "武魂真身", SkillBahuang7::new)
+                    .skillAs("skill_bahuang_8", 8, "降雷", SkillBahuang8::new)
+                    .skillAs("skill_bahuang_9", 9, "八荒寂灭", SkillBahuang9::new)
+                    .build();
+
+    public static final com.TovidY.kunluncontinent.item.wuhun.WuhunDef WUHUN_LEIJINHU =
+            com.TovidY.kunluncontinent.item.wuhun.WuhunRegistry
+                    .define("liejinhu", Wuhunname.liejinhu,
+                            com.TovidY.kunluncontinent.item.wuhun.WuhunDef.Category.BEAST, "§c")
+                    .skillRef(1, "横爪", SKILL_LEIJINHU_1)
+                    .extraSkill(1, SKILL_LEIJINHU_1B, SKILL_LEIJINHU_1C, SKILL_LEIJINHU_1D, SKILL_LEIJINHU_1E)
+                    .skillAs("skill_leijinhu_2", 2, "虎啸", SkillLeijinhu2::new)
+                    .skillAs("skill_leijinhu_3", 3, "裂石", SkillLeijinhu3::new)
+                    .skillAs("skill_leijinhu_4", 4, "碎金", SkillLeijinhu4::new)
+                    .skillAs("skill_leijinhu_5", 5, "扑杀", SkillLeijinhu5::new)
+                    .skillAs("skill_leijinhu_6", 6, "啸月", SkillLeijinhu6::new)
+                    .skillAs("skill_leijinhu_7", 7, "武魂真身", SkillLeijinhu7::new)
+                    .skillAs("skill_leijinhu_8", 8, "裂天", SkillLeijinhu8::new)
+                    .skillAs("skill_leijinhu_9", 9, "猛虎破界", SkillLeijinhu9::new)
+                    .build();
+
+    public static final com.TovidY.kunluncontinent.item.wuhun.WuhunDef WUHUN_PANSHIJUYUAN =
+            com.TovidY.kunluncontinent.item.wuhun.WuhunRegistry
+                    .define("panshijuyuan", Wuhunname.panshijuyuan,
+                            com.TovidY.kunluncontinent.item.wuhun.WuhunDef.Category.BEAST, "§c")
+                    .skillRef(1, "重击", SKILL_PANSHIJUYUAN_1)
+                    .extraSkill(1, SKILL_PANSHIJUYUAN_1B, SKILL_PANSHIJUYUAN_1C, SKILL_PANSHIJUYUAN_1D, SKILL_PANSHIJUYUAN_1E)
+                    .skillAs("skill_panshijuyuan_2", 2, "石肤", SkillPanshijuyuan2::new)
+                    .skillAs("skill_panshijuyuan_3", 3, "震地", SkillPanshijuyuan3::new)
+                    .skillAs("skill_panshijuyuan_4", 4, "搬山", SkillPanshijuyuan4::new)
+                    .skillAs("skill_panshijuyuan_5", 5, "撼地", SkillPanshijuyuan5::new)
+                    .skillAs("skill_panshijuyuan_6", 6, "裂地", SkillPanshijuyuan6::new)
+                    .skillAs("skill_panshijuyuan_7", 7, "武魂真身", SkillPanshijuyuan7::new)
+                    .skillAs("skill_panshijuyuan_8", 8, "撼岳", SkillPanshijuyuan8::new)
+                    .skillAs("skill_panshijuyuan_9", 9, "不周倾", SkillPanshijuyuan9::new)
+                    .build();
+
+    // ==================================================================================
+    //  【声明式武魂】七杀剑（器武魂，1~9 魂技齐全）
+    // ==================================================================================
+    public static final com.TovidY.kunluncontinent.item.wuhun.WuhunDef WUHUN_QISHAJIAN =
+            com.TovidY.kunluncontinent.item.wuhun.WuhunRegistry
+                    .define("qishajian", Wuhunname.qishajian,
+                            com.TovidY.kunluncontinent.item.wuhun.WuhunDef.Category.WEAPON, "\u00a7c")
+                    .skill(1, "七杀剑", SkillQisha1::new)
+                    .skill(2, "血刃斩", SkillQisha2::new)
+                    .skill(3, "七杀步", SkillQisha3::new)
+                    .skill(4, "七杀印记", SkillQisha4::new)
+                    .skill(5, "断魂刺", SkillQisha5::new)
+                    .skill(6, "七杀剑阵", SkillQisha6::new)
+                    .skill(7, "七杀真身", SkillQisha7::new)
+                    .skill(8, "七绝斩", SkillQisha8::new)
+                    .skill(9, "七杀·灭魂", SkillQisha9::new)
+                    .build();
+
     public static ArrayList<RegistryObject<? extends Item>> HUNJILIST = new ArrayList<>();
     static {
-        HUNJILIST.add(SKILL_POHUN_1);
-        HUNJILIST.add(SKILL_BAHUANG_1);
         HUNJILIST.add(SKILL_LEIJINHU_1);
         HUNJILIST.add(SKILL_PANSHIJUYUAN_1);
-        HUNJILIST.add(SKILL_TIANSHI_1);
-        HUNJILIST.add(SKILL_POHUN_2);
-        HUNJILIST.add(SKILL_BAHUANG_2);
-        HUNJILIST.add(SKILL_LEIJINHU_2);
-        HUNJILIST.add(SKILL_PANSHIJUYUAN_2);
-        HUNJILIST.add(SKILL_TIANSHI_2);
-        HUNJILIST.add(SKILL_POHUN_3);
-        HUNJILIST.add(SKILL_BAHUANG_3);
-        HUNJILIST.add(SKILL_LEIJINHU_3);
-        HUNJILIST.add(SKILL_PANSHIJUYUAN_3);
-        HUNJILIST.add(SKILL_TIANSHI_3);
-        HUNJILIST.add(SKILL_POHUN_4);
-        HUNJILIST.add(SKILL_BAHUANG_4);
-        HUNJILIST.add(SKILL_LEIJINHU_4);
-        HUNJILIST.add(SKILL_PANSHIJUYUAN_4);
-        HUNJILIST.add(SKILL_TIANSHI_4);
-        HUNJILIST.add(SKILL_POHUN_5);
-        HUNJILIST.add(SKILL_BAHUANG_5);
-        HUNJILIST.add(SKILL_LEIJINHU_5);
-        HUNJILIST.add(SKILL_PANSHIJUYUAN_5);
-        HUNJILIST.add(SKILL_TIANSHI_5);
-        HUNJILIST.add(SKILL_POHUN_6);
-        HUNJILIST.add(SKILL_BAHUANG_6);
-        HUNJILIST.add(SKILL_LEIJINHU_6);
-        HUNJILIST.add(SKILL_PANSHIJUYUAN_6);
-        HUNJILIST.add(SKILL_TIANSHI_6);
-        HUNJILIST.add(SKILL_POHUN_7);
-        HUNJILIST.add(SKILL_BAHUANG_7);
-        HUNJILIST.add(SKILL_LEIJINHU_7);
-        HUNJILIST.add(SKILL_PANSHIJUYUAN_7);
-        HUNJILIST.add(SKILL_TIANSHI_7);
-        HUNJILIST.add(SKILL_POHUN_8);
-        HUNJILIST.add(SKILL_BAHUANG_8);
-        HUNJILIST.add(SKILL_LEIJINHU_8);
-        HUNJILIST.add(SKILL_PANSHIJUYUAN_8);
-        HUNJILIST.add(SKILL_TIANSHI_8);
-        HUNJILIST.add(SKILL_POHUN_9);
-        HUNJILIST.add(SKILL_BAHUANG_9);
-        HUNJILIST.add(SKILL_LEIJINHU_9);
-        HUNJILIST.add(SKILL_PANSHIJUYUAN_9);
-        HUNJILIST.add(SKILL_TIANSHI_9);
         // 特殊魂技也算「魂技类」：贴图 assets/kunluncontinent/textures/item/skill_pole_vault.png，
         // 由 HUNJILIST 统一生成模型（basicItem 用注册名当贴图名，不用在这里再写一遍）
         HUNJILIST.add(SKILL_POLE_VAULT);
+        // ⚠️ 声明式武魂（WUHUN_TIANSHI 这类）的魂技**不进** HUNJILIST：
+        //    模型由 WuhunRegistry.allSkillItems() 直接生成（见 ModItemModelsProvider），
+        //    这里再加一遍会重复出模型。
     }
 
     public static ArrayList<RegistryObject<Item>> DUANZAOMOBAN = new ArrayList<>();
@@ -947,6 +991,7 @@ public class ModItems {
         WUHUNGUOSHI.add(GUOSHI_LEIJINHU);
         WUHUNGUOSHI.add(GUOSHI_PANSHIJUYUAN);
         WUHUNGUOSHI.add(GUOSHI_TIANSHI);
+        WUHUNGUOSHI.add(GUOSHI_QISHAJIAN);
     }
 
     public static ArrayList<RegistryObject<Item>> NORMALITEMSLIST = new ArrayList<>();

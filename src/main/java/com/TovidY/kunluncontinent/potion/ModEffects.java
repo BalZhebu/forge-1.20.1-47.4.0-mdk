@@ -8,6 +8,7 @@ import com.TovidY.kunluncontinent.potion.skilleffect.wuhun.BhuanjiEffect;
 import com.TovidY.kunluncontinent.potion.skilleffect.wuhun.LiejinhuEffect;
 import com.TovidY.kunluncontinent.potion.skilleffect.wuhun.PanshijuYuanEffect;
 import com.TovidY.kunluncontinent.potion.skilleffect.wuhun.PohunEffect;
+import com.TovidY.kunluncontinent.potion.skilleffect.wuhun.QishaZhenshenEffect;
 import com.TovidY.kunluncontinent.potion.skilleffect.wuhun.TianshiEffect;
 import com.TovidY.kunluncontinent.potion.specialeffects.ArmorPiercingEffect;
 import com.TovidY.kunluncontinent.potion.specialeffects.DizzinessEffect;
@@ -46,6 +47,8 @@ public class ModEffects {
     public static final RegistryObject<MobEffect> LIEJINHU = REGISTER.register("liejinhu", LiejinhuEffect::new);
     public static final RegistryObject<MobEffect> PANSHIJUYUAN = REGISTER.register("panshijuyuan", PanshijuYuanEffect::new);
     public static final RegistryObject<MobEffect> TIANSHI = REGISTER.register("tianshi", TianshiEffect::new);
+    /** 七杀真身：只翻倍物攻。 */
+    public static final RegistryObject<MobEffect> QISHA_ZHENSHEN = REGISTER.register("qisha_zhenshen", QishaZhenshenEffect::new);
 
     //禁锢（圣光锁链 / 圣裁之域）：移速归零 + 无法攻击
     public static final RegistryObject<MobEffect> JINGU = REGISTER.register("jingu", JinguEffect::new);

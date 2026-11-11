@@ -1,5 +1,9 @@
 package com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.treen;
 
+import com.TovidY.kunluncontinent.render.skill.SkillEffectStyles;
+import com.TovidY.kunluncontinent.render.skill.SkillFieldSender;
+import com.TovidY.kunluncontinent.render.skill.SkillFxToggle;
+import net.minecraft.server.level.ServerPlayer;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import static com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem.dealSkillDamage;
@@ -26,12 +30,6 @@ public class SkillPohun3 extends BaseSkillItem {
     @Override public int getCastTime() { return 20; }
 
     @Override
-    public void executeEffect(Level level, Player player, float powerMultiplier) {
-        float finalDamage = getSkillBaseDamage(player) * getDamageMultiplier() * powerMultiplier;
-        this.runSkillLogic(level, player, powerMultiplier, finalDamage);
-    }
-
-    @Override
     public String getDescriptionKey() {
         return "skill.pohunqiang.three.description";
     }
@@ -43,7 +41,7 @@ public class SkillPohun3 extends BaseSkillItem {
 
     private void runSkillLogic(Level level, Player player, float powerMultiplier, float finalDamage) {
         Vec3 look = player.getLookAngle();
-        player.setDeltaMovement(look.x * 1.2, 0.1, look.z * 1.2);
+        player.setDeltaMovement(look.x * 2.5, 0.1, look.z * 2.5);
         player.hurtMarked = true;
 
         if (!level.isClientSide) {
@@ -61,16 +59,15 @@ public class SkillPohun3 extends BaseSkillItem {
                     .orElse(null);
 
             if (target != null) {
-                // ⚠️ 这里<b>不要</b>自己再乘一次 100/(100+防御)。
-                //    dealSkillDamage → LivingHurtEvent → CombatEventHandler
-                //    统一会做一次带下限的防御减伤（见 CombatEventHandler#getDamageFactor）。
-                //    本技能原本在这里先减一次、handler 里再减一次 = <b>伤害被砍两次</b>，
-                //    面对高防怪时伤害几乎归零，是「魂技很弱」的原因之一。
-                //    这里保留 0.7 的破甲意图，但改由 handler 的 wuchuan 口径统一处理。
                 dealSkillDamage(target, finalDamage, level.damageSources().indirectMagic(player, player));
 
                 // ---- 特效：锁定目标 → 贯穿突刺线 → 破甲碎片环 ----
-                ParticleFx fx = ParticleFx.of(level, player);
+                boolean shaderFx = SkillFxToggle.useShader(player) && player instanceof ServerPlayer;
+                if (shaderFx) {
+                    ServerPlayer sp = (ServerPlayer) player;
+                    SkillFieldSender.send(sp, SkillEffectStyles.BURST_POHUN, sp.getX(), sp.getY(), sp.getZ(), 1.4F, 12);
+                }
+                ParticleFx fx = shaderFx ? null : ParticleFx.of(level, player);
                 if (fx != null) {
                     Vec3 origin = player.getEyePosition();
                     Vec3 hitPos = target.position().add(0, target.getBbHeight() * 0.55, 0);

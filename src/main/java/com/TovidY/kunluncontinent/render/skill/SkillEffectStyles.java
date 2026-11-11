@@ -199,4 +199,61 @@ public final class SkillEffectStyles {
 
     private SkillEffectStyles() {
     }
+
+    // =====================================================================
+    //  七杀剑（器武魂·纯输出）：全部复用 sigil / beam / burst / shock 四条 fsh
+    // =====================================================================
+    /** 第一魂技「七杀剑」召唤地阵。 */
+    public static final int SIGIL_QISHA_SUMMON = 20;
+    /** 第六魂技「七杀剑阵」大阵。 */
+    public static final int SIGIL_QISHA_FIELD = 21;
+    /** 第七魂技「七杀真身」脚下血阵。 */
+    public static final int SIGIL_QISHA_ZHENSHEN = 22;
+    /** 第五/八/九魂技的血色射线（沿视线）。 */
+    public static final int BEAM_QISHA_RAY = 23;
+    /** 第七/九魂技的血色光柱（竖直）。 */
+    public static final int BEAM_QISHA_PILLAR = 24;
+    /** 通用血色爆光（施法者身上）。 */
+    public static final int BURST_QISHA = 25;
+    /** 印记 / 命中时目标身上的血爆。 */
+    public static final int BURST_QISHA_MARK = 26;
+    /** 扩散血环（斩击 / 突进）。 */
+    public static final int SHOCK_QISHA = 27;
+    /** 第二魂技「血刃斩」红色剑波（横向弧斩）。 */
+    public static final int SLASH_QISHA = 28;
+    /** 「七」字六芒星法阵（第二套：自带几何，不依赖 skill_sigil）。 */
+    public static final int SIGIL_QISHA_GLYPH = 29;
+    /** 暗红剑芒天降（单个目标落点）。 */
+    public static final int FALL_QISHA_SWORD = 30;
+    /** 五芒星法阵（第 8 魂技锁定阵）。 */
+    public static final int SIGIL_QISHA_PENTA = 31;
+    /** 八芒星法阵（第 6 魂技结界内层）。 */
+    public static final int SIGIL_QISHA_OCTA = 32;
+    /** 三角阵（第 9 魂技）。 */
+    public static final int SIGIL_QISHA_TRI = 33;
+
+    // =====================================================================
+    //  四大武魂（破魂枪 / 八荒戟 / 磐石巨猿 / 裂金虎）1~7 魂技的着色器样式
+    //  —— 全部复用 sigil / beam / burst / shock / arc 五条 fsh，只加预设
+    // =====================================================================
+    public static final int SHOCK_POHUN = 34;
+    public static final int SIGIL_POHUN_SUMMON = 35;
+    public static final int SIGIL_POHUN_FIELD = 36;
+    public static final int BEAM_POHUN_RAY = 37;
+    public static final int BEAM_POHUN_PILLAR = 38;
+    public static final int BURST_POHUN = 39;
+    public static final int SHOCK_BAHUANG = 40;
+    public static final int SIGIL_BAHUANG_SUMMON = 41;
+    public static final int SIGIL_BAHUANG_FIELD = 42;
+    public static final int BEAM_BAHUANG_RAY = 43;
+    public static final int BEAM_BAHUANG_PILLAR = 44;
+    public static final int BURST_BAHUANG = 45;
+    public static final int SLASH_BAHUANG = 46;
+    public static final int SHOCK_JUYUAN = 47;
+    public static final int SIGIL_JUYUAN_SUMMON = 48;
+    public static final int SIGIL_JUYUAN_FIELD = 49;
+    public static final int BEAM_JUYUAN_RAY = 50;
+    public static final int BURST_JUYUAN = 51;
+    public static final int SHOCK_TIGER = 52;
+    public static final int BEAM_TIGER_RAY = 53;
 }

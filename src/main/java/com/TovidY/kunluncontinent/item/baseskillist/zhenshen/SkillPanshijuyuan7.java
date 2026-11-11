@@ -1,5 +1,8 @@
 package com.TovidY.kunluncontinent.item.baseskillist.zhenshen;
 
+import com.TovidY.kunluncontinent.render.skill.SkillEffectStyles;
+import com.TovidY.kunluncontinent.render.skill.SkillFieldSender;
+import com.TovidY.kunluncontinent.render.skill.SkillFxToggle;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.potion.ModEffects;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -36,7 +39,10 @@ public class SkillPanshijuyuan7 extends BaseZhenshenSkill {
         player.displayClientMessage(Component.literal("§6§l第七魂技：磐石巨猿真身！"), true);
 
         // ---- 特效：岩灵真身 —— 巨岩阵 + 八方落地岩柱 + 环绕升腾尘环 ----
-        ParticleFx fx = ParticleFx.of(level, player);
+        if (SkillFxToggle.useShader(player)) {
+            SkillFieldSender.send(player, SkillEffectStyles.SIGIL_JUYUAN_SUMMON, player.getX(), player.getY(), player.getZ(), 2.4F, 60);
+        }
+        ParticleFx fx = SkillFxToggle.useShader(player) ? null : ParticleFx.of(level, player);
         if (fx != null) {
             Vec3 base = player.position();
             double rot = level.getGameTime() * 0.24;
@@ -62,7 +68,10 @@ public class SkillPanshijuyuan7 extends BaseZhenshenSkill {
 
     @Override
     protected void playDeactivateFx(ServerLevel level, ServerPlayer player) {
-        ParticleFx fx = ParticleFx.of(level, player);
+        if (SkillFxToggle.useShader(player)) {
+            SkillFieldSender.send(player, SkillEffectStyles.SHOCK_JUYUAN, player.getX(), player.getY(), player.getZ(), 3.0F, 10);
+        }
+        ParticleFx fx = SkillFxToggle.useShader(player) ? null : ParticleFx.of(level, player);
         if (fx != null) {
             Vec3 base = player.position();
             fx.budget(420);

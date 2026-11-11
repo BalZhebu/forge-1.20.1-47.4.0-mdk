@@ -240,11 +240,12 @@ public class PlayerNpcEntity extends PathfinderMob implements Merchant {
     }
 
     /**
-     * 死前结算：<b>玩家击杀</b>时才触发亡语 + 魂骨掉落。
+     * 死前结算：<b>玩家击杀</b>时才结算魂骨掉落。
      *
-     * <p>三条硬性条件都在这里把关：
-     * 击杀者必须是 {@link ServerPlayer}、NPC 必须带魂骨、每只只掉一次。
-     * 非玩家击杀（摔死/岩浆/其它 NPC）一律不触发——亡语和魂骨都是"给玩家的战利品"。</p>
+     * <p>硬性条件都在这里把关：击杀者必须是 {@link ServerPlayer}、NPC 必须带魂骨、每只只掉一次。
+     * 非玩家击杀（摔死/岩浆/其它 NPC）一律不触发。</p>
+     *
+     * <p>⚠️ 死亡后的<b>亡语（文字 + 音效）已经完全移除</b>，别再往 {@code die()} 里加死亡播报。</p>
      */
     @Override
     public void die(DamageSource cause) {
@@ -256,56 +257,7 @@ public class PlayerNpcEntity extends PathfinderMob implements Merchant {
             }
         }
 
-        // ==================== 玩家击杀专属结算 ====================
-        if (!this.level().isClientSide && this.level() instanceof ServerLevel serverLevel) {
-            ServerPlayer killer = resolveKiller(cause);
-            if (killer != null) {
-                // ① 亡语（一定播）
-                NpcDeathWhisper.speak(this, killer);
-
-                // ② 魂骨掉落（仅当这只 NPC 带魂骨，一次掉出全部）
-                if (NpcBoneGenerator.hasBone(this)) {
-                    int n = NpcBoneGenerator.tryDropBone(this);
-                    if (n > 0) {
-                        killer.sendSystemMessage(Component.literal(
-                                "§6【魂骨】§f从 §e" + cleanDisplayName() + " §f身上掉出了 §b"
-                                        + n + " §f枚魂骨！"));
-                    }
-                }
-            }
-        }
-
         super.die(cause);
-    }
-
-    /**
-     * 解析击杀者：优先取直接攻击者，其次取最后被谁打过（处理玩家技能/召唤物间接击杀）。
-     *
-     * @return 玩家击杀者；非玩家击杀返回 {@code null}
-     */
-    private ServerPlayer resolveKiller(DamageSource cause) {
-        Entity direct = cause.getDirectEntity();
-        if (direct instanceof ServerPlayer p) return p;
-
-        Entity attacker = cause.getEntity();
-        if (attacker instanceof ServerPlayer p) return p;
-
-        // 技能/投射物间接击杀：退回到最近的目标玩家
-        LivingEntity last = getLastHurtByMob();
-        if (last instanceof ServerPlayer p) return p;
-        // 召唤物/坐骑间接击杀：看它的"主人"
-        if (last != null) {
-            Entity owner = last.getVehicle();
-            if (owner instanceof ServerPlayer p) return p;
-        }
-        return null;
-    }
-
-    /** 显示名的前半截（去掉 "-----属性" 后缀）。 */
-    private String cleanDisplayName() {
-        String full = this.getName().getString();
-        int idx = full.indexOf("-----");
-        return idx > 0 ? full.substring(0, idx) : full;
     }
 
     /**

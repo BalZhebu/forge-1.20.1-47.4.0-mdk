@@ -106,6 +106,16 @@ public final class AlchemicalCalculator {
         return sum / materials.length;
     }
 
+    /**
+     * 对外暴露的「平均药性」（0 ~ 6）。
+     *
+     * <p>手动炼丹拿它当难度系数用：内丹品质越好，小游戏越容易
+     * （光标变慢、判定区变大），与自动炼丹"品质好 = 出高品质概率高"是同一个意图。</p>
+     */
+    public static double averagePotentialOf(@Nullable ItemStack[] materials) {
+        return averagePotential(materials);
+    }
+
     /** 丹炉等级相对丹方等级带来的药性加成。 */
     public static double furnacePotential(int furnaceLevel, int recipeLevel) {
         int diff = furnaceLevel - recipeLevel;

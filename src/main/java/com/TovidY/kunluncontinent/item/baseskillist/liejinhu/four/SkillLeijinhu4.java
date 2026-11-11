@@ -1,5 +1,9 @@
 package com.TovidY.kunluncontinent.item.baseskillist.liejinhu.four;
 
+import com.TovidY.kunluncontinent.render.skill.SkillEffectStyles;
+import com.TovidY.kunluncontinent.render.skill.SkillFieldSender;
+import com.TovidY.kunluncontinent.render.skill.SkillFxToggle;
+import net.minecraft.server.level.ServerPlayer;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import static com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem.dealSkillDamage;
@@ -45,7 +49,12 @@ public class SkillLeijinhu4 extends BaseSkillItem {
             }
 
             // ---- 特效：地脉炸裂 —— 五格碎金多边形 + 崩塌岩屑锥 + 双重冲击环 ----
-            ParticleFx fx = ParticleFx.of(level, player);
+            boolean shaderFx = SkillFxToggle.useShader(player) && player instanceof ServerPlayer;
+            if (shaderFx) {
+                ServerPlayer sp = (ServerPlayer) player;
+                SkillFieldSender.send(sp, SkillEffectStyles.BURST_LIETIAN, sp.getX(), sp.getY(), sp.getZ(), 1.3F, 12);
+            }
+            ParticleFx fx = shaderFx ? null : ParticleFx.of(level, player);
             if (fx != null) {
                 Vec3 c = new Vec3(center.getX() + 0.5, center.getY(), center.getZ() + 0.5);
                 double rot = serverLevel.getGameTime() * 0.35;

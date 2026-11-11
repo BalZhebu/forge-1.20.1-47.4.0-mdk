@@ -1,5 +1,6 @@
 package com.TovidY.kunluncontinent.screen.bank;
 
+import com.TovidY.kunluncontinent.screen.KunlunContainerScreen;
 import com.TovidY.kunluncontinent.bank.BankAccount;
 import com.TovidY.kunluncontinent.screen.KunlunGuiHelper;
 import com.TovidY.kunluncontinent.screen.attribute.AttributeTabBar;
@@ -43,7 +44,7 @@ import java.util.List;
  *   └───────────┘
  * </pre>
  */
-public class BankStorageScreen extends AbstractContainerScreen<BankTabMenu> implements AttributeTabBar.Host {
+public class BankStorageScreen extends KunlunContainerScreen<BankTabMenu> implements AttributeTabBar.Host {
 
     // ---- 版式（相对 leftPos / topPos）----
     private static final int ROW_Y0 = 20;
@@ -140,9 +141,9 @@ public class BankStorageScreen extends AbstractContainerScreen<BankTabMenu> impl
     // ==================================================================================
 
     @Override
-    public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
+    protected void renderPanel(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
         this.renderBackground(gui);
-        super.render(gui, mouseX, mouseY, partialTick);
+        super.renderPanel(gui, mouseX, mouseY, partialTick);
 
         for (var child : this.children()) {
             if (child instanceof KunlunGuiHelper.HandDrawnButton btn) {

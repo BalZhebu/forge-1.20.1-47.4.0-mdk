@@ -1,5 +1,9 @@
 package com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.four;
 
+import com.TovidY.kunluncontinent.render.skill.SkillEffectStyles;
+import com.TovidY.kunluncontinent.render.skill.SkillFieldSender;
+import com.TovidY.kunluncontinent.render.skill.SkillFxToggle;
+import net.minecraft.server.level.ServerPlayer;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import static com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem.dealSkillDamage;
@@ -44,7 +48,13 @@ public class SkillPohun4 extends BaseSkillItem {
             }
 
             // ---- 特效：20格贯穿枪轨（双螺旋缠绕 + 沿途冲击环 + 终点爆发）----
-            ParticleFx fx = ParticleFx.of(level, player);
+            boolean shaderFx = SkillFxToggle.useShader(player) && player instanceof ServerPlayer;
+            if (shaderFx) {
+                ServerPlayer sp = (ServerPlayer) player;
+                SkillFieldSender.send(sp, SkillEffectStyles.BEAM_POHUN_RAY, sp.getX(), sp.getY(), sp.getZ(), 1.0F, 12);
+                SkillFieldSender.send(sp, SkillEffectStyles.SHOCK_POHUN, sp.getX(), sp.getY(), sp.getZ(), 3.0F, 10);
+            }
+            ParticleFx fx = shaderFx ? null : ParticleFx.of(level, player);
             if (fx != null) {
                 Vec3 end = start.add(look.scale(20));
                 double rot = serverLevel.getGameTime() * 0.5;

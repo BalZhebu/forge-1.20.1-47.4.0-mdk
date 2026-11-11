@@ -1,5 +1,8 @@
 package com.TovidY.kunluncontinent.item.baseskillist.zhenshen;
 
+import com.TovidY.kunluncontinent.render.skill.SkillEffectStyles;
+import com.TovidY.kunluncontinent.render.skill.SkillFieldSender;
+import com.TovidY.kunluncontinent.render.skill.SkillFxToggle;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.potion.ModEffects;
 import net.minecraft.core.particles.ParticleTypes;
@@ -34,7 +37,10 @@ public class SkillBahuang7 extends BaseZhenshenSkill {
         player.displayClientMessage(Component.literal("§4§l第七魂技：八荒戟真身！"), true);
 
         // ---- 特效：八荒真身 —— 八角星阵 + 岩浆光柱环绕 + 贴地扩散环 ----
-        ParticleFx fx = ParticleFx.of(level, player);
+        if (SkillFxToggle.useShader(player)) {
+            SkillFieldSender.send(player, SkillEffectStyles.SIGIL_BAHUANG_SUMMON, player.getX(), player.getY(), player.getZ(), 2.6F, 60);
+        }
+        ParticleFx fx = SkillFxToggle.useShader(player) ? null : ParticleFx.of(level, player);
         if (fx != null) {
             Vec3 base = player.position();
             double rot = level.getGameTime() * 0.32;
@@ -59,7 +65,10 @@ public class SkillBahuang7 extends BaseZhenshenSkill {
 
     @Override
     protected void playDeactivateFx(ServerLevel level, ServerPlayer player) {
-        ParticleFx fx = ParticleFx.of(level, player);
+        if (SkillFxToggle.useShader(player)) {
+            SkillFieldSender.send(player, SkillEffectStyles.SHOCK_BAHUANG, player.getX(), player.getY(), player.getZ(), 3.0F, 10);
+        }
+        ParticleFx fx = SkillFxToggle.useShader(player) ? null : ParticleFx.of(level, player);
         if (fx != null) {
             Vec3 base = player.position();
             fx.budget(380);

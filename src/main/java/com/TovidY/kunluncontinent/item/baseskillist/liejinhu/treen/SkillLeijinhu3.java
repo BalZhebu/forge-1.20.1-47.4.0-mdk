@@ -1,5 +1,9 @@
 package com.TovidY.kunluncontinent.item.baseskillist.liejinhu.treen;
 
+import com.TovidY.kunluncontinent.render.skill.SkillEffectStyles;
+import com.TovidY.kunluncontinent.render.skill.SkillFieldSender;
+import com.TovidY.kunluncontinent.render.skill.SkillFxToggle;
+import net.minecraft.server.level.ServerPlayer;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import static com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem.dealSkillDamage;
@@ -38,7 +42,13 @@ public class SkillLeijinhu3 extends BaseSkillItem {
             Vec3 view = player.getViewVector(1.0f);
 
             // ---- 特效：碎金一击 —— 扇形金色爪芒 + 前方崩裂的岩屑锥 ----
-            ParticleFx fx = ParticleFx.of(level, player);
+            boolean shaderFx = SkillFxToggle.useShader(player) && player instanceof ServerPlayer;
+            if (shaderFx) {
+                ServerPlayer sp = (ServerPlayer) player;
+                SkillFieldSender.send(sp, SkillEffectStyles.SIGIL_LIETIAN, sp.getX(), sp.getY(), sp.getZ(), 5.5F, 36);
+                SkillFieldSender.send(sp, SkillEffectStyles.SHOCK_TIGER, sp.getX(), sp.getY(), sp.getZ(), 3.0F, 12);
+            }
+            ParticleFx fx = shaderFx ? null : ParticleFx.of(level, player);
             double rot = serverLevel.getGameTime() * 0.55;
             if (fx != null) {
                 Vec3 origin = player.getEyePosition().add(0, -0.3, 0);

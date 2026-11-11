@@ -1,5 +1,6 @@
 package com.TovidY.kunluncontinent.screen.attribute.shenkao;
 
+import com.TovidY.kunluncontinent.screen.KunlunContainerScreen;
 import com.TovidY.kunluncontinent.capability.ModAttributeAPI;
 import com.TovidY.kunluncontinent.godclass.GodRank;
 import com.TovidY.kunluncontinent.godclass.buff.GodBuff;
@@ -30,7 +31,7 @@ import com.TovidY.kunluncontinent.screen.attribute.AttributeTabs;
  *
  * <p>⚠️ 面板<b>没有任何物品栏槽位</b>（见 {@code ShenkaoMenu}）。</p>
  */
-public class ShenkaoScreen extends AbstractContainerScreen<ShenkaoMenu> implements AttributeTabBar.Host {
+public class ShenkaoScreen extends KunlunContainerScreen<ShenkaoMenu> implements AttributeTabBar.Host {
 
     public ShenkaoScreen(ShenkaoMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
@@ -54,11 +55,16 @@ public class ShenkaoScreen extends AbstractContainerScreen<ShenkaoMenu> implemen
 
         // 未封神：才需要「进度检查」按钮
         if (!GodClientData.isGod) {
+            // 【孤竹神】第九考是事件考（幽冥登天）：按钮改作「开启试炼考核」，点一下才开始判定
+            boolean loneBambooTrial = com.TovidY.kunluncontinent.godclass.LoneBambooGodPath.GOD_ID
+                    .equals(GodClientData.godId) && GodClientData.currentStage == 9;
             this.addRenderableWidget(new KunlunGuiHelper.HandDrawnButton(
-                    this.font, this.leftPos + this.imageWidth - 85, top + 12, 75, 18,
-                    Component.literal("进度检查"),
+                    this.font, this.leftPos + this.imageWidth - 95, top + 12, 85, 18,
+                    Component.literal(loneBambooTrial ? "§2开启试炼考核" : "进度检查"),
                     b -> NetworkHandler.INSTANCE.sendToServer(new C2SCheckTaskPacket()),
-                    () -> Collections.singletonList(Component.literal("点击检查并提交神考进度"))
+                    () -> Collections.singletonList(Component.literal(loneBambooTrial
+                            ? "§7在 §eY ≤ -60 §7处点击开始幽冥登天\n§7中途禁止飞行、禁止落地"
+                            : "点击检查并提交神考进度"))
             ));
         } else {
             // ⭐ 神祇面板：右下角一个按钮，按当前维度自动切换「进入/离开神界」（省面板空间）
@@ -90,9 +96,9 @@ public class ShenkaoScreen extends AbstractContainerScreen<ShenkaoMenu> implemen
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void renderPanel(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         this.renderBackground(guiGraphics);
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+        super.renderPanel(guiGraphics, mouseX, mouseY, partialTick);
 
         this.renderTooltip(guiGraphics, mouseX, mouseY);
 

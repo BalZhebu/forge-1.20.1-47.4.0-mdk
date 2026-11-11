@@ -1,5 +1,9 @@
 package com.TovidY.kunluncontinent.item.baseskillist.pohunqiang.five;
 
+import com.TovidY.kunluncontinent.render.skill.SkillEffectStyles;
+import com.TovidY.kunluncontinent.render.skill.SkillFieldSender;
+import com.TovidY.kunluncontinent.render.skill.SkillFxToggle;
+import net.minecraft.server.level.ServerPlayer;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import net.minecraft.core.particles.ParticleTypes;
@@ -30,7 +34,13 @@ public class SkillPohun5 extends BaseSkillItem {
             nbt.putFloat("SuiXingDamage", finalDamage);
 
             // ---- 特效：领域展开 —— 脚下星辉巨型法阵 + 十五格轨道环 + 上升星尘 ----
-            ParticleFx fx = ParticleFx.of(level, player);
+            boolean shaderFx = SkillFxToggle.useShader(player) && player instanceof ServerPlayer;
+            if (shaderFx) {
+                ServerPlayer sp = (ServerPlayer) player;
+                SkillFieldSender.send(sp, SkillEffectStyles.SIGIL_POHUN_FIELD, sp.getX(), sp.getY(), sp.getZ(), 6.0F, 40);
+                SkillFieldSender.send(sp, SkillEffectStyles.SHOCK_POHUN, sp.getX(), sp.getY(), sp.getZ(), 5.0F, 16);
+            }
+            ParticleFx fx = shaderFx ? null : ParticleFx.of(level, player);
             if (fx != null) {
                 ServerLevel serverLevel = (ServerLevel) level;
                 Vec3 base = player.position();

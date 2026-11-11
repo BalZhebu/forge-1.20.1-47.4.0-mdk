@@ -1,5 +1,9 @@
 package com.TovidY.kunluncontinent.item.baseskillist.bahuangji.treen;
 
+import com.TovidY.kunluncontinent.render.skill.SkillEffectStyles;
+import com.TovidY.kunluncontinent.render.skill.SkillFieldSender;
+import com.TovidY.kunluncontinent.render.skill.SkillFxToggle;
+import net.minecraft.server.level.ServerPlayer;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import static com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem.dealSkillDamage;
@@ -87,7 +91,12 @@ public class SkillBahuang3 extends BaseSkillItem {
                 }
 
                 // ---- 落地特效：三重冲击环 + 不规则裂地多边形 + 尘柱 ----
-                ParticleFx fx = ParticleFx.of(level, player);
+                boolean shaderFx = SkillFxToggle.useShader(player) && player instanceof ServerPlayer;
+                if (shaderFx) {
+                    ServerPlayer sp = (ServerPlayer) player;
+                    SkillFieldSender.send(sp, SkillEffectStyles.BURST_BAHUANG, sp.getX(), sp.getY(), sp.getZ(), 1.4F, 12);
+                }
+                ParticleFx fx = shaderFx ? null : ParticleFx.of(level, player);
                 if (fx != null) {
                     Vec3 land = new Vec3(lX, lY, lZ);
                     double rot = level.getGameTime() * 0.2;

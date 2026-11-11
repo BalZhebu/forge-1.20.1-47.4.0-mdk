@@ -1,5 +1,9 @@
 package com.TovidY.kunluncontinent.item.baseskillist.bahuangji.one;
 
+import com.TovidY.kunluncontinent.render.skill.SkillEffectStyles;
+import com.TovidY.kunluncontinent.render.skill.SkillFieldSender;
+import com.TovidY.kunluncontinent.render.skill.SkillFxToggle;
+import net.minecraft.server.level.ServerPlayer;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.ModItems;
@@ -65,7 +69,13 @@ public class SkillBahuang1 extends BaseSkillItem {
             }
 
             // 3. 视觉特效：八荒星阵 + 岩浆戟柱 + 八方光柱
-            ParticleFx fx = ParticleFx.of(level, player);
+            boolean shaderFx = SkillFxToggle.useShader(player) && player instanceof ServerPlayer;
+            if (shaderFx) {
+                ServerPlayer sp = (ServerPlayer) player;
+                SkillFieldSender.send(sp, SkillEffectStyles.SIGIL_BAHUANG_SUMMON, sp.getX(), sp.getY(), sp.getZ(), 2.6F, 40);
+                SkillFieldSender.send(sp, SkillEffectStyles.BURST_BAHUANG, sp.getX(), sp.getY(), sp.getZ(), 1.3F, 15);
+            }
+            ParticleFx fx = shaderFx ? null : ParticleFx.of(level, player);
             if (fx != null) {
                 Vec3 base = player.position();
                 double rot = serverLevel.getGameTime() * 0.3;

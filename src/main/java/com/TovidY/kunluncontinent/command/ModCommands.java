@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.command;
 
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.command.tovid.AttributeCommand;
+import com.TovidY.kunluncontinent.command.tovid.BankCommand;
 import com.TovidY.kunluncontinent.command.tovid.CoinDropCommand;
 import com.TovidY.kunluncontinent.command.tovid.DropTableCommand;
 import com.TovidY.kunluncontinent.command.tovid.HunguCommand;
@@ -45,6 +46,10 @@ public class ModCommands {
         KLCommands.register(d, HunguCommand.node());
         KLCommands.register(d, CoinDropCommand.node());
         KLCommands.register(d, DropTableCommand.node());
+
+        // ---- 银行 ----
+        // /kunluncontinent bank give <玩家> <gold|silver|copper> <数量>
+        KLCommands.register(d, BankCommand.node());
 
         // ---- NPC ----
         KLCommands.register(d, NpcSpawnCommand.node());
