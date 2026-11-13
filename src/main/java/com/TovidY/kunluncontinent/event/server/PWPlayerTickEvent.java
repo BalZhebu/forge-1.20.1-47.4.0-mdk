@@ -17,6 +17,7 @@ import com.TovidY.kunluncontinent.effect.ParticleFx;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import com.TovidY.kunluncontinent.item.baseskillist.liejinhu.eight.SkillLeijinhu8;
 import com.TovidY.kunluncontinent.item.baseskillist.liejinhu.nine.SkillLeijinhu9;
+import com.TovidY.kunluncontinent.item.baseskillist.zhenshen.BuffToggleState;
 import com.TovidY.kunluncontinent.item.baseskillist.zhenshen.ZhenshenState;
 import com.TovidY.kunluncontinent.item.baseskillist.tianshi.AngelWings;
 import com.TovidY.kunluncontinent.render.skill.SkillEffectStyles;
@@ -124,8 +125,12 @@ public class PWPlayerTickEvent {
 
                 updatePlayerFly(player, capability, gameTime);
 
-                if (gameTime % 20 == 0 && ZhenshenState.isActive(serverPlayer)) {
-                    ZhenshenState.tickServer(serverPlayer, capability);
+                if (gameTime % 20 == 0) {
+                    if (ZhenshenState.isActive(serverPlayer)) {
+                        ZhenshenState.tickServer(serverPlayer, capability);
+                    }
+                    // 增益开关（石肤 / 搬山 / 石铠 / 啸月…）：换武魂 / 精神力见底自动关闭
+                    BuffToggleState.tickServer(serverPlayer, capability);
                 }
 
                 handleMeditationLogic(serverPlayer, capability, gameTime);
@@ -939,14 +944,14 @@ public class PWPlayerTickEvent {
             }
             if (cap.getCurrentCastingSkill() != null) {
                 // ⭐ 抗打断在**吟唱开始时就已经掷过骰**（见 CPacketReleaseSkill）：
-                //    掷中了就代表整段吟唱打不断，这里直接放行、连提示都不要再发 ——
-                //    每次受击都提示会在吟唱期间把 ActionBar 刷屏。
-                //    掷不中则任意一次实打实的命中都能打断。
+                //    掷中了就代表整段吟唱打不断，这里直接放行。
+                //    ⚠️ 不打任何提示 —— 「被打断就被打断」，这些文本对玩家没用，
+                //    只会刷 ActionBar（受击提示、防御成功提示都属噪音）。
                 if (cap.isCastingProtected()) {
                     return;
                 }
+                // 被打断：只清吟唱状态（含收掉客户端吟唱条），不刷文本
                 cap.stopCasting(player);
-                player.displayClientMessage(Component.literal("§c魂力紊乱，吟唱中断！"), true);
             }
         });
     }
@@ -1050,7 +1055,10 @@ public class PWPlayerTickEvent {
         //    （改动前的既有行为，保持不动）。因此「真身的状态机」不能写在这里，
         //    否则创造模式玩家会看到「增益 5 秒后凭空消失」—— 见 onPlayerTick 里的 1b。
         if (capability.getWuhunName() != null && gameTime % 20 == 0) {
-            float cost = wuhunUpkeepCost(capability.getDengji()) * ZhenshenState.upkeepMultiplier(player);
+            // 总维持费 = 基础 × 真身倍率 × 增益开关倍率（多个增益按条目累加）
+            float cost = wuhunUpkeepCost(capability.getDengji())
+                    * ZhenshenState.upkeepMultiplier(player)
+                    * BuffToggleState.upkeepMultiplier(player);
             capability.setJingshenli(capability.getJingshenli() - cost);
         }
 

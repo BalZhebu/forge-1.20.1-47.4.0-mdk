@@ -147,4 +147,24 @@ public record BeamPreset(
     public static final BeamPreset TIGER_RAY = new BeamPreset(
             0.7F, 12.0F, false, true, 1.1F, 0.18F, 2.6F,
             0xFFE98A, 0x8A5A00);
+
+    /**
+     * 深海召唤·收尾「天降能量柱」：28 格高、更粗、几乎不抖。
+     *
+     * <p>锚点在祭坛顶面，光柱从这里向上 28 格 —— 从玩家视角看就是
+     * 「一道光从天上砸下来接在祭坛上」。超过清场穹顶（12 格）的部分会被地形挡住，
+     * 只留下穹顶里那一截，正好是"从天而降"的观感。</p>
+     */
+    public static final BeamPreset DEEPSEA_HEAVEN = new BeamPreset(
+            3.0F, 28.0F, true, false,
+            0.0F,
+            0.04F, 2.6F,
+            0xDFFBFF, 0x0A4A63);
+
+    /** 深海召唤：12 格高青白光柱，轻微抖动、能量上涌。 */
+    public static final BeamPreset DEEPSEA_PILLAR = new BeamPreset(
+            2.2F, 12.0F, true, false,
+            0.0F,
+            0.05F, 1.6F,
+            0x9FF6FF, 0x06222E);
 }

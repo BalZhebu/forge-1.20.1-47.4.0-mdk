@@ -1,5 +1,6 @@
 package com.TovidY.kunluncontinent.block.portal.polarice;
 
+import com.TovidY.kunluncontinent.block.ModBlocks;
 import com.TovidY.kunluncontinent.worldgen.ModDimensions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -13,7 +14,9 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -48,6 +51,43 @@ public class PolarIcePortalBlock extends Block {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(AXIS);
+    }
+
+    /**
+     * 框架被拆 → 门跟着消散（与地狱门完全相同的机制）。
+     *
+     * <p>{@code updateShape} 在<b>任何邻居变化</b>时被调用（拆方块、爆炸、活塞…都算），
+     * 所以这里不需要额外去监听 {@code BlockEvent.BreakEvent} —— 原版地狱门就是这么做的：
+     * 一旦门形不再完整就返回空气，被拆的那一格会连锁通知其余门方块，整扇门一起消失。</p>
+     *
+     * <p>三种情况直接放行不做校验：</p>
+     * <ul>
+     *   <li><b>垂直于门平面的前后两面</b>（门轴是 X 时的南北邻居）：那一面本来就没有框架，
+     *       玩家在旁边放/拆方块不该把门炸掉；</li>
+     *   <li><b>邻居也是门方块</b>：建门时门方块是一格一格放的，先放的那几格会在
+     *       后放的格子到来时收到通知，此时校验必然失败 → 必须跳过，否则门刚建好就自毁；</li>
+     *   <li>其余情况才真的去校验 2×3 内腔 + 一圈框架。</li>
+     * </ul>
+     */
+    @Override
+    public BlockState updateShape(BlockState state, Direction facing, BlockState facingState,
+                                  LevelAccessor level, BlockPos pos, BlockPos facingPos) {
+        Direction.Axis axis = state.getValue(AXIS);
+
+        // ① 前后两面（垂直于门平面）：不参与框架，放行
+        if (facing.getAxis().isHorizontal() && facing.getAxis() != axis) {
+            return super.updateShape(state, facing, facingState, level, pos, facingPos);
+        }
+        // ② 邻居也是门方块：交给它自己判，避免建门过程中互相判空
+        if (facingState.is(this)) {
+            return super.updateShape(state, facing, facingState, level, pos, facingPos);
+        }
+        // ③ 框架残缺 → 消散
+        boolean complete = PortalFrameValidator.isComplete(level, pos, axis, this,
+                ModBlocks.POLAR_ICE_PORTAL_BLOCK.get());
+        return complete
+                ? super.updateShape(state, facing, facingState, level, pos, facingPos)
+                : Blocks.AIR.defaultBlockState();
     }
 
     @Override

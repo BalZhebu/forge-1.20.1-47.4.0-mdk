@@ -20,6 +20,9 @@ import com.TovidY.kunluncontinent.entity.lonebamboo.LoneBambooModel;
 import com.TovidY.kunluncontinent.entity.lonebamboo.LoneBambooRenderer;
 import com.TovidY.kunluncontinent.entity.playernpc.PlayerNpcEntity;
 import com.TovidY.kunluncontinent.entity.playernpc.PlayerNpcRenderer;
+import com.TovidY.kunluncontinent.entity.snowdemon.IceBallEntity;
+import com.TovidY.kunluncontinent.entity.snowdemon.IceBallModel;
+import com.TovidY.kunluncontinent.entity.snowdemon.IceBallRenderer;
 import com.TovidY.kunluncontinent.entity.snowdemon.SnowDemonEntity;
 import com.TovidY.kunluncontinent.entity.snowdemon.SnowDemonNewModel;
 import com.TovidY.kunluncontinent.entity.snowdemon.SnowDemonRenderer;
@@ -85,6 +88,20 @@ public class EntityInit {
                     .sized(4.4F, 8.5F)
                     .build("snow_demon"));
 
+    /**
+     * 雪魔的远程攻击弹射物「冰球」。
+     *
+     * <p>{@code MobCategory.MISC} + 小碰撞箱；{@code setShouldReceiveVelocityUpdates(true)}
+     * 是必须的，否则客户端拿不到速度、冰球会一顿一顿地飘。</p>
+     */
+    public static final RegistryObject<EntityType<IceBallEntity>> ICE_BALL = ENTITY_TYPES.register("ice_ball",
+            () -> EntityType.Builder.<IceBallEntity>of(IceBallEntity::new, MobCategory.MISC)
+                    .sized(0.55F, 0.55F)
+                    .clientTrackingRange(6)
+                    .updateInterval(10)
+                    .setShouldReceiveVelocityUpdates(true)
+                    .build("ice_ball"));
+
     public static final RegistryObject<EntityType<DemonWhaleEntity>> DEMON_WHALE =
             ENTITY_TYPES.register("demon_whale", () -> EntityType.Builder.of(DemonWhaleEntity::new, MobCategory.MONSTER)
                     .sized(8.0F, 6.5F)
@@ -112,6 +129,7 @@ public class EntityInit {
         public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
             event.registerLayerDefinition(CustomModel.LAYER_LOCATION, CustomModel::createBodyLayer);
             event.registerLayerDefinition(SnowDemonNewModel.LAYER_LOCATION, SnowDemonNewModel::createBodyLayer);
+            event.registerLayerDefinition(IceBallModel.LAYER_LOCATION, IceBallModel::createBodyLayer);
             event.registerLayerDefinition(DemonWhaleModel.LAYER_LOCATION, DemonWhaleModel::createBodyLayer);
             event.registerLayerDefinition(LoneBambooModel.LAYER_LOCATION, LoneBambooModel::createBodyLayer);
             event.registerLayerDefinition(com.TovidY.kunluncontinent.entity.icempress.IceEmpressEntityModel.LAYER_LOCATION,
@@ -125,6 +143,7 @@ public class EntityInit {
             EntityRenderers.register(EntityInit.ICE_CRYSTAL.get(), IceCrystalRenderer::new);
             EntityRenderers.register(EntityInit.ICE_SHARD.get(), ThrownItemRenderer::new);
             EntityRenderers.register(EntityInit.SNOW_DEMON.get(), SnowDemonRenderer::new);
+            EntityRenderers.register(EntityInit.ICE_BALL.get(), IceBallRenderer::new);
 
             EntityRenderers.register(EntityInit.DEMON_WHALE.get(), DemonWhaleRenderer::new);
 

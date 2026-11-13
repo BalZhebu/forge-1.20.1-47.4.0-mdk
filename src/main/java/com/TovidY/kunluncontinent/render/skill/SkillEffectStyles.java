@@ -204,33 +204,33 @@ public final class SkillEffectStyles {
     //  七杀剑（器武魂·纯输出）：全部复用 sigil / beam / burst / shock 四条 fsh
     // =====================================================================
     /** 第一魂技「七杀剑」召唤地阵。 */
-    public static final int SIGIL_QISHA_SUMMON = 20;
+    public static final int SIGIL_QISHA_SUMMON = 54;
     /** 第六魂技「七杀剑阵」大阵。 */
-    public static final int SIGIL_QISHA_FIELD = 21;
+    public static final int SIGIL_QISHA_FIELD = 55;
     /** 第七魂技「七杀真身」脚下血阵。 */
-    public static final int SIGIL_QISHA_ZHENSHEN = 22;
+    public static final int SIGIL_QISHA_ZHENSHEN = 56;
     /** 第五/八/九魂技的血色射线（沿视线）。 */
-    public static final int BEAM_QISHA_RAY = 23;
+    public static final int BEAM_QISHA_RAY = 57;
     /** 第七/九魂技的血色光柱（竖直）。 */
-    public static final int BEAM_QISHA_PILLAR = 24;
+    public static final int BEAM_QISHA_PILLAR = 58;
     /** 通用血色爆光（施法者身上）。 */
-    public static final int BURST_QISHA = 25;
+    public static final int BURST_QISHA = 59;
     /** 印记 / 命中时目标身上的血爆。 */
-    public static final int BURST_QISHA_MARK = 26;
+    public static final int BURST_QISHA_MARK = 60;
     /** 扩散血环（斩击 / 突进）。 */
-    public static final int SHOCK_QISHA = 27;
+    public static final int SHOCK_QISHA = 61;
     /** 第二魂技「血刃斩」红色剑波（横向弧斩）。 */
-    public static final int SLASH_QISHA = 28;
+    public static final int SLASH_QISHA = 62;
     /** 「七」字六芒星法阵（第二套：自带几何，不依赖 skill_sigil）。 */
-    public static final int SIGIL_QISHA_GLYPH = 29;
+    public static final int SIGIL_QISHA_GLYPH = 63;
     /** 暗红剑芒天降（单个目标落点）。 */
-    public static final int FALL_QISHA_SWORD = 30;
+    public static final int FALL_QISHA_SWORD = 64;
     /** 五芒星法阵（第 8 魂技锁定阵）。 */
-    public static final int SIGIL_QISHA_PENTA = 31;
+    public static final int SIGIL_QISHA_PENTA = 65;
     /** 八芒星法阵（第 6 魂技结界内层）。 */
-    public static final int SIGIL_QISHA_OCTA = 32;
+    public static final int SIGIL_QISHA_OCTA = 66;
     /** 三角阵（第 9 魂技）。 */
-    public static final int SIGIL_QISHA_TRI = 33;
+    public static final int SIGIL_QISHA_TRI = 67;
 
     // =====================================================================
     //  四大武魂（破魂枪 / 八荒戟 / 磐石巨猿 / 裂金虎）1~7 魂技的着色器样式
@@ -256,4 +256,24 @@ public final class SkillEffectStyles {
     public static final int BURST_JUYUAN = 51;
     public static final int SHOCK_TIGER = 52;
     public static final int BEAM_TIGER_RAY = 53;
+
+    // =====================================================================
+    //  深海祭坛（召唤深渊领主）—— 青蓝系召唤动画
+    // =====================================================================
+    /** 外层巨阵（24 边 + 12 芒）。 */
+    public static final int SIGIL_DEEPSEA_ALTAR = 68;
+    /** 中层阵（8 边 + 6 芒）。 */
+    public static final int SIGIL_DEEPSEA_INNER = 69;
+    /** 内层符文阵（20 边 + 5 芒 + 三道爪痕）。 */
+    public static final int SIGIL_DEEPSEA_RUNE = 70;
+    /** 冲天光柱（12 格高）。 */
+    public static final int BEAM_DEEPSEA_PILLAR = 71;
+    /** 天降能量柱（收尾那一根直通天际的光）。 */
+    public static final int BEAM_DEEPSEA_HEAVEN = 74;
+    /** 法阵塔·塔基（正五边形 + 五芒星）。 */
+    public static final int SIGIL_DEEPSEA_PENTA = 75;
+    /** 法阵塔·塔身（正六边形 + 六芒星）。 */
+    public static final int SIGIL_DEEPSEA_HEXA = 76;
+    /** 法阵塔·塔顶封印（十二边 + 三芒 + 爪痕）。 */
+    public static final int SIGIL_DEEPSEA_SEAL = 77;
 }

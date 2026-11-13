@@ -401,14 +401,26 @@ public class ModAttributeAPI {
     }
 
     /**
-     * ⭐ 抗打断几率（0~1之间的概率，1 = 必定不被打断）。
+     * ⭐ 抗打断几率（<b>返回值是 0~1 的概率</b>，1 = 必定不被打断）。
      *
      * <p><b>构成</b>：</p>
      * <pre>
      *   最终抗打断 = min(0.99, 点数加成 + 等级加成)
-     *   点数加成 = 0.8% × 已加点数        （"定魂"属性，max 99 点 → 79.2%）
-     *   等级加成 = min(0.15, 等级 × 0.15%)  （99 级 → +14.85%）
+     *   点数加成 = 0.8% × 已加点数 / 100   （"定魂"属性，max 99 点 → 0.792）
+     *   等级加成 = min(0.15, 等级 × 0.0015)（99 级 → +0.1485）
      * </pre>
+     *
+     * <p>⚠️ <b>单位坑（2026-11-12 修）</b>：{@code AttributePointSpec#applyBonusByKey}
+     * 走 FLAT 模式时返回的是<b>百分点</b>（{@code 0.8 × 点数}，满点 = 79.2），
+     * 和暴击率 / 命中 / 闪避是同一套口径（面板也是按 {@code %.1f%%} 直接打印的）。
+     * 而本方法要的是 0~1 的概率 —— 以前的写法直接把 79.2 当概率塞进
+     * {@code player.getRandom().nextFloat() < 79.2}：
+     * <ul>
+     *   <li>加 <b>1 点</b>定魂 → {@code 0.8 + 0.15 = 0.95}，<b>95% 抗打断</b>；</li>
+     *   <li>加 <b>2 点</b> → 撞上限 {@code 0.99}，<b>此后任何一次吟唱都打不断</b>。</li>
+     * </ul>
+     * 于是「受击打断吟唱」这条老规则被彻底架空 —— 面板写着 79.2%，
+     * 实际两点就满免疫。现在先把点数部分 {@code /100} 转成概率再相加。</p>
      *
      * <p><b>掷骰时机：一次吟唱只掷一次</b>（在吟唱开始的那一刻，见
      * {@code CPacketReleaseSkill}）。掷中 → 整段吟唱全程打不断；掷不中 → 任意一次
@@ -427,13 +439,16 @@ public class ModAttributeAPI {
     public static float getKangdapan(Entity entity) {
         if (!(entity instanceof Player player)) return 0f;
 
-        float points = AttributePointSpec.applyBonusByKey("kangdapan", 0f, player);
+        // ⚠️ applyBonusByKey 返回的是**百分点**（0.8 × 已加点数，最多 79.2），
+        //    必须 /100 换成 0~1 的概率，否则 1 点就是 80% 抗打断（详见方法注释）。
+        float pointPercent = AttributePointSpec.applyBonusByKey("kangdapan", 0f, player);
+        float pointChance = Math.max(0.0f, pointPercent) / 100.0f;
 
         // 等级加成：线性但封顶 15%，保证低等级也能感知到差异
         int level = getDengji(player);
         float levelBonus = Math.min(0.15f, level * 0.0015f);
 
-        return Math.min(0.99f, points + levelBonus);
+        return Math.min(0.99f, pointChance + levelBonus);
     }
 
     public static float getMingzhong(Entity entity) {

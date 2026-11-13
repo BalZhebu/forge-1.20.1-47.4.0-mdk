@@ -19,38 +19,48 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
-public class SkillPanshijuyuan2 extends BaseSkillItem {
-    public SkillPanshijuyuan2() {
-        super();
+import com.TovidY.kunluncontinent.item.baseskillist.zhenshen.BaseBuffSkill;
+import com.TovidY.kunluncontinent.potion.ModEffects;
+import net.minecraft.world.effect.MobEffect;
+
+/**
+ * 本技能已改造为<b>增益开关</b>（见 {@link com.TovidY.kunluncontinent.item.baseskillist.zhenshen.BaseBuffSkill}）：
+ * <ul>
+ *   <li>释放 → 开启，持续获得增益，<b>武魂维持消耗大幅增加</b>（×{@code MULT}）；</li>
+ *   <li>开启期间再释放 → 关闭；</li>
+ *   <li>切换武魂 / 武魂关闭 / 精神力见底 → 自动关闭。</li>
+ * </ul>
+ */
+public class SkillPanshijuyuan2 extends BaseBuffSkill {
+
+    @Override public float getBaseCost() { return 150f; }
+    @Override public float getDamageMultiplier() { return 0.000000f; }
+    @Override public int getCastTime() { return 0; }
+
+    @Override
+    public String getDescriptionKey() { return "skill.panshijuyuan.two.description"; }
+
+    @Override
+    protected String getToggleId() { return "JUYUAN_STONE_SKIN"; }
+
+    @Override
+    protected MobEffect resolveBuffEffect(ServerPlayer player) {
+        return ModEffects.STONE_SKIN.get();
     }
 
     @Override
-    public int getCastTime() {
-        return 0; // 瞬发技能，强化自身
-    }
+    protected int getBuffAmplifier() { return 0; }
 
     @Override
-    public float getDamageMultiplier() {
-        return 0f;
-    }
+    protected float getUpkeepMultiplier() { return 8.000000f; }
 
     @Override
-    public float getBaseCost() {
-        return 100f;
-    }
+    protected String getActiveMessage() { return "§6§l石肤"; }
 
     @Override
-    public String getDescriptionKey() {
-        return "skill.panshijuyuan.two.description";
-    }
-
-    @Override
-    public void executeEffect(Level level, Player player, float powerMultiplier, float finalDamage) {
-        if (!level.isClientSide) {
-            player.addEffect(new MobEffectInstance(ModEffects.STONE_SKIN.get(), 200, 0));
-
-            // ---- 特效：石肤 —— 环绕岩球汇聚 + 石壳穹顶 + 贴地尘环 ----
-            boolean shaderFx = SkillFxToggle.useShader(player) && player instanceof ServerPlayer;
+    protected void playActivateFx(ServerLevel level, ServerPlayer player) {
+        player.displayClientMessage(Component.literal("§6§l石肤！"), true);
+        boolean shaderFx = SkillFxToggle.useShader(player) && player instanceof ServerPlayer;
             if (shaderFx) {
                 ServerPlayer sp = (ServerPlayer) player;
                 SkillFieldSender.send(sp, SkillEffectStyles.SHOCK_JUYUAN, sp.getX(), sp.getY(), sp.getZ(), 2.6F, 12);
@@ -74,11 +84,18 @@ public class SkillPanshijuyuan2 extends BaseSkillItem {
                 fx.shockRing(ParticleTypes.WHITE_ASH, base.add(0, 0.05, 0), 3.0, 1.6, 34);
                 fx.burst(ParticleTypes.SOUL_FIRE_FLAME, hub, 26, 0.7, true);
             }
+        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                SoundEvents.IRON_GOLEM_HURT, SoundSource.PLAYERS, 1.0f, 0.5f);
+    }
 
-            level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                    SoundEvents.IRON_GOLEM_HURT, SoundSource.PLAYERS, 1.0f, 0.5f);
-
-            player.displayClientMessage(Component.literal("§6§l第二魂技：石肤！"), true);
+    @Override
+    protected void playDeactivateFx(ServerLevel level, ServerPlayer player) {
+        ParticleFx fx = ParticleFx.of(level, player);
+        if (fx != null) {
+            fx.budget(240);
+            fx.shockRing(ParticleTypes.CRIMSON_SPORE, player.position().add(0, 0.05, 0), 2.4, 1.4, 26);
         }
+        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                SoundEvents.BEACON_DEACTIVATE, SoundSource.PLAYERS, 0.6f, 1.4f);
     }
 }

@@ -27,6 +27,11 @@ public class UnderwaterAltarBlock extends BaseEntityBlock {
 
     public static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 8, 16);
 
+    /** 清场半径（水平，格）。 */
+    private static final int CLEAR_RADIUS = 12;
+    /** 清场高度（只往上，格）。 */
+    private static final int CLEAR_HEIGHT = 12;
+
     public UnderwaterAltarBlock() {
         super(BlockBehaviour.Properties.of()
                 .strength(-1.0F)
@@ -76,9 +81,12 @@ public class UnderwaterAltarBlock extends BaseEntityBlock {
     }
 
     private void clearSummonArea(Level level, BlockPos center) {
-        int radius = 12;
-        BlockPos minPos = center.offset(-radius, -radius, -radius);
-        BlockPos maxPos = center.offset(radius, radius, radius);
+        // ⚠️ 只清「祭坛这一格及以上」，绝不动下面：
+        //    原来是 ±12 的立方体，连祭坛脚下的海床 / 基座一起挖掉 ——
+        //    ① BOSS 生成在 y+3，脚下先被挖空，容易掉进自己挖的坑里卡死；
+        //    ② 会把海底地形整片掏塌。现在只在祭坛上方开一个"穹顶"给它活动。
+        BlockPos minPos = center.offset(-CLEAR_RADIUS, 0, -CLEAR_RADIUS);
+        BlockPos maxPos = center.offset(CLEAR_RADIUS, CLEAR_HEIGHT, CLEAR_RADIUS);
         for (BlockPos targetPos : BlockPos.betweenClosed(minPos, maxPos)) {
             if (targetPos.equals(center)) continue;
             BlockState targetState = level.getBlockState(targetPos);

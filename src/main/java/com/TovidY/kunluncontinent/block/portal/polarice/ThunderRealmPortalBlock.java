@@ -1,5 +1,6 @@
 package com.TovidY.kunluncontinent.block.portal.polarice;
 
+import com.TovidY.kunluncontinent.block.ModBlocks;
 import com.TovidY.kunluncontinent.worldgen.ModDimensions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -12,7 +13,9 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -46,6 +49,33 @@ public class ThunderRealmPortalBlock extends Block {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(AXIS);
+    }
+
+    /**
+     * 框架被拆 → 门跟着消散（与地狱门、极冰门同一套机制）。
+     *
+     * <p>说明见 {@link PolarIcePortalBlock#updateShape}：邻居变化时校验 2×3 内腔 + 一圈框架，
+     * 不再完整就返回空气，被拆掉的那一格会连锁把整扇门带走。</p>
+     */
+    @Override
+    public BlockState updateShape(BlockState state, Direction facing, BlockState facingState,
+                                  LevelAccessor level, BlockPos pos, BlockPos facingPos) {
+        Direction.Axis axis = state.getValue(AXIS);
+
+        // ① 垂直于门平面的前后两面：没有框架，放行
+        if (facing.getAxis().isHorizontal() && facing.getAxis() != axis) {
+            return super.updateShape(state, facing, facingState, level, pos, facingPos);
+        }
+        // ② 邻居也是门方块：交给它自己判（建门过程中不能互相判空）
+        if (facingState.is(this)) {
+            return super.updateShape(state, facing, facingState, level, pos, facingPos);
+        }
+        // ③ 框架残缺 → 消散
+        boolean complete = PortalFrameValidator.isComplete(level, pos, axis, this,
+                ModBlocks.THUNDER_REALM_PORTAL_BLOCK.get());
+        return complete
+                ? super.updateShape(state, facing, facingState, level, pos, facingPos)
+                : Blocks.AIR.defaultBlockState();
     }
 
     @Override

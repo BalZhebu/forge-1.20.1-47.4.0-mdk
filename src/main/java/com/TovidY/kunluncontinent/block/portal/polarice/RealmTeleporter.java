@@ -186,17 +186,26 @@ public abstract class RealmTeleporter implements ITeleporter {
         if (y < 1) y = 70;
         BlockPos spawnPos = new BlockPos(pos.getX(), y, pos.getZ());
 
-        // 4x5 结构：外圈框架，内径 2x3 门
+        // 4x5 结构：外圈框架，内径 2x3 门。
+        //
+        // ⚠️ **必须先放完整圈框架，再填内腔**，不能边放框架边填门：
+        //    门方块重写了 updateShape（框架被拆就消散，见 PortalFrameValidator），
+        //    按原来的"逐列（dx 外层）"顺序，dx=0 那一列的门方块放进去之后，
+        //    随后的 dx=1 立柱、dx=2 右立柱落地时都会触发它的邻居更新校验 ——
+        //    此时框架还没建完，校验必然失败，门会**在生成过程中自毁**。
         for (int dx = -1; dx <= 2; dx++) {
             for (int dy = 0; dy <= 4; dy++) {
-                BlockPos target = spawnPos.offset(dx, dy, 0);
                 boolean isFrame = (dx == -1 || dx == 2 || dy == 0 || dy == 4);
                 if (isFrame) {
-                    destWorld.setBlockAndUpdate(target, frameBlock().defaultBlockState());
-                } else {
-                    destWorld.setBlockAndUpdate(target, portalBlock().defaultBlockState()
-                            .setValue(BlockStateProperties.HORIZONTAL_AXIS, Direction.Axis.X));
+                    destWorld.setBlockAndUpdate(spawnPos.offset(dx, dy, 0), frameBlock().defaultBlockState());
                 }
+            }
+        }
+        BlockState portalState = portalBlock().defaultBlockState()
+                .setValue(BlockStateProperties.HORIZONTAL_AXIS, Direction.Axis.X);
+        for (int dx = 0; dx <= 1; dx++) {
+            for (int dy = 1; dy <= 3; dy++) {
+                destWorld.setBlockAndUpdate(spawnPos.offset(dx, dy, 0), portalState);
             }
         }
 

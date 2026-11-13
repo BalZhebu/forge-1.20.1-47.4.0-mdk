@@ -207,6 +207,17 @@ public final class SkillEffects {
                         new QishaGlyphSigilEffect(owner, origin, radius, startTick, duration,
                                 QishaGlyphSigilEffect.Shape.TRIANGLE));
         register(SkillEffectStyles.FALL_QISHA_SWORD, QishaSwordFallEffect::new);
+        // =====================================================================
+        //  深海祭坛：召唤深渊领主的分层法阵 + 光柱 + 冲击环
+        // =====================================================================
+        register(SkillEffectStyles.SIGIL_DEEPSEA_ALTAR, sigil(SigilPreset.DEEPSEA_ALTAR));
+        register(SkillEffectStyles.SIGIL_DEEPSEA_INNER, sigil(SigilPreset.DEEPSEA_INNER));
+        register(SkillEffectStyles.SIGIL_DEEPSEA_RUNE, sigil(SigilPreset.DEEPSEA_RUNE));
+        register(SkillEffectStyles.SIGIL_DEEPSEA_PENTA, sigil(SigilPreset.DEEPSEA_PENTA));
+        register(SkillEffectStyles.SIGIL_DEEPSEA_HEXA, sigil(SigilPreset.DEEPSEA_HEXA));
+        register(SkillEffectStyles.SIGIL_DEEPSEA_SEAL, sigil(SigilPreset.DEEPSEA_SEAL));
+        register(SkillEffectStyles.BEAM_DEEPSEA_PILLAR, beam(BeamPreset.DEEPSEA_PILLAR));
+        register(SkillEffectStyles.BEAM_DEEPSEA_HEAVEN, beam(BeamPreset.DEEPSEA_HEAVEN));
         register(SkillEffectStyles.SLASH_QISHA,
                 (ownerEntityId, origin, radius, startTick, durationTicks) ->
                         new ArcEffect(ownerEntityId, origin, radius, startTick, durationTicks,

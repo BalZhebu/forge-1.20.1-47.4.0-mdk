@@ -37,7 +37,7 @@ public class ModCreativeModelTab {
                         Stream.of(
                                         ModItems.DEBUG_ITEM_BLOCK.stream(),
 
-                                        Stream.of(ModItems.POHUNQIANG, ModItems.BAHUANGJI),
+                                        Stream.of(ModItems.POHUNQIANG, ModItems.BAHUANGJI , ModItems.QISHAJIAN),
 
                                         ModItems.WUHUNGUOSHI.stream(),
                                         ModItems.COINLIST.stream(),

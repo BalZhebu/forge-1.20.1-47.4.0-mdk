@@ -166,4 +166,62 @@ public record SigilPreset(
     public static final SigilPreset JUYUAN_FIELD = new SigilPreset(
             16.0F, 0.82F, 9.0F, 0.28F, 0.70F, 0.42F, 0, 0.0F, 3,
             0xE8B44C, 0x3A2A10);
+
+    // =====================================================================
+    //  深海祭坛（召唤深渊领主）：青蓝系三层阵
+    // =====================================================================
+    /** 外层巨阵：24 边 + 12 芒 + 内符文 + 三重冲击环。 */
+    public static final SigilPreset DEEPSEA_ALTAR = new SigilPreset(
+            24.0F, 0.88F,
+            12.0F, 0.26F, 0.76F,
+            0.46F,
+            0, 0.0F,
+            3,
+            0x7FE9FF, 0x062A3E);
+
+    /** 中层阵：8 边 + 6 芒，贴身一圈。 */
+    public static final SigilPreset DEEPSEA_INNER = new SigilPreset(
+            8.0F, 0.72F,
+            6.0F, 0.22F, 0.60F,
+            0.34F,
+            0, 0.0F,
+            2,
+            0xBFF7FF, 0x0B3A52);
+
+    /** 内层符文阵：20 边 + 5 芒 + 三道爪痕（被巨兽抓过）。 */
+    public static final SigilPreset DEEPSEA_RUNE = new SigilPreset(
+            20.0F, 0.80F,
+            5.0F, 0.24F, 0.68F,
+            0.40F,
+            3, 0.6F,
+            2,
+            0x5AD8FF, 0x08203A);
+
+    // ---- 深海法阵塔：一层一个形状，越往上越大 ----
+    /** 塔基：正五边形 + 五芒星。 */
+    public static final SigilPreset DEEPSEA_PENTA = new SigilPreset(
+            5.0F, 0.74F,
+            5.0F, 0.30F, 0.70F,
+            0.30F,
+            0, 0.0F,
+            2,
+            0x9FF6FF, 0x0A2A3E);
+
+    /** 塔身：正六边形 + 六芒星（两个交叠三角）。 */
+    public static final SigilPreset DEEPSEA_HEXA = new SigilPreset(
+            6.0F, 0.78F,
+            6.0F, 0.28F, 0.72F,
+            0.34F,
+            0, 0.0F,
+            3,
+            0x7FE9FF, 0x07203A);
+
+    /** 塔顶封印：十二边 + 三芒 + 三道爪痕，最小最亮。 */
+    public static final SigilPreset DEEPSEA_SEAL = new SigilPreset(
+            12.0F, 0.80F,
+            3.0F, 0.20F, 0.62F,
+            0.30F,
+            3, 0.8F,
+            1,
+            0xBFF7FF, 0x0B3042);
 }

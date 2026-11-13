@@ -9,6 +9,7 @@ import com.TovidY.kunluncontinent.godclass.interfac.GodInfo;
 import com.TovidY.kunluncontinent.godclass.interfac.GodTask;
 import com.TovidY.kunluncontinent.item.baseskillist.BaseSkillItem;
 import com.TovidY.kunluncontinent.network.SynsAPI;
+import com.TovidY.kunluncontinent.network.server.S2CCastingSyncPacket;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -1196,6 +1197,10 @@ public class PlayerAttributeCapability implements ICapabilitySerializable<Compou
         this.castingProtected = false;
 
         removeCastingSlowdown(player);
+
+        // ⚠️ 客户端吟唱条是「按包里的总时长自己倒数」的，服务端提前收尾（打断 / 死亡 /
+        //    转生）必须补一个 0 时长的包，否则那条进度条会继续走完，看起来像技能还在唱。
+        S2CCastingSyncPacket.clear(player);
     }
 
     public void removeCastingSlowdown(Player player) {

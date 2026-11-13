@@ -19,24 +19,50 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
-public class SkillPanshijuyuan4 extends BaseSkillItem {
-    @Override public float getBaseCost() { return 220f; }
-    @Override public float getDamageMultiplier() { return 0f; }
+import com.TovidY.kunluncontinent.item.baseskillist.zhenshen.BaseBuffSkill;
+import com.TovidY.kunluncontinent.potion.ModEffects;
+import net.minecraft.world.effect.MobEffect;
+
+/**
+ * 本技能已改造为<b>增益开关</b>（见 {@link com.TovidY.kunluncontinent.item.baseskillist.zhenshen.BaseBuffSkill}）：
+ * <ul>
+ *   <li>释放 → 开启，持续获得增益，<b>武魂维持消耗大幅增加</b>（×{@code MULT}）；</li>
+ *   <li>开启期间再释放 → 关闭；</li>
+ *   <li>切换武魂 / 武魂关闭 / 精神力见底 → 自动关闭。</li>
+ * </ul>
+ */
+public class SkillPanshijuyuan4 extends BaseBuffSkill {
+
+    @Override public float getBaseCost() { return 180f; }
+    @Override public float getDamageMultiplier() { return 0.000000f; }
     @Override public int getCastTime() { return 10; }
 
     @Override
-    public String getDescriptionKey() {
-        return "skill.panshijuyuan.four.description";
+    public String getDescriptionKey() { return "skill.panshijuyuan.four.description"; }
+
+    @Override
+    protected String getToggleId() { return "JUYUAN_MOVING_MOUNTAINS"; }
+
+    @Override
+    protected MobEffect resolveBuffEffect(ServerPlayer player) {
+        return ModEffects.MOVING_MOUNTAINS.get();
     }
 
     @Override
-    public void executeEffect(Level level, Player player, float powerMultiplier, float finalDamage) {
-        if (!level.isClientSide) {
-            player.addEffect(new MobEffectInstance(ModEffects.MOVING_MOUNTAINS.get(), 400, 1));
-            ServerLevel serverLevel = (ServerLevel) level;
+    protected int getBuffAmplifier() { return 1; }
 
-            // ---- 特效：搬山 —— 头顶悬浮巨石阵 + 地脉光柱 + 抬升气流 ----
-            boolean shaderFx = SkillFxToggle.useShader(player) && player instanceof ServerPlayer;
+    @Override
+    protected float getUpkeepMultiplier() { return 10.000000f; }
+
+    @Override
+    protected String getActiveMessage() { return "§6§l搬山"; }
+
+    @Override
+    protected void playActivateFx(ServerLevel level, ServerPlayer player) {
+        player.displayClientMessage(Component.literal("§6§l搬山！"), true);
+        ServerLevel serverLevel = level;
+
+        boolean shaderFx = SkillFxToggle.useShader(player) && player instanceof ServerPlayer;
             if (shaderFx) {
                 ServerPlayer sp = (ServerPlayer) player;
                 SkillFieldSender.send(sp, SkillEffectStyles.SHOCK_JUYUAN, sp.getX(), sp.getY(), sp.getZ(), 3.0F, 10);
@@ -71,9 +97,18 @@ public class SkillPanshijuyuan4 extends BaseSkillItem {
                 fx.burst(ParticleTypes.SOUL_FIRE_FLAME, base.add(0, 1.0, 0), 36, 1.2, true);
                 fx.bloom(ParticleTypes.WHITE_ASH, base.add(0, 2.0, 0), 30, 2.0, 0.1);
             }
+        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                SoundEvents.IRON_GOLEM_DAMAGE, SoundSource.PLAYERS, 1.0f, 0.6f);
+    }
 
-            level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.IRON_GOLEM_HURT, SoundSource.PLAYERS, 1.0f, 0.5f);
-            player.displayClientMessage(Component.literal("§8§l第四魂技：搬山！"), true);
+    @Override
+    protected void playDeactivateFx(ServerLevel level, ServerPlayer player) {
+        ParticleFx fx = ParticleFx.of(level, player);
+        if (fx != null) {
+            fx.budget(240);
+            fx.shockRing(ParticleTypes.CRIMSON_SPORE, player.position().add(0, 0.05, 0), 2.4, 1.4, 26);
         }
+        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                SoundEvents.BEACON_DEACTIVATE, SoundSource.PLAYERS, 0.6f, 1.4f);
     }
 }

@@ -17,21 +17,51 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-public class SkillLeijinhu6 extends BaseSkillItem {
-    @Override public float getBaseCost() { return 450f; }
-    @Override public float getDamageMultiplier() { return 0f; } // Buff类技能
-    @Override public int getCastTime() { return 10; }
+import com.TovidY.kunluncontinent.item.baseskillist.zhenshen.BaseBuffSkill;
+import com.TovidY.kunluncontinent.potion.ModEffects;
+import net.minecraft.world.effect.MobEffect;
+
+/**
+ * 本技能已改造为<b>增益开关</b>（见 {@link com.TovidY.kunluncontinent.item.baseskillist.zhenshen.BaseBuffSkill}）：
+ * <ul>
+ *   <li>释放 → 开启，持续获得增益，<b>武魂维持消耗大幅增加</b>（×{@code MULT}）；</li>
+ *   <li>开启期间再释放 → 关闭；</li>
+ *   <li>切换武魂 / 武魂关闭 / 精神力见底 → 自动关闭。</li>
+ * </ul>
+ */
+public class SkillLeijinhu6 extends BaseBuffSkill {
+
+    @Override public float getBaseCost() { return 220f; }
+    @Override public float getDamageMultiplier() { return 0.000000f; }
+    @Override public int getCastTime() { return 0; }
 
     @Override
     public String getDescriptionKey() { return "skill.leijinhu.six.description"; }
 
     @Override
-    public void executeEffect(Level level, Player player, float powerMultiplier, float finalDamage) {
-        if (!level.isClientSide) {
-            ServerLevel serverLevel = (ServerLevel) level;
-            boolean isDay = level.isDay();
+    protected String getToggleId() { return "TIGER_MOON"; }
+    /** 啸月：白天给大日之威，夜晚给邀月之华 —— 每次刷新时按当前时间重新解析。 */
+    @Override
+    protected MobEffect resolveBuffEffect(ServerPlayer player) {
+        return player.level().isDay() ? ModEffects.SUN_POWER.get() : ModEffects.POWER_OF_THE_MOON.get();
+    }
 
-            boolean shaderFx = SkillFxToggle.useShader(player) && player instanceof ServerPlayer;
+    @Override
+    protected int getBuffAmplifier() { return 1; }
+
+    @Override
+    protected float getUpkeepMultiplier() { return 12.000000f; }
+
+    @Override
+    protected String getActiveMessage() { return "§d§l啸月"; }
+
+    @Override
+    protected void playActivateFx(ServerLevel level, ServerPlayer player) {
+        player.displayClientMessage(Component.literal("§d§l啸月！"), true);
+        ServerLevel serverLevel = level;
+        boolean isDay = level.isDay();
+
+        boolean shaderFx = SkillFxToggle.useShader(player) && player instanceof ServerPlayer;
             if (shaderFx) {
                 ServerPlayer sp = (ServerPlayer) player;
                 SkillFieldSender.send(sp, SkillEffectStyles.SIGIL_LIETIAN, sp.getX(), sp.getY(), sp.getZ(), 6.0F, 36);
@@ -66,7 +96,7 @@ public class SkillLeijinhu6 extends BaseSkillItem {
                     fx.bloom(ParticleTypes.SMALL_FLAME, base.add(0, 1.0, 0), 24, 1.2, 0.1);
                 }
             } else {
-                player.addEffect(new MobEffectInstance(ModEffects.POWER_OF_THE_MOON.get(), 500, 1));
+
                 player.displayClientMessage(Component.literal("§b§l第六魂技：啸月（邀月之华）！"), true);
 
                 // ---- 邀月形态：月牙 + 银白环 + 垂落的星屑 ----
@@ -87,7 +117,18 @@ public class SkillLeijinhu6 extends BaseSkillItem {
                     fx.bloom(ParticleTypes.SNOWFLAKE, base.add(0, 1.2, 0), 24, 1.2, 0.06);
                 }
             }
-            level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.WOLF_HOWL, SoundSource.PLAYERS, 1.5f, 1.0f);
+        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                SoundEvents.WITHER_AMBIENT, SoundSource.PLAYERS, 0.6f, 1.2f);
+    }
+
+    @Override
+    protected void playDeactivateFx(ServerLevel level, ServerPlayer player) {
+        ParticleFx fx = ParticleFx.of(level, player);
+        if (fx != null) {
+            fx.budget(240);
+            fx.shockRing(ParticleTypes.CRIMSON_SPORE, player.position().add(0, 0.05, 0), 2.4, 1.4, 26);
         }
+        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                SoundEvents.BEACON_DEACTIVATE, SoundSource.PLAYERS, 0.6f, 1.4f);
     }
 }

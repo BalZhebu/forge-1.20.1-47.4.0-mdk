@@ -57,10 +57,12 @@ public class ShockwaveEffect extends SkillEffect {
     private static final float EDGE_G = 0.24F;
     private static final float EDGE_B = 0.06F;
 
+
     public ShockwaveEffect(int ownerEntityId, Vec3 origin, float radius,
                            long startTick, int durationTicks) {
         super(ownerEntityId, origin, radius, startTick, durationTicks);
     }
+
 
     @Override
     public void render(Vec3 cameraPos, long gameTime, float partialTick) {
@@ -72,13 +74,19 @@ public class ShockwaveEffect extends SkillEffect {
         float elapsedSeconds = elapsedSeconds(gameTime, partialTick);
         float elapsedTicks = elapsedSeconds * 20.0F;
 
-        // 推进度：0 → 1 走完 EXPAND_TICKS
-        float expand = Mth.clamp(elapsedTicks / EXPAND_TICKS, 0.0F, 1.0F);
+        // 推进度：0 → 1 走完 expandTicks
+        //
+        // ⚠️ 以前 expandTicks 恒为 40，但调用方经常只给 10~30 tick 的时长 ——
+        //    于是光波还没推到边缘，特效就被丢弃了：看起来就是「环卡在中心、越堆越亮」，
+        //    完全看不到扩散。现在按实际时长反推扩散时间（上限仍是 40，长时长表现不变）。
+        float expandTicks = Mth.clamp(durationTicks() * 0.55F, 4.0F, EXPAND_TICKS);
+        float expand = Mth.clamp(elapsedTicks / expandTicks, 0.0F, 1.0F);
 
-        // 包络：扩散期间保持全亮，到位后才开始淡出
-        float fade = elapsedTicks <= EXPAND_TICKS
+        // 包络：扩散期间保持全亮，到位后才开始淡出（淡出时长同样按时长收放）
+        float fadeTicks = Math.min(FADE_OUT_TICKS, Math.max(4.0F, durationTicks() * 0.35F));
+        float fade = elapsedTicks <= expandTicks
                 ? Mth.clamp(elapsedTicks / 4.0F, 0.0F, 1.0F)
-                : Mth.clamp((durationTicks() - elapsedTicks) / FADE_OUT_TICKS, 0.0F, 1.0F);
+                : Mth.clamp((durationTicks() - elapsedTicks) / fadeTicks, 0.0F, 1.0F);
         if (fade <= 0.002F) {
             return;
         }

@@ -8,7 +8,6 @@ import com.TovidY.kunluncontinent.advancement.ModTriggers;
 import com.TovidY.kunluncontinent.block.ModBlockEntities;
 import com.TovidY.kunluncontinent.block.ModBlocks;
 import com.TovidY.kunluncontinent.block.blockentity.SpiritGatheringAltarRenderer;
-import com.TovidY.kunluncontinent.block.blockentity.UnderwaterAltarRenderer;
 import com.TovidY.kunluncontinent.godclass.GodRegistry;
 import com.TovidY.kunluncontinent.item.tool.DecompositionItem;
 import com.TovidY.kunluncontinent.potion.ModEffects;
@@ -141,8 +140,8 @@ public class KlMain {
 
         @SubscribeEvent
         public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
-            event.registerBlockEntityRenderer(ModBlockEntities.UNDERWATER_ALTAR_TILE.get(),
-                    UnderwaterAltarRenderer::new);
+            // 海底祭坛不再挂着那张"魂环"贴图渲染（原地抽搐、不转、还卡）——
+            // 召唤表现全部改由 SkillEffects 的着色器法阵塔负责。
             event.registerBlockEntityRenderer(ModBlockEntities.SPIRIT_GATHERING_ALTAR_BE.get(),
                     SpiritGatheringAltarRenderer::new);
         }

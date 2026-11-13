@@ -81,7 +81,12 @@ public class SnowDemonEntity extends Monster {
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(1, new FloatGoal(this));
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+        // ⚠️ 远程必须比近战<b>优先级高</b>（数字小）：
+        //    MeleeAttackGoal 只要"有目标"就会一直 canUse（它会一直往玩家那边走），
+        //    放在前面会把远程 Goal 整个挡住 → 玩家飞起来时雪魔永远只会干瞪眼。
+        //    反过来：近战够得着时 IceBallAttackGoal.canUse() 返回 false，自然轮到近战。
+        this.goalSelector.addGoal(1, new IceBallAttackGoal(this));
         this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.2D, false));
         this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
@@ -138,11 +143,19 @@ public class SnowDemonEntity extends Monster {
      */
     @Override
     public boolean doHurtTarget(Entity target) {
+        this.playAttackAnimation();
+        return super.doHurtTarget(target);
+    }
+
+    /**
+     * 播放一次普通攻击（挥手）动画。
+     * <p>近战命中与<b>扔冰球</b>共用它 —— 远程技能在表现上就是"挥手 + 飞出冰球"。</p>
+     */
+    public void playAttackAnimation() {
         if (!this.level().isClientSide) {
             this.attackTimer = ATTACK_ANIM_TICKS;
             this.entityData.set(IS_ATTACKING, true);
         }
-        return super.doHurtTarget(target);
     }
 
     /**
@@ -170,39 +183,10 @@ public class SnowDemonEntity extends Monster {
     }
 
     @Override
-    public void aiStep() {
-        super.aiStep();
-
-        if (!this.level().isClientSide && this.isAlive()) {
-            if (this.getTarget() != null && ForgeEventFactory.getMobGriefingEvent(this.level(), this)) {
-                this.getCapability(MobAttributeCapabilityProvider.CAPABILITY).ifPresent(attr -> {
-                    if (attr.getNianxian() > 5000) {
-                        breakEnvironment();
-                    }
-                });
-            }
-        }
-    }
-
-    @Override
     protected void dropCustomDeathLoot(DamageSource source, int looting, boolean hitByPlayer) {
         super.dropCustomDeathLoot(source, looting, hitByPlayer);
         if (this.random.nextFloat() < 0.1F) {
             this.spawnAtLocation(ModItems.RINSEI_INGOT.get());
-        }
-    }
-
-    private void breakEnvironment() {
-        AABB aabb = this.getBoundingBox().inflate(0.1D);
-        int yMin = Mth.floor(this.getY() + 0.5D);
-        int yMax = Mth.floor(aabb.maxY);
-        for (BlockPos pos : BlockPos.betweenClosed(
-                Mth.floor(aabb.minX), yMin, Mth.floor(aabb.minZ),
-                Mth.floor(aabb.maxX), yMax, Mth.floor(aabb.maxZ))) {
-            BlockState state = this.level().getBlockState(pos);
-            if (!state.isAir() && state.getDestroySpeed(this.level(), pos) <= 2.0F) {
-                this.level().destroyBlock(pos, true, this);
-            }
         }
     }
 

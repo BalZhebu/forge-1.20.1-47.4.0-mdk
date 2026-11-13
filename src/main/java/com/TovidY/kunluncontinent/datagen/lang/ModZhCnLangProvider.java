@@ -45,15 +45,11 @@ public class ModZhCnLangProvider extends LanguageProvider {
         //别忘了写分配技能的类
         //技能代码
 
-
-
         //变体魂技：与横爪同属第一魂技槽位，获得时随机五选一
         add(ModItems.SKILL_LEIJINHU_1B.get(), "§c《裂金虎》第一魂技[金牙连斩]");
         add(ModItems.SKILL_LEIJINHU_1C.get(), "§c《裂金虎》第一魂技[虎跃]");
         add(ModItems.SKILL_LEIJINHU_1D.get(), "§c《裂金虎》第一魂技[噬金]");
         add(ModItems.SKILL_LEIJINHU_1E.get(), "§c《裂金虎》第一魂技[虎爪裂地]");
-
-
 
         //变体魂技：与重击同属第一魂技槽位，获得时随机五选一
         add(ModItems.SKILL_PANSHIJUYUAN_1B.get(), "§c《磐石巨猿》第一魂技[崩拳]");
@@ -61,11 +57,9 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.SKILL_PANSHIJUYUAN_1D.get(), "§c《磐石巨猿》第一魂技[石波]");
         add(ModItems.SKILL_PANSHIJUYUAN_1E.get(), "§c《磐石巨猿》第一魂技[磐石之怒]");
 
-        // ===== 特殊魂技（com.TovidY.kunluncontinent.special 包）=====
         add(ModItems.SKILL_POLE_VAULT.get(), "§b《孤竹》特殊魂技[撑杆跳]");
         add("skill.pole_vault.description", "消耗%s点精神力，撑杆一跃，原地弹起约6格，落地不会受伤。");
 
-        // ===== 声明式武魂：魂技名自动生成，不用再手写一行行 add =====
         String[] cn = {"", "一", "二", "三", "四", "五", "六", "七", "八", "九"};
         for (com.TovidY.kunluncontinent.item.wuhun.WuhunDef def
                 : com.TovidY.kunluncontinent.item.wuhun.WuhunRegistry.all()) {
@@ -95,7 +89,9 @@ public class ModZhCnLangProvider extends LanguageProvider {
 
         add("skill.bakuangji.one.description", "消耗%s点精神力，凝结武魂实体化。");
 
-        // ===== 七杀剑 =====
+        add("entity.kunluncontinent.ice_ball", "冰球");
+        add(ModEffects.QISHA_ZHENSHEN.get(), "§c§l七杀真身");
+
         add("tooltip.kunluncontinent.qishajian",
                 "拿在副手或主手上时每3秒扣除1点精神力 \n持有时玩家最终攻击力增加1.25% \n增加的百分比根据玩家等级变化 \n最高增幅4.5%");
         add("skill.qishajian.one.description", "消耗%s点精神力，凝结七杀剑本体（优先放入副手），断剑之前杀意不散。");
@@ -125,7 +121,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("skill.liejinhu.three.description","消耗%s点精神力，释放裂石：对范围敌人造成巨额伤害并附加缓慢");
         add("skill.leijinhu.four.description", "消耗%s点精神力，释放碎金：对面前3*3*3范围内的敌人造成大量伤害，可以破坏硬度较低的方块");
         add("skill.leijinhu.five.description", "消耗%s点精神力，释放扑杀：单体技能，对一个实体造成高额伤害的同时，有极低概率直接斩杀对方，斩杀特效不论对方实力强弱，触发后顷刻斩杀");
-        add("skill.leijinhu.six.description", "消耗%s点精神力，释放啸月：在白天使用获得大日之威效果20秒，在夜晚使用获得邀月之华效果25秒。buff提供全属性加成。");
+        add("skill.leijinhu.six.description", "开启啸月（可再次释放关闭）：白天获得大日之威，夜晚获得邀月之华（全属性加成）。开启期间武魂维持消耗大幅增加，切换武魂或精神力见底时自动关闭。");
         add("skill.liejinhu.7.description", "开启裂金虎真身：持续增幅自身；维持消耗为普通武魂的10倍，精神力低于上限10%时自动解除，再次释放可提前关闭。开启后进入冷却");
         add("skill.leijinhu.eight.description","消耗%s点精神力，释放裂天：对自身半径20格范围内造成10次高额伤害。");
         add("skill.leijinhu.nine.description","消耗%s点精神力，释放猛虎破界：对10格内敌人造成巨额伤害的同时附加缓慢，虚弱，反胃时长15秒，并在攻击到的实体处破碎虚空，身处虚空的生物持续受到伤害");
@@ -135,10 +131,10 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("skill.panshijuyuan.one.c.description", "消耗%s点精神力，石刺：在面前唤出成排石刺，对直线上的敌人造成伤害并大幅减速");
         add("skill.panshijuyuan.one.d.description", "消耗%s点精神力，石波：向面前推出一道石浪，对长7格内的敌人造成伤害并击退");
         add("skill.panshijuyuan.one.e.description", "消耗%s点精神力，磐石之怒：怒吼获得力量2与抗性1，持续15秒");
-        add("skill.panshijuyuan.two.description","消耗%s点精神力，释放石肤：对自身附加30%%的防御力");
+        add("skill.panshijuyuan.two.description","开启石肤（可再次释放关闭）：对自身附加30%%的防御力。开启期间武魂维持消耗大幅增加，切换武魂或精神力见底时自动关闭。");
         add("skill.panshijuyuan.three.description","消耗%s点精神力，释放震地：对10格内敌人造成巨额伤害");
-        add("skill.panshijuyuan.four.description", "消耗%s点精神力，释放搬山：给自身附加80%%的攻击力");
-        add("skill.panshijuyuan.five.description", "消耗%s点精神力，释放撼地：给自身附加85%%的攻击力，70%%的防御力");
+        add("skill.panshijuyuan.four.description", "开启搬山（可再次释放关闭）：给自身附加80%%的攻击力。开启期间武魂维持消耗大幅增加，切换武魂或精神力见底时自动关闭。");
+        add("skill.panshijuyuan.five.description", "开启撼地（可再次释放关闭）：给自身附加85%%的攻击力与70%%的防御力。开启期间武魂维持消耗大幅增加，切换武魂或精神力见底时自动关闭。");
         add("skill.panshijuyuan.six.description", "消耗%s点精神力，释放裂地：强制跳起来5格以上高度，狠狠砸向地面，对范围20格内敌人造成高额伤害");
         add("skill.panshijuyuan.7.description", "开启磐石巨猿真身：持续增幅自身；维持消耗为普通武魂的10倍，精神力低于上限10%时自动解除，再次释放可提前关闭。开启后进入冷却");
         add("skill.panshijuyuan.eight.description","消耗%s点精神力，释放憾岳：对面自身前5格内敌人造成极高倍率的伤害");

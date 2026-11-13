@@ -406,7 +406,6 @@ public class ModItems {
     //武魂武器
     public static final RegistryObject<Item> POHUNQIANG = ITEMS.register("pohunqiang", PohunqiangItem::new);
     public static final RegistryObject<Item> BAHUANGJI = ITEMS.register("bahuangji", BahuangjiItem::new);
-    /** 七杀剑本体（器武魂实体化武器）。 */
     public static final RegistryObject<Item> QISHAJIAN = ITEMS.register("qishajian", QishajianItem::new);
 
     public static final RegistryObject<Item> GRAY_IRON_SWORD = ITEMS.register("gray_iron_sword",()->new ModSwordBaseItem(ModToolTiers.GRAY_IRON,3,-1.8F,new Item.Properties()));
@@ -532,12 +531,9 @@ public class ModItems {
 
     //魂技
     //破魂枪
-
     //八荒戟
-
     //裂金虎
     public static final RegistryObject<SkillLeijinhu1> SKILL_LEIJINHU_1 = ITEMS.register("skill_leijinhu_1", SkillLeijinhu1::new);
-
     //磐石巨猿
     public static final RegistryObject<SkillPanshijuyuan1> SKILL_PANSHIJUYUAN_1 = ITEMS.register("skill_panshijuyuan_1", SkillPanshijuyuan1::new);
 
@@ -971,12 +967,7 @@ public class ModItems {
     static {
         HUNJILIST.add(SKILL_LEIJINHU_1);
         HUNJILIST.add(SKILL_PANSHIJUYUAN_1);
-        // 特殊魂技也算「魂技类」：贴图 assets/kunluncontinent/textures/item/skill_pole_vault.png，
-        // 由 HUNJILIST 统一生成模型（basicItem 用注册名当贴图名，不用在这里再写一遍）
         HUNJILIST.add(SKILL_POLE_VAULT);
-        // ⚠️ 声明式武魂（WUHUN_TIANSHI 这类）的魂技**不进** HUNJILIST：
-        //    模型由 WuhunRegistry.allSkillItems() 直接生成（见 ModItemModelsProvider），
-        //    这里再加一遍会重复出模型。
     }
 
     public static ArrayList<RegistryObject<Item>> DUANZAOMOBAN = new ArrayList<>();

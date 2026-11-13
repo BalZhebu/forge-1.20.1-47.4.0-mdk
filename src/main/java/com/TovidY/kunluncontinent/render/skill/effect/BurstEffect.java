@@ -131,6 +131,7 @@ public class BurstEffect extends SkillEffect {
     public static final Style JUYUAN_BURST =
             new Style(SHADER_BURST, false, 0.0F, 0xE8B44C, 0x3A2A10);
 
+
     private final Style style;
 
     /** 让同一次技能打到的多个目标"形态"各不相同。 */
