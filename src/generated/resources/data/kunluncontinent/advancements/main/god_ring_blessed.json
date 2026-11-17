@@ -1,0 +1,32 @@
+{
+  "parent": "kunluncontinent:main/god_ascended",
+  "criteria": {
+    "criterion": {
+      "conditions": {
+        "event": "god_ring_blessed"
+      },
+      "trigger": "kunluncontinent:kunlun_event"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "adv.kunlun.god_ring_blessed.desc"
+    },
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:hunhuan_storage_five"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "adv.kunlun.god_ring_blessed.title"
+    }
+  },
+  "requirements": [
+    [
+      "criterion"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

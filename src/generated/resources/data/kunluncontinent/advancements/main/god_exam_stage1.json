@@ -1,0 +1,32 @@
+{
+  "parent": "kunluncontinent:main/god_exam_start",
+  "criteria": {
+    "criterion": {
+      "conditions": {
+        "event": "god_exam_stage1"
+      },
+      "trigger": "kunluncontinent:kunlun_event"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "adv.kunlun.god_exam_stage1.desc"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:demon_whale_medal"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "adv.kunlun.god_exam_stage1.title"
+    }
+  },
+  "requirements": [
+    [
+      "criterion"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

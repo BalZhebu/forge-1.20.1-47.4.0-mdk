@@ -1,0 +1,525 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 16.0,
+                "min": 4.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "kunluncontinent:copper_soul_coin",
+          "weight": 30
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 10.0,
+                "min": 2.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "kunluncontinent:silver_soul_coin",
+          "weight": 25
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 8.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "kunluncontinent:dross",
+          "weight": 25
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 8.0,
+                "min": 2.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "kunluncontinent:chuyuan_dan",
+          "weight": 24
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 6.0,
+                "min": 2.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "kunluncontinent:baicaoling_dan",
+          "weight": 20
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "kunluncontinent:extreme_cold_snowflake_fragment",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "kunluncontinent:guyuancao_seeds",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "kunluncontinent:fanqicao_seeds",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "kunluncontinent:first_decomposition_gossip",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "kunluncontinent:iron_engravings_knife",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "kunluncontinent:gray_iron_axe",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "kunluncontinent:gray_iron_hoe",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "kunluncontinent:gray_iron_pickaxe",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "kunluncontinent:gray_iron_shovel",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "kunluncontinent:gray_iron_sword",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "kunluncontinent:gray_iron_helmet",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "kunluncontinent:gray_iron_chestplate",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "kunluncontinent:gray_iron_boots",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "kunluncontinent:gray_iron_leggings",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 5.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "kunluncontinent:neidan1",
+          "weight": 18
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 3.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "kunluncontinent:low_hunhuan_storage_core",
+          "weight": 12
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 4.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "kunluncontinent:qianhuabao_dan",
+          "weight": 12
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 3.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "kunluncontinent:neidan2",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "kunluncontinent:strong_potion",
+          "weight": 9
+        },
+        {
+          "type": "minecraft:item",
+          "name": "kunluncontinent:two_decomposition_gossip",
+          "weight": 8
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 5.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "kunluncontinent:fanqi_dan",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 5.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "kunluncontinent:guyuan_dan",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "kunluncontinent:ruby",
+          "weight": 13
+        },
+        {
+          "type": "minecraft:item",
+          "name": "kunluncontinent:amethyst",
+          "weight": 8
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 5.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "kunluncontinent:red_fire_ingot",
+          "weight": 8
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "kunluncontinent:dross_block",
+          "weight": 12
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "kunluncontinent:neidan3",
+          "weight": 8
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 3.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "kunluncontinent:wanpoxuan_dan",
+          "weight": 8
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "kunluncontinent:shifangjie_dan",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "kunluncontinent:hunhuan_storage_four",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "kunluncontinent:diamond_engravings_knife",
+          "weight": 6
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 3.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "kunluncontinent:sunken_silver_ingot",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "kunluncontinent:red_fire_helmet",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "kunluncontinent:red_fire_chestplate",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "kunluncontinent:red_fire_leggings",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "kunluncontinent:red_fire_boots",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "kunluncontinent:cold_hearted_steel_hoe",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "kunluncontinent:neidan4",
+          "weight": 4
+        },
+        {
+          "type": "minecraft:item",
+          "name": "kunluncontinent:neidan5",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "kunluncontinent:golden_soul_coin"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "kunluncontinent:sunken_silver_helmet"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "kunluncontinent:sunken_silver_chestplate"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "kunluncontinent:sunken_silver_leggings"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "kunluncontinent:sunken_silver_boots"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "kunluncontinent:neidan6",
+          "weight": 2
+        }
+      ],
+      "rolls": {
+        "type": "minecraft:uniform",
+        "max": 7.0,
+        "min": 3.0
+      }
+    }
+  ],
+  "random_sequence": "kunluncontinent:chests/abandoned_danfang"
+}

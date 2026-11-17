@@ -1,0 +1,58 @@
+{
+  "parent": "kunluncontinent:main/bone_first",
+  "criteria": {
+    "criterion": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "kunluncontinent:first_decomposition_gossip"
+            ]
+          },
+          {
+            "items": [
+              "kunluncontinent:two_decomposition_gossip"
+            ]
+          },
+          {
+            "items": [
+              "kunluncontinent:three_decomposition_gossip"
+            ]
+          },
+          {
+            "items": [
+              "kunluncontinent:four_decomposition_gossip"
+            ]
+          },
+          {
+            "items": [
+              "kunluncontinent:five_decomposition_gossip"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "adv.kunlun.bagua_first.desc"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:first_decomposition_gossip"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "adv.kunlun.bagua_first.title"
+    }
+  },
+  "requirements": [
+    [
+      "criterion"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

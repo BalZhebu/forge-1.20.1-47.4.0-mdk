@@ -245,12 +245,13 @@ public class TowerCommand {
         return IntegerArgumentType.getInteger(ctx, "floor") - 1;
     }
 
-    /** 层号越界检查（配表总层数由 {@link TowerFloorRegistry#getTotalFloors()} 决定）。 */
+    /** 层号越界检查（第 101 层起由公式生成，上限见 {@link TowerFloorRegistry#getMaxAvailableFloor()}）。 */
     private static boolean checkFloor(CommandContext<CommandSourceStack> ctx, int floorIndex) {
-        int total = TowerFloorRegistry.getTotalFloors();
+        int total = TowerFloorRegistry.getMaxAvailableFloor();
         if (floorIndex < 0 || floorIndex >= total) {
             ctx.getSource().sendFailure(Component.literal(
-                    "§c[昆仑大陆] 层号超出范围，当前只配置了第 1 ~ " + total + " 层"));
+                    "§c[昆仑大陆] 层号超出范围，可挑战第 1 ~ " + total + " 层（前 "
+                            + TowerFloorRegistry.HANDWRITTEN_FLOORS + " 层为手写配置）"));
             return false;
         }
         return true;

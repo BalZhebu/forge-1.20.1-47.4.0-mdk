@@ -27,11 +27,17 @@ import java.util.stream.Stream;
 public class SummonTowerBlock extends Block {
 
     /**
-     * 当前开放的最高层数。
-     * 默认跟随 {@link TowerFloorRegistry#getTotalFloors()}（配了几层就开几层）；
-     * 如果想锁定开放进度（比如先只放 20 层），把这里改成固定数字即可。
+     * 开放层数锁定值。
+     *
+     * <p><b>0 = 不锁定</b>，跟随 {@link TowerFloorRegistry#getMaxAvailableFloor()}
+     * （第 101 层起由公式无限延伸，所以默认不设终点）；
+     * 想把进度锁在某一层（比如先只放到第 20 层）就把这里改成具体数字。</p>
      */
-    private static final int MAX_AVAILABLE_FLOOR = TowerFloorRegistry.getTotalFloors();
+    private static final int LOCKED_MAX_FLOOR = 0;
+
+    private static int maxAvailableFloor() {
+        return LOCKED_MAX_FLOOR > 0 ? LOCKED_MAX_FLOOR : TowerFloorRegistry.getMaxAvailableFloor();
+    }
 
     public SummonTowerBlock(Properties properties) {
         super(properties);
@@ -54,9 +60,10 @@ public class SummonTowerBlock extends Block {
             serverPlayer.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY).ifPresent(attr -> {
 
                 int floor = attr.getCurrentTowerFloor();
+                int maxFloor = maxAvailableFloor();
 
-                if ((floor + 1) > MAX_AVAILABLE_FLOOR) {
-                    serverPlayer.sendSystemMessage(Component.literal("§6§l[昆仑大陆] §c无法进入，当前层数暂未开放（当前最高开放至第 " + MAX_AVAILABLE_FLOOR + " 层）！"));
+                if ((floor + 1) > maxFloor) {
+                    serverPlayer.sendSystemMessage(Component.literal("§6§l[昆仑大陆] §c无法进入，当前层数暂未开放（当前最高开放至第 " + maxFloor + " 层）！"));
                     return;
                 }
 

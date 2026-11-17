@@ -1,0 +1,32 @@
+{
+  "parent": "kunluncontinent:main/rank_san_ji_shen",
+  "criteria": {
+    "criterion": {
+      "conditions": {
+        "min_level": 161
+      },
+      "trigger": "kunluncontinent:level_up"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "adv.kunlun.rank_er_ji_shen.desc"
+    },
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:hunhuan_storage_three"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "adv.kunlun.rank_er_ji_shen.title"
+    }
+  },
+  "requirements": [
+    [
+      "criterion"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

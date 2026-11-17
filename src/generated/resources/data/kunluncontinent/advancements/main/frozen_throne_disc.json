@@ -1,0 +1,38 @@
+{
+  "parent": "kunluncontinent:main/polar_ice_realm_enter",
+  "criteria": {
+    "criterion": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "kunluncontinent:throne_of_frozen_stone"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "adv.kunlun.frozen_throne_disc.desc"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:throne_of_frozen_stone"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "adv.kunlun.frozen_throne_disc.title"
+    }
+  },
+  "requirements": [
+    [
+      "criterion"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

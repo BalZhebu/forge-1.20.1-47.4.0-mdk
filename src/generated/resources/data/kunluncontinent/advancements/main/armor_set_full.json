@@ -1,0 +1,33 @@
+{
+  "parent": "kunluncontinent:main/get_gray_iron_ingot5",
+  "criteria": {
+    "criterion": {
+      "conditions": {
+        "event": "armor_set_full"
+      },
+      "trigger": "kunluncontinent:kunlun_event"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "adv.kunlun.armor_set_full.desc"
+    },
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:rinsei_chestplate",
+      "nbt": "{Damage:0}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "adv.kunlun.armor_set_full.title"
+    }
+  },
+  "requirements": [
+    [
+      "criterion"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

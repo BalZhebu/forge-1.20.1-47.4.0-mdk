@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "kunluncontinent:thunder_biome",
+  "features": "kunluncontinent:seven_spirit_stone_ore",
+  "step": "underground_ores"
+}

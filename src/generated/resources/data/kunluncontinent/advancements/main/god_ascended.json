@@ -1,0 +1,32 @@
+{
+  "parent": "kunluncontinent:main/god_exam_stage5",
+  "criteria": {
+    "criterion": {
+      "conditions": {
+        "event": "god_ascended"
+      },
+      "trigger": "kunluncontinent:kunlun_event"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "adv.kunlun.god_ascended.desc"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:hunhuan_storage_five"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "adv.kunlun.god_ascended.title"
+    }
+  },
+  "requirements": [
+    [
+      "criterion"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

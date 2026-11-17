@@ -1,0 +1,59 @@
+{
+  "parent": "kunluncontinent:main/bone_first",
+  "criteria": {
+    "criterion": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "kunluncontinent:fangshanhundaoqi_1"
+            ]
+          },
+          {
+            "items": [
+              "kunluncontinent:fangshanhundaoqi_2"
+            ]
+          },
+          {
+            "items": [
+              "kunluncontinent:fangshanhundaoqi_3"
+            ]
+          },
+          {
+            "items": [
+              "kunluncontinent:fangshanhundaoqi_4"
+            ]
+          },
+          {
+            "items": [
+              "kunluncontinent:fangshanhundaoqi_5"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "adv.kunlun.hundaoqi_first.desc"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:fangshanhundaoqi_1",
+      "nbt": "{Damage:0}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "adv.kunlun.hundaoqi_first.title"
+    }
+  },
+  "requirements": [
+    [
+      "criterion"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

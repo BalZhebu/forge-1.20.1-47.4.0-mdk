@@ -19,6 +19,7 @@ import com.TovidY.kunluncontinent.screen.ModMenuTypes;
 import com.TovidY.kunluncontinent.screen.playernpc.shoumai.SellPriceRegistry;
 import com.TovidY.kunluncontinent.Init.ModCreativeModelTab;
 import com.TovidY.kunluncontinent.item.ModItems;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraftforge.api.distmarker.Dist;
@@ -164,13 +165,36 @@ public class KlMain {
         }
     }
 
-    public static void changeAttributesIO()  {
+    /**
+     * 放开原版 {@link RangedAttribute} 的上限。
+     *
+     * <p>原版给这些属性写死了 maxValue，{@code AttributeInstance#getValue()} 最后一步会走
+     * {@code RangedAttribute#sanitizeValue()} → {@code Mth.clamp(value, min, max)}，
+     * 超出的部分<b>不是溢出、而是被悄悄削平</b>：</p>
+     * <ul>
+     *   <li>{@code MAX_HEALTH} 原版上限 <b>1024</b> —— 昆仑的怪物/玩家血量动辄上亿；</li>
+     *   <li>{@code ATTACK_DAMAGE} 原版上限 <b>2048</b> —— NPC 把魂骨加成后的攻击力
+     *       写进这个属性（{@code PlayerNpcEntity}/{@code CapabilityRegistryHandler}），
+     *       高年限 NPC 一过 2048 就被削，技能伤害跟着一起废。</li>
+     * </ul>
+     *
+     * <p>⚠️ <b>不能用字段名反射</b>：生产环境里 {@code minValue}/{@code maxValue} 会被混淆成
+     * {@code f_22320_} 这种名字，只有开发环境才叫原名。这里沿用「按声明顺序取」
+     * （{@code RangedAttribute} 的字段表固定是 minValue → maxValue → descriptionId，
+     * 混淆只改名不重排），取第 2 个 double 字段。</p>
+     *
+     * <p>只放开项目真的会写大数值的两个属性，{@code movement_speed} / {@code attack_speed} 之类
+     * 保持原版上限 —— 那些值一旦被算飞，玩家会直接瞬移。</p>
+     */
+    public static void changeAttributesIO() {
         try {
-            Field privateField = RangedAttribute.class.getDeclaredFields()[1];
-            privateField.setAccessible(true);
-            privateField.set(Attributes.MAX_HEALTH, Float.MAX_VALUE);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
+            Field maxValueField = RangedAttribute.class.getDeclaredFields()[1];
+            maxValueField.setAccessible(true);
+            for (Attribute attr : new Attribute[]{Attributes.MAX_HEALTH, Attributes.ATTACK_DAMAGE}) {
+                maxValueField.setDouble(attr, Double.MAX_VALUE);
+            }
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException("放开原版属性上限失败", e);
         }
     }
 }

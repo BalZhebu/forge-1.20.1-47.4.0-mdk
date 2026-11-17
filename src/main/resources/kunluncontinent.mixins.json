@@ -4,7 +4,9 @@
   "package": "com.TovidY.kunluncontinent.mixin",
   "compatibilityLevel": "JAVA_17",
   "refmap": "kunluncontinent.refmap.json",
+  "plugin": "com.TovidY.kunluncontinent.mixin.KunlunMixinPlugin",
   "mixins": [
+    "MixinEntityDisplayName",
     "MixinMerchantMenu",
     "MixinPlayer",
     "MixinServerLevel",

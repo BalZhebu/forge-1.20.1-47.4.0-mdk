@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/orientable_with_bottom",
+  "textures": {
+    "bottom": "kunluncontinent:block/bank_block1",
+    "front": "kunluncontinent:block/bank_block",
+    "side": "kunluncontinent:block/bank_block1",
+    "top": "kunluncontinent:block/bank_block1"
+  }
+}

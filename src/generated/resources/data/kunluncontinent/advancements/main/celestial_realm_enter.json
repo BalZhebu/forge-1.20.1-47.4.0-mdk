@@ -1,0 +1,32 @@
+{
+  "parent": "kunluncontinent:main/thunder_realm_enter",
+  "criteria": {
+    "criterion": {
+      "conditions": {
+        "event": "celestial_realm_enter"
+      },
+      "trigger": "kunluncontinent:kunlun_event"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "adv.kunlun.celestial_realm_enter.desc"
+    },
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:golden_soul_coin"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "adv.kunlun.celestial_realm_enter.title"
+    }
+  },
+  "requirements": [
+    [
+      "criterion"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

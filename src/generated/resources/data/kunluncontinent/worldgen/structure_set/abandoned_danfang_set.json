@@ -1,0 +1,18 @@
+{
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 20261009,
+    "separation": 10,
+    "spacing": 40
+  },
+  "structures": [
+    {
+      "structure": "kunluncontinent:abandoned_danfang",
+      "weight": 3
+    },
+    {
+      "structure": "kunluncontinent:abandoned_danfang_underground",
+      "weight": 1
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "parent": "kunluncontinent:main/wuhun_awaken",
+  "criteria": {
+    "criterion": {
+      "conditions": {
+        "event": "wuhun_duo"
+      },
+      "trigger": "kunluncontinent:kunlun_event"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "adv.kunlun.wuhun_duo.desc"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:guoshi_bahuangji"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "adv.kunlun.wuhun_duo.title"
+    }
+  },
+  "requirements": [
+    [
+      "criterion"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

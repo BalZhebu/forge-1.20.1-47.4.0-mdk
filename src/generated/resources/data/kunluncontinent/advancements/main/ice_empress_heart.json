@@ -1,0 +1,38 @@
+{
+  "parent": "kunluncontinent:main/ice_empress_slain",
+  "criteria": {
+    "criterion": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "kunluncontinent:ice_empress_heart"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "adv.kunlun.ice_empress_heart.desc"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:ice_empress_heart"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "adv.kunlun.ice_empress_heart.title"
+    }
+  },
+  "requirements": [
+    [
+      "criterion"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

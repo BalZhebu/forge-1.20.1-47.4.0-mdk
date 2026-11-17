@@ -1,0 +1,32 @@
+{
+  "parent": "kunluncontinent:main/bone_first",
+  "criteria": {
+    "criterion": {
+      "conditions": {
+        "event": "bone_seven"
+      },
+      "trigger": "kunluncontinent:kunlun_event"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "adv.kunlun.bone_seven.desc"
+    },
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:soul_beast_external_appendages"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "adv.kunlun.bone_seven.title"
+    }
+  },
+  "requirements": [
+    [
+      "criterion"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,8 @@
+// 1.20.1	2026-10-22T17:14:22.9780344	Tags for minecraft:item mod id kunluncontinent
+4e3d18984a52eb2c181a2a575e99569a73955db6 data/forge/tags/items/cobblestone.json
+39d0ce4faede8194d43a685da56b767e722564ed data/kunluncontinent/tags/items/danyao_dross.json
+e5944d8606d8cba00f2c8a233d9a735dc3459d0d data/kunluncontinent/tags/items/engraving_knife.json
+a3eb66bc1237071d635b7527e298638e8b5d3690 data/minecraft/tags/items/music_discs.json
+181fd053dcbc6150fd60ab74b53f56fd24f524fc data/minecraft/tags/items/planks.json
+4e3d18984a52eb2c181a2a575e99569a73955db6 data/minecraft/tags/items/stone_crafting_materials.json
+4e3d18984a52eb2c181a2a575e99569a73955db6 data/minecraft/tags/items/stone_tool_materials.json

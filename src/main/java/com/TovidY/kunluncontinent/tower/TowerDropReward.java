@@ -63,6 +63,14 @@ public final class TowerDropReward {
     /** 魂币数量：每 20 层额外 +1 个。 */
     private static final int COIN_COUNT_PER_FLOORS = 20;
 
+    /**
+     * 魂币数量加成的上限。
+     *
+     * <p>层数从第 101 层起可以无限延伸，若不封顶，第 1000 层一次会掉 50 个魂币、
+     * 第 10000 层 500 个 —— 单个 {@code ItemStack} 直接爆掉。20 个（第 400 层）之后不再增长。</p>
+     */
+    private static final int COIN_COUNT_BONUS_CAP = 20;
+
     /** 内丹掉落率：每层 +0.4%（基础 20% → 第 100 层 60%）。 */
     private static final double NEIDAN_CHANCE_PER_FLOOR = 0.004D;
 
@@ -114,8 +122,8 @@ public final class TowerDropReward {
                 : player.getCapability(PlayerAttributeCapabilityProvider.CAPABILITY)
                 .map(PlayerAttributeCapability::getCurrentTowerFloor)
                 .orElse(0);
-        // 防御性钳制：配表外的层号会让加成曲线跑飞
-        return Math.max(0, Math.min(TowerFloorRegistry.getTotalFloors() - 1, floor));
+        // 防御性钳制：负数会让加成曲线跑飞；上限跟挑战塔一致（第 101 层起是公式生成的）
+        return Math.max(0, Math.min(TowerFloorRegistry.getMaxAvailableFloor() - 1, floor));
     }
 
     // ==================================================================================
@@ -134,7 +142,7 @@ public final class TowerDropReward {
                 COIN_CHANCE_PER_FLOOR * f,
                 COIN_BAG_PER_FLOOR * f,
                 COIN_QUALITY_PER_FLOOR * f,
-                f / COIN_COUNT_PER_FLOORS);
+                Math.min(COIN_COUNT_BONUS_CAP, f / COIN_COUNT_PER_FLOORS));
     }
 
     /** 内丹：掉落率与品质随层数提升（内丹的等级仍由魂兽年限决定，不随层数跳档）。 */

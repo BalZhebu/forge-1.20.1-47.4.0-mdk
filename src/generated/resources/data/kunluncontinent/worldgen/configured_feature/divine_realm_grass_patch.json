@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:random_patch",
+  "config": {
+    "feature": "kunluncontinent:divine_realm_grass_tall_placed",
+    "tries": 20,
+    "xz_spread": 2,
+    "y_spread": 0
+  }
+}

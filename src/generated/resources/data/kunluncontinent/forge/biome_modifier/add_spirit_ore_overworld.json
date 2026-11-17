@@ -1,0 +1,10 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#minecraft:is_overworld",
+  "features": [
+    "kunluncontinent:one_spirit_stone_ore",
+    "kunluncontinent:two_spirit_stone_ore",
+    "kunluncontinent:three_spirit_stone_ore"
+  ],
+  "step": "underground_ores"
+}

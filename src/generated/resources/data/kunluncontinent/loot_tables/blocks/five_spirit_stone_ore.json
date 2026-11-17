@@ -1,0 +1,455 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:inverted",
+          "term": {
+            "condition": "minecraft:match_tool",
+            "predicate": {
+              "enchantments": [
+                {
+                  "enchantment": "minecraft:fortune",
+                  "levels": {
+                    "min": 1
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{SpiritStoneQuality:0}"
+            }
+          ],
+          "name": "kunluncontinent:five_spirit_stone",
+          "weight": 250
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{SpiritStoneQuality:1}"
+            }
+          ],
+          "name": "kunluncontinent:five_spirit_stone",
+          "weight": 300
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{SpiritStoneQuality:2}"
+            }
+          ],
+          "name": "kunluncontinent:five_spirit_stone",
+          "weight": 250
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{SpiritStoneQuality:3}"
+            }
+          ],
+          "name": "kunluncontinent:five_spirit_stone",
+          "weight": 130
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{SpiritStoneQuality:4}"
+            }
+          ],
+          "name": "kunluncontinent:five_spirit_stone",
+          "weight": 50
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{SpiritStoneQuality:5}"
+            }
+          ],
+          "name": "kunluncontinent:five_spirit_stone",
+          "weight": 18
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{SpiritStoneQuality:6}"
+            }
+          ],
+          "name": "kunluncontinent:five_spirit_stone",
+          "weight": 2
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:all_of",
+          "terms": [
+            {
+              "condition": "minecraft:match_tool",
+              "predicate": {
+                "enchantments": [
+                  {
+                    "enchantment": "minecraft:fortune",
+                    "levels": {
+                      "min": 1
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "condition": "minecraft:inverted",
+              "term": {
+                "condition": "minecraft:match_tool",
+                "predicate": {
+                  "enchantments": [
+                    {
+                      "enchantment": "minecraft:fortune",
+                      "levels": {
+                        "min": 2
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{SpiritStoneQuality:0}"
+            }
+          ],
+          "name": "kunluncontinent:five_spirit_stone",
+          "weight": 180
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{SpiritStoneQuality:1}"
+            }
+          ],
+          "name": "kunluncontinent:five_spirit_stone",
+          "weight": 280
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{SpiritStoneQuality:2}"
+            }
+          ],
+          "name": "kunluncontinent:five_spirit_stone",
+          "weight": 260
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{SpiritStoneQuality:3}"
+            }
+          ],
+          "name": "kunluncontinent:five_spirit_stone",
+          "weight": 160
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{SpiritStoneQuality:4}"
+            }
+          ],
+          "name": "kunluncontinent:five_spirit_stone",
+          "weight": 75
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{SpiritStoneQuality:5}"
+            }
+          ],
+          "name": "kunluncontinent:five_spirit_stone",
+          "weight": 35
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{SpiritStoneQuality:6}"
+            }
+          ],
+          "name": "kunluncontinent:five_spirit_stone",
+          "weight": 10
+        }
+      ],
+      "rolls": {
+        "type": "minecraft:uniform",
+        "max": 3.0,
+        "min": 1.0
+      }
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:all_of",
+          "terms": [
+            {
+              "condition": "minecraft:match_tool",
+              "predicate": {
+                "enchantments": [
+                  {
+                    "enchantment": "minecraft:fortune",
+                    "levels": {
+                      "min": 2
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "condition": "minecraft:inverted",
+              "term": {
+                "condition": "minecraft:match_tool",
+                "predicate": {
+                  "enchantments": [
+                    {
+                      "enchantment": "minecraft:fortune",
+                      "levels": {
+                        "min": 3
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{SpiritStoneQuality:0}"
+            }
+          ],
+          "name": "kunluncontinent:five_spirit_stone",
+          "weight": 120
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{SpiritStoneQuality:1}"
+            }
+          ],
+          "name": "kunluncontinent:five_spirit_stone",
+          "weight": 250
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{SpiritStoneQuality:2}"
+            }
+          ],
+          "name": "kunluncontinent:five_spirit_stone",
+          "weight": 270
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{SpiritStoneQuality:3}"
+            }
+          ],
+          "name": "kunluncontinent:five_spirit_stone",
+          "weight": 190
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{SpiritStoneQuality:4}"
+            }
+          ],
+          "name": "kunluncontinent:five_spirit_stone",
+          "weight": 100
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{SpiritStoneQuality:5}"
+            }
+          ],
+          "name": "kunluncontinent:five_spirit_stone",
+          "weight": 50
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{SpiritStoneQuality:6}"
+            }
+          ],
+          "name": "kunluncontinent:five_spirit_stone",
+          "weight": 20
+        }
+      ],
+      "rolls": {
+        "type": "minecraft:uniform",
+        "max": 3.0,
+        "min": 1.0
+      }
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:match_tool",
+          "predicate": {
+            "enchantments": [
+              {
+                "enchantment": "minecraft:fortune",
+                "levels": {
+                  "min": 3
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{SpiritStoneQuality:0}"
+            }
+          ],
+          "name": "kunluncontinent:five_spirit_stone",
+          "weight": 80
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{SpiritStoneQuality:1}"
+            }
+          ],
+          "name": "kunluncontinent:five_spirit_stone",
+          "weight": 220
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{SpiritStoneQuality:2}"
+            }
+          ],
+          "name": "kunluncontinent:five_spirit_stone",
+          "weight": 260
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{SpiritStoneQuality:3}"
+            }
+          ],
+          "name": "kunluncontinent:five_spirit_stone",
+          "weight": 210
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{SpiritStoneQuality:4}"
+            }
+          ],
+          "name": "kunluncontinent:five_spirit_stone",
+          "weight": 130
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{SpiritStoneQuality:5}"
+            }
+          ],
+          "name": "kunluncontinent:five_spirit_stone",
+          "weight": 70
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{SpiritStoneQuality:6}"
+            }
+          ],
+          "name": "kunluncontinent:five_spirit_stone",
+          "weight": 30
+        }
+      ],
+      "rolls": {
+        "type": "minecraft:uniform",
+        "max": 3.0,
+        "min": 1.0
+      }
+    }
+  ],
+  "random_sequence": "kunluncontinent:blocks/five_spirit_stone_ore"
+}

@@ -179,6 +179,10 @@ dependencies {
     // at runtime, use the full JEI jar for Forge
     runtimeOnly(fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}"))
 
+    //修BUG用
+    implementation fg.deobf("curse.maven:alexs-mobs-426558:5698791")
+    implementation fg.deobf("curse.maven:citadel-331936:7476570")
+
     //极简血量显示4
     runtimeOnly fg.deobf("curse.maven:Neat-238372:4580940")
 

@@ -175,7 +175,31 @@ public class CapabilityRegistryHandler {
 
                     CompoundTag persistent = entity.getPersistentData();
                     Component newName = Component.literal( baseName);
+
+                    // ============================================================
+                    // ⚠️⚠️ 极度重要：改名可能破坏其它 mod 的「去刷 / 刷怪上限」判定
+                    // ============================================================
+                    // 有些 mod 的怪把「有没有自定义名」直接写进了持久化判定里。
+                    // 典型：Alex's Mobs 的宇宙鳕鱼（cosmic_cod）：
+                    //     requiresCustomPersistence() = super || hasCustomName() || fromBucket()
+                    //     removeWhenFarAway(d)         = !fromBucket() && !hasCustomName()
+                    // 而原版 NaturalSpawner.createState 是这么统计刷怪上限的：
+                    //     if (mob.isPersistenceRequired() || mob.requiresCustomPersistence()) continue;   // 不计入
+                    //     ...
+                    //     canSpawnForCategory: 已有数量 < maxInstancesPerChunk * spawnableChunkCount / 289
+                    // 于是给它改个名 → 它既不参与上限统计、又永远不去刷 →
+                    // 该生物群系每个区块每 tick 都能再刷一只新的，**指数级无限刷**
+                    // （实测末地 1 秒刷出上千只宇宙鳕鱼，服务器直接卡死）。
+                    //
+                    // 所以：设完名字立刻复核一次持久化语义 —— 一旦「命名」让它从
+                    // "会正常去刷、会占上限" 变成 "自定义持久化"，就把名字退回原名，
+                    // 宁可不显示年限，也不能把别 mod 的刷怪逻辑搞崩。
+                    Component previousName = entity.getCustomName();
+                    boolean persistentBefore = entity.requiresCustomPersistence();
                     entity.setCustomName(newName);
+                    if (!persistentBefore && entity.requiresCustomPersistence()) {
+                        entity.setCustomName(previousName);
+                    }
                     if (persistent.getBoolean("TowerSpawned")) {
                         entity.setCustomNameVisible(true);
                     }

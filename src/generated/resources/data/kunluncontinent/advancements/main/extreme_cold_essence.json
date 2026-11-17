@@ -1,0 +1,38 @@
+{
+  "parent": "kunluncontinent:main/polar_ice_realm_enter",
+  "criteria": {
+    "criterion": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "kunluncontinent:extreme_cold_essence"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "adv.kunlun.extreme_cold_essence.desc"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:extreme_cold_essence"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "adv.kunlun.extreme_cold_essence.title"
+    }
+  },
+  "requirements": [
+    [
+      "criterion"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

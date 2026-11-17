@@ -1,0 +1,32 @@
+{
+  "parent": "kunluncontinent:main/hunhuan_first",
+  "criteria": {
+    "criterion": {
+      "conditions": {
+        "event": "bone_first"
+      },
+      "trigger": "kunluncontinent:kunlun_event"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "adv.kunlun.bone_first.desc"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:soul_beast_skull"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "adv.kunlun.bone_first.title"
+    }
+  },
+  "requirements": [
+    [
+      "criterion"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

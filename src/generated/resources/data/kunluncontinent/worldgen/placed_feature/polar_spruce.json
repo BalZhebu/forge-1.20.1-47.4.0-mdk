@@ -1,0 +1,19 @@
+{
+  "feature": "minecraft:spruce",
+  "placement": [
+    {
+      "type": "minecraft:count",
+      "count": 3
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:heightmap",
+      "heightmap": "OCEAN_FLOOR"
+    },
+    {
+      "type": "kunluncontinent:dry_ground"
+    }
+  ]
+}

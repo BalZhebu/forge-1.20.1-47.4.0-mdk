@@ -1,0 +1,32 @@
+{
+  "parent": "kunluncontinent:main/rank_yi_ji_shen",
+  "criteria": {
+    "criterion": {
+      "conditions": {
+        "min_level": 196
+      },
+      "trigger": "kunluncontinent:level_up"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "adv.kunlun.rank_shen_wang.desc"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "kunluncontinent:hunhuan_storage_five"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "adv.kunlun.rank_shen_wang.title"
+    }
+  },
+  "requirements": [
+    [
+      "criterion"
+    ]
+  ],
+  "sends_telemetry_event": true
+}
