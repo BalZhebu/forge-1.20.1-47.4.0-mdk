@@ -124,6 +124,13 @@ public class ModItems {
     public static final RegistryObject<Item> INSTANT_KILL_SWORD =
             ITEMS.register("instant_kill_sword", InstantKillSwordItem::new);
 
+    //蕴灵石
+    public static final RegistryObject<Item> FEIQI_SPIRIT_STONE = ITEMS.register("feiqi_spirit_stone",()->new Item(new Item.Properties()){
+        @Override
+        public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
+            pTooltipComponents.add(Component.translatable("item.feiqi_spirit_stone.tooltip").withStyle(ChatFormatting.GRAY));
+        }
+    });
     public static final RegistryObject<Item> FIRST_SPIRIT_STONE = ITEMS.register("first_spirit_stone",()->new SpiritStoneItem(new Item.Properties(),1));
     public static final RegistryObject<Item> TWO_SPIRIT_STONE = ITEMS.register("two_spirit_stone",()->new SpiritStoneItem(new Item.Properties(),2));
     public static final RegistryObject<Item> THREE_SPIRIT_STONE = ITEMS.register("three_spirit_stone",()->new SpiritStoneItem(new Item.Properties(),3));
@@ -1147,6 +1154,7 @@ public class ModItems {
         MODSTONE.add(SAPPHIRE);
         MODSTONE.add(STARLIGHT_STONE);
 
+        MODSTONE.add(FEIQI_SPIRIT_STONE);
         MODSTONE.add(FIRST_SPIRIT_STONE);
         MODSTONE.add(TWO_SPIRIT_STONE);
         MODSTONE.add(THREE_SPIRIT_STONE);

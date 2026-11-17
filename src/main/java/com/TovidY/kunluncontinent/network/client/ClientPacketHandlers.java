@@ -4,6 +4,7 @@ import com.TovidY.kunluncontinent.capability.mobattributes.MobAttributeCapabilit
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapability;
 import com.TovidY.kunluncontinent.capability.playerattributes.PlayerAttributeCapabilityProvider;
 import com.TovidY.kunluncontinent.event.client.PWRenderPlayerEvent;
+import com.TovidY.kunluncontinent.event.client.CastClientState;
 import com.TovidY.kunluncontinent.entity.playernpc.PlayerNpcEntity;
 import com.TovidY.kunluncontinent.render.skill.SkillEffect;
 import com.TovidY.kunluncontinent.render.skill.SkillEffectRenderer;
@@ -154,6 +155,19 @@ public final class ClientPacketHandlers {
         Entity entity = level.getEntity(entityId);
         if (entity instanceof PlayerNpcEntity npc) {
             PWRenderPlayerEvent.updateNpcWuhunCache(npc.getUUID(), nianxianList);
+        }
+    }
+
+    /**
+     * 吟唱状态同步。
+     *
+     * <p>{@code totalTicks <= 0} 表示这次吟唱收尾（唱完或被打断）。</p>
+     */
+    public static void castingSync(int entityId, int totalTicks) {
+        if (totalTicks <= 0) {
+            CastClientState.stop(entityId);
+        } else {
+            CastClientState.start(entityId, totalTicks);
         }
     }
 }

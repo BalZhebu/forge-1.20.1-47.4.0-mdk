@@ -8,6 +8,7 @@
   "mixins": [
     "MixinEntityDisplayName",
     "MixinMerchantMenu",
+    "MixinMobSunBurn",
     "MixinPlayer",
     "MixinServerLevel",
     "MixinStructurePiecesBuilder",

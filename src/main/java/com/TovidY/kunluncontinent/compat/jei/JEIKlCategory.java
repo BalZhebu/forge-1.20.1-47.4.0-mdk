@@ -90,7 +90,8 @@ public class JEIKlCategory implements IRecipeCategory<LiandanRecipe> {
         }
 
         builder.addSlot(RecipeIngredientRole.CATALYST, 9, 42)
-                .addItemStack(new ItemStack(ModBlocks.DROSS_BLOCK.get().asItem()));
+                .addItemStack(new ItemStack(ModBlocks.DROSS_BLOCK.get().asItem()))
+                .addItemStack(new ItemStack(ModBlocks.FEIQI_SPIRIT_STONE_BLOCK.get().asItem()));
 
         builder.addSlot(RecipeIngredientRole.CATALYST, 35, 42)
                 .addIngredients(VanillaTypes.ITEM_STACK, ModItems.JUHUNPING.stream().map(reg -> new ItemStack(reg.get())).toList());

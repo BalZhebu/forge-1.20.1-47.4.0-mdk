@@ -1,4 +1,4 @@
-// 1.20.1	2026-11-10T20:12:58.9572826	Item Models: kunluncontinent
+// 1.20.1	2026-11-17T19:24:58.4478264	Item Models: kunluncontinent
 f32644d7d62d87d0d3f109d31b9e62ec09229906 assets/kunluncontinent/models/item/amethyst.json
 f4c6955cbdbd17da9ddf02bb007f099e05afbc04 assets/kunluncontinent/models/item/attribute_button.json
 5c2f20ad8bfe9952d95e9c87b9d654a99f8cbefa assets/kunluncontinent/models/item/baicaoling_dan.json
@@ -53,6 +53,7 @@ c9f5bd47a097eb3dbd12b6795be7fa551e48b05b assets/kunluncontinent/models/item/fang
 00452eaa7fb4a8a15b336e0740e4a567e7251ebe assets/kunluncontinent/models/item/fanqicao_item.json
 6d3526124efa14df3575004bfa609eb923c722ad assets/kunluncontinent/models/item/fanqicao_seeds.json
 bb64c1b1c039122eabf2a99b052cd2afe54482a5 assets/kunluncontinent/models/item/fanqi_dan.json
+60c9e4bcf711bc088ec05f5bdf90f3c9766bed37 assets/kunluncontinent/models/item/feiqi_spirit_stone.json
 ebf5be1e5d193be6b4daf2252c875c5cbd81e051 assets/kunluncontinent/models/item/first_decomposition_gossip.json
 099596b1805b7f0263f053f25cef13f5f0490add assets/kunluncontinent/models/item/first_spirit_stone.json
 f678b5edd23c40895253ab7cae0b8d57dbff5dd5 assets/kunluncontinent/models/item/five_decomposition_gossip.json

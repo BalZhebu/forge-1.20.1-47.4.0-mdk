@@ -238,7 +238,8 @@ public class CPacketReleaseSkill {
             if (speedAttr != null && !speedAttr.hasModifier(CASTING_SLOWDOWN_MODIFIER)) {
                 speedAttr.addTransientModifier(CASTING_SLOWDOWN_MODIFIER);
             }
-            NetworkHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new S2CCastingSyncPacket(effectiveCastTime));
+            // 广播给追踪者 + 自己：客户端要靠它给吟唱中的人摆结印姿势
+            S2CCastingSyncPacket.begin(player, effectiveCastTime);
 
             if (mode.isBatch()) {
                 // 批量里的吟唱要占好几秒，必须让玩家知道"正在唱哪个、还要多久"，

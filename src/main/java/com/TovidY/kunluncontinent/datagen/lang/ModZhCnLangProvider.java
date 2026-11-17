@@ -7,7 +7,6 @@ import com.TovidY.kunluncontinent.entity.EntityInit;
 import com.TovidY.kunluncontinent.item.ModItems;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.LanguageProvider;
-import net.minecraftforge.fml.common.Mod;
 
 public class ModZhCnLangProvider extends LanguageProvider {
     public ModZhCnLangProvider(PackOutput output) {
@@ -681,6 +680,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.DEMON_WHALE_BADGE.get(), "§b魔鲸徽章");
         add(ModItems.LIGHTNING_FRAGMENTS.get(),"§e闪电碎片");
 
+        add(ModItems.FEIQI_SPIRIT_STONE.get(), "废弃蕴灵石");
         add(ModItems.FIRST_SPIRIT_STONE.get(), "一阶蕴灵石");
         add(ModItems.TWO_SPIRIT_STONE.get(), "二阶蕴灵石");
         add(ModItems.THREE_SPIRIT_STONE.get(), "§e三阶蕴灵石");
@@ -691,7 +691,12 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.EIGHT_SPIRIT_STONE.get(), "§c八阶蕴灵石");
         add(ModItems.NINE_SPIRIT_STONE.get(), "§c九阶蕴灵石");
 
+        add("item.feiqi_spirit_stone.tooltip","毫无能量的粉末");
+        add("tooltip.kunluncontinent.spirit_stone","含有一丝能量的蕴灵块");
+        add("tooltip.kunluncontinent.spirit_stone1","可放入炼丹炉的丹渣槽位");
+
         //方块类
+        add(ModBlocks.FEIQI_SPIRIT_STONE_BLOCK.get(), "废弃蕴灵块");
         add(ModBlocks.CULTIVATION_PLATFORM.get(),"重修台");
         add(ModBlocks.GRAY_IRON_ORE.get(),"灰铁矿");
         add(ModBlocks.CLOUD_PATTERNED_BRONZE_ORE.get(),"云纹铜矿");

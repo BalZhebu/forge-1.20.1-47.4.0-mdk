@@ -82,7 +82,12 @@ public class SoulGatheringBottleItem extends Item implements Nengliang {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (!level.isClientSide && !player.isShiftKeyDown()) {
+        if (!level.isClientSide) {
+            // Shift + 右键：把背包里的蕴灵石一次性灌进来（合成台一次只能合一颗，太慢）
+            if (player.isShiftKeyDown()) {
+                return InteractionResultHolder.success(infuseFromInventory(player, stack));
+            }
+
             CompoundTag tag = stack.getOrCreateTag();
             boolean isAutoAbsorbing = !tag.getBoolean("auto_absorb");
             tag.putBoolean("auto_absorb", isAutoAbsorbing);
@@ -94,6 +99,92 @@ public class SoulGatheringBottleItem extends Item implements Nengliang {
             return InteractionResultHolder.success(stack);
         }
         return InteractionResultHolder.pass(stack);
+    }
+
+    /**
+     * 把背包里的蕴灵石按 1:1（1 点修为 = 1 点能量）一次性灌进这个瓶子。
+     *
+     * <h3>为什么不用合成台的 shift 连点</h3>
+     * <p>合成台里瓶子既是输入又是输出：让它留在格子里就会和输出一起形成复制，不让它留就只能合一次。
+     * 原版 {@code ResultSlot} 每轮固定只从每格扣 1 个，这个结构下没法绕过去。
+     * 所以批量走右键 —— 一次扫完整个背包，比连点快得多。</p>
+     *
+     * @return 处理后的瓶子（同一个 stack，便于调用方直接返回）
+     */
+    public ItemStack infuseFromInventory(Player player, ItemStack bottle) {
+        int max = getMaxnengliang(bottle);
+        int cur = getNengliang(player, bottle);
+
+        if (cur >= max) {
+            player.displayClientMessage(Component.literal("§6聚魂瓶已经注满了"), true);
+            return bottle;
+        }
+
+        int used = 0;
+        int gained = 0;
+
+        // 主背包 → 副手，逐格吃到装不下为止；废品（能量 0）直接跳过
+        for (ItemStack stack : player.getInventory().items) {
+            int[] r = drain(stack, bottle, cur, max, gained);
+            cur = r[0]; gained = r[1]; used += r[2];
+            if (cur >= max) break;
+        }
+        if (cur < max) {
+            for (ItemStack stack : player.getInventory().offhand) {
+                int[] r = drain(stack, bottle, cur, max, gained);
+                cur = r[0]; gained = r[1]; used += r[2];
+                if (cur >= max) break;
+            }
+        }
+
+        if (used <= 0) {
+            player.displayClientMessage(
+                    Component.literal("§7背包里没有可用的蕴灵石，或者一颗都装不下了。"), true);
+            return bottle;
+        }
+
+        setNengliang(player, bottle, cur);
+        player.getInventory().setChanged();
+
+        player.level().playSound(null, player.blockPosition(),
+                SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 0.9f, 1.35f);
+        if (player.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+            serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD,
+                    player.getX(), player.getY() + 1.0, player.getZ(),
+                    24, 0.4, 0.6, 0.4, 0.02);
+        }
+
+        player.displayClientMessage(Component.literal(
+                "§b灌注 §e" + String.format("%,d", gained) + " §b点灵气"
+                        + " §7(消耗 " + used + " 颗蕴灵石)"
+                        + " §8[" + cur + "/" + max + "]"), true);
+        return bottle;
+    }
+
+    /**
+     * 把一格物品里的蕴灵石尽量灌进瓶子。
+     *
+     * @return {@code {新能量, 本次新增能量, 本次消耗颗数}}
+     */
+    private static int[] drain(ItemStack stack, ItemStack bottle, int cur, int max, int gainedSoFar) {
+        if (stack.isEmpty() || stack == bottle) {
+            return new int[]{cur, gainedSoFar, 0};
+        }
+        if (!(stack.getItem() instanceof com.TovidY.kunluncontinent.item.spiritstone.SpiritStoneItem stone)) {
+            return new int[]{cur, gainedSoFar, 0};
+        }
+        int per = stone.getExp(stack);
+        if (per <= 0) {
+            return new int[]{cur, gainedSoFar, 0};
+        }
+        int used = 0;
+        while (!stack.isEmpty() && cur + per <= max) {
+            stack.shrink(1);
+            cur += per;
+            gainedSoFar += per;
+            used++;
+        }
+        return new int[]{cur, gainedSoFar, used};
     }
 
     @Override
@@ -217,6 +308,8 @@ public class SoulGatheringBottleItem extends Item implements Nengliang {
         tooltip.add(Component.literal("自动模式: " + (isAutoOn ? "§a开启" : "§c关闭")));
         tooltip.add(Component.literal("吸收范围: §6" + getAbsorbRange() + "格"));
         tooltip.add(Component.literal("§7[右键空气切换自动模式]"));
+        tooltip.add(Component.literal("§b[Shift + 右键] §7一键灌注背包里的蕴灵石"));
+        tooltip.add(Component.literal("§8与蕴灵石同放合成台也可单颗灌注"));
     }
 
 

@@ -81,7 +81,7 @@ public class LiandanluMenu extends AbstractContainerMenu {
             public boolean mayPlace(ItemStack stack) {
                 // 手动炼丹没有药渣这个玩法，直接禁放
                 if (!LiandanluMenu.this.isAutoMode()) return false;
-                return stack.is(ModBlocks.DROSS_BLOCK.get().asItem());
+                return isDrossSlotItem(stack);
             }
 
             // ---- 手动模式整体隐藏：不画、不悬停、不参与任何搬运 ----
@@ -276,7 +276,7 @@ public class LiandanluMenu extends AbstractContainerMenu {
         } else {
             boolean moved = this.moveItemStackTo(sourceStack, NEIDAN_SLOT_START, NEIDAN_SLOT_END, false);
             if (!moved) {
-                if (sourceStack.is(ModBlocks.DROSS_BLOCK.get().asItem())) {
+                if (isDrossSlotItem(sourceStack)) {
                     moved = this.moveItemStackTo(sourceStack, DROSS_MENU_SLOT, DROSS_MENU_SLOT + 1, false);
                 } else if (isSoulGatheringBottle(sourceStack)) {
                     moved = this.moveItemStackTo(sourceStack, BOTTLE_MENU_SLOT, BOTTLE_MENU_SLOT + 1, false);
@@ -307,9 +307,19 @@ public class LiandanluMenu extends AbstractContainerMenu {
             this.addSlot(new Slot(inv, i, 25 + i * 18, 144));
     }
 
+    /**
+     * 丹渣槽接受的物品：丹渣块，以及作用完全相同的<b>废弃蕴灵块</b>。
+     *
+     * <p>两者都只是「降低出现丹渣品质概率」的耗材，{@code AlchemicalCalculator} 那边只判断槽位非空，
+     * 所以这里放开物品白名单就够了，不需要另写一套逻辑。</p>
+     */
+    public static boolean isDrossSlotItem(ItemStack stack) {
+        return stack.is(ModBlocks.DROSS_BLOCK.get().asItem())
+                || stack.is(ModBlocks.FEIQI_SPIRIT_STONE_BLOCK.get().asItem());
+    }
+
     public boolean hasDrossBlock() {
-        return this.slots.get(DROSS_MENU_SLOT).getItem()
-                .is(ModBlocks.DROSS_BLOCK.get().asItem());
+        return isDrossSlotItem(this.slots.get(DROSS_MENU_SLOT).getItem());
     }
 
     /** 炉等级会影响品质加成，GUI 必须拿到它才能和服务端算出同一份概率。 */

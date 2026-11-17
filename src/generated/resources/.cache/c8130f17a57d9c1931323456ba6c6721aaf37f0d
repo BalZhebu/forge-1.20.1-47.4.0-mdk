@@ -1,4 +1,4 @@
-// 1.20.1	2026-10-22T18:11:09.9289507	Tags for minecraft:block mod id kunluncontinent
+// 1.20.1	2026-11-17T19:24:58.4538712	Tags for minecraft:block mod id kunluncontinent
 4e3d18984a52eb2c181a2a575e99569a73955db6 data/forge/tags/blocks/cobblestone.json
 434c9c68bc80dfcb1564ba90889074f5bba415c4 data/forge/tags/blocks/needs_netherite_tool.json
 e18a55652993ed1867a621093070022eb6f3a43d data/minecraft/tags/blocks/dirt.json
@@ -7,10 +7,10 @@ e18a55652993ed1867a621093070022eb6f3a43d data/minecraft/tags/blocks/dirt.json
 6e2d999c81c0f00995309fd9773933e2609d42ac data/minecraft/tags/blocks/logs_that_burn.json
 6986d1e0afb02903d7a907f5d0d8cf090309dc8c data/minecraft/tags/blocks/mineable/axe.json
 a47a98fd87c7678dc20601da407518bdb350a2dc data/minecraft/tags/blocks/mineable/hoe.json
-9b6c58555ad48f7c2ad035b0b6a5a6172d7a6d16 data/minecraft/tags/blocks/mineable/pickaxe.json
+24f42d06aed0f0fd6877ffc33d1970cb49a7c909 data/minecraft/tags/blocks/mineable/pickaxe.json
 3335372ad5e19e46d93fa5aa0dc8216bbac383ff data/minecraft/tags/blocks/mineable/shovel.json
 d2c2d0c96f46f4d873ee3aa6e65676f78694670e data/minecraft/tags/blocks/needs_diamond_tool.json
-ee7c66f65328eeca1f9f952e7ec81a98a2613d3c data/minecraft/tags/blocks/needs_iron_tool.json
+3f8a0a330ca52e029800ef02091711819d8f847b data/minecraft/tags/blocks/needs_iron_tool.json
 6e2d999c81c0f00995309fd9773933e2609d42ac data/minecraft/tags/blocks/overworld_natural_logs.json
 181fd053dcbc6150fd60ab74b53f56fd24f524fc data/minecraft/tags/blocks/planks.json
 e18a55652993ed1867a621093070022eb6f3a43d data/minecraft/tags/blocks/replaceable.json

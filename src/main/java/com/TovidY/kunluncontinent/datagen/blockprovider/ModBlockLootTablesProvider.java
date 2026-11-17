@@ -88,6 +88,7 @@ public class ModBlockLootTablesProvider extends BlockLootSubProvider {
 
         //极寒圆石：本身掉自己
         dropSelf(ModBlocks.EXTREME_COLD_COBBLESTONE.get());
+        dropSelf(ModBlocks.FEIQI_SPIRIT_STONE_BLOCK.get());
 
         // ==================== 蕴灵矿 ====================
         // 每阶矿掉对应阶的蕴灵石，品质随机；时运会同时提高「数量」和「高品质占比」。

@@ -159,9 +159,11 @@ public class SpiritStoneItem extends Item {
 
         if (exp <= 0) {
             tooltip.add(Component.literal("§8内里空空如也，无法炼化。"));
+            tooltip.add(Component.literal("§8可单独放入合成台，拆成废弃蕴灵石。"));
         } else {
             tooltip.add(Component.literal("§7可炼化修为: §b" + String.format("%,d", exp) + " §7点"));
             tooltip.add(Component.literal("§8右键吸收，化为自身修为。"));
+            tooltip.add(Component.literal("§b与聚魂瓶同放合成台，可灌注灵气 §8(1 修为 = 1 能量)"));
         }
 
         if (quality.isPrecious()) {

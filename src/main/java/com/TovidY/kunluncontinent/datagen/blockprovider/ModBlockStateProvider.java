@@ -54,6 +54,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         simpleBlockWithItem(ModBlocks.STARLIGHT_STONE_ORE.get(), cubeAll(ModBlocks.STARLIGHT_STONE_ORE.get()));
         //丹渣块
         simpleBlockWithItem(ModBlocks.DROSS_BLOCK.get(), cubeAll(ModBlocks.DROSS_BLOCK.get()));
+        simpleBlockWithItem(ModBlocks.FEIQI_SPIRIT_STONE_BLOCK.get(), cubeAll(ModBlocks.FEIQI_SPIRIT_STONE_BLOCK.get()));
         simpleBlockWithItem(ModBlocks.EXTREME_COLD_STONE.get(), cubeAll(ModBlocks.EXTREME_COLD_STONE.get()));
         simpleBlockWithItem(ModBlocks.EXTREME_COLD_COBBLESTONE.get(), cubeAll(ModBlocks.EXTREME_COLD_COBBLESTONE.get()));
         //银行方块：正面（放置时朝向玩家的那一面）用 bank_block.png，其余五面 bank_block1.png

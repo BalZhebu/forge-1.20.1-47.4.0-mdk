@@ -109,6 +109,7 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(ModBlocks.SEVEN_SPIRIT_STONE_ORE.get())
                 .add(ModBlocks.EIGHT_SPIRIT_STONE_ORE.get())
                 .add(ModBlocks.NINE_SPIRIT_STONE_ORE.get())
+                .add(ModBlocks.FEIQI_SPIRIT_STONE_BLOCK.get())
 
                 .add(ModBlocks.EXTREME_COLD_STONE.get())
                 .add(ModBlocks.EXTREME_COLD_COBBLESTONE.get())
@@ -136,6 +137,7 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(ModBlocks.RUBY_ORE.get())
                 .add(ModBlocks.GRAY_BLOCK.get())
                 .add(ModBlocks.CLOUD_PATTERNED_BRONZE_BLOCK.get())
+                .add(ModBlocks.FEIQI_SPIRIT_STONE_BLOCK.get())
         ;
         //需要钻石镐
         tag(BlockTags.NEEDS_DIAMOND_TOOL)

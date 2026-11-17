@@ -26,16 +26,11 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.Nullable;
-import org.stringtemplate.v4.ST;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-import java.util.ArrayList;
-import java.util.List;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.ForgeRegistries;
 
 //方块注册类
 public class ModBlocks {
@@ -232,6 +227,17 @@ public class ModBlocks {
                         }
                     });
 
+    public static final RegistryObject<Block> FEIQI_SPIRIT_STONE_BLOCK =
+            registerBlock("feiqi_spirit_stone_block",()->
+                    new Block(BlockBehaviour.Properties.copy(Blocks.STONE)){
+                        @Override
+
+                        public void appendHoverText(ItemStack pStack, @Nullable BlockGetter pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
+                            pTooltip.add(Component.translatable("tooltip.kunluncontinent.spirit_stone_block").withStyle(ChatFormatting.DARK_GRAY));
+                            pTooltip.add(Component.translatable("tooltip.kunluncontinent.spirit_stone1").withStyle(ChatFormatting.DARK_GRAY));
+                        }
+                    });
+
     public static final RegistryObject<Block> BANK_BLOCK =
             registerBlock("bank_block", () ->
                    new BankBlock(BlockBehaviour.Properties.copy(Blocks.HAY_BLOCK)
@@ -403,6 +409,7 @@ public class ModBlocks {
         MODBLOCKS.add(SPIRIT_GATHERING_STONE_1);
         MODBLOCKS.add(SPIRIT_GATHERING_STONE_2);
         MODBLOCKS.add(DROSS_BLOCK);
+        MODBLOCKS.add(FEIQI_SPIRIT_STONE_BLOCK);
         MODBLOCKS.add(SOUL_SOIL);
         MODBLOCKS.add(EXTREME_COLD_STONE);
         MODBLOCKS.add(EXTREME_COLD_COBBLESTONE);

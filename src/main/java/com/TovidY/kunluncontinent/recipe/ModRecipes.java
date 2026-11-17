@@ -1,6 +1,8 @@
 package com.TovidY.kunluncontinent.recipe;
 
 import com.TovidY.kunluncontinent.recipe.klcont.BottleRefillRecipe;
+import com.TovidY.kunluncontinent.recipe.klcont.SpiritStoneInfuseRecipe;
+import com.TovidY.kunluncontinent.recipe.klcont.WasteSpiritStoneRecipe;
 import com.TovidY.kunluncontinent.recipe.liandanlurecipe.DrossConversionRecipe;
 import com.TovidY.kunluncontinent.recipe.liandanlurecipe.LiandanRecipe;
 import com.TovidY.kunluncontinent.recipe.liandanlurecipe.LiandanRecipeSerializer;
@@ -31,6 +33,16 @@ public class ModRecipes {
 
     public static final RegistryObject<SimpleCraftingRecipeSerializer<?>> BOTTLE_REFILL_SERIALIZER =
             SERIALIZERS.register("bottle_refill", () -> new SimpleCraftingRecipeSerializer<>(BottleRefillRecipe::new));
+
+    /** 蕴灵石 → 聚魂瓶（能量 1:1 转移，保留瓶子等级与已有能量）。 */
+    public static final RegistryObject<SimpleCraftingRecipeSerializer<?>> SPIRIT_STONE_INFUSE_SERIALIZER =
+            SERIALIZERS.register("spirit_stone_infuse",
+                    () -> new SimpleCraftingRecipeSerializer<>(SpiritStoneInfuseRecipe::new));
+
+    /** 废品蕴灵石 → 废弃蕴灵石。 */
+    public static final RegistryObject<SimpleCraftingRecipeSerializer<?>> WASTE_SPIRIT_STONE_SERIALIZER =
+            SERIALIZERS.register("waste_spirit_stone",
+                    () -> new SimpleCraftingRecipeSerializer<>(WasteSpiritStoneRecipe::new));
 
     public static void register(IEventBus eventBus) {
         SERIALIZERS.register(eventBus);

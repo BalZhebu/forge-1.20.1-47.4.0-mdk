@@ -304,6 +304,14 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
         SpecialRecipeBuilder.special(ModRecipes.DROSS_CONVERSION_SERIALIZER.get())
                 .save(pWriter, KlMain.MOD_ID + ":dross_conversion");
 
+        //蕴灵石 → 聚魂瓶（灵气 1:1 转移）
+        SpecialRecipeBuilder.special(ModRecipes.SPIRIT_STONE_INFUSE_SERIALIZER.get())
+                .save(pWriter, KlMain.MOD_ID + ":spirit_stone_infuse");
+
+        //废品蕴灵石 → 废弃蕴灵石
+        SpecialRecipeBuilder.special(ModRecipes.WASTE_SPIRIT_STONE_SERIALIZER.get())
+                .save(pWriter, KlMain.MOD_ID + ":waste_spirit_stone");
+
         //引导书
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.GUIDE_BOOK.get())
                 .pattern("IX")
@@ -447,6 +455,10 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 RecipeCategory.MISC, ModItems.RINSEI_INGOT.get(),
                 RecipeCategory.BUILDING_BLOCKS, ModBlocks.RINSEI_BLOCK.get()
         );
+        //废弃块
+        nineBlockStorageRecipes(pWriter,
+                RecipeCategory.MISC, ModItems.FEIQI_SPIRIT_STONE.get(),
+                RecipeCategory.BUILDING_BLOCKS, ModBlocks.FEIQI_SPIRIT_STONE_BLOCK.get());
 
         //低阶魂环存储核心
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.LOW_HUNHUAN_STORAGE_CORE.get())
