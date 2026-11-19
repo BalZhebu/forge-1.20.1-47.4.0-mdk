@@ -51,6 +51,10 @@ public class JEIKluxPlugin implements IModPlugin {
         registration.addRecipeCategories(new JEIKlCategory(registration.getJeiHelpers().getGuiHelper()));
 
         registration.addRecipeCategories(new JEIPortalCategory(registration.getJeiHelpers().getGuiHelper()));
+
+        registration.addRecipeCategories(new JEIHunlingCategory(registration.getJeiHelpers().getGuiHelper()));
+
+        registration.addRecipeCategories(new JEIHunlingSpawnCategory(registration.getJeiHelpers().getGuiHelper()));
     }
 
     @Override
@@ -82,6 +86,14 @@ public class JEIKluxPlugin implements IModPlugin {
                 new ItemStack(ModItems.THUNDERREALM_SNOWFLAKE.get())
         ));
         registration.addRecipes(JEIPortalCategory.TYPE, portalRecipes);
+
+        // 汇灵台仪式
+        registration.addRecipes(JEIHunlingCategory.TYPE,
+                recipeManager.getAllRecipesFor(ModRecipes.HUNLING_RITUAL_TYPE.get()));
+
+        // 汇灵台仪式 · 召唤生物
+        registration.addRecipes(JEIHunlingSpawnCategory.TYPE,
+                recipeManager.getAllRecipesFor(ModRecipes.HUNLING_SPAWN_TYPE.get()));
 
         List<ItemStack> repairables = new ArrayList<>();
         ModItems.COLDPROTECTIONLIST.forEach(reg -> repairables.add(new ItemStack(reg.get())));
@@ -122,5 +134,11 @@ public class JEIKluxPlugin implements IModPlugin {
         registration.addRecipeCatalyst(new ItemStack(ModBlocks.THUNDER_REALM_PORTAL_BLOCK.get()), JEIPortalCategory.TYPE);
         registration.addRecipeCatalyst(new ItemStack(ModItems.EXTREME_COLD_SNOWFLAKE.get()), JEIPortalCategory.TYPE);
         registration.addRecipeCatalyst(new ItemStack(ModItems.THUNDERREALM_SNOWFLAKE.get()), JEIPortalCategory.TYPE);
+
+        // 汇灵台 / 底座都能点开仪式页
+        registration.addRecipeCatalyst(new ItemStack(ModBlocks.HUNLING_ALTAR.get()), JEIHunlingCategory.TYPE);
+        registration.addRecipeCatalyst(new ItemStack(ModBlocks.HUNLING_ALTAR_BASE.get()), JEIHunlingCategory.TYPE);
+        registration.addRecipeCatalyst(new ItemStack(ModBlocks.HUNLING_ALTAR.get()), JEIHunlingSpawnCategory.TYPE);
+        registration.addRecipeCatalyst(new ItemStack(ModBlocks.HUNLING_ALTAR_BASE.get()), JEIHunlingSpawnCategory.TYPE);
     }
 }

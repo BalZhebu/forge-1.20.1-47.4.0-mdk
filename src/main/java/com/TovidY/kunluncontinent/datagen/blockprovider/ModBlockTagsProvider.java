@@ -98,6 +98,8 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(ModBlocks.SPIRIT_GATHERING_STONE_0.get())
                 .add(ModBlocks.SPIRIT_GATHERING_STONE_1.get())
                 .add(ModBlocks.SPIRIT_GATHERING_STONE_2.get())
+                .add(ModBlocks.HUNLING_ALTAR.get())
+                .add(ModBlocks.HUNLING_ALTAR_BASE.get())
                 //蕴灵矿（九阶全部都要在这里，否则镐子不算「有效工具」：
                 //     挖掘速度退回 1.0、且破坏进度按 /100 算，表现就是"挖半天还挖不动、也挖不出东西"）
                 .add(ModBlocks.ONE_SPIRIT_STONE_ORE.get())
@@ -166,6 +168,8 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(ModBlocks.SPIRIT_GATHERING_STONE_0.get())
                 .add(ModBlocks.SPIRIT_GATHERING_STONE_1.get())
                 .add(ModBlocks.SPIRIT_GATHERING_STONE_2.get())
+                .add(ModBlocks.HUNLING_ALTAR.get())
+                .add(ModBlocks.HUNLING_ALTAR_BASE.get())
 
         ;
 

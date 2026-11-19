@@ -263,3 +263,62 @@ publishing {
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
+
+// =====================================================================================
+//  编译产物进回收站的兜底清理
+//
+//  背景：这台机器上有某个文件过滤驱动 / 删除保护软件，会把 `File.delete()` 重定向成
+//  「移到回收站」，而 Java 的删除本来是不走回收站的。结果是每跑一次 `compileJava`，
+//  `build/classes` 里的旧 .class 就整批进 D 盘回收站（一次几百个），越积越多。
+//  （`NukeOnDelete=1` 对这个没用 —— 它只管资源管理器的删除，管不到别人 hook 掉的 API。）
+//
+//  这个 task 在编译结束后，把回收站里「最近 10 分钟内产生的 .class」连同配对的 $I 元数据删掉。
+//  只动 .class，且只看 10 分钟窗口，不会碰你自己删进去的其它文件。
+//
+//  注意：只有走 Gradle 编译才会触发；用 IDEA 直接 Build 的话，手动跑
+//       gradlew purgeRecycleClasses
+// =====================================================================================
+tasks.register('purgeRecycleClasses') {
+    group = 'build'
+    description = '删除回收站里由本次编译产生的 .class（不影响其它文件）'
+
+    doLast {
+        def roots = []
+        ['D://$Recycle.Bin', 'C://$Recycle.Bin'].each { path ->
+            def dir = new File(path)
+            if (dir.isDirectory()) roots << dir
+        }
+        if (roots.isEmpty()) return
+
+        long cutoff = System.currentTimeMillis() - 10 * 60 * 1000L
+        int removed = 0
+
+        roots.each { root ->
+            root.eachDir { volumeDir ->
+                // 只处理当前用户 / 其它普通用户的回收站，跳过 SYSTEM 的 S-1-5-18（没权限）
+                if (!volumeDir.name.startsWith('S-1-5-21-')) return
+                volumeDir.eachFileRecurse { f ->
+                    if (!f.isFile()) return
+                    if (!f.name.startsWith('$R') || !f.name.endsWith('.class')) return
+                    if (f.lastModified() < cutoff) return
+                    try {
+                        def meta = new File(f.parentFile, '$I' + f.name.substring(2))
+                        f.delete()
+                        meta.delete()
+                        removed++
+                    } catch (ignored) {
+                    }
+                }
+            }
+        }
+
+        if (removed > 0) {
+            println "purgeRecycleClasses: 已从回收站清掉 ${removed} 个编译产物"
+        }
+    }
+}
+
+// 编译完自动跑一次（--rerun-tasks 全量编译时最需要）
+tasks.matching { it.name in ['compileJava', 'classes', 'build'] }.configureEach {
+    finalizedBy 'purgeRecycleClasses'
+}

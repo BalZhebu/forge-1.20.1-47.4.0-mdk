@@ -1,6 +1,10 @@
 package com.TovidY.kunluncontinent.recipe;
 
 import com.TovidY.kunluncontinent.recipe.klcont.BottleRefillRecipe;
+import com.TovidY.kunluncontinent.recipe.hunling.HunlingRitualRecipe;
+import com.TovidY.kunluncontinent.recipe.hunling.HunlingRitualSerializer;
+import com.TovidY.kunluncontinent.recipe.hunling.HunlingSpawnRitualRecipe;
+import com.TovidY.kunluncontinent.recipe.hunling.HunlingSpawnRitualSerializer;
 import com.TovidY.kunluncontinent.recipe.klcont.SpiritStoneInfuseRecipe;
 import com.TovidY.kunluncontinent.recipe.klcont.WasteSpiritStoneRecipe;
 import com.TovidY.kunluncontinent.recipe.liandanlurecipe.DrossConversionRecipe;
@@ -29,6 +33,27 @@ public class ModRecipes {
     public static final RegistryObject<RecipeType<LiandanRecipe>> LIANDAN_TYPE =
             TYPES.register("liandan", () -> new RecipeType<>() {
                 @Override public String toString() { return "liandan"; }
+            });
+
+    // ==================== 汇灵台仪式 ====================
+
+    /** 汇灵台仪式配方序列化器（JSON 结构较复杂，手写）。 */
+    public static final RegistryObject<RecipeSerializer<HunlingRitualRecipe>> HUNLING_RITUAL_SERIALIZER =
+            SERIALIZERS.register("hunling_ritual", HunlingRitualSerializer::new);
+
+    public static final RegistryObject<RecipeType<HunlingRitualRecipe>> HUNLING_RITUAL_TYPE =
+            TYPES.register("hunling_ritual", () -> new RecipeType<>() {
+                @Override public String toString() { return "hunling_ritual"; }
+            });
+
+    // ---- 汇灵台仪式 · 召唤生物版 ----
+
+    public static final RegistryObject<RecipeSerializer<HunlingSpawnRitualRecipe>> HUNLING_SPAWN_SERIALIZER =
+            SERIALIZERS.register("hunling_spawn_ritual", HunlingSpawnRitualSerializer::new);
+
+    public static final RegistryObject<RecipeType<HunlingSpawnRitualRecipe>> HUNLING_SPAWN_TYPE =
+            TYPES.register("hunling_spawn_ritual", () -> new RecipeType<>() {
+                @Override public String toString() { return "hunling_spawn_ritual"; }
             });
 
     public static final RegistryObject<SimpleCraftingRecipeSerializer<?>> BOTTLE_REFILL_SERIALIZER =

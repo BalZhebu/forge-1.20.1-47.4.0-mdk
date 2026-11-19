@@ -8,6 +8,7 @@ import com.TovidY.kunluncontinent.advancement.ModTriggers;
 import com.TovidY.kunluncontinent.block.ModBlockEntities;
 import com.TovidY.kunluncontinent.block.ModBlocks;
 import com.TovidY.kunluncontinent.block.blockentity.SpiritGatheringAltarRenderer;
+import com.TovidY.kunluncontinent.block.blockentity.HunlingAltarRenderer;
 import com.TovidY.kunluncontinent.godclass.GodRegistry;
 import com.TovidY.kunluncontinent.item.tool.DecompositionItem;
 import com.TovidY.kunluncontinent.potion.ModEffects;
@@ -145,6 +146,8 @@ public class KlMain {
             // 召唤表现全部改由 SkillEffects 的着色器法阵塔负责。
             event.registerBlockEntityRenderer(ModBlockEntities.SPIRIT_GATHERING_ALTAR_BE.get(),
                     SpiritGatheringAltarRenderer::new);
+            event.registerBlockEntityRenderer(ModBlockEntities.HUNLING_ALTAR_BE.get(),
+                    HunlingAltarRenderer::new);
         }
 
         /** 注册魂环粒子：让魂环贴图本身作为粒子渲染出来。 */

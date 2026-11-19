@@ -92,25 +92,38 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .special()
                 .save(pWriter,new ResourceLocation(KlMain.MOD_ID, "fanqi_dan_from"));
 
-        //雷域石
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.THUNDERREALM_SNOWFLAKE.get())
+
+        //沉银
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.SUNKEN_SILVER_EMPRESS_CROWN.get())
+                .pattern(" Z ")
+                .pattern("X X")
                 .pattern("XXX")
-                .pattern("XOX")
-                .pattern("XXX")
-                .define('X', ModItems.LIGHTNING_FRAGMENTS.get())
-                .define('O', Items.FLINT_AND_STEEL)
-                .unlockedBy("has_thunderrealm", has(ModItems.THUNDERREALM_SNOWFLAKE.get()))
+                .define('X', ModBlocks.SUNKEN_SILVER_BLOCK.get())
+                .define('Z', ModItems.SUNKEN_SILVER_INGOT.get())
+                .unlockedBy("has_sunken_sliver_block", has(ModItems.SUNKEN_SILVER_EMPRESS_CROWN.get()))
                 .save(pWriter);
 
-        //万雷天域传送门框架
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.THUNDER_REALM_PORTAL_BLOCK.get(),5)
-                .pattern("ZXZ")
-                .pattern("XOX")
-                .pattern("ZXZ")
-                .define('Z', Items.OBSIDIAN)
-                .define('X', ModItems.LIGHTNING_FRAGMENTS.get())
-                .define('O', ModBlocks.POLAR_ICE_PORTAL_BLOCK.get())
-                .unlockedBy("has_thunderrealm", has(ModBlocks.THUNDER_REALM_PORTAL_BLOCK.get()))
+        //汇灵台
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.HUNLING_ALTAR.get())
+                .pattern(" X ")
+                .pattern("ZOZ")
+                .pattern("CSC")
+                .define('Z', ModBlocks.CLOUD_PATTERNED_BRONZE_BLOCK.get())
+                .define('X', ModItems.AMETHYST.get())
+                .define('O', ModBlocks.SUNKEN_SILVER_BLOCK.get())
+                .define('C', ModBlocks.GRAY_BLOCK.get())
+                .define('S', ModBlocks.RED_FIRE_BLOCK.get())
+                .unlockedBy("has_hunling_altar", has(ModBlocks.HUNLING_ALTAR.get()))
+                .save(pWriter);
+
+        //基座
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.HUNLING_ALTAR_BASE.get())
+                .pattern(" X ")
+                .pattern(" O ")
+                .pattern(" X ")
+                .define('X', ModBlocks.GRAY_BLOCK.get())
+                .define('O', ModBlocks.CLOUD_PATTERNED_BRONZE_BLOCK.get())
+                .unlockedBy("has_hunling_altar_base", has(ModBlocks.HUNLING_ALTAR_BASE.get()))
                 .save(pWriter);
 
         //重修之眼的配方
@@ -135,40 +148,10 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .unlockedBy("has_eye_deep", has(ModItems.EYE_DEEP_SEA.get()))
                 .save(pWriter);
 
-        //深渊祭品
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.DEEP_SEA_OFFERINGS.get())
-                .pattern("ZXZ")
-                .pattern("XOX")
-                .pattern("ZXZ")
-                .define('O', Items.GOLDEN_APPLE)
-                .define('Z', ModItems.DEEPSEA_JINGHUA.get())
-                .define('X', ModItems.EYE_DEEP_SEA.get())
-                .unlockedBy("has_eye_dee_sea", has(ModItems.DEEP_SEA_OFFERINGS.get()))
-                .save(pWriter);   // ← 去掉手动 ID
+        //深渊祭品 ×1 / ×10：两条都已迁到汇灵台仪式
+        //  （KlRecipeProvider#hunling_ritual_deep_sea_offering / _enchanted）
 
-// 配方2：附魔深海祭品（产出10个，必须手动指定不同 ID）
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.DEEP_SEA_OFFERINGS.get(), 10)
-                .pattern("ZXZ")
-                .pattern("XOX")
-                .pattern("ZXZ")
-                .define('O', Items.ENCHANTED_GOLDEN_APPLE)
-                .define('Z', ModItems.DEEPSEA_JINGHUA.get())
-                .define('X', ModItems.EYE_DEEP_SEA.get())
-                .unlockedBy("has_eye_dee_sea_two", has(ModItems.DEEP_SEA_OFFERINGS.get()))
-                .save(pWriter, "kunluncontinent:deep_sea_offerings_enchanted");
-
-        //魔鲸徽章
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.DEMON_WHALE_MEDAL.get())
-                .pattern(" A ")
-                .pattern("BCD")
-                .pattern(" E ")
-                .define('A', Items.DRAGON_HEAD)
-                .define('B', Items.NETHER_STAR)
-                .define('C', ModItems.DEMON_WHALE_BADGE.get())
-                .define('D', Items.SCULK_CATALYST)
-                .define('E', ModItems.DEEPSEA_JINGHUA.get())
-                .unlockedBy("has_demon_whale_badge", has(ModItems.DEMON_WHALE_MEDAL.get()))
-                .save(pWriter);
+        //魔鲸徽章：已迁到汇灵台仪式（KlRecipeProvider#hunling_ritual_demon_whale_medal）
 
         //一阶魂环分解器
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.FIRST_DECOMPOSITION_GOSSIP.get())
@@ -312,6 +295,9 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
         SpecialRecipeBuilder.special(ModRecipes.WASTE_SPIRIT_STONE_SERIALIZER.get())
                 .save(pWriter, KlMain.MOD_ID + ":waste_spirit_stone");
 
+        // ⚠️ 汇灵台仪式配方不写在这里 —— 参数多、写法特殊，统一在 KlRecipeProvider 维护
+        KlRecipeProvider.register(pWriter);
+
         //引导书
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.GUIDE_BOOK.get())
                 .pattern("IX")
@@ -320,15 +306,7 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .unlockedBy("has_guide_book", has(ModItems.GUIDE_BOOK.get()))
                 .save(pWriter);
 
-        //极寒打火石
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.EXTREME_COLD_SNOWFLAKE.get())
-                .pattern("III")
-                .pattern("IAI")
-                .pattern("III")
-                .define('A', Items.FLINT_AND_STEEL)
-                .define('I', ModItems.EXTREME_COLD_SNOWFLAKE_FRAGMENT.get())
-                .unlockedBy("has_extreme_cold_snowflake_peif", has(ModItems.EXTREME_COLD_SNOWFLAKE_FRAGMENT.get()))
-                .save(pWriter);
+        //极寒石（原「极寒打火石」）：已迁到汇灵台仪式（KlRecipeProvider#hunling_ritual_extreme_cold_snowflake）
 
         //冰晶
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.EXTREME_COLD.get())
@@ -338,15 +316,7 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .unlockedBy("has_extreme_cold_snowflak", has(ModItems.EXTREME_COLD.get()))
                 .save(pWriter);
 
-        //极寒冰晶框架
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.POLAR_ICE_PORTAL_BLOCK.get())
-                .pattern("III")
-                .pattern("IWI")
-                .pattern("III")
-                .define('W', ModItems.EXTREME_COLD.get())
-                .define('I', Items.SNOW_BLOCK)
-                .unlockedBy("has_polar_ice_portal_block_peifang)", has(ModItems.EXTREME_COLD.get()))
-                .save(pWriter);
+        //极寒冰晶框架：已迁到汇灵台仪式（KlRecipeProvider#hunling_ritual_polar_ice_portal_frame）
 
         //聚灵台
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.SPIRIT_GATHERING_ALTAR.get())
@@ -394,17 +364,7 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .unlockedBy("has_spirit_gathering_altar3", has(ModBlocks.SPIRIT_GATHERING_STONE_1.get()))
                 .save(pWriter);
 
-        //高阶基石柱
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.SPIRIT_GATHERING_STONE_2.get())
-                .pattern("CVC")
-                .pattern("CZC")
-                .pattern("CXC")
-                .define('Z', ModBlocks.SPIRIT_GATHERING_STONE_1.get())
-                .define('X', ModBlocks.SUNKEN_SILVER_BLOCK.get())
-                .define('C', ModBlocks.RED_FIRE_BLOCK.get())
-                .define('V', ModItems.TOP_HUNHUAN_STORAGE_CORE.get())
-                .unlockedBy("has_spirit_gathering_altar4", has(ModBlocks.SPIRIT_GATHERING_STONE_2.get()))
-                .save(pWriter);
+        //高阶基石柱：已迁到汇灵台仪式（KlRecipeProvider#hunling_ritual_high_spirit_pillar）
 
         //挑战石碑
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.STONE_STAMP.get())
@@ -492,16 +452,7 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .unlockedBy("has_knife", has(ModTags.Items.ENGRAVING_KNIFE))
                 .save(pWriter);
 
-        //顶级魂环存储核心
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.TOP_HUNHUAN_STORAGE_CORE.get())
-                .pattern("XRX")
-                .pattern("RKR")
-                .pattern("XRX")
-                .define('K', Ingredient.of(ModTags.Items.ENGRAVING_KNIFE))
-                .define('R', ModItems.STARLIGHT_STONE.get())
-                .define('X', ModItems.HIGH_HUNHUAN_STORAGE_CORE.get())
-                .unlockedBy("has_knife", has(ModTags.Items.ENGRAVING_KNIFE))
-                .save(pWriter);
+        //顶级魂环存储核心：已迁到汇灵台仪式（KlRecipeProvider#hunling_ritual_top_hunhuan_core）
 
         //一阶魂环储存器
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC,ModItems.HUNHUAN_STORAGE_ONE.get())
@@ -539,29 +490,9 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .unlockedBy("has_hunhuan_storage", has(ModItems.HUNHUAN_STORAGE_THREE.get()))
                 .save(pWriter);
 
-        //四阶魂环储存器
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,ModItems.HUNHUAN_STORAGE_FOUR.get())
-                .pattern("#Y#")
-                .pattern("ZXZ")
-                .pattern("#Z#")
-                .define('#', ModItems.SUNKEN_SILVER_INGOT.get())
-                .define('X', ModItems.HIGH_HUNHUAN_STORAGE_CORE.get())
-                .define('Z', ModItems.RED_FIRE_INGOT.get())
-                .define('Y', ModItems.HUNHUAN_STORAGE_THREE.get())
-                .unlockedBy("has_hunhuan_storage", has(ModItems.HUNHUAN_STORAGE_FOUR.get()))
-                .save(pWriter);
+        //四阶魂环储存器：已迁到汇灵台仪式（KlRecipeProvider#hunling_ritual_hunhuan_storage_four）
 
-        //五阶魂环储存器
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,ModItems.HUNHUAN_STORAGE_FIVE.get())
-                .pattern("#Y#")
-                .pattern("ZXZ")
-                .pattern("#Z#")
-                .define('#', ModItems.COLD_HEARTED_STEEL_INGOT.get())
-                .define('X', ModItems.TOP_HUNHUAN_STORAGE_CORE.get())
-                .define('Z', ModItems.SUNKEN_SILVER_INGOT.get())
-                .define('Y', ModItems.HUNHUAN_STORAGE_FOUR.get())
-                .unlockedBy("has_hunhuan_storage", has(ModItems.HUNHUAN_STORAGE_FIVE.get()))
-                .save(pWriter);
+        //五阶魂环储存器：已迁到汇灵台仪式（KlRecipeProvider#hunling_ritual_hunhuan_storage_five）
 
         //低阶核心
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.LOW_LEVEL_HEXIN.get())
@@ -595,16 +526,7 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .unlockedBy("has_knife", has(ModItems.HIGH_LEVEL_HEXIN.get()))
                 .save(pWriter);
 
-        //顶级核心
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.TOP_LEVEL_HEXIN.get())
-                .pattern("XRX")
-                .pattern("RKR")
-                .pattern("XRX")
-                .define('K', ModItems.HIGH_LEVEL_HEXIN.get())
-                .define('X', ModItems.SUNKEN_SILVER_INGOT.get())
-                .define('R', ModItems.STARLIGHT_STONE.get())
-                .unlockedBy("has_knife", has(ModItems.TOP_LEVEL_HEXIN.get()))
-                .save(pWriter);
+        //顶级丹炉核心：已迁到汇灵台仪式（KlRecipeProvider#hunling_ritual_top_liandan_core）
 
         //一阶防闪魂导器
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.FANGSHANHUNDAOQI_1.get())
@@ -698,16 +620,7 @@ public class ModRecipesProvider extends RecipeProvider implements IConditionBuil
                 .unlockedBy("has_cold_protections", has(ModItems.HIGH_COLD_PROTECTION.get()))
                 .save(pWriter);
 
-        //顶级御寒魂导器
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.TOP_COLD_PROTECTION.get())
-                .pattern("XRX")
-                .pattern("RKR")
-                .pattern("XRX")
-                .define('K', ModItems.TOP_HUNHUAN_STORAGE_CORE.get())
-                .define('X', ModItems.SUNKEN_SILVER_INGOT.get())
-                .define('R', ModItems.STARLIGHT_STONE.get())
-                .unlockedBy("has_cold_protections", has(ModItems.TOP_COLD_PROTECTION.get()))
-                .save(pWriter);
+        //顶级御寒魂导器：已迁到汇灵台仪式（KlRecipeProvider#hunling_ritual_top_cold_protection）
 
         //一阶炼丹炉
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC,ModBlocks.LIANDANLU1.get())

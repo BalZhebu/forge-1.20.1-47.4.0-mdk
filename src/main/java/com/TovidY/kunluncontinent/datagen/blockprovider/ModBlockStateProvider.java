@@ -233,8 +233,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         itemModels().withExistingParent("summon_tower",
                 new ResourceLocation(KlMain.MOD_ID, "block/summon_tower"));
 
-        Block spirit = ModBlocks.SPIRIT_GATHERING_ALTAR.get();
-        simpleBlock(spirit, new ModelFile.UncheckedModelFile(
+        Block spirit = ModBlocks.SPIRIT_GATHERING_ALTAR.get();        simpleBlock(spirit, new ModelFile.UncheckedModelFile(
                 new ResourceLocation(KlMain.MOD_ID, "block/spirit_gathering_altar")));
         itemModels().withExistingParent("spirit_gathering_altar",
                 new ResourceLocation(KlMain.MOD_ID, "block/spirit_gathering_altar"));
@@ -244,6 +243,19 @@ public class ModBlockStateProvider extends BlockStateProvider {
                 new ResourceLocation(KlMain.MOD_ID, "block/spirit_gathering_stone")));
         itemModels().withExistingParent("spirit_gathering_stone",
                 new ResourceLocation(KlMain.MOD_ID, "block/spirit_gathering_stone"));
+
+        // ---- 汇灵台 / 底座：模型是手写 json（Blockbench 导出），这里只挂引用 ----
+        Block hunlingAltar = ModBlocks.HUNLING_ALTAR.get();
+        simpleBlock(hunlingAltar, new ModelFile.UncheckedModelFile(
+                new ResourceLocation(KlMain.MOD_ID, "block/hunling_altar")));
+        itemModels().withExistingParent("hunling_altar",
+                new ResourceLocation(KlMain.MOD_ID, "block/hunling_altar"));
+
+        Block hunlingAltarBase = ModBlocks.HUNLING_ALTAR_BASE.get();
+        simpleBlock(hunlingAltarBase, new ModelFile.UncheckedModelFile(
+                new ResourceLocation(KlMain.MOD_ID, "block/hunling_altar_base")));
+        itemModels().withExistingParent("hunling_altar_base",
+                new ResourceLocation(KlMain.MOD_ID, "block/hunling_altar_base"));
 
         Block stone1 = ModBlocks.SPIRIT_GATHERING_STONE_0.get();
         stoneWithOccupied(stone1, new ModelFile.UncheckedModelFile(

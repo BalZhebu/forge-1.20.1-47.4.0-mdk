@@ -120,9 +120,25 @@ public class ModItems {
     public static final RegistryObject<Item> DANYAO_DENGJI_JIA = ITEMS.register("danyao_dengji_jia", () -> new TestLevelUp(new Item.Properties().stacksTo(1), 1));
     public static final RegistryObject<Item> DANYAO_DENGJI_JIAN = ITEMS.register("danyao_dengji_jian", () -> new TestLevelUp(new Item.Properties().stacksTo(1), -1));
     public static final RegistryObject<Item> TEST_ZHUANSHENG = ITEMS.register("test_zhuansheng", () -> new ZhuanShengTestItem(new Item.Properties().stacksTo(1)));
-
+    //测试剑
     public static final RegistryObject<Item> INSTANT_KILL_SWORD =
             ITEMS.register("instant_kill_sword", InstantKillSwordItem::new);
+
+    //沉银王冠
+    public static final RegistryObject<Item> SUNKEN_SILVER_EMPRESS_CROWN = ITEMS.register("sunken_silver_empress_crown", () -> new Item(new Item.Properties().stacksTo(1)){
+        @Override
+        public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
+            pTooltipComponents.add(Component.translatable("item.sunken_silver_empress_crown.tooltip").withStyle(ChatFormatting.GRAY));
+        }
+    });
+
+    //冰封王冠
+    public static final RegistryObject<Item> ICE_EMPRESS_CROWN = ITEMS.register("ice_empress_crown", () -> new Item(new Item.Properties().stacksTo(1)){
+        @Override
+        public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
+            pTooltipComponents.add(Component.translatable("item.ice_empress_crown.tooltip").withStyle(ChatFormatting.GRAY));
+        }
+    });
 
     //蕴灵石
     public static final RegistryObject<Item> FEIQI_SPIRIT_STONE = ITEMS.register("feiqi_spirit_stone",()->new Item(new Item.Properties()){
@@ -1013,6 +1029,9 @@ public class ModItems {
         NORMALITEMSLIST.add(EYE_DEEP_SEA);
 
         NORMALITEMSLIST.add(DEEP_SEA_OFFERINGS);
+
+        NORMALITEMSLIST.add(SUNKEN_SILVER_EMPRESS_CROWN);
+        NORMALITEMSLIST.add(ICE_EMPRESS_CROWN);
     }
 
     public static ArrayList<RegistryObject<Item>> SPAWNEGGLIST = new ArrayList<>();

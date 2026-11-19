@@ -2,6 +2,7 @@ package com.TovidY.kunluncontinent.block;
 
 import com.TovidY.kunluncontinent.KlMain;
 import com.TovidY.kunluncontinent.block.blockentity.LiandanluBlockEntity;
+import com.TovidY.kunluncontinent.block.blockentity.HunlingAltarBlockEntity;
 import com.TovidY.kunluncontinent.block.blockentity.SpiritGatheringAltherBlockEntity;
 import com.TovidY.kunluncontinent.block.blockentity.UnderwaterAltarTile;
 import com.TovidY.kunluncontinent.block.klblock.LiandanluBlock;
@@ -30,6 +31,14 @@ public class ModBlockEntities {
             BLOCK_ENTITIES.register("spirit_gathering_altar_be", () ->
                     BlockEntityType.Builder.of(SpiritGatheringAltherBlockEntity::new,
                             ModBlocks.SPIRIT_GATHERING_ALTAR.get()
+                    ).build(null));
+
+    // ==================== 注册汇灵台（台 + 底座共用一种 BE） ====================
+    public static final RegistryObject<BlockEntityType<HunlingAltarBlockEntity>> HUNLING_ALTAR_BE =
+            BLOCK_ENTITIES.register("hunling_altar_be", () ->
+                    BlockEntityType.Builder.of(HunlingAltarBlockEntity::new,
+                            ModBlocks.HUNLING_ALTAR.get(),
+                            ModBlocks.HUNLING_ALTAR_BASE.get()
                     ).build(null));
 
     // ==================== 注册炼丹炉 ====================

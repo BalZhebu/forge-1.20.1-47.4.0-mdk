@@ -679,6 +679,11 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.DEMON_WHALE_MEDAL.get(),"§1§l深海勋章");
         add(ModItems.DEMON_WHALE_BADGE.get(), "§b魔鲸徽章");
         add(ModItems.LIGHTNING_FRAGMENTS.get(),"§e闪电碎片");
+        add(ModItems.SUNKEN_SILVER_EMPRESS_CROWN.get(), "§f§l沉银王冠");
+        add(ModItems.ICE_EMPRESS_CROWN.get(), "§b§l冰封王冠");
+
+        add("item.sunken_silver_empress_crown.tooltip","可用于合成冰封王冠");
+        add("item.ice_empress_crown.tooltip","用于某种仪式召唤Boss");
 
         add(ModItems.FEIQI_SPIRIT_STONE.get(), "废弃蕴灵石");
         add(ModItems.FIRST_SPIRIT_STONE.get(), "一阶蕴灵石");
@@ -692,7 +697,7 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add(ModItems.NINE_SPIRIT_STONE.get(), "§c九阶蕴灵石");
 
         add("item.feiqi_spirit_stone.tooltip","毫无能量的粉末");
-        add("tooltip.kunluncontinent.spirit_stone","含有一丝能量的蕴灵块");
+        add("tooltip.kunluncontinent.spirit_stone_block","含有一丝能量的蕴灵块");
         add("tooltip.kunluncontinent.spirit_stone1","可放入炼丹炉的丹渣槽位");
 
         //方块类
@@ -729,6 +734,9 @@ public class ModZhCnLangProvider extends LanguageProvider {
         add("putuan.xiulian.finish","§c你感到浑身清爽，但打坐时间太长你感到有被心魔入侵的风险，出去走走吧");
         add(ModBlocks.DROSS_BLOCK.get(), "丹渣块");
         add("tooltip.kunluncontinent.dross_block","放入炼丹炉可明显减少破碎丹药概率");
+        add(ModBlocks.HUNLING_ALTAR.get(), "汇灵台");
+        add("tooltip.kunluncontinent.hunling_altar","手持物品右键即可放置在上面，空手右键取回");
+        add(ModBlocks.HUNLING_ALTAR_BASE.get(), "汇灵台基座");
         add(ModBlocks.SOUL_SOIL.get(),"魂土");
         add("item.demon_whale_badge.tooltip","击杀魔鲸必定掉落");
 

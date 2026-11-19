@@ -1,4 +1,4 @@
-// 1.20.1	2026-11-17T19:24:58.4578714	Block States: kunluncontinent
+// 1.20.1	2026-11-18T20:38:11.4751715	Block States: kunluncontinent
 241e9815c11f394913eb2c1228a0b35e5f930d0c assets/kunluncontinent/blockstates/amethyst_ore.json
 188b6995a0ba8789459313e7375e347b570b3095 assets/kunluncontinent/blockstates/bank_block.json
 0e5a325dc7a923bd6ca2fe7f5391b479e261f6f7 assets/kunluncontinent/blockstates/cloud_patterned_bronze_block.json
@@ -21,6 +21,8 @@ aa198151da873c1dceb6398fa0536b0cca1a4487 assets/kunluncontinent/blockstates/clou
 557258574f576ab25cefd6c8460fc1f0c51615ff assets/kunluncontinent/blockstates/gray_block.json
 f608ed04a98a341104bc5a8ac320d5b13724fbc0 assets/kunluncontinent/blockstates/gray_iron_ore.json
 8bf0af74e152e02abba44bc53e3d51f39fd31685 assets/kunluncontinent/blockstates/guyuancao_block.json
+b6cfc65564cb1a8565af677bd8569b8e08fba5e2 assets/kunluncontinent/blockstates/hunling_altar.json
+4f81bd7abd3f409058072385ad2049ef5df3cb4e assets/kunluncontinent/blockstates/hunling_altar_base.json
 75b50f77b33c8b7d06de3e9754803a953439c5f7 assets/kunluncontinent/blockstates/nine_spirit_stone_ore.json
 fee69adc91ced257f441129b11c675f385f04c9f assets/kunluncontinent/blockstates/one_spirit_stone_ore.json
 fda73d2210f55e81f2c70bee7cad6ba1ab2d9f4e assets/kunluncontinent/blockstates/polar_ice_portal.json
@@ -119,6 +121,8 @@ aa4aeb6d93a8203b91af05a547a40ac8558d4570 assets/kunluncontinent/models/item/five
 fc254039ea611391eb2385cf6b138479c68f3956 assets/kunluncontinent/models/item/four_spirit_stone_ore.json
 e5d6dfe91dc710be9530883ab48fbddeee2e4883 assets/kunluncontinent/models/item/gray_block.json
 fb65077d9cda7b1ad8b034b8bd825be22c4cfea4 assets/kunluncontinent/models/item/gray_iron_ore.json
+252b2484685dd31020fc14520cadf3388340cc83 assets/kunluncontinent/models/item/hunling_altar.json
+64fcc16b8d6c106ecb71e57a33d36ec0513a2d08 assets/kunluncontinent/models/item/hunling_altar_base.json
 b3d188d283d91efafb266418f8a0ffd2d7f6d151 assets/kunluncontinent/models/item/liandanlu1.json
 a95ac411fca55a7b1629f33658582603207f802d assets/kunluncontinent/models/item/liandanlu2.json
 c851c12decc0e3bcca348799661ffded94599313 assets/kunluncontinent/models/item/liandanlu3.json

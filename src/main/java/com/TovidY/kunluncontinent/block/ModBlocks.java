@@ -38,6 +38,15 @@ public class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS =
             DeferredRegister.create(ForgeRegistries.BLOCKS, KlMain.MOD_ID);
 
+    //汇灵台
+    public static final RegistryObject<Block> HUNLING_ALTAR =
+            registerBlock("hunling_altar",()->
+                    new HunlingAltarBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion()));
+
+    public static final RegistryObject<Block> HUNLING_ALTAR_BASE =
+            registerBlock("hunling_altar_base",()->
+                    new HunlingAltarBaseBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion()));
+
     //蕴灵矿
     public static final RegistryObject<Block> ONE_SPIRIT_STONE_ORE =
             registerBlock("one_spirit_stone_ore",()->
@@ -402,6 +411,8 @@ public class ModBlocks {
     public static ArrayList<RegistryObject<Block>> MODBLOCKS = new ArrayList<>();
     static {
         MODBLOCKS.add(CULTIVATION_PLATFORM);
+        MODBLOCKS.add(HUNLING_ALTAR);
+        MODBLOCKS.add(HUNLING_ALTAR_BASE);
         MODBLOCKS.add(PUTUAN_BLOCK);
         MODBLOCKS.add(SPIRIT_GATHERING_ALTAR);
         MODBLOCKS.add(SPIRIT_GATHERING_STONE);

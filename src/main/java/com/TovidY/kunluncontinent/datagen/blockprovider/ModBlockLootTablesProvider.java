@@ -126,6 +126,10 @@ public class ModBlockLootTablesProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.SPIRIT_GATHERING_STONE_1.get());
         dropSelf(ModBlocks.SPIRIT_GATHERING_STONE_2.get());
 
+        //汇灵台 / 底座
+        dropSelf(ModBlocks.HUNLING_ALTAR.get());
+        dropSelf(ModBlocks.HUNLING_ALTAR_BASE.get());
+
         //炼丹炉
         dropSelf(ModBlocks.LIANDANLU1.get());
         dropSelf(ModBlocks.LIANDANLU2.get());
